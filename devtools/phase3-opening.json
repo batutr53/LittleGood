@@ -15,4 +15,3 @@
  {"name":"game","arguments":{"action":"eval","expressions":["world.living","world.settlements","world.creatures.back()"]}},
  {"name":"run","arguments":{"action":"errors"}}
 ]
-
