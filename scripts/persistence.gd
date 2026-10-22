@@ -51,13 +51,26 @@ static func validate(w: Variant) -> bool:
 		if s.cell < 0 or s.cell >= w.cells.size() or s.stage < 0 or s.stage > 2: return false
 	return true
 
+static func normalize_integer_fields(w: Dictionary) -> Dictionary:
+	for key in ["version", "seed", "tick", "xp", "weather", "theme"]: w[key] = int(w[key])
+	for cr in w.creatures:
+		cr.cell = int(cr.cell)
+		cr.species = int(cr.species)
+	for s in w.settlements:
+		for key in ["cell", "stage", "blessing"]: s[key] = int(s[key])
+	for i in range(w.discoveries.size()): w.discoveries[i] = int(w.discoveries[i])
+	for e in w.events:
+		e.tick = int(e.tick)
+		e.amount = int(e.get("amount", 0))
+	return w
+
 static func load_world(path: String = PATH, backup: bool = true) -> Dictionary:
 	if FileAccess.file_exists(path):
 		var parser = JSON.new()
 		var parse_error = parser.parse(FileAccess.get_file_as_string(path))
 		var envelope = parser.data if parse_error == OK else null
 		if envelope is Dictionary and envelope.get("payload") is String and envelope.get("checksum") == envelope.payload.sha256_text():
-			if parser.parse(envelope.payload) == OK and validate(parser.data): return parser.data
+			if parser.parse(envelope.payload) == OK and validate(parser.data): return normalize_integer_fields(parser.data)
 	return load_world(path + ".bak", false) if backup else {}
 
 static func offline(w: Dictionary, now: float) -> Dictionary:

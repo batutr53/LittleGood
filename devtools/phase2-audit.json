@@ -1,0 +1,12 @@
+[
+ {"name":"run","arguments":{"action":"stop"}},
+ {"name":"files","arguments":{"action":"rescan"}},
+ {"name":"scene","arguments":{"action":"reload","path":"res://scenes/main.tscn"}},
+ {"name":"run","arguments":{"action":"play","mute":true}},
+ {"name":"game","arguments":{"action":"set","path":".","props":{"is_test_session":true}}},
+ {"name":"game","arguments":{"action":"call","path":".","method":"new_planet","args":[2026,"Lumi",false]}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"game","arguments":{"action":"wait","seconds":1}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase2/mcp-gameplay.png"},
+ {"name":"run","arguments":{"action":"errors"}}
+]

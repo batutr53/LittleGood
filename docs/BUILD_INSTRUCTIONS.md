@@ -8,17 +8,17 @@ The tools and local outputs already exist on this computer. No manual scene setu
 - Console editor: same directory, `Godot_v4.7.2-stable_win64_console.exe`
 - Project: `D:\LittleGod\project.godot`
 - Desktop build: `D:\LittleGod\builds\windows\LittleGod.exe`
-- Android debug APK: `D:\LittleGod\builds\android\LittleGod-debug.apk`
+- Current Android debug APK: `D:\LittleGod\builds\android\LittleGod-0.2-debug.apk`
 
 `Launch LittleGod.cmd` starts the project with the verified official Godot runtime. Windows App Control blocked the exported console launcher during testing, so standalone Windows-package execution is not verified on this machine. The project itself runs successfully through Godot. No policy or security control was bypassed.
 
 ## Reproduce checks and exports
 
-Run `devtools/build.ps1` with PowerShell. It validates the Godot project, runs the suite, and exports Android and Windows debug artifacts using the installed templates. SDK and JDK are configured in Godot Editor Settings; paths are recorded in ENVIRONMENT.md. The Android build uses the normal debug signing key and is unsuitable as a store release. Its package ID is `org.littlegod.livinguniverse`, version 0.1.0, minimum Android API 24, target 36, ARM64 and x86_64. Internet permission is disabled.
+Run `devtools/build.ps1` with PowerShell. It validates the Godot project, runs the suite, and exports Android and Windows debug artifacts using the installed templates. SDK and JDK are configured in Godot Editor Settings; paths are recorded in ENVIRONMENT.md. The Android build uses the normal debug signing key and is unsuitable as a store release. Its package ID is `org.littlegod.livinguniverse`, version 0.2.0, minimum Android API 24, target 36, ARM64 and x86_64. Internet permission is disabled.
 
 For direct unit testing: `tools/godot/Godot_v4.7.2-stable_win64_console.exe --headless --path . --script tests/suite.gd`. For a real rendered capture: launch the same executable with `--path . -- --capture`; it writes `builds/gameplay.png`, prints frame statistics and exits. Headless mode cannot produce that GPU screenshot.
 
-MCP diagnostic: `node tools/godot-forge/dist/index.js doctor --project . --godot D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`. The versioned `devtools/mcp_action.mjs` accepts a JSON list of standard MCP tool calls; `devtools/ui-regression.json` is the recorded desktop input scenario. Run it against a playing editor session after creating a planet.
+MCP diagnostic: `node tools/godot-forge/dist/index.js doctor --project . --godot D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`. The versioned `devtools/mcp_action.mjs` accepts a JSON list of standard MCP tool calls; `devtools/phase2-gameplay.json` is the current desktop input scenario. Run it with the existing project open in Godot; it creates an unsaved test planet.
 
 ## Android validation environment
 

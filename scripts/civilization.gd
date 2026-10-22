@@ -21,7 +21,7 @@ static func tick(w: Dictionary) -> void:
 		var average = 0.0
 		for s in w.settlements: average += s.food / w.settlements.size()
 		for s in w.settlements: s.food = lerpf(s.food, average, 0.02)
-	if w.tick % 240 == 0 and w.settlements.size() < 4:
+	if int(w.tick) % 240 == 0 and w.settlements.size() < 4:
 		for i in range(w.cells.size()):
 			var c = w.cells[i]
 			if c.biome != 0 or c.plants < 0.6: continue

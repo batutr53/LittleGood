@@ -9,8 +9,10 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Tests failed' }
     & $godotExe --headless --path . --script tests/runtime.gd
     if ($LASTEXITCODE -ne 0) { throw 'Runtime integration test failed' }
+    & $godotExe --headless --path . --script tests/phase2.gd
+    if ($LASTEXITCODE -ne 0) { throw 'Phase 2 regression checks failed' }
     New-Item -ItemType Directory builds/android,builds/windows -Force | Out-Null
-    & $godotExe --headless --path . --export-debug Android builds/android/LittleGod-debug.apk
+    & $godotExe --headless --path . --export-debug Android builds/android/LittleGod-0.2-debug.apk
     if ($LASTEXITCODE -ne 0) { throw 'Android export failed' }
     & $godotExe --headless --path . --export-debug 'Windows Desktop' builds/windows/LittleGod.exe
     if ($LASTEXITCODE -ne 0) { throw 'Windows export failed' }

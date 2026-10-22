@@ -15,6 +15,7 @@ static func apply(w: Dictionary, power: int, cell: int) -> bool:
 		if not found: return false
 	w.energy -= COSTS[power]
 	w.xp += 3
+	if power <= 2: c["last_gift"] = power
 	match power:
 		0:
 			c.biome = 6

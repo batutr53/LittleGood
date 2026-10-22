@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://ds2g5wr5uioup" path="res://scripts/world_view.gd" id="2"]
 [ext_resource type="Script" uid="uid://xu6tmf2lj1f6" path="res://scripts/interface.gd" id="3"]
 [ext_resource type="Shader" path="res://assets/atmosphere.gdshader" id="4"]
+[ext_resource type="Script" path="res://scripts/world_foreground.gd" id="5"]
 
 [sub_resource type="ShaderMaterial" id="Sky"]
 shader = ExtResource("4")
@@ -22,3 +23,6 @@ script = ExtResource("2")
 
 [node name="Interface" type="CanvasLayer" parent="." unique_id=1440480015]
 script = ExtResource("3")
+
+[node name="WorldForeground" type="Node2D" parent="."]
+script = ExtResource("5")

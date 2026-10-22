@@ -1,10 +1,12 @@
 # LittleGod — Your Living Universe
 
-A playable offline Godot 4.7.2 game checkpoint. Create a named, seeded floating planet; nurture six habitats and six original species; watch camps become towns; shape the ecosystem with six guardian gifts.
+A playable offline Godot 4.7.2 game, now at the **0.2 visual and performance milestone**. Create a named, seeded floating planet; nurture six habitats and six original species; watch camps become towns; shape the ecosystem with six guardian gifts.
 
 ## Play
 
-Run `Launch LittleGod.cmd` to play through the verified Godot runtime. A Windows executable is exported under `builds/windows/`, but Windows App Control blocked its console launcher during packaged-build testing. No security settings were changed. The Android debug package is `builds/android/LittleGod-debug.apk`; it was installed and played on an emulator. Both builds are generated locally, without purchases or online services. These are development builds, not store releases.
+Run `Launch LittleGod.cmd` to play the current source through the verified Godot runtime. The current Android debug package is **`builds/android/LittleGod-0.2-debug.apk`**. The older Windows and Android exports remain under `builds/`; they are phase-one artifacts. Windows App Control blocked the older exported console launcher, so no security settings were changed or bypassed. These are development builds, not store releases.
+
+Phase two adds painted creature and environment sprites, connected terrain with blended biome colors and flowing water, evolving village art, illustrated discoveries, consistent icons/fonts, smoother camera gestures, haptics support, ambient rain, and a battery-saver option. Read `docs/STATUS.md` for actual desktop/Android measurements, screenshots, tests, and remaining limits.
 
 Click **Create a planet**, enter a name and optional seed, then **Let there be life**. Drag the island to pan. Scroll, pinch, or use +/− to zoom. Choose a gift and touch a tile. Blessing requires a settlement tile. With no gift selected, touch a tile to inspect its creatures, settlement, or soil. Tap the selected gift again to return to inspection. Spirit regenerates; every gift shows its cost.
 

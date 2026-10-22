@@ -1,0 +1,95 @@
+{
+  "creature_0": {
+    "frame": 0,
+    "size": [
+      190,
+      232
+    ]
+  },
+  "creature_1": {
+    "frame": 1,
+    "size": [
+      228,
+      232
+    ]
+  },
+  "creature_2": {
+    "frame": 2,
+    "size": [
+      232,
+      200
+    ]
+  },
+  "creature_3": {
+    "frame": 3,
+    "size": [
+      198,
+      232
+    ]
+  },
+  "creature_4": {
+    "frame": 4,
+    "size": [
+      207,
+      232
+    ]
+  },
+  "creature_5": {
+    "frame": 5,
+    "size": [
+      197,
+      232
+    ]
+  },
+  "prop_0": {
+    "frame": 6,
+    "size": [
+      224,
+      232
+    ]
+  },
+  "prop_1": {
+    "frame": 7,
+    "size": [
+      158,
+      232
+    ]
+  },
+  "prop_2": {
+    "frame": 8,
+    "size": [
+      204,
+      232
+    ]
+  },
+  "prop_3": {
+    "frame": 9,
+    "size": [
+      230,
+      232
+    ]
+  },
+  "prop_4": {
+    "frame": 10,
+    "size": [
+      232,
+      217
+    ]
+  },
+  "prop_5": {
+    "frame": 11,
+    "size": [
+      232,
+      168
+    ]
+  },
+  "tree": {
+    "frame": 12
+  },
+  "camp": {
+    "frame": 13
+  },
+  "villager": {
+    "frame": 14
+  }
+}

@@ -8,6 +8,16 @@ var hint: Label
 var power_buttons: Array = []
 var modal: PanelContainer
 var language = "en"
+var spirit: Label
+var veil: ColorRect
+var body_font: FontVariation
+
+func ui_font() -> Font:
+	if body_font == null:
+		body_font = FontVariation.new()
+		body_font.base_font = load("res://assets/phase2/nunito.ttf")
+		body_font.variation_opentype = {"wght": 550.0}
+	return body_font
 
 const TEXT = {
 "universe": ["YOUR LIVING UNIVERSE", "SENİN YAŞAYAN EVRENİN"],
@@ -48,7 +58,11 @@ const TEXT = {
 "settlement_info": ["%s · %d people\nFood %d · Technology %.1f", "%s · %d kişi\nBesin %d · Teknoloji %.1f"],
 "unknown": ["Undiscovered", "Keşfedilmedi"], "habitat": ["Habitat: %s · feeds on local resources", "Yaşam alanı: %s · yerel kaynaklarla beslenir"],
 "back": ["Back", "Geri"], "reset": ["Center planet", "Gezegeni ortala"], "replace": ["A new world replaces your current save.", "Yeni dünya mevcut kaydının yerini alır."],
-"load_failed": ["No valid save found.", "Geçerli kayıt bulunamadı."], "spirit": ["SPIRIT", "RUH GÜCÜ"]
+"load_failed": ["No valid save found.", "Geçerli kayıt bulunamadı."], "spirit": ["SPIRIT", "RUH GÜCÜ"],
+"quality": ["Performance: %s", "Performans: %s"], "smooth": ["Smooth · 60 FPS", "Akıcı · 60 FPS"], "economy": ["Battery saver · 30 FPS", "Pil tasarrufu · 30 FPS"],
+"haptics": ["Toggle touch vibration", "Dokunma titreşimini aç / kapat"],
+"hint_short": ["A little care changes everything.", "Biraz özen her şeyi değiştirir."],
+"audio": ["Sound", "Ses"], "vibration": ["Touch vibration", "Dokunma titreşimi"], "on": ["On", "Açık"], "off": ["Off", "Kapalı"], "paused": ["Paused", "Duraklatıldı"]
 }
 const POWER_KEYS = ["water", "forest", "mountain", "wildlife", "rain_power", "bless"]
 const SYMBOLS = ["≈", "♧", "△", "◇", "☂", "✧"]
@@ -77,6 +91,9 @@ func style(color: Color, radius: int = 20) -> StyleBoxFlat:
 	s.border_width_right = 1
 	s.border_width_bottom = 1
 	s.border_color = Color(0.66, 0.83, 0.72, 0.15)
+	s.shadow_color = Color(0, .04, .05, .18)
+	s.shadow_size = 8
+	s.shadow_offset = Vector2(0, 4)
 	s.content_margin_left = 20
 	s.content_margin_right = 20
 	s.content_margin_top = 12
@@ -87,6 +104,7 @@ func label(text: String, size: int = 22, color: Color = Color("e5efdc")) -> Labe
 	var l = Label.new()
 	l.text = text
 	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_font_override("font", ui_font())
 	l.add_theme_color_override("font_color", color)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -98,21 +116,27 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 	b.text = text
 	b.custom_minimum_size = Vector2(0, 66)
 	b.add_theme_font_size_override("font_size", 21)
+	b.add_theme_font_override("font", ui_font())
 	b.add_theme_color_override("font_color", Color("102d33") if primary else Color("e1ead7"))
 	b.add_theme_stylebox_override("normal", style(Color("bbd8aa") if primary else Color("203d46")))
 	b.add_theme_stylebox_override("hover", style(Color("d3e5bd") if primary else Color("325653")))
 	b.add_theme_stylebox_override("pressed", style(Color("e5c88d")))
-	b.pressed.connect(func(): game.audio.chime(); action.call())
+	b.pressed.connect(func(): game.audio.button_sound(); action.call())
 	return b
 
 func place(control: Control, rect: Rect2) -> void:
 	root.add_child(control)
+	var extra = maxf(0, get_viewport().get_visible_rect().size.y - 1280)
+	if rect.position.y >= 800: rect.position.y += extra
 	control.position = rect.position
 	control.size = rect.size
 
 func build() -> void:
 	if root: root.queue_free()
+	modal = null
+	veil = null
 	root = Control.new()
+	root.name = "HUD"
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
@@ -120,35 +144,70 @@ func build() -> void:
 	if OS.has_feature("mobile"):
 		var safe = DisplayServer.get_display_safe_area()
 		var screen = DisplayServer.screen_get_size()
-		if screen.y > 0: safe_top = clampf(safe.position.y * 1280.0 / screen.y, 0, 55)
-	var brand = label("L I T T L E G O D", 21, Color("b7d4c2"))
-	place(brand, Rect2(120, 35 + safe_top, 480, 40))
-	header = label("", 44)
-	place(header, Rect2(80, 88 + safe_top, 560, 65))
-	stats = label("", 19, Color("abc4bc"))
-	place(stats, Rect2(60, 160 + safe_top, 600, 75))
-	place(button("☰", menu), Rect2(28, 40 + safe_top, 64, 60))
-	place(button("−", func(): game.view.zoom = clampf(game.view.zoom - 0.15, 0.5, 2)), Rect2(28, 825, 62, 64))
-	place(button("+", func(): game.view.zoom = clampf(game.view.zoom + 0.15, 0.5, 2)), Rect2(98, 825, 62, 64))
-	place(button("◎", func(): game.view.pan = Vector2.ZERO; game.view.zoom = 0.88), Rect2(168, 825, 62, 64))
-	place(button("1× / 3×", func(): game.speed = 3 if game.speed == 1 else 1), Rect2(534, 825, 158, 64))
-	hint = label(t("hint"), 20, Color("b9cfc3"))
-	place(hint, Rect2(42, 900, 636, 83))
-	place(label(t("gift"), 17, Color("c2cda8")), Rect2(40, 1000, 640, 25))
+		if screen.x > 0: safe_top = clampf(safe.position.y * 720.0 / screen.x, 0, 55)
+	var brand = label("L I T T L E G O D", 17, Color("a9c9b7"))
+	place(brand, Rect2(120, 36 + safe_top, 480, 30))
+	header = label("", 47, Color("f0e7cd"))
+	header.add_theme_font_override("font", load("res://assets/phase2/lora.ttf"))
+	place(header, Rect2(100, 76 + safe_top, 520, 75))
+	stats = label("", 18, Color("a9c5b9"))
+	place(stats, Rect2(80, 156 + safe_top, 560, 60))
+	place(icon_button("menu", menu), Rect2(30, 60 + safe_top, 58, 58))
+	spirit = label("", 19, Color("eddb9e"))
+	place(spirit, Rect2(520, 232, 170, 40))
+	place(icon_button("minus", func(): game.view.zoom_at(game.view.origin, .88)), Rect2(30, 838, 58, 58))
+	place(icon_button("plus", func(): game.view.zoom_at(game.view.origin, 1.12)), Rect2(98, 838, 58, 58))
+	place(icon_button("center", func(): game.view.pan = Vector2.ZERO; game.view.zoom = .88), Rect2(166, 838, 58, 58))
+	place(button("1× / 3×", func(): game.speed = 3 if game.speed == 1 else 1), Rect2(553, 838, 137, 58))
+	hint = label(t("hint_short"), 21, Color("cad9c4"))
+	place(hint, Rect2(44, 930, 632, 78))
+	place(label(t("gift"), 15, Color("a9bda8")), Rect2(40, 1046, 640, 25))
 	power_buttons.clear()
 	for i in range(6):
-		var b = button(SYMBOLS[i] + "  " + t(POWER_KEYS[i]) + "  · " + str(Powers.COSTS[i]), func(): choose_power(i))
-		b.add_theme_font_size_override("font_size", 18)
-		place(b, Rect2(28 + (i % 3) * 232, 1043 + (i / 3) * 85, 220, 75))
+		var b = button(t(POWER_KEYS[i]), func(): choose_power(i))
+		b.name = "Power" + str(i)
+		b.add_theme_font_size_override("font_size", 16)
+		var normal = style(Color("1b353b"), 22)
+		normal.content_margin_top = 57
+		normal.content_margin_left = 2
+		normal.content_margin_right = 2
+		normal.content_margin_bottom = 8
+		b.add_theme_stylebox_override("normal", normal)
+		place(b, Rect2(27 + i * 112, 1092, 105, 104))
+		var icon = Sprite2D.new()
+		icon.texture = load("res://assets/phase2/icons/" + POWER_KEYS[i] + ".svg")
+		icon.position = Vector2(52, 32)
+		icon.scale = Vector2.ONE * .55
+		b.add_child(icon)
+		var cost = label(str(Powers.COSTS[i]), 12, Color("a6bd9e"))
+		cost.position = Vector2(73, 8)
+		cost.size = Vector2(23, 20)
+		b.add_child(cost)
 		power_buttons.append(b)
-	place(label(t("universe"), 13, Color("6d938b")), Rect2(50, 1224, 620, 26))
+	place(label(t("universe"), 12, Color("6d938b")), Rect2(50, 1225, 620, 25))
 	refresh()
+	root.modulate.a = 0
+	create_tween().tween_property(root, "modulate:a", 1.0, .25)
+
+func icon_button(key: String, action: Callable) -> Button:
+	var b = button("", action)
+	b.tooltip_text = t(key) if TEXT.has(key) else key
+	b.name = key.capitalize()
+	var icon = Sprite2D.new()
+	icon.texture = load("res://assets/phase2/icons/" + key + ".svg")
+	icon.position = Vector2(29, 29)
+	icon.scale = Vector2.ONE * .42
+	b.add_child(icon)
+	return b
 
 func choose_power(i: int) -> void:
 	game.power = -1 if game.power == i else i
-	hint.text = t("hint") if game.power == -1 else t("select") % t(POWER_KEYS[i])
+	hint.text = t("hint_short") if game.power == -1 else t("select") % t(POWER_KEYS[i])
 	for n in range(6):
-		power_buttons[n].add_theme_stylebox_override("normal", style(Color("556a4d") if n == game.power else Color("203d46")))
+		var s = power_buttons[n].get_theme_stylebox("normal").duplicate()
+		s.bg_color = Color("4d6550") if n == game.power else Color("1b353b")
+		s.border_color = Color("c9d6a0") if n == game.power else Color(.66, .83, .72, .15)
+		power_buttons[n].add_theme_stylebox_override("normal", s)
 
 func refresh() -> void:
 	if not header or game.world.is_empty(): return
@@ -156,21 +215,33 @@ func refresh() -> void:
 	header.text = w.name
 	var people = 0
 	for s in w.settlements: people += int(s.population)
-	stats.text = (t("day") % (1 + int(w.tick) / 30)) + "  ·  " + seasons()[(int(w.tick) / 120) % 4] + "  ·  " + (t("level") % (1 + int(w.xp) / 40)) + "\n" + t("population") % [w.creatures.size(), people] + "   ✧ " + str(int(w.energy))
+	stats.text = (t("day") % (1 + int(w.tick) / 30)) + "  ·  " + seasons()[(int(w.tick) / 120) % 4] + "  ·  " + (t("level") % (1 + int(w.xp) / 40)) + "\n" + t("population") % [w.creatures.size(), people]
+	if game.paused: stats.text += "  ·  " + t("paused")
+	spirit.text = "✧  " + str(int(w.energy)) + "  " + t("spirit")
 
 func popup(title: String) -> VBoxContainer:
+	game.dragging = false
 	if modal: modal.queue_free()
+	if not is_instance_valid(veil):
+		veil = ColorRect.new()
+		veil.color = Color(.01, .04, .05, .35)
+		place(veil, Rect2(Vector2.ZERO, get_viewport().get_visible_rect().size))
 	modal = PanelContainer.new()
-	modal.add_theme_stylebox_override("panel", style(Color("152f3a"), 28))
-	place(modal, Rect2(34, 240, 652, 700))
+	modal.add_theme_stylebox_override("panel", style(Color("173239"), 28))
+	place(modal, Rect2(34, 254 + maxf(0, get_viewport().get_visible_rect().size.y - 1280) * .5, 652, 710))
 	var v = VBoxContainer.new()
 	v.add_theme_constant_override("separation", 16)
 	modal.add_child(v)
-	v.add_child(label(title, 32, Color("ecdfb8")))
+	var heading = label(title, 31, Color("ecdfb8"))
+	heading.add_theme_font_override("font", load("res://assets/phase2/lora.ttf"))
+	v.add_child(heading)
+	modal.modulate.a = 0
+	create_tween().tween_property(modal, "modulate:a", 1.0, .18)
 	return v
 
 func close() -> void:
 	if modal: modal.queue_free(); modal = null
+	if is_instance_valid(veil): veil.queue_free(); veil = null
 	game.in_menu = false
 
 func add_close(v: VBoxContainer) -> void:
@@ -181,7 +252,20 @@ func main_menu() -> void:
 	var v = popup("LittleGod")
 	v.add_child(label(t("universe"), 16, Color("a1c9b2")))
 	v.add_child(label(t("welcome"), 26))
-	v.add_child(label("✧   ♧   ≈", 64, Color("d8d9a9")))
+	var artwork = HBoxContainer.new()
+	artwork.alignment = BoxContainer.ALIGNMENT_CENTER
+	artwork.add_theme_constant_override("separation", 18)
+	v.add_child(artwork)
+	for frame in [0, 12, 1]:
+		var picture = TextureRect.new()
+		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		picture.custom_minimum_size = Vector2(105, 118)
+		var atlas = AtlasTexture.new()
+		atlas.atlas = GameArt.ATLAS
+		atlas.region = Rect2((frame % 4) * 256, (frame / 4) * 256, 256, 256)
+		picture.texture = atlas
+		artwork.add_child(picture)
 	if FileAccess.file_exists(Persistence.PATH): v.add_child(button(t("continue"), game.restore, true))
 	v.add_child(button(t("new"), creation, true))
 	v.add_child(button("English / Türkçe", func(): toggle_language(); main_menu()))
@@ -230,7 +314,9 @@ func toggle_language() -> void:
 func settings() -> void:
 	var v = popup(t("settings"))
 	v.add_child(button("English / Türkçe", func(): toggle_language(); settings()))
-	v.add_child(button(t("sound"), func(): game.audio.set_enabled(not game.audio.enabled); game.save_settings()))
+	v.add_child(button(t("audio") + "  ·  " + t("on" if game.audio.enabled else "off"), func(): game.audio.set_enabled(not game.audio.enabled); game.save_settings(); settings()))
+	v.add_child(button(t("quality") % t("economy" if game.view.low_quality else "smooth"), func(): game.view.set_quality(not game.view.low_quality); game.save_settings(); settings()))
+	v.add_child(button(t("vibration") + "  ·  " + t("on" if game.haptics else "off"), func(): game.haptics = not game.haptics; game.save_settings(); settings()))
 	v.add_child(button(t("theme"), func():
 		if game.world.xp >= 40: game.world.theme = 1 - int(game.world.theme)))
 	add_close(v)
@@ -247,10 +333,35 @@ func scroll_text(v: VBoxContainer, text: String) -> void:
 
 func journal() -> void:
 	var v = popup(t("journal") + "  " + str(game.world.discoveries.size()) + "/6")
-	var text = ""
+	var scroll = ScrollContainer.new()
+	scroll.custom_minimum_size.y = 470
+	v.add_child(scroll)
+	var list = VBoxContainer.new()
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	list.add_theme_constant_override("separation", 10)
+	scroll.add_child(list)
 	for i in range(6):
-		text += ("◇ " + species(i) + "\n" + t("habitat") % Biomes.title(i, language) if game.world.discoveries.has(i) else "?  " + t("unknown")) + "\n\n"
-	scroll_text(v, text)
+		var card = PanelContainer.new()
+		card.add_theme_stylebox_override("panel", style(Color("203e42"), 14))
+		list.add_child(card)
+		var row = HBoxContainer.new()
+		row.add_theme_constant_override("separation", 14)
+		card.add_child(row)
+		var portrait = TextureRect.new()
+		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		portrait.custom_minimum_size = Vector2(84, 86)
+		var texture = AtlasTexture.new()
+		texture.atlas = GameArt.ATLAS
+		texture.region = Rect2((i % 4) * 256, (i / 4) * 256, 256, 256)
+		portrait.texture = texture
+		row.add_child(portrait)
+		var known = game.world.discoveries.has(i)
+		if not known: portrait.modulate = Color(.18, .35, .34)
+		var text = label((species(i) + "\n" + t("habitat") % Biomes.title(i, language)) if known else t("unknown"), 20)
+		text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(text)
 	add_close(v)
 
 func event_text(e: Dictionary) -> String:

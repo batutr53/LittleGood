@@ -4,17 +4,28 @@ extends Node
 var enabled = true
 var player: AudioStreamPlayer
 var ambience: AudioStreamPlayer
+var rainfall: AudioStreamPlayer
+var effects: Dictionary = {}
 
 func _ready() -> void:
 	player = AudioStreamPlayer.new()
+	player.max_polyphony = 4
 	add_child(player)
 	ambience = AudioStreamPlayer.new()
 	add_child(ambience)
-	var wav = make_tone(110, 3.0, 0.025, true)
+	var wav = load("res://assets/phase2/wind.wav") as AudioStreamWAV
 	wav.loop_mode = AudioStreamWAV.LOOP_FORWARD
-	wav.loop_end = 66150
+	wav.loop_end = 132300
 	ambience.stream = wav
 	ambience.play()
+	rainfall = AudioStreamPlayer.new()
+	add_child(rainfall)
+	var rain = load("res://assets/phase2/rain-loop.wav") as AudioStreamWAV
+	rain.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	rain.loop_end = 132300
+	rainfall.stream = rain
+	for key in ["water", "forest", "mountain", "wildlife", "rain", "bless", "discovery", "button"]:
+		effects[key] = load("res://assets/" + key + ".wav")
 
 func make_tone(freq: float, seconds: float, volume: float, wind: bool = false) -> AudioStreamWAV:
 	var data = PackedByteArray()
@@ -36,10 +47,21 @@ func make_tone(freq: float, seconds: float, volume: float, wind: bool = false) -
 func chime(power: int = 0) -> void:
 	if not enabled: return
 	var names = ["water", "forest", "mountain", "wildlife", "rain", "bless", "discovery"]
-	var path = "res://assets/" + names[clampi(power, 0, 6)] + ".wav"
-	player.stream = load(path) if ResourceLoader.exists(path) else make_tone(330 + power * 70, 0.6, 0.15)
+	player.stream = effects[names[clampi(power, 0, 6)]]
 	player.play()
+
+func button_sound() -> void:
+	if not enabled: return
+	player.stream = effects.button
+	player.volume_db = -8
+	player.play()
+	player.volume_db = 0
+
+func weather(raining: bool) -> void:
+	if raining and enabled and not rainfall.playing: rainfall.play()
+	if (not raining or not enabled) and rainfall.playing: rainfall.stop()
 
 func set_enabled(value: bool) -> void:
 	enabled = value
 	ambience.volume_db = 0 if value else -80
+	if not value: rainfall.stop()

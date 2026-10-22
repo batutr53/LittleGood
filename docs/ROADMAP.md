@@ -1,5 +1,9 @@
 # Checkpoint and exact next work
 
+## Phase 2 update
+
+Visual terrain transitions, painted creature/environment art, evolved village visuals, illustrated discoveries, a consistent icon/font system, portrait expansion, gesture smoothing and a battery-saver mode are now implemented. The repeated terrain viewport redraw and a restored-save float-clock bug were fixed. Current measurements, APK path and screenshots are in STATUS.md and PHASE2_REPORT.md. The original list below is phase-one planning history; physical-device performance, richer ecology/content, accessibility, long-running mobile interruption tests and iOS work remain relevant.
+
 Implemented: environment setup, Godot Forge source installation and working MCP verification, original art pipeline, six biome island, six moving species, interacting climate and vegetation, communities, six gifts, local saves and recovery, bounded return progression, EN/TR menus, discoveries, history, two milestones, cosmetic sky unlock, sounds, animation, desktop and Android debug export.
 
 This is a playable 0.1 milestone. It is not the full premium release or a production-ready mobile launch.

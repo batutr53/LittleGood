@@ -10,14 +10,23 @@
 | `civilization.gd` | Food, population, construction stages, technology, trade, expansion |
 | `powers.gd` | Costs, validation, persistent gift effects |
 | `persistence.gd` | Versioned checksummed envelope, atomic replacement, backup validation, bounded offline ticks |
-| `world_view.gd` | Isometric projection, cached terrain, animated wildlife, weather and interaction feedback |
+| `world_view.gd` | Projection, smoothed camera, selection, render coordination and effect state |
+| `terrain_surface.gd` | Connected land/water/cliff meshes, blended biome colors, banks and decorations |
+| `world_inhabitants.gd` | Shared-atlas sprites, depth ordering, animal behavior animation and settlement activity |
+| `game_art.gd` | Shared texture atlas and foliage material |
+| `world_foreground.gd` | Weather, selection rings and power effects above the world |
+| `performance_probe.gd` | Explicit debug-only profiling sessions and local JSON/screenshot evidence |
 | `interface.gd` | Portrait touch controls, menus, inspection, encyclopedia, history, settings, localization |
 | `soundscape.gd` | Local synthesized sounds, ambient wind, mute preference |
 | `tests/suite.gd` | Deterministic and integration checks, stress simulation, persistence recovery |
 
 World state is JSON-safe data; rendering does not own simulation decisions. Random-generator state is serialized as a decimal string to retain all 64 bits across JSON parsing. Floating-point fields are checked with tolerances in round-trip tests. Simulation work is tick based and independent of frame rate.
 
-Terrain is drawn into a transparent 1024×1024 SubViewport, refreshed at 4 Hz or immediately after ticks/gifts. A single cached texture replaces most per-frame terrain calls. Creatures, smoke, selections, particles, and rain remain in the foreground. This trades exact canopy occlusion for readable moving wildlife. A coordinate lookup replaces repeated whole-dictionary comparisons.
+Phase two removes the repeatedly redrawn offscreen SubViewport. Three retained meshes represent land/cliffs, water and ground details; shared vertex positions make the land continuous, and vertex colors blend adjacent land biomes. Water glints and foliage sway run in lightweight shaders. Terrain geometry rebuilds on simulation ticks or gifts, rather than four times per second. Painted props, houses, villagers and creatures share one 1024×1024 atlas and use depth ordering. Species-specific idle motion, grazing pauses, travel, wing-like body movement and rain shelter poses are visual behavior linked to existing habitat/hunger/weather state.
+
+The camera separates target pan/zoom from displayed transforms with frame-rate-independent interpolation. Pinch zoom preserves its world anchor, moves with its centroid and suppresses accidental power taps on release. Simulation uses bounded monotonic elapsed time, preserving the intended two-second tick at low frame rates; menus/suspension reset the clock appropriately. Battery saver caps at 30 FPS, reduces decorative effects, disables foliage sway, and renders a smaller internal viewport on mobile. Portrait layouts expand to tall screens rather than adding black bars.
+
+Version-one saves remain supported. After checksum/schema validation, integer fields from JSON are normalized before simulation. This fixes a phase-one bug where a restored float clock reached integer modulo operations. Optional tile `last_gift` metadata guarantees a visible planted tree or raised peak, without changing power costs or ecological rules.
 
 Save files live in Godot's platform-specific `user://` directory. On Windows this is normally `%APPDATA%/Godot/app_userdata/LittleGod — Your Living Universe/`. A SHA-256 envelope detects accidental corruption, not malicious tampering. A flushed temporary file replaces the current save and preserves one `.bak` file. Invalid primary data falls back to the backup. Settings are a separate ConfigFile.
 

@@ -1,0 +1,8 @@
+[
+ {"name":"game","arguments":{"action":"wait","seconds":0.4}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase2/journal-tr.png"},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"toggle_language"}},
+ {"name":"game","arguments":{"action":"set","path":".","props":{"paused":false}}},
+ {"name":"run","arguments":{"action":"errors"}}
+]

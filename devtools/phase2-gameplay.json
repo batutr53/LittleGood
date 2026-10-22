@@ -1,0 +1,22 @@
+[
+ {"name":"run","arguments":{"action":"stop"}},
+ {"name":"files","arguments":{"action":"rescan"}},
+ {"name":"scene","arguments":{"action":"reload","path":"res://scenes/main.tscn"}},
+ {"name":"run","arguments":{"action":"play","mute":true}},
+ {"name":"game","arguments":{"action":"set","path":".","props":{"is_test_session":true}}},
+ {"name":"game","arguments":{"action":"call","path":".","method":"new_planet","args":[2026,"Lumi",false]}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"input","arguments":{"action":"send","steps":[{"click_node":"Interface/HUD/Plus"},{"drag":[[350,500],[390,520]],"seconds":0.4},{"click_text":"Rain"},{"click":[360,585]},{"wait":0.4}]}},
+ {"name":"game","arguments":{"action":"eval","expressions":["world.energy","world.weather","get_node('LivingWorld').pan","get_node('LivingWorld').zoom"]}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase2/power-feedback.png"},
+ {"name":"exec","arguments":{"action":"game","code":"scene.power = -1\nscene.touch_world(scene.view.to_screen(scene.view.inhabitants.animals[0].position + Vector2(0,-12)))\nreturn scene.view.selected_creature"}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase2/creature-selection.png"},
+ {"name":"exec","arguments":{"action":"game","code":"for i in range(1000):\n\tscene.advance_tick()\nscene.paused = true\nscene.view.pan = Vector2.ZERO\nscene.view.zoom = 0.88\nscene.view.effects.clear()\nscene.view.invalidate()\nscene.ui.refresh()\nreturn scene.world.settlements"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.5}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase2/town.png"},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"menu"}},
+ {"name":"input","arguments":{"action":"send","steps":[{"click_text":"Settings"},{"click_text":"English / Türkçe"},{"wait":0.2}]}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"journal"}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase2/journal-tr.png"},
+ {"name":"run","arguments":{"action":"errors"}}
+]

@@ -1,0 +1,28 @@
+{
+	"atlas_size": [
+		1024,
+		1024
+	],
+	"average_fps": 60.0382125564624,
+	"creatures": 18,
+	"draw_calls": 131.0,
+	"effects": 0,
+	"first_frame_ms": 1171,
+	"frame_p50_ms": 16.665,
+	"frame_p95_ms": 16.746,
+	"frames": 901,
+	"nodes": 147.0,
+	"peak_draw_calls": 133.0,
+	"peak_process_ms": 21.858,
+	"platform": "Windows",
+	"quality": "smooth",
+	"renderer": "gl_compatibility",
+	"simulation_average_ms": 0.816428571428571,
+	"simulation_peak_ms": 0.997,
+	"simulation_ticks": 7,
+	"static_memory_mb": 43.0423135757446,
+	"terrain_last_build_ms": 9.636,
+	"terrain_rebuilds": 8,
+	"video_memory_mb": 18.8670606613159,
+	"wall_seconds": 15.007109
+}

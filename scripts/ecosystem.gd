@@ -9,7 +9,7 @@ static func event(w: Dictionary, key: String, amount: int = 0) -> void:
 	if w.events.size() > 160: w.events.pop_front()
 
 static func tick(w: Dictionary, rng: RandomNumberGenerator) -> void:
-	w.tick += 1
+	w.tick = int(w.tick) + 1
 	w.energy = minf(100, w.energy + 0.45)
 	if w.tick % 20 == 0:
 		w.weather = rng.randi_range(0, 3)

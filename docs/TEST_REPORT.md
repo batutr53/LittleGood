@@ -1,5 +1,9 @@
 # Test report — 22 October 2026
 
+## Phase 2 update
+
+Current results and profiling evidence are in [PHASE2_REPORT.md](PHASE2_REPORT.md). The existing 51 checks still pass; 15 phase-two interaction/legacy-save/10,000-tick checks and the real-scene clock integration check pass as well (67 total). The old tests did not resume JSON-loaded worlds far enough to expose the float-clock modulo bug; the new fixture regression found it and verifies the fix. Android emulator profiling now averages about 59 FPS in smooth mode and 30 FPS in battery saver. The remainder of this document records phase-one history and must not be read as current rendering/performance status.
+
 ## Automated simulation and persistence
 
 Godot 4.7.2 headless ran `tests/suite.gd`: **51/51 checks passed**. The recorded 1,800-tick simulations took approximately 1.3–1.7 seconds on this computer; this is simulation throughput, not a phone frame-rate benchmark.
