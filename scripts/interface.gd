@@ -26,6 +26,39 @@ func ui_font() -> Font:
 	return body_font
 
 const TEXT = {
+"closer": ["Look closer", "Yakından bak"],
+"chronicle": ["Planet Chronicle", "Gezegen Günlüğü"],
+"memory_body": ["Recorded moments · tap to revisit their place", "Kaydedilen anlar · yerini görmek için dokun"],
+"first_birth": ["%s was the first new life recorded here.", "%s burada kaydedilen ilk yeni yaşam oldu."],
+"companions": ["%s forage together. Companionship eases hunger.", "%s birlikte besin arıyor. Dostluk açlığı azaltıyor."],
+"rivalry": ["%s crossed paths. The hungry mossbun now avoids its rival.", "%s karşılaştı. Aç yosunpon artık rakibinden kaçınıyor."],
+"explored": ["%s explored eight places. A little trailblazer!", "%s sekiz yer keşfetti. Küçük bir öncü!"],
+"elder": ["%s has lived through 450 recorded world ticks.", "%s kaydedilen 450 dünya adımını yaşadı."],
+"landmark": ["%s raised a cultural landmark. Its tradition now helps the land.", "%s kültür anıtını kurdu. Geleneği artık toprağa yardım ediyor."],
+"alliance": ["%s formed a learning alliance.", "%s öğrenme birliği kurdu."],
+"rescue": ["%s recovered after a long dry spell. Its harvest is renewed.", "%s uzun kuraklıktan kurtuldu. Hasadı yenilendi."],
+"mountain_spring": ["A raised mountain and a wet forest awakened a spring. Nearby forest stays moist.", "Yükseltilen dağ ve nemli orman bir pınar uyandırdı. Yakın orman nemli kalıyor."],
+"silver_fox": ["%s became a silver guardian after thriving in its forest. Its grove grows greener.", "%s ormanında gelişip gümüş koruyucu oldu. Korusu yeşeriyor."],
+"rainbow_choir": ["%s sang after the rain cleared. The wetland bloomed beneath a rainbow.", "%s yağmur dindikten sonra şarkı söyledi. Sulak alan gökkuşağının altında çiçeklendi."],
+"secrets_hint": ["Secrets to seek: raise a mountain beside a wet forest; nurture a patient fox through several lantern nights; watch a wetland bird after rain clears.", "Sırlar: nemli orman yanında dağ yükselt; sabırlı tilkiyi birkaç ışıklı gece boyunca besle; yağmur sonrası sulak alan kuşunu izle."],
+"rename": ["Give a name", "Bir isim ver"],
+"favorite": ["Mark / unmark this place · up to 5", "Burayı işaretle / kaldır · en çok 5"],
+"favorites": ["Favorite places", "Sevilen yerler"],
+"personal_story": ["Recorded %d ticks · %d places explored\nPreferred habitat: %s", "%d adım kaydedildi · %d yer keşfedildi\nSevdiği yaşam alanı: %s"],
+"bonds": ["Companion: %s · rival: %s", "Dost: %s · rakip: %s"],
+"showcase": ["Create a planet postcard", "Gezegen kartpostalı oluştur"],
+"postcard": ["Your planet postcard", "Gezegen kartpostalın"],
+"export_png": ["Save PNG to a chosen location", "PNG dosyasını seçtiğin yere kaydet"],
+"postcard_body": ["Only this picture is exported. No save files or diagnostics. Sharing is your choice.", "Yalnızca bu resim aktarılır. Kayıt veya tanılama içermez. Paylaşmak senin seçimin."],
+"image_saved": ["Picture saved.", "Resim kaydedildi."],
+"image_failed": ["Could not save the picture. Choose another location.", "Resim kaydedilemedi. Başka bir konum seç."],
+"memories_count": ["%d memories", "%d anı"],
+"one_memory": ["1 memory", "1 anı"],
+"recent_activity": ["Recent world activity", "Son dünya hareketleri"],
+"community_story": ["%d recorded ticks · %d allied communities", "%d kayıtlı adım · %d dost topluluk"],
+"away_minutes": ["%d minutes away · your world grew gently", "%d dakika sonra · dünyan sakince büyüdü"],
+"away_hours": ["%d hours away · your world grew gently", "%d saat sonra · dünyan sakince büyüdü"],
+"away_days": ["%d days away · welcome back to your world", "%d gün sonra · dünyana yeniden hoş geldin"],
 "loading": ["Your world is waking", "Dünyan uyanıyor"],
 "loading_body": ["Remembering the changes in your world…", "Dünyandaki değişimler hatırlanıyor…"],
 "recovered": ["Your planet was recovered from a safe local copy.", "Gezegenin güvenli bir yerel kopyadan kurtarıldı."],
@@ -210,6 +243,9 @@ func build() -> void:
 	place(icon_button("minus", func(): game.view.zoom_at(game.view.origin, .88)), Rect2(30, 838, 58, 58))
 	place(icon_button("plus", func(): game.view.zoom_at(game.view.origin, 1.12)), Rect2(98, 838, 58, 58))
 	place(icon_button("center", func(): game.view.pan = Vector2.ZERO; game.view.zoom = .88), Rect2(166, 838, 58, 58))
+	var details = button(t("closer"), inspect_selected)
+	details.name = "Details"
+	place(details, Rect2(238, 838, 299, 58))
 	speed_button = button("1×", func(): game.speed = 3 if game.speed == 1 else 1; refresh())
 	speed_button.name = "Speed"
 	place(speed_button, Rect2(553, 838, 137, 58))
@@ -380,7 +416,7 @@ func menu() -> void:
 	grid.add_theme_constant_override("h_separation", 12)
 	grid.add_theme_constant_override("v_separation", 12)
 	v.add_child(grid)
-	for entry in [["journal", journal], ["neighbors", neighbors], ["history", history], ["achievements", achievements], ["settings", settings], ["save", game.manual_save], ["load", game.restore], ["new", creation], ["pause", func(): game.paused = not game.paused; close()]]:
+	for entry in [["journal", journal], ["neighbors", neighbors], ["chronicle", history], ["achievements", achievements], ["settings", settings], ["save", game.manual_save], ["load", game.restore], ["favorites", favorite_places], ["showcase", capture_postcard], ["new", creation], ["pause", func(): game.paused = not game.paused; close()]]:
 		var b = button(t(entry[0]), entry[1])
 		b.custom_minimum_size.x = 294
 		grid.add_child(b)
@@ -459,12 +495,25 @@ func event_text(e: Dictionary) -> String:
 	if key in ["discovery", "birth"]: text = text % species(clampi(amount, 0, 5))
 	elif key == "settlement": text = text % stages()[clampi(amount, 0, 2)]
 	elif key == "power": text = text % t(POWER_KEYS[clampi(amount, 0, 5)])
-	elif key in ["friendship", "lantern_grove", "first_village"]: text = text % str(e.get("subject", game.world.name))
+	elif key in ["friendship", "lantern_grove", "first_village", "first_birth", "companions", "rivalry", "explored", "elder", "landmark", "alliance", "rescue", "silver_fox", "rainbow_choir"]: text = text % str(e.get("subject", game.world.name))
 	return text
 
 func history() -> void:
 	page = "history"
-	var v = popup(t("history"))
+	var v = popup(t("chronicle"))
+	v.add_child(label(t("memory_body"), 18))
+	var list = card_list(v, 410)
+	var memories = game.world.living.memories.duplicate()
+	memories.reverse()
+	for e in memories: memory_card(list, e)
+	if memories.is_empty(): list.add_child(label(t("quiet"), 21))
+	list.add_child(button(t("recent_activity"), recent_history))
+	list.add_child(label(t("secrets_hint"), 20))
+	add_close(v)
+
+func recent_history() -> void:
+	page = "history"
+	var v = popup(t("recent_activity"))
 	var text = ""
 	var events = game.world.events.duplicate()
 	events.reverse()
@@ -486,13 +535,23 @@ func achievements() -> void:
 func away(report: Dictionary) -> void:
 	page = "away"
 	var v = popup(t("away"))
-	v.add_child(label(t("away_body") % report.minutes, 22))
+	var duration_key = "away_days" if int(report.minutes) >= 1440 else "away_hours" if int(report.minutes) >= 60 else "away_minutes"
+	var duration_value = int(report.minutes) / (1440 if int(report.minutes) >= 1440 else 60 if int(report.minutes) >= 60 else 1)
+	v.add_child(label(t(duration_key) % duration_value, 22))
 	if report.has("new_chapters"):
 		v.add_child(label(t("return_growth") % [report.new_chapters, report.creature_change, report.people_change, report.new_settlements], 19))
-	var text = ""
-	for e in report.events.slice(maxi(0, report.events.size() - 9)):
-		text += "✧ " + event_text(e) + "\n\n"
-	scroll_text(v, text if not text.is_empty() else t("quiet"))
+	var list = card_list(v, 360)
+	var highlights = report.get("memories", []).duplicate()
+	highlights.sort_custom(func(a,b):
+		var priority = {"mountain_spring": 5, "silver_fox": 5, "rainbow_choir": 5, "alliance": 4, "landmark": 4, "first_birth": 3, "first_village": 3, "rescue": 3}
+		var pa = int(priority.get(a.key, 1))
+		var pb = int(priority.get(b.key, 1))
+		return pa > pb if pa != pb else int(a.tick) > int(b.tick))
+	for e in highlights.slice(0, 9): memory_card(list, e)
+	if highlights.size() > 9: list.add_child(button(t("chronicle"), history))
+	if report.get("memories", []).is_empty():
+		for e in report.events.slice(maxi(0, report.events.size() - 6)): list.add_child(label(event_text(e), 20))
+	if report.events.is_empty() and report.get("memories", []).is_empty(): list.add_child(label(t("quiet"), 20))
 	add_close(v)
 
 func inspect(cell: int) -> void:
@@ -704,3 +763,152 @@ func world_pulse() -> void:
 			inspect_settlement(home)))
 	v.add_child(button(t("neighbors"), neighbors))
 	add_close(v)
+
+func card_list(v: VBoxContainer, height: float) -> VBoxContainer:
+	var scroll = ScrollContainer.new()
+	scroll.custom_minimum_size.y = height
+	v.add_child(scroll)
+	var list = VBoxContainer.new()
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	list.add_theme_constant_override("separation", 12)
+	scroll.add_child(list)
+	return list
+
+func memory_card(list: VBoxContainer, e: Dictionary) -> void:
+	var card = PanelContainer.new()
+	card.add_theme_stylebox_override("panel", style(Color("203e42"), 16))
+	list.add_child(card)
+	var row = HBoxContainer.new()
+	card.add_child(row)
+	var portrait = TextureRect.new()
+	portrait.custom_minimum_size = Vector2(76, 100)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var frame = int(e.get("species", -1))
+	if frame < 0:
+		frame = 1 if e.key in ["silver_fox", "lantern_grove"] else 5 if e.key == "rainbow_choir" else 13 if e.key == "friendship" else 8 if e.key in ["landmark", "alliance", "first_village", "rescue"] else 6 if e.key == "mountain_spring" else 12
+	var texture = AtlasTexture.new()
+	texture.atlas = GameArt.ATLAS
+	texture.region = Rect2((frame % 4) * 256, (frame / 4) * 256, 256, 256)
+	portrait.texture = texture
+	if e.key == "silver_fox": portrait.material = GameArt.silver()
+	row.add_child(portrait)
+	var text = event_text(e)
+	var b = button((t("day") % (1 + int(e.tick) / 30)) + " · " + text, func(): focus_place(int(e.cell)))
+	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.custom_minimum_size.y = 105
+	b.add_theme_font_size_override("font_size", 19)
+	row.add_child(b)
+
+func focus_place(cell: int) -> void:
+	if cell < 0 or cell >= game.world.cells.size(): return
+	close()
+	game.power = -1
+	game.view.selected = cell
+	game.view.selected_creature = -1
+	game.view.selected_identity = -1
+	game.view.zoom = 1.1
+	game.view.pan = -game.view.project(game.world.cells[cell]) * 1.1
+	game.view.effects.append({"cell": cell, "age": 0.0, "power": 5})
+	inspect(cell)
+
+func inspect_selected() -> void:
+	var cell = int(game.view.selected)
+	if cell < 0: world_pulse(); return
+	var cr: Dictionary = {}
+	var home: Dictionary = {}
+	if game.view.selected_creature >= 0 and game.view.selected_creature < game.world.creatures.size(): cr = game.world.creatures[game.view.selected_creature]
+	for s in game.world.settlements:
+		if int(s.cell) == cell and cr.is_empty(): home = s
+	var subject = cr if not cr.is_empty() else home
+	page = "detail"
+	var v = popup(subject.get("given_name", Biomes.title(game.world.cells[cell].biome, language)))
+	var list = card_list(v, 220 if not subject.is_empty() else 350)
+	if not cr.is_empty():
+		list.add_child(label(t("personal_story") % [int(game.world.tick) - int(cr.recorded_at), cr.trail.size(), Biomes.title(cr.preferred, language)], 21))
+		list.add_child(label(t("bonds") % [creature_name(int(cr.companion)), creature_name(int(cr.rival))], 19))
+		list.add_child(label(t(cr.trait), 19))
+	elif not home.is_empty():
+		list.add_child(label(t(home.custom) + "\n" + str(int(home.population)) + " · " + stages()[int(home.stage)], 21))
+		list.add_child(label(t("community_story") % [int(game.world.tick) - int(home.recorded_at), home.allies.size()], 19))
+	for e in game.world.living.memories:
+		if (not cr.is_empty() and int(e.identity) == int(cr.identity)) or (not home.is_empty() and int(e.cell) == cell): memory_card(list, e)
+	if not subject.is_empty():
+		var input = LineEdit.new()
+		input.name = "PersonalName"
+		input.text = subject.given_name
+		input.max_length = 24
+		input.add_theme_font_override("font", ui_font())
+		input.add_theme_font_size_override("font_size", 25)
+		input.custom_minimum_size.y = 60
+		v.add_child(input)
+		v.add_child(button(t("rename"), func():
+			if LivingStories.rename_subject(subject, input.text): game.schedule_save(); inspect_selected()))
+	v.add_child(button(t("favorite"), func(): LivingStories.favorite(game.world, cell); game.schedule_save(); close()))
+	add_close(v)
+
+func creature_name(identity: int) -> String:
+	for cr in game.world.creatures:
+		if int(cr.identity) == identity: return cr.given_name
+	return "—"
+
+func favorite_places() -> void:
+	page = "favorites"
+	var v = popup(t("favorites"))
+	var list = card_list(v, 400)
+	for cell in game.world.living.favorites:
+		list.add_child(button("✧ " + Biomes.title(game.world.cells[int(cell)].biome, language) + " · " + str(int(cell) + 1), func(): focus_place(int(cell))))
+	list.add_child(label(t("favorite"), 20))
+	add_close(v)
+
+var postcard_image: Image
+
+func capture_postcard() -> void:
+	if DisplayServer.get_name() == "headless": return
+	close()
+	world_controls(false)
+	game.in_menu = true
+	var title = label(game.world.name, 44, Color("f0e7cd"))
+	title.add_theme_font_override("font", load("res://assets/phase2/lora.ttf"))
+	place(title, Rect2(40, 82, 640, 80))
+	var memory_count = game.world.living.memories.size()
+	var caption = label("L I T T L E G O D\n" + (t("day") % (1 + int(game.world.tick) / 30)) + " · " + (t("one_memory") if memory_count == 1 else t("memories_count") % memory_count), 21)
+	place(caption, Rect2(50, 990, 620, 95))
+	await RenderingServer.frame_post_draw
+	postcard_image = get_viewport().get_texture().get_image()
+	title.queue_free()
+	caption.queue_free()
+	postcard_preview()
+
+func postcard_preview() -> void:
+	page = "postcard"
+	var v = popup(t("postcard"))
+	var preview = TextureRect.new()
+	preview.texture = ImageTexture.create_from_image(postcard_image)
+	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	preview.custom_minimum_size.y = 320
+	v.add_child(preview)
+	v.add_child(label(t("postcard_body"), 19))
+	v.add_child(button(t("export_png"), export_postcard, true))
+	add_close(v)
+
+func save_postcard(path: String) -> bool:
+	return postcard_image != null and postcard_image.save_png(path) == OK
+
+func export_postcard() -> void:
+	var dialog = FileDialog.new()
+	dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	dialog.access = FileDialog.ACCESS_FILESYSTEM
+	dialog.use_native_dialog = true
+	dialog.filters = PackedStringArray(["*.png ; PNG"])
+	dialog.current_file = "LittleGod-postcard.png"
+	add_child(dialog)
+	dialog.file_selected.connect(func(path):
+		var ok = save_postcard(path)
+		postcard_preview()
+		toast(t("image_saved" if ok else "image_failed"))
+		dialog.queue_free())
+	dialog.canceled.connect(func(): dialog.queue_free())
+	dialog.popup_centered_ratio(.8)

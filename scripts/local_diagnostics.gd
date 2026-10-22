@@ -2,7 +2,7 @@ class_name LocalDiagnostics
 extends RefCounted
 
 # Private app storage only. Never store planet/creature names, seed, paths or identifiers.
-const ALLOWED = ["session_started", "session_ended", "unclean_previous_session", "planet_created", "first_power", "first_creature", "first_settlement", "onboarding_completed", "save_completed", "world_restored", "handled_error"]
+const ALLOWED = ["session_started", "session_ended", "unclean_previous_session", "planet_created", "first_power", "first_creature", "first_settlement", "onboarding_completed", "save_completed", "world_restored", "handled_error", "power_used", "memory_found", "return_day"]
 var path = "user://diagnostics.json"
 var enabled = true
 var source = "player"
@@ -27,6 +27,14 @@ func begin() -> void:
 	var marker = FileAccess.open(path + ".open", FileAccess.WRITE)
 	if marker: marker.store_string(source)
 	record("session_started")
+	var day = int(Time.get_unix_time_from_system() / 86400)
+	if not data.has("first_day"): data.first_day = day
+	var relative = maxi(0, day - int(data.first_day))
+	if not data.has("visit_days"): data.visit_days = []
+	if not data.visit_days.has(relative):
+		data.visit_days.append(relative)
+		if data.visit_days.size() > 32: data.visit_days.pop_front()
+		record("return_day", relative)
 
 func advance(seconds: float) -> void:
 	if running and enabled: active_seconds += clampf(seconds, 0, 1)
@@ -61,7 +69,7 @@ func feedback() -> Dictionary:
 	for e in data.events:
 		if not e is Dictionary or not ALLOWED.has(e.get("event")): continue
 		events.append({"event": e.event, "seconds": maxi(0, int(e.get("seconds", 0))), "value": maxi(0, int(e.get("value", 0))), "source": "simulated" if e.get("source") == "simulated" else "player"})
-	return {"schema": 1, "game_version": "0.4.0", "platform": OS.get_name(), "scope": "local_optional_feedback", "events": events.slice(maxi(0, events.size() - 200))}
+	return {"schema": 1, "game_version": "0.5.0", "platform": OS.get_name(), "scope": "local_optional_feedback", "events": events.slice(maxi(0, events.size() - 200))}
 
 func export_feedback() -> String:
 	var text = JSON.stringify(feedback(), "\t")

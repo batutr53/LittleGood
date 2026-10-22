@@ -15,8 +15,10 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Phase 3 gameplay checks failed' }
     & $godotExe --headless --path . --script tests/phase4.gd
     if ($LASTEXITCODE -ne 0) { throw 'Phase 4 beta checks failed' }
+    & $godotExe --headless --path . --script tests/phase5.gd
+    if ($LASTEXITCODE -ne 0) { throw 'Phase 5 checks failed' }
     New-Item -ItemType Directory builds/android,builds/windows -Force | Out-Null
-    & $godotExe --headless --path . --export-debug Android builds/android/LittleGod-0.4-debug.apk
+    & $godotExe --headless --path . --export-debug Android builds/android/LittleGod-0.5-debug.apk
     if ($LASTEXITCODE -ne 0) { throw 'Android export failed' }
     & $godotExe --headless --path . --export-debug 'Windows Desktop' builds/windows/LittleGod.exe
     if ($LASTEXITCODE -ne 0) { throw 'Windows export failed' }

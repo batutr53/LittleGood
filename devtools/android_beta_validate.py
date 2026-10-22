@@ -5,11 +5,12 @@ import subprocess, json, time, re, argparse
 root = Path(__file__).resolve().parent.parent
 parser = argparse.ArgumentParser()
 parser.add_argument('--serial', default='emulator-5554')
+parser.add_argument('--export-dialog', action='store_true')
 args = parser.parse_args()
 adb = Path.home() / 'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 pkg = 'org.littlegod.livinguniverse.betaqa'
 base = [str(adb), '-s', args.serial]
-out = root / 'builds/phase4/android-qa'
+out = root / 'builds/phase5/android-qa'
 out.mkdir(parents=True, exist_ok=True)
 
 def run(*cmd, check=True):
@@ -41,7 +42,11 @@ def capture(name):
 
 # This ID is reserved for this QA harness and has no player release data.
 run('uninstall', pkg, check=False)
-run('install', str(root / 'builds/android/LittleGod-0.4-qa-debug.apk'))
+run('install', str(root / 'builds/android/LittleGod-0.5-qa-debug.apk'))
+# Android may restore app data after reinstall. Clear only the disposable QA ID
+# so this scenario is truly blank; never issue pm clear for the player package.
+if b'Success' not in run('shell', 'pm', 'clear', pkg):
+    raise RuntimeError('Could not reset isolated QA storage')
 run('shell', 'am', 'start', '-n', pkg + '/com.godot.game.GodotAppLauncher')
 time.sleep(2)
 run('shell', 'am', 'force-stop', pkg)
@@ -64,11 +69,20 @@ put('phase4_qa_continue', 'continue')
 first = stage('ready_to_restart')
 run('shell', 'input', 'keyevent', 'KEYCODE_HOME')
 run('shell', 'am', 'force-stop', pkg)
-put('phase4_qa.json', json.dumps({'phase': 'reopen'}))
+put('phase4_qa.json', json.dumps({'phase': 'reopen', 'export': args.export_dialog}))
 run('shell', 'am', 'start', '-n', pkg + '/com.godot.game.GodotAppLauncher')
 second = stage('complete')
 capture('reopened.png')
-checks = first['checks'] | second['checks']
+run('shell', 'input', 'keyevent', 'KEYCODE_BACK')
+time.sleep(.4)
+put('phase5_qa_back', 'back')
+third = stage('back_complete')
+capture('postcard.png')
+if args.export_dialog:
+    put('phase5_qa_export', 'export')
+    time.sleep(2)
+    capture('native-save-dialog.png')
+checks = first['checks'] | third['checks']
 report = {'source': 'simulated_android_qa', 'serial': args.serial, 'package': pkg,
           'fresh_install': True, 'checks': checks, 'all_passed': all(checks.values())}
 (out / 'result.json').write_text(json.dumps(report, indent=2), encoding='utf-8')

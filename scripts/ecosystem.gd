@@ -43,6 +43,9 @@ static func tick(w: Dictionary, rng: RandomNumberGenerator) -> void:
 				if other.biome != 6 and (other.biome == cr.species or cr.hunger > .65 or cr.trait == "explorer"):
 					candidates.append(i)
 			if not candidates.is_empty():
+				var safe = candidates.filter(func(i):
+					return not w.creatures.any(func(other): return int(other.identity) == int(cr.rival) and int(other.cell) == int(i))) if int(cr.rival) >= 0 else candidates
+				if not safe.is_empty(): candidates = safe
 				cr.cell = candidates[rng.randi_range(0, candidates.size() - 1)]
 				if cr.trait == "friendly":
 					for home in w.settlements:
@@ -59,7 +62,7 @@ static func tick(w: Dictionary, rng: RandomNumberGenerator) -> void:
 	if w.tick % 45 == 0 and w.creatures.size() < 70 and not w.creatures.is_empty():
 		var parent = w.creatures[rng.randi_range(0, w.creatures.size() - 1)]
 		if parent.hunger < 0.6:
-			w.creatures.append({"species": parent.species, "cell": parent.cell, "hunger": 0.2, "phase": rng.randf() * TAU})
+			w.creatures.append({"species": parent.species, "cell": parent.cell, "hunger": 0.2, "phase": rng.randf() * TAU, "born_here": true, "parent_id": int(parent.identity)})
 			event(w, "birth", int(parent.species))
 	if w.tick % 60 == 0:
 		for i in range(w.creatures.size() - 1, -1, -1):

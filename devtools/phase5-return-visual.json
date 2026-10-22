@@ -1,0 +1,119 @@
+[
+ {
+  "name": "exec",
+  "arguments": {
+   "action": "game",
+   "code": "scene.ui.close()\nvar w=scene.world\nvar target=-1\nvar forest=-1\nvar score=INF\nfor i in range(w.cells.size()):\n\tif w.settlements.any(func(home): return absf(w.cells[int(home.cell)].x-w.cells[i].x)+absf(w.cells[int(home.cell)].y-w.cells[i].y)<3): continue\n\tfor j in range(w.cells.size()):\n\t\tif i==j or w.cells[i].biome==6 or w.cells[j].biome==6: continue\n\t\tif absf(w.cells[i].x-w.cells[j].x)+absf(w.cells[i].y-w.cells[j].y)!=1: continue\n\t\tvar d=scene.view.project(w.cells[i]).length()\n\t\tif d<score: score=d; target=i; forest=j\nif target>=0:\n\tPowers.apply(w,1,forest)\n\tscene.view.invalidate()\n\tscene.view.selected=target\n\tscene.view.pan=-scene.view.project(w.cells[target])*.88\n\tscene.view.zoom=.88\n\tscene.ui.choose_power(2)\nreturn {\"mountain_target\":target,\"forest\":forest}"
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "wait",
+   "seconds": 0.6
+  }
+ },
+ {
+  "name": "input",
+  "arguments": {
+   "action": "send",
+   "steps": [
+    {
+     "click": [
+      360,
+      585
+     ]
+    },
+    {
+     "wait": 0.5
+    }
+   ]
+  }
+ },
+ {
+  "name": "exec",
+  "arguments": {
+   "action": "game",
+   "code": "scene.advance_tick()\nscene.view.pan=Vector2.ZERO\nscene.view.zoom=.88\nreturn scene.world.living.secrets"
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "wait",
+   "seconds": 1
+  }
+ },
+ {
+  "name": "view",
+  "arguments": {
+   "action": "game"
+  },
+  "output": "D:/LittleGod/docs/screenshots/phase5-spring.png"
+ },
+ {
+  "name": "exec",
+  "arguments": {
+   "action": "game",
+   "code": "scene.new_planet(2026,\"Lumi\",false)\nvar report=Persistence.offline(scene.world,scene.world.saved_at+604800)\nscene.view.invalidate()\nscene.ui.away(report)\nreturn {\"memories\":report.memories,\"minutes\":report.minutes,\"ticks\":report.ticks}"
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "wait",
+   "seconds": 1
+  }
+ },
+ {
+  "name": "view",
+  "arguments": {
+   "action": "game"
+  },
+  "output": "D:/LittleGod/docs/screenshots/phase5-return.png"
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "set",
+   "path": "Interface",
+   "props": {
+    "language": "tr"
+   }
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "call",
+   "path": "Interface",
+   "method": "history"
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "wait",
+   "seconds": 0.4
+  }
+ },
+ {
+  "name": "view",
+  "arguments": {
+   "action": "game"
+  },
+  "output": "D:/LittleGod/docs/screenshots/phase5-chronicle-tr.png"
+ },
+ {
+  "name": "run",
+  "arguments": {
+   "action": "errors"
+  }
+ },
+ {
+  "name": "run",
+  "arguments": {
+   "action": "stop"
+  }
+ }
+]

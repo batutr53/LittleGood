@@ -4,6 +4,7 @@ import subprocess, json, time, hashlib, argparse
 root=Path(__file__).resolve().parent.parent
 parser=argparse.ArgumentParser()
 parser.add_argument('--serial',default='emulator-5554')
+parser.add_argument('--package',default='org.littlegod.livinguniverse',choices=['org.littlegod.livinguniverse','org.littlegod.livinguniverse.betaqa'])
 parser.add_argument('--control',action='store_true')
 parser.add_argument('--economy',action='store_true')
 parser.add_argument('--stress',action='store_true')
@@ -12,7 +13,7 @@ parser.add_argument('--output-dir',default='builds/phase3')
 args=parser.parse_args()
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 base=[str(adb),'-s',args.serial]
-pkg='org.littlegod.livinguniverse'
+pkg=args.package
 def run(*cmd,check=True):return subprocess.run(base+list(cmd),capture_output=True,check=check).stdout
 run('shell','am','force-stop',pkg)
 before=run('shell','run-as',pkg,'cat','files/planet.json',check=False)
@@ -37,6 +38,7 @@ report['host_launch_to_report_seconds']=round(time.monotonic()-started,3)
 after=run('shell','run-as',pkg,'cat','files/planet.json',check=False)
 report['player_save_unchanged']=before==after
 report['device_serial']=args.serial
+report['package']=pkg
 kind='control' if args.control else 'economy' if args.economy else 'stress' if args.stress else 'smooth'
 dest=output/f'android-{kind}'
 dest.with_suffix('.json').write_text(json.dumps(report,indent=2))

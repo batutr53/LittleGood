@@ -80,7 +80,9 @@ func set_quality(economy: bool) -> void:
 	low_quality = economy
 	Engine.max_fps = 30 if economy else 60
 	if OS.has_feature("mobile"):
-		get_window().content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT if economy else Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+		# Render the existing 720-wide composition once, rather than shading at
+		# native phone resolution. Smooth retains full effects and its 60-FPS cap.
+		get_window().content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT
 	invalidate()
 
 func _process(delta: float) -> void:
@@ -133,6 +135,11 @@ func _draw() -> void:
 func draw_foreground(canvas: Node2D) -> void:
 	if world.is_empty(): return
 	for c in world.cells:
+		if c.get("spring", false):
+			var p = screen_point(c)
+			for n in range(3):
+				var flow = fmod(time * .6 + n * .33, 1)
+				canvas.draw_line(p + Vector2(2, -22 + flow * 28) * display_zoom, p + Vector2(2, -16 + flow * 28) * display_zoom, Color(.6, .94, 1, 1 - flow * .5), 2 * display_zoom)
 		if c.get("meadow", false):
 			var center = screen_point(c)
 			for i in range(8 if not low_quality else 4):
@@ -149,6 +156,9 @@ func draw_foreground(canvas: Node2D) -> void:
 		canvas.draw_set_transform(Vector2.ZERO)
 	for s in world.settlements:
 		var p = screen_point(world.cells[int(s.cell)])
+		if s.get("landmark", false):
+			canvas.draw_line(p + Vector2(31, -17) * display_zoom, p + Vector2(31, -39) * display_zoom, Color("eddca3"), 1.5)
+			canvas.draw_colored_polygon(PackedVector2Array([p + Vector2(31, -39) * display_zoom, p + Vector2(47 + sin(time * 3) * 2, -35) * display_zoom, p + Vector2(31, -30) * display_zoom]), Color("b4d9b0"))
 		if selected == int(s.cell) and selected_creature < 0:
 			canvas.draw_string(preload("res://assets/phase2/nunito.ttf"), p + Vector2(-80, -64), str(s.get("given_name", "")), HORIZONTAL_ALIGNMENT_CENTER, 160, 18, Color("fff0c9"))
 		if s.has("friend_id"):
@@ -186,6 +196,18 @@ func draw_foreground(canvas: Node2D) -> void:
 			canvas.draw_set_transform(p, 0, Vector2(1, .4))
 			canvas.draw_arc(Vector2.ZERO, 4 + phase * 9, 0, TAU, 16, Color(.7, .95, .87, (1 - phase) * .18), .8, false)
 	canvas.draw_set_transform(Vector2.ZERO)
+	for cell in world.living.get("favorites", []):
+		var p = screen_point(world.cells[int(cell)])
+		canvas.draw_arc(p, 9, 0, TAU, 20, Color(.95, .85, .6, .65), 1.2, true)
+	for i in range(mini(world.creatures.size(), inhabitants.animals.size())):
+		var cr = world.creatures[i]
+		if int(cr.get("companion", -1)) >= 0:
+			var p = to_screen(inhabitants.animals[i].position) - Vector2(0, 38 * display_zoom)
+			canvas.draw_circle(p + Vector2(-2, 0), 2.8, Color(.96, .78, .7, .55 + sin(time * 2 + i) * .18))
+			canvas.draw_circle(p + Vector2(2, 0), 2.8, Color(.96, .78, .7, .55 + sin(time * 2 + i) * .18))
+	if int(world.living.get("choir_until", 0)) > int(world.tick):
+		for i in range(3):
+			canvas.draw_arc(origin + Vector2(0, 45), 170 + i * 7, PI * 1.15, PI * 1.85, 40, [Color(.95, .7, .6, .25), Color(.85, .9, .6, .22), Color(.6, .92, .86, .2)][i], 5, true)
 	if selected_creature >= 0 and selected_creature < inhabitants.animals.size():
 		var p = to_screen(inhabitants.animals[selected_creature].position)
 		canvas.draw_arc(p - Vector2(0, 17), 21, 0, TAU, 32, Color(1, .89, .65, .7), 1.5, true)

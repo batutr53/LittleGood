@@ -38,6 +38,8 @@ func finish() -> void:
 	report["pipeline"] = game.pipeline
 	report["props_sync_ms"] = game.view.inhabitants.sync_ms
 	report["props_created_total"] = game.view.inhabitants.props_created
+	report["content_scale_mode"] = game.get_window().content_scale_mode
+	report["render_size"] = [game.get_viewport().get_texture().get_width(), game.get_viewport().get_texture().get_height()]
 	f.store_string(JSON.stringify(report, "\t"))
 	f.close()
 	print("PHASE2_PROFILE ", JSON.stringify(report))

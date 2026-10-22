@@ -31,3 +31,6 @@ The two generated input sheets remain at the Codex generated-images paths record
 | Godot engine | `tools/godot/`, export templates | Official Godot stable distribution, MIT with bundled third-party notices |
 
 No stock-art marketplace, external music license, account, or paid asset was used. See engine distribution notices for included export-runtime dependencies. Generated game assets are project-owned work products; no claim of exclusivity over generative output is made.
+## Phase-five additions
+
+`assets/phase2/silver.gdshader` is original shader code recoloring the existing painted fox. Spring flow, community banners, companionship marks and the rainbow choir are procedural animated gameplay graphics. Chronicle illustrations reuse the original species/environment atlas; postcards capture the actual rendered world. No new raster generation service, stock pack or paid asset was used in phase five. Existing artwork, fonts and license files are retained.

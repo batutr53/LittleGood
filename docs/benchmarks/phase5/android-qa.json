@@ -1,0 +1,26 @@
+{
+  "source": "simulated_android_qa",
+  "serial": "emulator-5554",
+  "package": "org.littlegod.livinguniverse.betaqa",
+  "fresh_install": true,
+  "checks": {
+    "adb_pan": true,
+    "adb_power": true,
+    "adb_zoom": true,
+    "background_checkpoint": true,
+    "created_from_form": true,
+    "fresh_slot": true,
+    "initial_save": true,
+    "saved_from_menu": true,
+    "adb_back": true,
+    "android_engine_pinch": true,
+    "android_postcard": true,
+    "battery_saver": true,
+    "diagnostics_simulated": true,
+    "menu_checkpoint": true,
+    "normal_mode": true,
+    "power_survived": true,
+    "reopened_saved_world": true
+  },
+  "all_passed": true
+}

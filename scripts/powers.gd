@@ -22,6 +22,7 @@ static func apply(w: Dictionary, power: int, cell: int) -> bool:
 		c["last_gift"] = power
 		c.erase("meadow")
 		c.erase("grove_until")
+		c.erase("spring")
 	match power:
 		0:
 			c.biome = 6

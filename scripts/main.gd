@@ -36,11 +36,14 @@ var save_path = Persistence.PATH
 
 func _exit_tree() -> void:
 	GameArt.foliage_material = null
+	GameArt.silver_material = null
 
 func _ready() -> void:
 	var ready_start = Time.get_ticks_usec()
 	get_window().min_size = Vector2i(360, 640)
 	get_tree().auto_accept_quit = false
+	get_tree().quit_on_go_back = false
+	get_window().go_back_requested.connect(navigate_back)
 	$Atmosphere.size = get_viewport_rect().size
 	audio = Soundscape.new()
 	add_child(audio)
@@ -91,7 +94,7 @@ func _ready() -> void:
 			in_menu = true
 		var probe = PerformanceProbe.new()
 		probe.duration = options.get("duration", 15)
-		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase4/desktop-" + ("economy" if view.low_quality else "smooth") + ".json"
+		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase5/desktop-" + ("economy" if view.low_quality else "smooth") + ".json"
 		add_child(probe)
 	set_process_input(true)
 	if OS.is_debug_build() and FileAccess.file_exists("user://phase4_qa.json"):
@@ -258,7 +261,7 @@ func navigate_back() -> void:
 	if loading: return
 	reset_gesture()
 	if ui.page == "beta": ui.settings()
-	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse"]: ui.menu()
+	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse", "detail", "favorites", "postcard"]: ui.menu()
 	elif in_menu and has_player_world: ui.close()
 	elif has_player_world: ui.menu()
 	else: ui.main_menu()
@@ -284,6 +287,15 @@ func advance_tick() -> void:
 				ui.toast(ui.event_text(e))
 				view.effects.append({"cell": int(e.cell), "age": 0.0, "power": 1})
 				audio.chime(6)
+	# A full Chronicle rotates episodes, so its size cannot detect a new story.
+	var new_memories = world.living.memories.filter(func(e): return int(e.tick) == int(world.tick))
+	if not new_memories.is_empty():
+		note("memory_found", new_memories.size())
+		var memory = new_memories.back()
+		if not memory.key in LivingStories.FINDINGS:
+			ui.toast(ui.event_text(memory))
+			view.effects.append({"cell": int(memory.cell), "age": 0.0, "power": 5})
+			audio.chime(6)
 	ui.refresh()
 	if onboarding_live and world.living.findings.has("friendship") and not world.living.observed.is_empty():
 		note("onboarding_completed", 0, true)
@@ -333,7 +345,6 @@ func _notification(what: int) -> void:
 			get_tree().quit()
 	if what == NOTIFICATION_APPLICATION_PAUSED: suspend_session()
 	if what == NOTIFICATION_APPLICATION_RESUMED: resume_session()
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST: navigate_back()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
@@ -418,6 +429,7 @@ func touch_world(pos: Vector2) -> void:
 	if power >= 0:
 		if Powers.apply(world, power, cell):
 			note("first_power", power, true)
+			note("power_used", power)
 			schedule_save()
 			view.effects.append({"cell": cell, "age": 0.0, "power": power})
 			view.invalidate()

@@ -1,0 +1,238 @@
+[
+ {
+  "name": "run",
+  "arguments": {
+   "action": "stop"
+  }
+ },
+ {
+  "name": "editor",
+  "arguments": {
+   "action": "clear_logs"
+  }
+ },
+ {
+  "name": "files",
+  "arguments": {
+   "action": "rescan"
+  }
+ },
+ {
+  "name": "scene",
+  "arguments": {
+   "action": "reload",
+   "path": "res://scenes/main.tscn"
+  }
+ },
+ {
+  "name": "run",
+  "arguments": {
+   "action": "play",
+   "mute": true
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "set",
+   "path": ".",
+   "props": {
+    "is_test_session": true
+   }
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "set",
+   "path": "Interface",
+   "props": {
+    "language": "en"
+   }
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "call",
+   "path": "Interface",
+   "method": "build"
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "call",
+   "path": ".",
+   "method": "new_planet",
+   "args": [
+    2026,
+    "Lumi",
+    false
+   ]
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "call",
+   "path": "Interface",
+   "method": "close"
+  }
+ },
+ {
+  "name": "input",
+  "arguments": {
+   "action": "send",
+   "steps": [
+    {
+     "click_node": "Interface/HUD/Chapter"
+    },
+    {
+     "wait": 0.3
+    },
+    {
+     "click": [
+      360,
+      585
+     ]
+    },
+    {
+     "wait": 2.5
+    },
+    {
+     "click_node": "Interface/HUD/Chapter"
+    },
+    {
+     "wait": 0.5
+    },
+    {
+     "click_node": "Interface/HUD/Chapter"
+    },
+    {
+     "wait": 0.5
+    },
+    {
+     "click": [
+      360,
+      585
+     ]
+    },
+    {
+     "wait": 3
+    }
+   ]
+  }
+ },
+ {
+  "name": "exec",
+  "arguments": {
+   "action": "game",
+   "code": "for i in range(maxi(0,900-int(scene.world.tick))): scene.advance_tick()\nscene.paused=true\nscene.view.zoom=.88\nscene.view.pan=Vector2.ZERO\nscene.ui.refresh()\nreturn {\"tick\":scene.world.tick,\"memories\":scene.world.living.memories,\"secrets\":scene.world.living.secrets}"
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "wait",
+   "seconds": 2
+  }
+ },
+ {
+  "name": "view",
+  "arguments": {
+   "action": "game"
+  },
+  "output": "D:/LittleGod/docs/screenshots/phase5-world.png"
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "call",
+   "path": "Interface",
+   "method": "history"
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "wait",
+   "seconds": 0.4
+  }
+ },
+ {
+  "name": "view",
+  "arguments": {
+   "action": "game"
+  },
+  "output": "D:/LittleGod/docs/screenshots/phase5-chronicle.png"
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "call",
+   "path": "Interface",
+   "method": "close"
+  }
+ },
+ {
+  "name": "exec",
+  "arguments": {
+   "action": "game",
+   "code": "scene.view.focus_creature(0)\nscene.view.selected=int(scene.world.creatures[0].cell)\nscene.ui.inspect_selected()\nreturn scene.ui.page"
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "wait",
+   "seconds": 0.3
+  }
+ },
+ {
+  "name": "view",
+  "arguments": {
+   "action": "game"
+  },
+  "output": "D:/LittleGod/docs/screenshots/phase5-neighbor.png"
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "call",
+   "path": "Interface",
+   "method": "capture_postcard"
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "wait",
+   "seconds": 0.5
+  }
+ },
+ {
+  "name": "game",
+  "arguments": {
+   "action": "call",
+   "path": "Interface",
+   "method": "save_postcard",
+   "args": [
+    "res://docs/screenshots/phase5-postcard.png"
+   ]
+  }
+ },
+ {
+  "name": "view",
+  "arguments": {
+   "action": "game"
+  },
+  "output": "D:/LittleGod/docs/screenshots/phase5-postcard-preview.png"
+ },
+ {
+  "name": "run",
+  "arguments": {
+   "action": "errors"
+  }
+ }
+]

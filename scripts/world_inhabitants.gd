@@ -70,13 +70,16 @@ func sync(w: Dictionary) -> void:
 		var key = "s:" + str(s.cell)
 		valid[key] = true
 		var c = w.cells[int(s.cell)]
-		if not begin_props(key, base + ":" + str(s.stage) + ":" + str(c.height)): continue
+		if not begin_props(key, base + ":" + str(s.stage) + ":" + str(c.height) + ":" + str(s.get("landmark", false))): continue
 		var p = view.project(c)
 		if s.stage == 0: add_prop(13, p, 50)
 		else:
 			add_prop(8 if s.stage == 1 else 9, p, 50 if s.stage == 1 else 68)
 			add_prop(8, p + Vector2(-30, 12), 35)
 			if s.stage == 2: add_prop(8, p + Vector2(31, 15), 39)
+		if s.get("landmark", false):
+			var frame = 12 if s.custom == "orchard" else 11 if s.custom == "riverfolk" else 6
+			add_prop(frame, p + Vector2(34, -9), 32).modulate = Color("f6e4b4")
 	for key in prop_cache.keys():
 		if not valid.has(key):
 			for sprite in prop_cache[key].sprites:
@@ -130,6 +133,8 @@ func animate(w: Dictionary, delta: float) -> void:
 		if int(w.weather) == 1: sprite.scale.y *= .94
 		sprite.rotation = sin(time * 3 + phase) * (.045 if grazing else .012)
 		if int(cr.species) == 1: sprite.self_modulate = Color(1, .96 + sin(time * 2 + phase) * .025, .94)
+		sprite.material = GameArt.silver() if cr.get("silver", false) else null
+		if cr.get("silver", false): sprite.self_modulate = Color.WHITE
 	for i in range(walkers.size()):
 		var settlement = w.settlements[i / 3]
 		var p = view.project(w.cells[int(settlement.cell)])

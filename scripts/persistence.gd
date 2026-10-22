@@ -58,6 +58,22 @@ static func validate(w: Variant) -> bool:
 			for key in w.living.records:
 				var record = w.living.records[key]
 				if not LivingStories.FINDINGS.has(key) or not record is Dictionary or record.get("key") != key or not record.get("subject") is String: return false
+		for field in ["memories", "remembered", "secrets", "favorites"]:
+			if w.living.has(field) and not w.living[field] is Array: return false
+		if w.living.get("memories", []).size() > 64 or w.living.get("remembered", []).size() > 128 or w.living.get("secrets", []).size() > 3 or w.living.get("favorites", []).size() > 5: return false
+		for key in w.living.get("secrets", []):
+			if not key is String or not LivingStories.SECRETS.has(key): return false
+		for key in w.living.get("remembered", []):
+			if not key is String or key.length() > 80: return false
+		for cell in w.living.get("favorites", []):
+			if not cell is float and not cell is int: return false
+			if not is_finite(float(cell)) or cell < 0 or cell >= w.cells.size(): return false
+		for memory in w.living.get("memories", []):
+			if not memory is Dictionary: return false
+			if not memory.get("id") is String or not memory.get("subject") is String or not LivingStories.MEMORY_KEYS.has(memory.get("key")): return false
+			for field in ["tick", "cell", "identity", "species", "biome", "plants"]:
+				if not (memory.get(field) is int or memory.get(field) is float) or not is_finite(float(memory[field])): return false
+			if memory.cell < 0 or memory.cell >= w.cells.size() or memory.tick < 0 or memory.species < -1 or memory.species > 5 or memory.biome < 0 or memory.biome > 6: return false
 	for e in w.events:
 		if not e is Dictionary or not e.get("key") is String or not (e.get("tick") is int or e.get("tick") is float): return false
 	for s in w.discoveries:
@@ -77,12 +93,24 @@ static func validate(w: Variant) -> bool:
 			if not (cr.identity is int or cr.identity is float) or not is_finite(float(cr.identity)): return false
 			if not cr.get("given_name") is String or not LivingStories.TRAITS.has(cr.get("trait")): return false
 			if not (cr.get("visits") is int or cr.get("visits") is float): return false
+		if cr.has("recorded_at"):
+			for field in ["recorded_at", "preferred", "habitat_ticks", "companion", "rival", "bond_ticks"]:
+				if not (cr.get(field) is int or cr.get(field) is float) or not is_finite(float(cr[field])): return false
+			if cr.preferred < 0 or cr.preferred > 5 or not cr.get("trail") is Array or cr.trail.size() > 32: return false
+			for cell in cr.trail:
+				if not (cell is float or cell is int) or not is_finite(float(cell)) or cell < 0 or cell >= w.cells.size(): return false
 	for s in w.settlements:
 		if not s is Dictionary: return false
 		for key in ["cell", "population", "food", "stage", "tech", "blessing"]:
 			if not s.has(key) or not (s[key] is float or s[key] is int) or not is_finite(float(s[key])): return false
 		if s.cell < 0 or s.cell >= w.cells.size() or s.stage < 0 or s.stage > 2: return false
 		if s.has("given_name") and (not s.given_name is String or not s.get("custom") in ["orchard", "riverfolk", "stargazers"] or not (s.get("visitors") is int or s.get("visitors") is float)): return false
+		if s.has("recorded_at"):
+			if not s.get("allies") is Array or s.allies.size() > 10 or not s.get("landmark") is bool or not s.get("helped") is bool: return false
+			for field in ["recorded_at", "dry_ticks"]:
+				if not (s.get(field) is int or s.get(field) is float) or not is_finite(float(s[field])): return false
+			for cell in s.allies:
+				if not (cell is int or cell is float) or not is_finite(float(cell)) or cell < 0 or cell >= w.cells.size(): return false
 	return true
 
 static func normalize_integer_fields(w: Dictionary) -> Dictionary:
@@ -103,6 +131,17 @@ static func normalize_integer_fields(w: Dictionary) -> Dictionary:
 	LivingStories.ensure(w)
 	for key in ["next_id", "gifts", "bloom_after"]: w.living[key] = int(w.living[key])
 	for i in range(w.living.observed.size()): w.living.observed[i] = int(w.living.observed[i])
+	for i in range(w.living.favorites.size()): w.living.favorites[i] = int(w.living.favorites[i])
+	for cr in w.creatures:
+		for key in ["recorded_at", "preferred", "habitat_ticks", "companion", "rival", "bond_ticks", "meeting_id", "parent_id"]:
+			if cr.has(key): cr[key] = int(cr[key])
+		for i in range(cr.trail.size()): cr.trail[i] = int(cr.trail[i])
+	for s in w.settlements:
+		for key in ["recorded_at", "dry_ticks"]: s[key] = int(s[key])
+		for i in range(s.allies.size()): s.allies[i] = int(s.allies[i])
+	for memory in w.living.memories:
+		for key in ["tick", "cell", "identity", "species", "biome"]: memory[key] = int(memory[key])
+		memory.plants = snappedf(memory.plants, .01)
 	return w
 
 static func read_checked(path: String) -> Dictionary:
@@ -139,12 +178,13 @@ static func offline_begin(w: Dictionary, now: float) -> Dictionary:
 	var homes_before = w.settlements.size()
 	var people_before = 0.0
 	for s in w.settlements: people_before += s.population
-	var elapsed = 0.0 if w.get("user_paused", false) else clampf(now - float(w.saved_at), 0, MAX_OFFLINE_SECONDS)
+	var actual_elapsed = 0.0 if w.get("user_paused", false) else maxf(0, now - float(w.saved_at))
+	var elapsed = minf(actual_elapsed, MAX_OFFLINE_SECONDS)
 	var count = mini(480, int(elapsed / 60))
 	var previous = w.events.duplicate(true)
 	var rng = RandomNumberGenerator.new()
 	rng.state = int(w.rng_state)
-	return {"world": w, "now": now, "count": count, "done": 0, "elapsed": elapsed, "previous": previous, "rng": rng, "chapters_before": chapters_before, "creatures_before": creatures_before, "homes_before": homes_before, "people_before": people_before}
+	return {"world": w, "now": now, "count": count, "done": 0, "elapsed": elapsed, "actual_elapsed": actual_elapsed, "previous": previous, "rng": rng, "chapters_before": chapters_before, "creatures_before": creatures_before, "homes_before": homes_before, "people_before": people_before, "memories_before": w.living.remembered.duplicate()}
 
 static func offline_step(job: Dictionary, budget: int = 12) -> bool:
 	for i in range(mini(maxi(0, budget), int(job.count) - int(job.done))):
@@ -163,4 +203,5 @@ static func offline_finish(job: Dictionary) -> Dictionary:
 		if not job.previous.has(e): changes.append(e)
 	var people_after = 0.0
 	for s in w.settlements: people_after += s.population
-	return {"minutes": int(job.elapsed / 60), "ticks": job.count, "events": changes, "new_chapters": w.living.findings.size() - job.chapters_before, "creature_change": w.creatures.size() - job.creatures_before, "people_change": int(people_after) - int(job.people_before), "new_settlements": w.settlements.size() - job.homes_before}
+	var memories = w.living.memories.filter(func(e): return not job.memories_before.has(e.id))
+	return {"minutes": int(job.actual_elapsed / 60), "ticks": job.count, "events": changes, "memories": memories, "new_chapters": w.living.findings.size() - job.chapters_before, "creature_change": w.creatures.size() - job.creatures_before, "people_change": int(people_after) - int(job.people_before), "new_settlements": w.settlements.size() - job.homes_before}

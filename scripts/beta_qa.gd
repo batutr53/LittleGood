@@ -49,6 +49,29 @@ func run() -> void:
 		game.ui.menu()
 		checks.menu_checkpoint = Persistence.load_world(game.save_path).tick == game.world.tick
 		publish("complete", {"tick": game.world.tick, "energy": game.world.energy})
+		while not FileAccess.file_exists("user://phase5_qa_back"):
+			await get_tree().process_frame
+		checks.adb_back = not game.in_menu
+		# Synthetic engine events on Android validate the gesture handler; they
+		# are explicitly separate from the external ADB touch checks above.
+		var zoom = game.view.zoom
+		for i in range(2):
+			var touch = InputEventScreenTouch.new()
+			touch.index = i; touch.pressed = true
+			touch.position = Vector2(280 + i * 160, 590)
+			game._input(touch)
+		var drag = InputEventScreenDrag.new()
+		drag.index = 1; drag.position = Vector2(500, 590); drag.relative = Vector2(60,0)
+		game._input(drag)
+		checks.android_engine_pinch = game.view.zoom > zoom
+		game.reset_gesture()
+		await game.ui.capture_postcard()
+		checks.android_postcard = game.ui.save_postcard("user://beta-postcard.png")
+		publish("back_complete")
+		if options.get("export", false):
+			while not FileAccess.file_exists("user://phase5_qa_export"):
+				await get_tree().process_frame
+			game.ui.export_postcard()
 		return
 	checks.fresh_slot = not Persistence.has_save(game.save_path)
 	find_text(game.ui.root, game.ui.t("new")).pressed.emit()
