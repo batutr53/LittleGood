@@ -11,6 +11,8 @@ var language = "en"
 var spirit: Label
 var veil: ColorRect
 var body_font: FontVariation
+var chapter: Button
+var speed_button: Button
 
 func ui_font() -> Font:
 	if body_font == null:
@@ -20,6 +22,29 @@ func ui_font() -> Font:
 	return body_font
 
 const TEXT = {
+"habitat_full": ["Wildlife habitat is full. Meet your existing neighbors.", "Canlıların yaşam alanı dolu. Mevcut komşularınla tanış."],
+"return_growth": ["%d new chapters · %+d creatures · %+d people\n%d new communities", "%d yeni bölüm · %+d canlı · %+d insan\n%d yeni topluluk"],
+"guide_world": ["Your world has stories → visit your neighbors", "Dünyanın hikâyeleri var → komşularını ziyaret et"],
+"neighbors": ["My neighbors", "Komşularım"],
+"orchard": ["Orchard keepers · cultivate the home meadow", "Bahçeciler · yuvalarındaki çayırı büyütür"],
+"riverfolk": ["Riverfolk · gather more food in the rain", "Nehir halkı · yağmurda daha çok besin toplar"],
+"stargazers": ["Stargazers · learn faster under clear skies", "Yıldız gözlemcileri · açık gökte daha hızlı öğrenir"],
+"guide_rain": ["1 · Wake the meadow → Rain, then touch land", "1 · Çayırı uyandır → Yağmur, sonra toprağa dokun"],
+"guide_creature": ["2 · Meet a little neighbor → tap to find one", "2 · Küçük bir komşuyla tanış → bulmak için dokun"],
+"guide_bloom": ["Follow the rain → discover a desert bloom", "Yağmuru izle → çöldeki çiçeklenmeyi keşfet"],
+"guide_friend": ["A friendship → bring wildlife beside the camp", "Bir dostluk → obanın yanına canlı getir"],
+"guide_village": ["Help a village grow → bless its home", "Köyü büyüt → yuvasını kutsa"],
+"guide_grove": ["Seek lanterns → a happy fox in a lush forest", "Işıkları ara → gür ormanda mutlu bir tilki"],
+"rain_bloom": ["Rain awakened a desert meadow. New grazing land!", "Yağmur çölde bir çayır uyandırdı. Yeni otlak!"],
+"friendship": ["%s became friends. Shared foraging feeds the community.", "%s dost oldu. Birlikte besin toplayıp obayı besliyorlar."],
+"lantern_grove": ["%s lit a lantern grove. The forest gained resources.", "%s ışıklı koruyu aydınlattı. Orman kaynak kazandı."],
+"first_village": ["%s grew into a village, with more homes and walkers.", "%s köye dönüştü; evler ve gezinen insanlar çoğaldı."],
+"gardener": ["Gardener · restores plants wherever it wanders", "Bahçıvan · gezdiği yerde bitkileri büyütür"],
+"friendly": ["Friendly · shares food when visiting communities", "Dost canlısı · yerleşimleri ziyaret edip besin paylaşır"],
+"explorer": ["Explorer · wanders beyond its native biome", "Kâşif · doğal yaşam alanının dışını keşfeder"],
+"patient": ["Patient · needs less food to stay content", "Sabırlı · mutlu kalmak için daha az besin gerekir"],
+"chapters": ["Living chapters", "Yaşayan bölümler"],
+"chapter_progress": ["%d / 4 living chapters · %d neighbors met", "%d / 4 yaşayan bölüm · %d komşuyla tanışıldı"],
 "universe": ["YOUR LIVING UNIVERSE", "SENİN YAŞAYAN EVRENİN"],
 "welcome": ["A small world. Endless wonder.", "Küçük bir dünya. Sonsuz merak."],
 "new": ["Create a planet", "Gezegen yarat"], "continue": ["Return to my world", "Dünyama dön"],
@@ -132,7 +157,9 @@ func place(control: Control, rect: Rect2) -> void:
 	control.size = rect.size
 
 func build() -> void:
-	if root: root.queue_free()
+	if root:
+		remove_child(root)
+		root.queue_free()
 	modal = null
 	veil = null
 	root = Control.new()
@@ -154,11 +181,17 @@ func build() -> void:
 	place(stats, Rect2(80, 156 + safe_top, 560, 60))
 	place(icon_button("menu", menu), Rect2(30, 60 + safe_top, 58, 58))
 	spirit = label("", 19, Color("eddb9e"))
-	place(spirit, Rect2(520, 232, 170, 40))
+	place(spirit, Rect2(520, 232 + safe_top, 170, 40))
+	chapter = button("", follow_chapter)
+	chapter.name = "Chapter"
+	chapter.add_theme_font_size_override("font_size", 18)
+	place(chapter, Rect2(30, 235 + safe_top, 475, 76))
 	place(icon_button("minus", func(): game.view.zoom_at(game.view.origin, .88)), Rect2(30, 838, 58, 58))
 	place(icon_button("plus", func(): game.view.zoom_at(game.view.origin, 1.12)), Rect2(98, 838, 58, 58))
 	place(icon_button("center", func(): game.view.pan = Vector2.ZERO; game.view.zoom = .88), Rect2(166, 838, 58, 58))
-	place(button("1× / 3×", func(): game.speed = 3 if game.speed == 1 else 1), Rect2(553, 838, 137, 58))
+	speed_button = button("1×", func(): game.speed = 3 if game.speed == 1 else 1; refresh())
+	speed_button.name = "Speed"
+	place(speed_button, Rect2(553, 838, 137, 58))
 	hint = label(t("hint_short"), 21, Color("cad9c4"))
 	place(hint, Rect2(44, 930, 632, 78))
 	place(label(t("gift"), 15, Color("a9bda8")), Rect2(40, 1046, 640, 25))
@@ -174,11 +207,13 @@ func build() -> void:
 		normal.content_margin_bottom = 8
 		b.add_theme_stylebox_override("normal", normal)
 		place(b, Rect2(27 + i * 112, 1092, 105, 104))
-		var icon = Sprite2D.new()
+		var icon = TextureRect.new()
 		icon.texture = load("res://assets/phase2/icons/" + POWER_KEYS[i] + ".svg")
-		icon.position = Vector2(52, 32)
-		icon.scale = Vector2.ONE * .55
-		b.add_child(icon)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		# A sibling stays above the button's redraw when selection changes its style.
+		place(icon, Rect2(62 + i * 112, 1106, 35, 35))
 		var cost = label(str(Powers.COSTS[i]), 12, Color("a6bd9e"))
 		cost.position = Vector2(73, 8)
 		cost.size = Vector2(23, 20)
@@ -193,15 +228,21 @@ func icon_button(key: String, action: Callable) -> Button:
 	var b = button("", action)
 	b.tooltip_text = t(key) if TEXT.has(key) else key
 	b.name = key.capitalize()
-	var icon = Sprite2D.new()
-	icon.texture = load("res://assets/phase2/icons/" + key + ".svg")
-	icon.position = Vector2(29, 29)
-	icon.scale = Vector2.ONE * .42
-	b.add_child(icon)
+	b.icon = load("res://assets/phase2/icons/" + key + ".svg")
+	b.expand_icon = true
+	b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	b.add_theme_constant_override("icon_max_width", 28)
+	for state in ["normal", "hover", "pressed"]:
+		var box = b.get_theme_stylebox(state).duplicate()
+		box.content_margin_left = 8
+		box.content_margin_right = 8
+		box.content_margin_top = 8
+		box.content_margin_bottom = 8
+		b.add_theme_stylebox_override(state, box)
 	return b
 
 func choose_power(i: int) -> void:
-	game.power = -1 if game.power == i else i
+	game.power = -1 if game.power == i or i < 0 else i
 	hint.text = t("hint_short") if game.power == -1 else t("select") % t(POWER_KEYS[i])
 	for n in range(6):
 		var s = power_buttons[n].get_theme_stylebox("normal").duplicate()
@@ -218,6 +259,8 @@ func refresh() -> void:
 	stats.text = (t("day") % (1 + int(w.tick) / 30)) + "  ·  " + seasons()[(int(w.tick) / 120) % 4] + "  ·  " + (t("level") % (1 + int(w.xp) / 40)) + "\n" + t("population") % [w.creatures.size(), people]
 	if game.paused: stats.text += "  ·  " + t("paused")
 	spirit.text = "✧  " + str(int(w.energy)) + "  " + t("spirit")
+	if chapter: chapter.text = t(LivingStories.objective(w))
+	if speed_button: speed_button.text = str(game.speed) + "×"
 
 func popup(title: String) -> VBoxContainer:
 	game.dragging = false
@@ -243,6 +286,7 @@ func close() -> void:
 	if modal: modal.queue_free(); modal = null
 	if is_instance_valid(veil): veil.queue_free(); veil = null
 	game.in_menu = false
+	refresh()
 
 func add_close(v: VBoxContainer) -> void:
 	v.add_child(button(t("close"), close, true))
@@ -300,7 +344,7 @@ func menu() -> void:
 	grid.add_theme_constant_override("h_separation", 12)
 	grid.add_theme_constant_override("v_separation", 12)
 	v.add_child(grid)
-	for entry in [["journal", journal], ["history", history], ["achievements", achievements], ["settings", settings], ["save", game.manual_save], ["load", game.restore], ["new", creation], ["pause", func(): game.paused = not game.paused; close()]]:
+	for entry in [["journal", journal], ["neighbors", neighbors], ["history", history], ["achievements", achievements], ["settings", settings], ["save", game.manual_save], ["load", game.restore], ["new", creation], ["pause", func(): game.paused = not game.paused; close()]]:
 		var b = button(t(entry[0]), entry[1])
 		b.custom_minimum_size.x = 294
 		grid.add_child(b)
@@ -340,6 +384,9 @@ func journal() -> void:
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	list.add_theme_constant_override("separation", 10)
 	scroll.add_child(list)
+	list.add_child(label(t("chapter_progress") % [game.world.living.findings.size(), game.world.living.observed.size()], 19))
+	for key in LivingStories.FINDINGS:
+		list.add_child(label(("✧ " + event_text(game.world.living.records.get(key, {"key": key}))) if game.world.living.findings.has(key) else "◇ " + t({"rain_bloom": "guide_bloom", "friendship": "guide_friend", "lantern_grove": "guide_grove", "first_village": "guide_village"}[key]), 18))
 	for i in range(6):
 		var card = PanelContainer.new()
 		card.add_theme_stylebox_override("panel", style(Color("203e42"), 14))
@@ -371,6 +418,7 @@ func event_text(e: Dictionary) -> String:
 	if key in ["discovery", "birth"]: text = text % species(clampi(amount, 0, 5))
 	elif key == "settlement": text = text % stages()[clampi(amount, 0, 2)]
 	elif key == "power": text = text % t(POWER_KEYS[clampi(amount, 0, 5)])
+	elif key in ["friendship", "lantern_grove", "first_village"]: text = text % str(e.get("subject", game.world.name))
 	return text
 
 func history() -> void:
@@ -384,6 +432,8 @@ func history() -> void:
 
 func achievements() -> void:
 	var v = popup(t("achievements"))
+	v.add_child(label(t("chapter_progress") % [game.world.living.findings.size(), game.world.living.observed.size()], 22))
+	v.add_child(button(t(LivingStories.objective(game.world)), func(): close(); follow_chapter()))
 	for key in ["sanctuary", "season"]:
 		v.add_child(label(("✧ " if game.world.achievements.has(key) else "◇ ") + t(key), 24))
 	v.add_child(label(t("theme"), 22))
@@ -393,6 +443,8 @@ func achievements() -> void:
 func away(report: Dictionary) -> void:
 	var v = popup(t("away"))
 	v.add_child(label(t("away_body") % report.minutes, 22))
+	if report.has("new_chapters"):
+		v.add_child(label(t("return_growth") % [report.new_chapters, report.creature_change, report.people_change, report.new_settlements], 19))
 	var text = ""
 	for e in report.events.slice(maxi(0, report.events.size() - 9)):
 		text += "✧ " + event_text(e) + "\n\n"
@@ -404,11 +456,78 @@ func inspect(cell: int) -> void:
 	hint.text = t("inspect") % [Biomes.title(int(c.biome), language), int(c.moisture * 100), int(c.plants * 100)]
 	for cr in game.world.creatures:
 		if int(cr.cell) == cell:
-			hint.text = t("creature_info") % [species(int(cr.species)), int(cr.hunger * 100), Biomes.title(int(cr.species), language)]
+			LivingStories.observe(game.world, cr)
+			show_creature(cr)
+			refresh()
 			return
 	for s in game.world.settlements:
 		if int(s.cell) == cell:
-			hint.text = t("settlement_info") % [stages()[int(s.stage)], int(s.population), int(s.food), s.tech]
+			hint.text = s.given_name + " · " + str(int(s.population)) + " · " + stages()[int(s.stage)] + "\n" + t(s.custom)
+
+func show_creature(cr: Dictionary) -> void:
+	hint.text = cr.given_name + " · " + species(int(cr.species)) + "\n" + t(cr.trait)
+
+func neighbors() -> void:
+	var v = popup(t("neighbors"))
+	var scroll = ScrollContainer.new()
+	scroll.custom_minimum_size.y = 470
+	v.add_child(scroll)
+	var list = VBoxContainer.new()
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(list)
+	for i in range(game.world.creatures.size()):
+		var cr = game.world.creatures[i]
+		var known = game.world.living.observed.has(int(cr.identity))
+		var b = button(("✧ " if known else "◇ ") + cr.given_name + " · " + species(int(cr.species)), func():
+			close()
+			game.power = -1
+			game.view.focus_creature(i)
+			game.view.selected = int(cr.cell)
+			game.view.zoom = 1.15
+			game.view.pan = -game.view.project(game.world.cells[int(cr.cell)]) * 1.15
+			LivingStories.observe(game.world, cr)
+			show_creature(cr)
+			refresh())
+		list.add_child(b)
+		list.add_child(label(t(cr.trait), 17))
+	add_close(v)
+
+func follow_chapter() -> void:
+	var w = game.world
+	var goal = LivingStories.objective(w)
+	if goal == "guide_world":
+		game.in_menu = true
+		neighbors()
+		return
+	var cell = 0
+	if goal == "guide_creature":
+		var cr = w.creatures[0]
+		cell = int(cr.cell)
+		game.power = -1
+		game.view.focus_creature(0)
+		LivingStories.observe(w, cr)
+		show_creature(cr)
+	elif goal in ["guide_friend", "guide_village"] and not w.settlements.is_empty():
+		cell = int(w.settlements[0].cell)
+		if goal == "guide_village" and int(w.settlements[0].blessing) > 0:
+			game.power = -1
+			toast(w.settlements[0].given_name + " · " + str(int(w.settlements[0].population)) + "/12 · " + t("speed") % "1× / 3×")
+		else: choose_power(3 if goal == "guide_friend" else 5)
+		if goal == "guide_friend": toast(t("guide_friend"))
+	else:
+		choose_power(4 if goal in ["guide_rain", "guide_bloom"] else 1)
+		for i in range(w.cells.size()):
+			if int(w.cells[i].biome) == (2 if goal != "guide_grove" else 1):
+				cell = i
+				break
+	game.view.selected = cell
+	game.view.zoom = 1.15
+	game.view.pan = -game.view.project(w.cells[cell]) * game.view.zoom
+	if goal in ["guide_rain", "guide_bloom"]:
+		game.view.zoom = .88
+		game.view.pan = Vector2.ZERO
+	game.view.effects.append({"cell": cell, "age": 0.0, "power": 3})
+	refresh()
 
 func toast(text: String) -> void:
 	hint.text = text

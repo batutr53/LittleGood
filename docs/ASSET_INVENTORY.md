@@ -1,5 +1,9 @@
 # Asset inventory and provenance
 
+## Phase 3 additions
+
+The phase-two atlas, fonts, audio, icons and shaders are retained. No raster asset was replaced and no generation service was called in this phase. New meadow flowers, lantern fireflies, friendship hearts, labels and discovery effects are original procedural runtime graphics in `world_view.gd`. Power/camera icons use the existing SVG textures in GUI texture controls. No new external asset license or paid service was introduced.
+
 ## Phase 2 additions
 
 - `assets/phase2/world-atlas.png`: one 1024×1024 atlas, approximately 1.03 MB on disk. Twelve original imagegen sprites (six species and six environment/building props), the existing original tree, and original procedural camp/villager art. `atlas.json` and `devtools/phase2_assets.py` document frame layout and preparation.

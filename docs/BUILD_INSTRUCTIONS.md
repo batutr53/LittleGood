@@ -8,13 +8,13 @@ The tools and local outputs already exist on this computer. No manual scene setu
 - Console editor: same directory, `Godot_v4.7.2-stable_win64_console.exe`
 - Project: `D:\LittleGod\project.godot`
 - Desktop build: `D:\LittleGod\builds\windows\LittleGod.exe`
-- Current Android debug APK: `D:\LittleGod\builds\android\LittleGod-0.2-debug.apk`
+- Current Android debug APK: `D:\LittleGod\builds\android\LittleGod-0.3-debug.apk`
 
 `Launch LittleGod.cmd` starts the project with the verified official Godot runtime. Windows App Control blocked the exported console launcher during testing, so standalone Windows-package execution is not verified on this machine. The project itself runs successfully through Godot. No policy or security control was bypassed.
 
 ## Reproduce checks and exports
 
-Run `devtools/build.ps1` with PowerShell. It validates the Godot project, runs the suite, and exports Android and Windows debug artifacts using the installed templates. SDK and JDK are configured in Godot Editor Settings; paths are recorded in ENVIRONMENT.md. The Android build uses the normal debug signing key and is unsuitable as a store release. Its package ID is `org.littlegod.livinguniverse`, version 0.2.0, minimum Android API 24, target 36, ARM64 and x86_64. Internet permission is disabled.
+Run `devtools/build.ps1` with PowerShell. It validates the project, runs all four suites (116 checks), and exports Android and Windows debug artifacts using the installed templates. SDK/JDK are configured in Editor Settings; paths are recorded in ENVIRONMENT.md. For direct SDK tools, use task-only JAVA_HOME `D:\LittleGod\tools\jdk\jdk-17.0.20.1+1`. Package `org.littlegod.livinguniverse`, version 0.3.0/code 3, min API 24, target 36, ARM64+x86_64. Internet permission is disabled; the debug signing key is unsuitable for a store release.
 
 For direct unit testing: `tools/godot/Godot_v4.7.2-stable_win64_console.exe --headless --path . --script tests/suite.gd`. For a real rendered capture: launch the same executable with `--path . -- --capture`; it writes `builds/gameplay.png`, prints frame statistics and exits. Headless mode cannot produce that GPU screenshot.
 

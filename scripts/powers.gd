@@ -4,6 +4,7 @@ extends RefCounted
 const COSTS = [12, 15, 18, 20, 22, 25]
 static func apply(w: Dictionary, power: int, cell: int) -> bool:
 	if power < 0 or power >= 6 or cell < 0 or cell >= w.cells.size() or w.energy < COSTS[power]: return false
+	if power == 3 and w.creatures.size() >= 70: return false
 	var c = w.cells[cell]
 	if power == 5:
 		var found = false
@@ -14,8 +15,13 @@ static func apply(w: Dictionary, power: int, cell: int) -> bool:
 				found = true
 		if not found: return false
 	w.energy -= COSTS[power]
+	LivingStories.ensure(w)
+	w.living.gifts = int(w.living.gifts) + 1
 	w.xp += 3
-	if power <= 2: c["last_gift"] = power
+	if power <= 2:
+		c["last_gift"] = power
+		c.erase("meadow")
+		c.erase("grove_until")
 	match power:
 		0:
 			c.biome = 6
@@ -35,4 +41,8 @@ static func apply(w: Dictionary, power: int, cell: int) -> bool:
 			for tile in w.cells: tile.moisture = minf(1, tile.moisture + 0.2)
 			Ecosystem.event(w, "rain")
 	Ecosystem.event(w, "power", power)
+	LivingStories.ensure(w)
+	if power == 3 and not w.creatures.is_empty():
+		for s in w.settlements:
+			if int(s.cell) == cell: w.creatures.back().trait = "friendly"
 	return true

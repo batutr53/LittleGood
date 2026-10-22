@@ -1,0 +1,9 @@
+[
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"game","arguments":{"action":"call","path":".","method":"new_planet","args":[2026,"Camp Audit",false]}},
+ {"name":"game","arguments":{"action":"set","path":".","props":{"paused":true}}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"follow_chapter"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.5}},
+ {"name":"exec","arguments":{"action":"game","code":"var result = []\nfor child in scene.view.inhabitants.props.get_children():\n\tif child.frame == 13: result.append({\"frame\":child.frame,\"position\":str(child.global_position),\"offset\":str(child.offset),\"visible\":child.is_visible_in_tree(),\"scale\":str(child.scale),\"texture\":child.texture.resource_path})\nreturn result"}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase3/camp-audit.png"}
+]

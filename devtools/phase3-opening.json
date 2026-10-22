@@ -1,0 +1,18 @@
+[
+ {"name":"run","arguments":{"action":"stop"}},
+ {"name":"files","arguments":{"action":"rescan"}},
+ {"name":"scene","arguments":{"action":"reload","path":"res://scenes/main.tscn"}},
+ {"name":"run","arguments":{"action":"play","mute":true}},
+ {"name":"game","arguments":{"action":"set","path":".","props":{"is_test_session":true}}},
+ {"name":"game","arguments":{"action":"set","path":"Interface","props":{"language":"en"}}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"build"}},
+ {"name":"game","arguments":{"action":"call","path":".","method":"new_planet","args":[2026,"Lumi",false]}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"input","arguments":{"action":"send","steps":[{"click_node":"Interface/HUD/Chapter"},{"wait":0.8},{"click":[360,585]},{"wait":3},{"click_node":"Interface/HUD/Chapter"},{"wait":0.6}]}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase3-neighbor.png"},
+ {"name":"input","arguments":{"action":"send","steps":[{"click_node":"Interface/HUD/Chapter"},{"wait":0.8},{"click":[360,585]},{"wait":9}]}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase3-friendship.png"},
+ {"name":"game","arguments":{"action":"eval","expressions":["world.living","world.settlements","world.creatures.back()"]}},
+ {"name":"run","arguments":{"action":"errors"}}
+]
+

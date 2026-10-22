@@ -1,40 +1,36 @@
-# LittleGod — phase 2 status
+# LittleGod 0.3 — phase 3 status
 
-The existing project is now at the **0.2 visual and mobile-performance milestone**. Phase-one gameplay and version-one saves remain supported. The original 51 checks were retained; 15 new checks and the scene-clock integration check also pass (**67 total**).
+Continues **0.2 checkpoint `3b04cab`**. Existing gameplay, version-one saves, artwork, localization and Android support remain. The release checkpoint is Git tag **`littlegod-0.3`**; the delivery message contains its commit hash.
 
-Implemented and inspected in real gameplay: connected terrain with blended biome colors, river banks/waterfall and layered cliffs; twelve new original painted creature/environment sprites in a shared atlas; evolving cottage/guildhall settlements and villagers; creature grazing, wandering, breathing and rain reactions; foliage/water shaders; discovery/power effects; consistent vector icons and licensed fonts; illustrated EN/TR discoveries; branded boot art; full-height portrait layout; smooth anchored pan/pinch; accidental pinch-cast prevention; optional haptics; cached audio/rain ambience; and a 30 FPS battery-saver mode.
+Implemented and exercised in the real game: an interactive care loop; persistent creature names and four behavioral traits; a camera-linked neighbor album; named communities with three simulation-affecting customs; wildlife/community food-sharing friendships; rain-driven desert meadows; conditional lantern groves; village chapters; permanent named discovery records; immediate discovery/power effects; EN/TR guidance and journal; clearer speed controls; and return summaries with actual population/community/discovery changes. No streaks, purchases, notifications or new absence penalties were added.
 
-A legacy-save bug was found and fixed: JSON clocks restored as floats could break integer modulo operations. Loading now normalizes integer fields, and the new fixture test verifies that restored population/discoveries actually advance. The save version, power costs and ecological rules remain compatible.
+Performance work replaces per-creature full-map movement scans, caches shared terrain corners/colors, retains prop caches across gifts and refreshes slow vegetation tint every eight ticks. Topology changes still refresh promptly. Existing painted assets remain; new flowers, fireflies and hearts use procedural gameplay graphics.
 
-## Measured performance
+## Verified results
 
-| Environment | Average FPS | Frame p95 | Duration |
-|---|---:|---:|---:|
-| Windows smooth | 60.04 | 16.75 ms | 15 s |
-| Android emulator smooth | 57.61 | 20.07 ms | 30 s |
-| Android emulator, 70 creatures | 59.30 | 18.34 ms | 12 s |
-| Android emulator battery saver | 29.97 | 34.96 ms | 30 s |
-| Android emulator blank control | 60.17 | 18.31 ms | 12 s |
+- **116 automated checks pass:** original 51, original scene integration 1, phase-two 15, new phase-three 49. Existing tests were not weakened. The 10,000-tick world remains valid; final run took 6.15 seconds. New checks cover traits, discoveries, friendships, save migration, offline events, threshold timing, founders, onboarding, album, stable selection and full-habitat gift rejection.
+- Windows smooth: **60.05 FPS**, 18.33 ms p95, 15 seconds; 4.99 ms last terrain build, two builds.
+- Android emulator later APK validation: **57.89 FPS**, 20.69 ms p95, 30 seconds; .757 ms average simulation, 6.68 ms last terrain build, three builds. Prior 0.2 measured .950/17.41 ms and 15 builds. An earlier isolated 0.3 run reached 58.02 FPS.
+- Android emulator battery saver: **29.56 FPS**, 35.12 ms p95, 30 seconds. A 70-individual case reached **52.99 FPS**, 23.61 ms p95, 12 seconds. Blank control reached 57.62 FPS. Slower runs are retained and discussed in the report.
+- Android debug APK exports, verifies with v2/v3 signatures, installs over the existing package and starts. VersionCode 3 / versionName 0.3.0; min API 24, target 36, ARM64+x86_64. Completed profiles preserve the player's save bytes.
+- Godot MCP gameplay input and screenshots plus native Computer Use inspection were performed. No physical Android device was connected. Emulator numbers are not physical-phone, thermal or battery-life claims.
 
-The new desktop capture uses about 117 draw calls and 2.6 ms process time, versus 287 calls and 23.9 ms in the baseline capture. Android static memory is roughly 45.5 MB in smooth mode and 42.7 MB in battery saver; reported video memory drops from 35.8 to 24.1 MB. Benchmarks preserve the existing player-save bytes. Only an API-35 x86_64 emulator with NVIDIA host GPU was connected; **no physical-device verification is claimed**.
+## Exact launchers and outputs
 
-## Launchers and builds
-
-- Play current source: `D:\LittleGod\Launch LittleGod.cmd`
+- Source launcher: `D:\LittleGod\Launch LittleGod.cmd`
 - Verified runtime: `D:\LittleGod\tools\godot\Godot_v4.7.2-stable_win64.exe`
 - Godot project: `D:\LittleGod\project.godot`
-- Current Android debug APK: `D:\LittleGod\builds\android\LittleGod-0.2-debug.apk`
-- Current source archive: `D:\LittleGod\builds\LittleGod-0.2-source.zip`
-- Tests/profile/build evidence: `D:\LittleGod\builds\phase2\`
+- Android debug APK: `D:\LittleGod\builds\android\LittleGod-0.3-debug.apk`
+- Source archive: `D:\LittleGod\builds\LittleGod-0.3-source.zip`
+- Build/test evidence: `D:\LittleGod\builds\phase3\`
+- Versioned test/profile evidence: `D:\LittleGod\docs\benchmarks\phase3\`
 
-The APK exports, installs over the previous package and starts on the emulator. Windows source play is verified; the older exported Windows console launcher remains blocked by App Control. No security controls were changed or bypassed. No iOS binary, payments, paid API service, account sign-in or publication was used.
+## Gameplay evidence and remaining limits
 
-## Screenshots and remaining work
+Real rendered screenshots: [before](screenshots/phase3-before.png), [named neighbor](screenshots/phase3-neighbor.png), [friendship](screenshots/phase3-friendship.png), [village](screenshots/phase3-village.png), [discoveries](screenshots/phase3-discoveries.png), [extended simulation](screenshots/phase3-extended.png), [neighbor album](screenshots/phase3-neighbors.png), [Turkish journal](screenshots/phase3-journal-tr.png).
 
-- [Before](screenshots/phase1-before.png), [after](screenshots/phase2-after.png), [evolved towns](screenshots/phase2-town.png), [Turkish journal](screenshots/phase2-journal-tr.png).
-- [Detailed implementation, asset, performance and testing report](PHASE2_REPORT.md).
-- Physical-device thermals, battery, accessibility, actual haptic feel and sustained multi-touch testing remain.
-- Cold startup/mesh-refresh spikes remain; Godot/Forge shutdown still reports resource/ObjectDB cleanup warnings. Short profiles are not a guarantee of sustained hitch-free 60 FPS.
-- Climate generation still uses broad biome zones; species ecology, technology, long-term progression and content depth remain simplified.
+See [gameplay improvement report](PHASE3_REPORT.md), [test report](TEST_REPORT.md) and [known issues](KNOWN_ISSUES.md). Startup/occasional process spikes and shutdown resource warnings remain. Smooth mode does not sustain 60 FPS in every emulator run, especially the 70-creature case. Technology/ecology and the four-chapter content set remain modest; external first-time player feedback and physical-device validation are still needed. One current save plus backup is retained. No security feature was disabled, no paid service was used, and nothing was published.
 
-The phase-one status and known-issues documents are preserved under `docs/archive/`. See `KNOWN_ISSUES.md` for current limits.
+Phase-two status and issues are preserved under `docs/archive/`.
+
+Final APK startup/save-preservation evidence is `docs/benchmarks/phase3/final-startup.json`; [actual Android gameplay](screenshots/phase3-android.png) and [six-hour return screen](screenshots/phase3-return.png) were also inspected.

@@ -9,6 +9,7 @@ var display_zoom = 0.88
 var time = 0.0
 var selected = -1
 var selected_creature = -1
+var selected_identity = -1
 var effects: Array = []
 var creature_positions: Dictionary = {}
 var low_quality = false
@@ -17,6 +18,7 @@ var terrain: TerrainSurface
 var inhabitants: WorldInhabitants
 var scenery_signature = ""
 var update_accumulator = 0.0
+var terrain_signature = ""
 
 func _ready() -> void:
 	origin.y += maxf(0, get_viewport_rect().size.y - 1280) * .5
@@ -55,8 +57,23 @@ func pick(pos: Vector2) -> int:
 
 func invalidate() -> void:
 	scenery_signature = ""
-	if inhabitants: inhabitants.signature = ""
 	selected_creature = -1
+	selected_identity = -1
+
+func focus_creature(index: int) -> void:
+	selected_creature = index
+	selected_identity = int(world.creatures[index].identity)
+	selected = int(world.creatures[index].cell)
+
+func reconcile_selection() -> void:
+	if selected_identity < 0: return
+	selected_creature = -1
+	for i in range(world.creatures.size()):
+		if int(world.creatures[i].identity) == selected_identity:
+			selected_creature = i
+			selected = int(world.creatures[i].cell)
+			return
+	selected_identity = -1
 
 func set_quality(economy: bool) -> void:
 	low_quality = economy
@@ -79,8 +96,14 @@ func _process(delta: float) -> void:
 			var signature = str(world.seed) + ":" + str(world.xp) + ":" + str(world.tick)
 			if signature != scenery_signature:
 				scenery_signature = signature
-				terrain.rebuild(world)
+				# Topology gifts update immediately; slow vegetation tint refreshes every 8 ticks.
+				var geometry = str(world.seed) + ":" + str(int(world.tick) / 8)
+				for c in world.cells: geometry += ":%d,%d" % [int(c.biome), int(c.height * 1000)]
+				if geometry != terrain_signature:
+					terrain_signature = geometry
+					terrain.rebuild(world)
 				inhabitants.sync(world)
+				reconcile_selection()
 		inhabitants.animate(world, delta)
 	for i in range(effects.size() - 1, -1, -1):
 		effects[i].age += delta
@@ -108,6 +131,16 @@ func _draw() -> void:
 
 func draw_foreground(canvas: Node2D) -> void:
 	if world.is_empty(): return
+	for c in world.cells:
+		if c.get("meadow", false):
+			var center = screen_point(c)
+			for i in range(8 if not low_quality else 4):
+				var p = center + Vector2(sin(i * 8.3 + time * .3) * 20, cos(i * 6.7) * 9 - 3) * display_zoom
+				canvas.draw_circle(p, 2 * display_zoom, Color("f4cfbb"))
+		if int(c.get("grove_until", 0)) > int(world.tick):
+			for i in range(8 if not low_quality else 4):
+				var p = screen_point(c) + Vector2(sin(time + i * 2.1) * 24, -12 + cos(time * .7 + i) * 18) * display_zoom
+				canvas.draw_circle(p, 2, Color(1, .87, .4, .55 + .3 * sin(time * 2 + i)))
 	if selected >= 0 and selected < world.cells.size():
 		var selection = screen_point(world.cells[selected])
 		canvas.draw_set_transform(selection, 0, Vector2(display_zoom, display_zoom * .5))
@@ -115,6 +148,13 @@ func draw_foreground(canvas: Node2D) -> void:
 		canvas.draw_set_transform(Vector2.ZERO)
 	for s in world.settlements:
 		var p = screen_point(world.cells[int(s.cell)])
+		if selected == int(s.cell) and selected_creature < 0:
+			canvas.draw_string(preload("res://assets/phase2/nunito.ttf"), p + Vector2(-80, -64), str(s.get("given_name", "")), HORIZONTAL_ALIGNMENT_CENTER, 160, 18, Color("fff0c9"))
+		if s.has("friend_id"):
+			var heart = p + Vector2(-10, -42 - sin(time * 2) * 2) * display_zoom
+			canvas.draw_circle(heart, 3, Color("f1c4a3"))
+			canvas.draw_circle(heart + Vector2(4, 0), 3, Color("f1c4a3"))
+			canvas.draw_colored_polygon(PackedVector2Array([heart + Vector2(-3, 1), heart + Vector2(7, 1), heart + Vector2(2, 7)]), Color("f1c4a3"))
 		for i in range(2):
 			var rise = fmod(time * 7 + i * 10, 22)
 			canvas.draw_circle(p + Vector2(8 + sin(time + rise * .05) * 3, -35 - rise) * display_zoom, (2 + rise * .09) * display_zoom, Color(.88, .91, .82, .22 * (1 - rise / 22)))
@@ -148,6 +188,8 @@ func draw_foreground(canvas: Node2D) -> void:
 	if selected_creature >= 0 and selected_creature < inhabitants.animals.size():
 		var p = to_screen(inhabitants.animals[selected_creature].position)
 		canvas.draw_arc(p - Vector2(0, 17), 21, 0, TAU, 32, Color(1, .89, .65, .7), 1.5, true)
+		var cr = world.creatures[selected_creature]
+		canvas.draw_string(preload("res://assets/phase2/nunito.ttf"), p + Vector2(-55, -49), str(cr.get("given_name", "")), HORIZONTAL_ALIGNMENT_CENTER, 110, 18, Color("fff0c9"))
 	var night = maxf(0, -sin(float(world.tick) / 30.0)) * .17
 	canvas.draw_rect(Rect2(0, 230, 720, 700), Color(.04, .08, .19, night))
 	if int(world.tick) >= 150 and int(world.tick) % 150 < 10:

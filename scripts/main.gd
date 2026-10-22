@@ -62,7 +62,11 @@ func _ready() -> void:
 		view.set_quality(options.get("economy", "--economy" in OS.get_cmdline_user_args()))
 		world.weather = 1
 		if options.get("stress", false):
-			while world.creatures.size() < 70: world.creatures.append(world.creatures[world.creatures.size() % 18].duplicate(true))
+			while world.creatures.size() < 70:
+				var cr = world.creatures[world.creatures.size() % 18].duplicate(true)
+				cr.erase("identity")
+				world.creatures.append(cr)
+			LivingStories.ensure(world)
 		benchmark_control = options.get("control", false)
 		if benchmark_control:
 			view.hide()
@@ -74,7 +78,7 @@ func _ready() -> void:
 			in_menu = true
 		var probe = PerformanceProbe.new()
 		probe.duration = options.get("duration", 15)
-		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase2/profile-" + ("economy" if view.low_quality else "smooth") + ".json"
+		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase3/desktop-" + ("economy" if view.low_quality else "smooth") + ".json"
 		add_child(probe)
 	set_process_input(true)
 
@@ -92,6 +96,7 @@ func new_planet(seed_value: int, planet_name: String, persist: bool = true) -> v
 	view.world = world
 	view.selected = -1
 	view.creature_positions.clear()
+	view.inhabitants.position_memory.clear()
 	view.invalidate()
 	view.pan = Vector2.ZERO
 	view.zoom = 0.88
@@ -115,6 +120,7 @@ func restore() -> void:
 	view.creature_positions.clear()
 	view.invalidate()
 	ui.close()
+	view.inhabitants.position_memory.clear()
 	ui.refresh()
 	if report.minutes >= 1: in_menu = true; ui.away(report)
 
@@ -126,6 +132,7 @@ func manual_save() -> void:
 func advance_tick() -> void:
 	var start = Time.get_ticks_usec()
 	var before = world.discoveries.size()
+	var chapters_before = world.living.findings.size()
 	Ecosystem.tick(world, rng)
 	Civilization.tick(world)
 	world.rng_state = str(rng.state)
@@ -137,6 +144,13 @@ func advance_tick() -> void:
 			if int(cr.species) == found:
 				view.effects.append({"cell": int(cr.cell), "age": 0.0, "power": 3})
 				break
+	if world.living.findings.size() > chapters_before:
+		for e in world.events:
+			if int(e.tick) == int(world.tick) and e.key in LivingStories.FINDINGS:
+				ui.toast(ui.event_text(e))
+				view.effects.append({"cell": int(e.cell), "age": 0.0, "power": 1})
+				audio.chime(6)
+	ui.refresh()
 	$Atmosphere.material.set_shader_parameter("night", maxf(0, -sin(float(world.tick) / 30.0)))
 	var cost = (Time.get_ticks_usec() - start) / 1000.0
 	simulation_total_ms += cost
@@ -227,10 +241,12 @@ func touch_world(pos: Vector2) -> void:
 	if power < 0:
 		var creature = view.inhabitants.closest_creature(pos)
 		if creature >= 0:
-			view.selected_creature = creature
+			view.focus_creature(creature)
 			var cr = world.creatures[creature]
 			view.selected = int(cr.cell)
-			ui.hint.text = ui.t("creature_info") % [ui.species(int(cr.species)), int(cr.hunger * 100), Biomes.title(int(cr.species), ui.language)]
+			LivingStories.observe(world, cr)
+			ui.show_creature(cr)
+			ui.refresh()
 			audio.button_sound()
 			return
 	var cell = view.pick(pos)
@@ -242,6 +258,8 @@ func touch_world(pos: Vector2) -> void:
 			view.invalidate()
 			if OS.has_feature("mobile") and haptics: Input.vibrate_handheld(22, .25)
 			audio.chime(power)
+			power = -1
+			ui.choose_power(-1)
 			ui.refresh()
-		else: ui.toast(ui.t("failed"))
+		else: ui.toast(ui.t("habitat_full") if power == 3 and world.creatures.size() >= 70 else ui.t("failed"))
 	else: ui.inspect(cell)

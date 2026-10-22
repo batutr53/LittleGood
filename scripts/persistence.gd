@@ -29,6 +29,23 @@ static func validate(w: Variant) -> bool:
 	for key in ["events", "discoveries", "achievements"]:
 		if not w[key] is Array: return false
 	if w.events.size() > 160: return false
+	if w.has("living"):
+		if not w.living is Dictionary: return false
+		for key in ["next_id", "gifts", "bloom_after"]:
+			if not (w.living.get(key) is int or w.living.get(key) is float) or not is_finite(float(w.living[key])) or w.living[key] < 0: return false
+		for key in ["observed", "findings"]:
+			if not w.living.get(key) is Array: return false
+		if w.living.observed.size() > 10000 or w.living.findings.size() > 4: return false
+		for key in w.living.findings:
+			if not key is String or not LivingStories.FINDINGS.has(key): return false
+		for id in w.living.observed:
+			if not (id is int or id is float) or not is_finite(float(id)) or id < 0: return false
+		if w.living.has("records") and not w.living.records is Dictionary: return false
+		if w.living.has("records"):
+			if w.living.records.size() > 4: return false
+			for key in w.living.records:
+				var record = w.living.records[key]
+				if not LivingStories.FINDINGS.has(key) or not record is Dictionary or record.get("key") != key or not record.get("subject") is String: return false
 	for e in w.events:
 		if not e is Dictionary or not e.get("key") is String or not (e.get("tick") is int or e.get("tick") is float): return false
 	for s in w.discoveries:
@@ -44,11 +61,16 @@ static func validate(w: Variant) -> bool:
 		for key in ["cell", "species", "hunger", "phase"]:
 			if not cr.has(key) or not (cr[key] is float or cr[key] is int): return false
 		if cr.cell < 0 or cr.cell >= w.cells.size() or cr.species < 0 or cr.species > 5: return false
+		if cr.has("identity"):
+			if not (cr.identity is int or cr.identity is float) or not is_finite(float(cr.identity)): return false
+			if not cr.get("given_name") is String or not LivingStories.TRAITS.has(cr.get("trait")): return false
+			if not (cr.get("visits") is int or cr.get("visits") is float): return false
 	for s in w.settlements:
 		if not s is Dictionary: return false
 		for key in ["cell", "population", "food", "stage", "tech", "blessing"]:
 			if not s.has(key) or not (s[key] is float or s[key] is int): return false
 		if s.cell < 0 or s.cell >= w.cells.size() or s.stage < 0 or s.stage > 2: return false
+		if s.has("given_name") and (not s.given_name is String or not s.get("custom") in ["orchard", "riverfolk", "stargazers"] or not (s.get("visitors") is int or s.get("visitors") is float)): return false
 	return true
 
 static func normalize_integer_fields(w: Dictionary) -> Dictionary:
@@ -56,12 +78,19 @@ static func normalize_integer_fields(w: Dictionary) -> Dictionary:
 	for cr in w.creatures:
 		cr.cell = int(cr.cell)
 		cr.species = int(cr.species)
+		for key in ["identity", "visits"]:
+			if cr.has(key): cr[key] = int(cr[key])
 	for s in w.settlements:
 		for key in ["cell", "stage", "blessing"]: s[key] = int(s[key])
+		for key in ["visitors", "friend_id"]:
+			if s.has(key): s[key] = int(s[key])
 	for i in range(w.discoveries.size()): w.discoveries[i] = int(w.discoveries[i])
 	for e in w.events:
 		e.tick = int(e.tick)
 		e.amount = int(e.get("amount", 0))
+	LivingStories.ensure(w)
+	for key in ["next_id", "gifts", "bloom_after"]: w.living[key] = int(w.living[key])
+	for i in range(w.living.observed.size()): w.living.observed[i] = int(w.living.observed[i])
 	return w
 
 static func load_world(path: String = PATH, backup: bool = true) -> Dictionary:
@@ -74,6 +103,12 @@ static func load_world(path: String = PATH, backup: bool = true) -> Dictionary:
 	return load_world(path + ".bak", false) if backup else {}
 
 static func offline(w: Dictionary, now: float) -> Dictionary:
+	LivingStories.ensure(w)
+	var chapters_before = w.living.findings.size()
+	var creatures_before = w.creatures.size()
+	var homes_before = w.settlements.size()
+	var people_before = 0.0
+	for s in w.settlements: people_before += s.population
 	var elapsed = clampf(now - float(w.saved_at), 0, MAX_OFFLINE_SECONDS)
 	var count = mini(480, int(elapsed / 60))
 	var previous = w.events.duplicate(true)
@@ -87,4 +122,6 @@ static func offline(w: Dictionary, now: float) -> Dictionary:
 	var changes: Array = []
 	for e in w.events:
 		if not previous.has(e): changes.append(e)
-	return {"minutes": int(elapsed / 60), "ticks": count, "events": changes}
+	var people_after = 0.0
+	for s in w.settlements: people_after += s.population
+	return {"minutes": int(elapsed / 60), "ticks": count, "events": changes, "new_chapters": w.living.findings.size() - chapters_before, "creature_change": w.creatures.size() - creatures_before, "people_change": int(people_after) - int(people_before), "new_settlements": w.settlements.size() - homes_before}

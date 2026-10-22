@@ -1,0 +1,11 @@
+[
+ {"name":"run","arguments":{"action":"play","mute":true}},
+ {"name":"game","arguments":{"action":"set","path":".","props":{"is_test_session":true}}},
+ {"name":"game","arguments":{"action":"call","path":".","method":"new_planet","args":[2026,"Lumi",false]}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"exec","arguments":{"action":"game","code":"scene.world.saved_at = Time.get_unix_time_from_system() - 21600\nvar report = Persistence.offline(scene.world, Time.get_unix_time_from_system())\nscene.in_menu = true\nscene.ui.refresh()\nscene.ui.away(report)\nreturn {\"ticks\":report.ticks,\"new_chapters\":report.new_chapters,\"creature_change\":report.creature_change,\"people_change\":report.people_change,\"new_settlements\":report.new_settlements}"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.5}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase3-return.png"},
+ {"name":"run","arguments":{"action":"errors"}},
+ {"name":"run","arguments":{"action":"stop"}}
+]

@@ -1,0 +1,11 @@
+[
+ {"name":"game","arguments":{"action":"eval","expressions":["world.settlements[0]","view.screen_point(world.cells[int(world.settlements[0].cell)])","view.inhabitants.props.get_child_count()","view.pan"]}},
+ {"name":"input","arguments":{"action":"send","steps":[{"click_node":"Interface/HUD/Chapter"},{"wait":0.8},{"click":[360,585]},{"click_node":"Interface/HUD/Speed"},{"wait":38}]}},
+ {"name":"game","arguments":{"action":"set","path":".","props":{"paused":true}}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase3-village.png"},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"journal"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.5}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase3-discoveries.png"},
+ {"name":"game","arguments":{"action":"eval","expressions":["world.living","world.tick","world.settlements"]}},
+ {"name":"run","arguments":{"action":"errors"}}
+]

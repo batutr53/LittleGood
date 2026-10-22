@@ -1,0 +1,121 @@
+[godot-forge] v0.1.0 project=D:\LittleGod godot=not found launch=none profile=full
+run {
+ "stopped": false
+}
+files {
+ "ok": true
+}
+scene {
+ "reloaded": "res://scenes/main.tscn"
+}
+run {
+ "connected": true,
+ "game": {
+  "fps": 1,
+  "frame": 0,
+  "headless": false,
+  "node_count": 63,
+  "paused": false,
+  "pid": 21304,
+  "renderer": "gl_compatibility",
+  "scene": "res://scenes/main.tscn",
+  "scene_root": "LittleGod",
+  "time_scale": 1,
+  "uptime_s": 1.108,
+  "viewport_size": "Vector2(720, 1280)",
+  "window_size": "Vector2i(540, 960)"
+ },
+ "muted": true,
+ "playing": true,
+ "scene": "main"
+}
+game {
+ "path": "/root/LittleGod",
+ "set": [
+  "is_test_session"
+ ]
+}
+game {
+ "path": "/root/LittleGod/Interface",
+ "set": [
+  "language"
+ ]
+}
+game {
+ "result": null
+}
+game {
+ "result": null
+}
+game {
+ "result": null
+}
+exec {
+ "result": [
+  "rain_bloom",
+  "friendship",
+  "lantern_grove",
+  "first_village"
+ ]
+}
+game {
+ "waited_s": 2.003
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+game {
+ "result": null
+}
+game {
+ "waited_s": 0.409
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+game {
+ "result": null
+}
+game {
+ "path": "/root/LittleGod/Interface",
+ "set": [
+  "language"
+ ]
+}
+game {
+ "result": null
+}
+game {
+ "result": null
+}
+game {
+ "waited_s": 0.401
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+run {
+ "entries": [],
+ "last_seq": 286
+}
+run {
+ "stopped": true
+}

@@ -1,0 +1,127 @@
+[godot-forge] v0.1.0 project=D:\LittleGod godot=not found launch=none profile=full
+game {
+ "values": {
+  "view.inhabitants.props.get_child_count()": 59,
+  "view.pan": "Vector2(-172.5, 14.370658)",
+  "view.screen_point(world.cells[int(world.settlements[0].cell)])": "Vector2(360, 585)",
+  "world.settlements[0]": {
+   "blessing": 0,
+   "cell": 71,
+   "custom": "riverfolk",
+   "food": 27.9605097263343,
+   "friend_id": 18,
+   "given_name": "Amber Haven",
+   "population": 5.56,
+   "stage": 0,
+   "tech": 0.0890157431583574,
+   "visitors": 8
+  }
+ }
+}
+input {
+ "results": [
+  "clicked at Vector2(267.5, 273)",
+  "waited 0.80s",
+  "clicked at Vector2(360, 585)",
+  "clicked at Vector2(621.5, 871)",
+  "waited 38.00s"
+ ],
+ "steps": 5
+}
+game {
+ "path": "/root/LittleGod",
+ "set": [
+  "paused"
+ ]
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+game {
+ "result": null
+}
+game {
+ "waited_s": 0.484
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+game {
+ "values": {
+  "world.living": {
+   "bloom_after": 91,
+   "findings": [
+    "rain_bloom",
+    "friendship",
+    "lantern_grove",
+    "first_village"
+   ],
+   "gifts": 3,
+   "next_id": 20,
+   "observed": [
+    0
+   ],
+   "records": {
+    "first_village": {
+     "amount": 0,
+     "cell": 71,
+     "key": "first_village",
+     "subject": "Amber Haven",
+     "tick": 57
+    },
+    "friendship": {
+     "amount": 0,
+     "cell": 71,
+     "key": "friendship",
+     "subject": "Fern 2 · Amber Haven",
+     "tick": 6
+    },
+    "lantern_grove": {
+     "amount": 0,
+     "cell": 50,
+     "key": "lantern_grove",
+     "subject": "Tansy 1",
+     "tick": 45
+    },
+    "rain_bloom": {
+     "amount": 0,
+     "cell": 8,
+     "key": "rain_bloom",
+     "subject": "",
+     "tick": 1
+    }
+   }
+  },
+  "world.settlements": [
+   {
+    "blessing": 63,
+    "cell": 71,
+    "custom": "riverfolk",
+    "food": 100,
+    "friend_id": 19,
+    "given_name": "Amber Haven",
+    "population": 13.05,
+    "stage": 1,
+    "tech": 0.957025588774313,
+    "visitors": 140
+   }
+  ],
+  "world.tick": 65
+ }
+}
+run {
+ "entries": [],
+ "last_seq": 283
+}

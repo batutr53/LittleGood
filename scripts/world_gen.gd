@@ -35,4 +35,5 @@ static func generate(seed_value: int, planet_name: String) -> Dictionary:
 			world.settlements.append({"cell": i, "population": 5.0, "food": 20.0, "stage": 0, "tech": 0.0, "blessing": 0})
 			break
 	world.rng_state = str(rng.state)
+	LivingStories.ensure(world)
 	return world

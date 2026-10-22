@@ -8,6 +8,7 @@ parser.add_argument('--control',action='store_true')
 parser.add_argument('--economy',action='store_true')
 parser.add_argument('--stress',action='store_true')
 parser.add_argument('--duration',type=float,default=30)
+parser.add_argument('--output-dir',default='builds/phase3')
 args=parser.parse_args()
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 base=[str(adb),'-s',args.serial]
@@ -16,7 +17,9 @@ def run(*cmd,check=True):return subprocess.run(base+list(cmd),capture_output=Tru
 run('shell','am','force-stop',pkg)
 before=run('shell','run-as',pkg,'cat','files/planet.json',check=False)
 options={'duration':args.duration,'economy':args.economy,'control':args.control,'stress':args.stress}
-marker=root/'builds/phase2/benchmark-options.json'
+output=root/args.output_dir
+output.mkdir(parents=True,exist_ok=True)
+marker=output/'benchmark-options.json'
 marker.write_text(json.dumps(options))
 run('push',str(marker),'/data/local/tmp/littlegod-benchmark.json')
 run('shell','run-as',pkg,'cp','/data/local/tmp/littlegod-benchmark.json','files/phase2_benchmark.json')
@@ -35,7 +38,7 @@ after=run('shell','run-as',pkg,'cat','files/planet.json',check=False)
 report['player_save_unchanged']=before==after
 report['device_serial']=args.serial
 kind='control' if args.control else 'economy' if args.economy else 'stress' if args.stress else 'smooth'
-dest=root/f'builds/phase2/android-{kind}'
+dest=output/f'android-{kind}'
 dest.with_suffix('.json').write_text(json.dumps(report,indent=2))
 for _ in range(10):
     data=run('exec-out','run-as',pkg,'cat','files/phase2_profile.png',check=False)

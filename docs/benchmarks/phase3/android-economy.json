@@ -1,0 +1,32 @@
+{
+  "atlas_size": [
+    1024,
+    1024
+  ],
+  "average_fps": 29.5575819141949,
+  "control_scene": false,
+  "creatures": 18,
+  "draw_calls": 94.0,
+  "effects": 1,
+  "first_frame_ms": 1997,
+  "frame_p50_ms": 33.328,
+  "frame_p95_ms": 35.116,
+  "frames": 888,
+  "nodes": 135.0,
+  "peak_draw_calls": 111.0,
+  "peak_process_ms": 84.124,
+  "platform": "Android",
+  "quality": "economy",
+  "renderer": "gl_compatibility",
+  "simulation_average_ms": 0.667666666666667,
+  "simulation_peak_ms": 1.078,
+  "simulation_ticks": 15,
+  "static_memory_mb": 41.8698673248291,
+  "terrain_last_build_ms": 8.375,
+  "terrain_rebuilds": 3,
+  "video_memory_mb": 22.9713191986084,
+  "wall_seconds": 30.043053,
+  "host_launch_to_report_seconds": 32.782,
+  "player_save_unchanged": true,
+  "device_serial": "emulator-5554"
+}

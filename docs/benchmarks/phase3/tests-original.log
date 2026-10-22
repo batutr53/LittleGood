@@ -1,0 +1,55 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: Seed reproduces terrain, wildlife and RNG state
+PASS: Different seeds vary terrain
+PASS: Six land biomes plus river
+PASS: Six autonomous creature species
+PASS: Generated world validates
+PASS: 1800 simulation ticks complete
+PASS: Long simulation preserves valid state
+PASS: Creature population remains bounded
+PASS: Discoveries recorded from actual species
+PASS: Settlement develops from camp through village to town
+PASS: Event history bounded
+PASS: Season milestone awarded
+PROFILE: 1800 ticks in 894 ms
+PASS: Power 0 succeeds
+PASS: Power 0 charges correct energy
+PASS: Power 0 changes simulation state
+PASS: Power 1 succeeds
+PASS: Power 1 charges correct energy
+PASS: Power 1 changes simulation state
+PASS: Power 2 succeeds
+PASS: Power 2 charges correct energy
+PASS: Power 2 changes simulation state
+PASS: Power 3 succeeds
+PASS: Power 3 charges correct energy
+PASS: Power 3 changes simulation state
+PASS: Power 4 succeeds
+PASS: Power 4 charges correct energy
+PASS: Power 4 changes simulation state
+PASS: Power 5 succeeds
+PASS: Power 5 charges correct energy
+PASS: Power 5 changes simulation state
+PASS: Insufficient spirit rejects power
+PASS: Invalid cell rejected
+PASS: Atomic save round 0
+PASS: Round-trip preserves world and exact RNG 0
+PASS: Atomic save round 1
+PASS: Round-trip preserves world and exact RNG 1
+PASS: Atomic save round 2
+PASS: Round-trip preserves world and exact RNG 2
+PASS: Atomic save round 3
+PASS: Round-trip preserves world and exact RNG 3
+PASS: Atomic save round 4
+PASS: Round-trip preserves world and exact RNG 4
+PASS: Corruption recovers previous backup
+PASS: Invalid save rejected safely
+PASS: Ten-day absence bounded to eight-hour progression
+PASS: Return summary contains actual events
+PASS: Clock rollback does not reverse simulation
+PASS: Out-of-range creature rejected
+PASS: Invalid numeric save field rejected
+PASS: Imprecise RNG save field rejected
+PASS: Malformed settlement record rejected without exception
+RESULT: 51/51 passed

@@ -1,0 +1,5 @@
+[
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"exec","arguments":{"action":"game","code":"var result = []\nfor child in scene.view.inhabitants.props.get_children():\n\tif child.frame in [8, 9, 13]: result.append({\"frame\":child.frame, \"position\":str(child.position), \"global\":str(child.global_position), \"scale\":str(child.scale), \"visible\":child.is_visible_in_tree()})\nreturn result"}},
+ {"name":"run","arguments":{"action":"errors"}}
+]

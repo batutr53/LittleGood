@@ -1,0 +1,16 @@
+[
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"exec","arguments":{"action":"game","code":"for i in range(maxi(0, 450 - int(scene.world.tick))):\n\tscene.advance_tick()\nscene.view.pan = Vector2.ZERO\nscene.view.zoom = .88\nscene.paused = true\nscene.ui.refresh()\nreturn {\"tick\":scene.world.tick,\"creatures\":scene.world.creatures.size(),\"settlements\":scene.world.settlements,\"chapters\":scene.world.living.findings}"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.6}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase3-extended.png"},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"neighbors"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.4}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase3-neighbors.png"},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"game","arguments":{"action":"set","path":"Interface","props":{"language":"tr"}}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"build"}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"journal"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.4}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase3-journal-tr.png"},
+ {"name":"run","arguments":{"action":"errors"}}
+]

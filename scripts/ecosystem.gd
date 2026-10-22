@@ -9,6 +9,7 @@ static func event(w: Dictionary, key: String, amount: int = 0) -> void:
 	if w.events.size() > 160: w.events.pop_front()
 
 static func tick(w: Dictionary, rng: RandomNumberGenerator) -> void:
+	LivingStories.ensure(w)
 	w.tick = int(w.tick) + 1
 	w.energy = minf(100, w.energy + 0.45)
 	if w.tick % 20 == 0:
@@ -22,6 +23,9 @@ static func tick(w: Dictionary, rng: RandomNumberGenerator) -> void:
 		var growth = Biomes.GROWTH[int(c.biome)] * c.moisture * (0.4 if season == 3 else 1.0)
 		c.plants = clampf(c.plants + growth - (0.008 if w.weather == 3 else 0.001), 0.08, 1)
 		c.resources = minf(100, c.resources + 0.25 + c.plants * 0.5)
+	# Four direct neighbor lookups replace a complete cell scan for each animal.
+	var cell_index: Dictionary = {}
+	for i in range(w.cells.size()): cell_index[Vector2i(w.cells[i].x, w.cells[i].y)] = i
 	for cr in w.creatures:
 		var c = w.cells[int(cr.cell)]
 		cr.hunger = clampf(cr.hunger + 0.025 - c.plants * 0.04, 0, 1)
@@ -32,11 +36,22 @@ static func tick(w: Dictionary, rng: RandomNumberGenerator) -> void:
 				if prey.species == 0 and prey.cell == cr.cell: prey.hunger = minf(1, prey.hunger + 0.06)
 		if rng.randf() < 0.22:
 			var candidates: Array = []
-			for i in range(w.cells.size()):
+			for direction in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+				var i = int(cell_index.get(Vector2i(c.x, c.y) + direction, -1))
+				if i < 0: continue
 				var other = w.cells[i]
-				if absf(other.x - c.x) + absf(other.y - c.y) == 1 and other.biome != 6:
-					if other.biome == cr.species or cr.hunger > 0.65: candidates.append(i)
-			if not candidates.is_empty(): cr.cell = candidates[rng.randi_range(0, candidates.size() - 1)]
+				if other.biome != 6 and (other.biome == cr.species or cr.hunger > .65 or cr.trait == "explorer"):
+					candidates.append(i)
+			if not candidates.is_empty():
+				cr.cell = candidates[rng.randi_range(0, candidates.size() - 1)]
+				if cr.trait == "friendly":
+					for home in w.settlements:
+						var h = w.cells[int(home.cell)]
+						if absf(h.x - c.x) + absf(h.y - c.y) > 4: continue
+						var best = INF
+						for i in candidates:
+							var distance = absf(h.x - w.cells[i].x) + absf(h.y - w.cells[i].y)
+							if distance < best: best = distance; cr.cell = i
 		if not w.discoveries.has(cr.species) and int(w.tick) >= int(cr.species) * 15:
 			w.discoveries.append(cr.species)
 			w.xp += 8
@@ -60,3 +75,4 @@ static func tick(w: Dictionary, rng: RandomNumberGenerator) -> void:
 	if w.tick >= 120 and not w.achievements.has("season"):
 		w.achievements.append("season")
 		event(w, "season")
+	LivingStories.tick(w)

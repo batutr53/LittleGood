@@ -1,6 +1,18 @@
 # Test report — 22 October 2026
 
-## Phase 2 update
+## Phase 3 current result
+
+**116 checks pass:** original suite 51, real-scene runtime 1, phase-two regressions 15, phase-three gameplay checks 49. All original tests remain intact. The final verification run took 894 ms for 1,800 ticks and 6,149 ms for 10,000 ticks. These are headless throughput results, not phone FPS; times vary between runs. Full habitats also reject wildlife gifts without a charge or unrelated trait change.
+
+New coverage: reproducible unique identities, all four trait effects, three settlement customs, one-time observation, positive/negative event triggers, permanent meadows, friendships/food sharing, groves/resources, four reachable chapters, optional version-one migration, named save round-trips, malformed extensions, offline events/change summaries, final-offline-tick village discovery, immediate founder identity, full guided care loop, neighbor-album navigation and stable identity selection. No test was weakened. Test worlds do not overwrite the player slot.
+
+Real-rendered MCP scenarios are `devtools/phase3-opening.json`, `phase3-village.json`, and `phase3-extended.json`; the last uses accelerated actual simulation to tick 450. Screenshots were visually inspected, including English/Turkish UI and a native game-window capture through Computer Use. This is developer testing, not an external usability study or a 15-minute uninterrupted human session.
+
+Android 0.3 exports, signature validation, update installation and startup/profiling succeed on `emulator-5554`. Save-byte comparisons passed for completed profiles. No physical phone was attached. Measurements and slower runs are in [PHASE3_REPORT.md](PHASE3_REPORT.md). Versioned logs/JSON are in `docs/benchmarks/phase3`; fuller build/MCP logs are in `builds/phase3`. Shutdown resource/ObjectDB warnings remain; they were not suppressed.
+
+The remaining sections are historical phase-one/two results.
+
+## Historical phase 2 update
 
 Current results and profiling evidence are in [PHASE2_REPORT.md](PHASE2_REPORT.md). The existing 51 checks still pass; 15 phase-two interaction/legacy-save/10,000-tick checks and the real-scene clock integration check pass as well (67 total). The old tests did not resume JSON-loaded worlds far enough to expose the float-clock modulo bug; the new fixture regression found it and verifies the fix. Android emulator profiling now averages about 59 FPS in smooth mode and 30 FPS in battery saver. The remainder of this document records phase-one history and must not be read as current rendering/performance status.
 

@@ -9,6 +9,8 @@ var details: MeshInstance2D
 var lookup: Dictionary = {}
 var rebuilds = 0
 var build_ms = 0.0
+var corner_cache: Dictionary = {}
+var color_cache: Dictionary = {}
 
 func _ready() -> void:
 	land = MeshInstance2D.new()
@@ -25,6 +27,8 @@ func _ready() -> void:
 	add_child(details)
 
 func corner(x: float, y: float) -> Vector2:
+	var key = Vector2(x, y)
+	if corner_cache.has(key): return corner_cache[key]
 	var height_sum = 0.0
 	var n = 0
 	for cy in [floori(y), ceili(y)]:
@@ -32,9 +36,13 @@ func corner(x: float, y: float) -> Vector2:
 			if lookup.has(Vector2i(cx, cy)):
 				height_sum += lookup[Vector2i(cx, cy)].height
 				n += 1
-	return Vector2((x - y) * 30, (x + y - 16) * 15 - height_sum / maxf(1, n) * 42)
+	var result = Vector2((x - y) * 30, (x + y - 16) * 15 - height_sum / maxf(1, n) * 42)
+	corner_cache[key] = result
+	return result
 
 func corner_color(x: float, y: float, water_tile: bool) -> Color:
+	var key = Vector3(x, y, 1 if water_tile else 0)
+	if color_cache.has(key): return color_cache[key]
 	var color = Color(0, 0, 0, 0)
 	var count = 0.0
 	for cy in [floori(y), ceili(y)]:
@@ -46,7 +54,9 @@ func corner_color(x: float, y: float, water_tile: bool) -> Color:
 			if c.biome != 6: base = base.darkened((1.0 - c.plants) * 0.09)
 			color += base
 			count += 1
-	return color / maxf(1, count)
+	var result = color / maxf(1, count)
+	color_cache[key] = result
+	return result
 
 func triangle(vertices: Array, colors: Array, points: Array, shades: Array) -> void:
 	for i in range(3):
@@ -70,6 +80,8 @@ func make_mesh(v: Array, colors: Array) -> ArrayMesh:
 func rebuild(w: Dictionary) -> void:
 	var start = Time.get_ticks_usec()
 	lookup.clear()
+	corner_cache.clear()
+	color_cache.clear()
 	for c in w.cells: lookup[Vector2i(c.x, c.y)] = c
 	var v: Array = []
 	var colors: Array = []

@@ -1,0 +1,100 @@
+[godot-forge] v0.1.0 project=D:\LittleGod godot=not found launch=none profile=full
+game {
+ "result": null
+}
+exec {
+ "result": {
+  "chapters": [
+   "rain_bloom",
+   "friendship",
+   "lantern_grove",
+   "first_village"
+  ],
+  "creatures": 29,
+  "settlements": [
+   {
+    "blessing": 0,
+    "cell": 71,
+    "custom": "riverfolk",
+    "food": 100,
+    "friend_id": 23,
+    "given_name": "Amber Haven",
+    "population": 46.9999999999995,
+    "stage": 2,
+    "tech": 6.6567310667743,
+    "visitors": 1511
+   },
+   {
+    "blessing": 0,
+    "cell": 8,
+    "custom": "stargazers",
+    "food": 100,
+    "friend_id": 7,
+    "given_name": "Clover Haven",
+    "population": 21.7999999999999,
+    "stage": 1,
+    "tech": 3.26901534600001,
+    "visitors": 100
+   }
+  ],
+  "tick": 450
+ }
+}
+game {
+ "waited_s": 0.583
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+game {
+ "result": null
+}
+game {
+ "waited_s": 0.413
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+game {
+ "result": null
+}
+game {
+ "path": "/root/LittleGod/Interface",
+ "set": [
+  "language"
+ ]
+}
+game {
+ "result": null
+}
+game {
+ "result": null
+}
+game {
+ "waited_s": 0.4
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+run {
+ "entries": [],
+ "last_seq": 283
+}

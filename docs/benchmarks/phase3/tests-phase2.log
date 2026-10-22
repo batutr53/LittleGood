@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: Land and water meshes compile and contain geometry
+PASS: All six species retain three rendered individuals
+PASS: World projection and picking agree after terrain rewrite
+PASS: Pinch/scroll zoom keeps the chosen world anchor stable
+PASS: Camera zoom interpolates rather than snapping
+PASS: Finishing a two-finger gesture cannot accidentally cast a power
+PASS: Intentional tap still changes saved terrain and charges spirit
+PASS: Battery saver selects the 30 FPS budget
+PASS: Smooth mode restores the 60 FPS budget
+PASS: Live clock advances from elapsed monotonic time even on slow frames
+PASS: Phase-one version-one save fixture still loads unchanged
+PASS: JSON integer fields are normalized before resuming simulation
+PASS: Legacy planet actually grows and discovers species after load
+PASS: Ten-thousand-tick world remains valid
+PASS: Extended populations and event history stay bounded
+EXTENDED_SIM_MS: 6149
+PHASE2_RESULT: 15 passed, 0 failed
+WARNING: 2 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

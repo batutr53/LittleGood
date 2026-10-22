@@ -37,6 +37,9 @@ func sync(w: Dictionary) -> void:
 			for s in w.settlements:
 				var home = w.cells[int(s.cell)]
 				if absf(home.x - c.x) <= 1 and absf(home.y - c.y) <= 1: occupied = true
+				var separation = p - view.project(home)
+				# Tall foreground props must not conceal the player's settlement target.
+				if absf(separation.x) < 65 and separation.y > -10 and separation.y < 80: occupied = true
 			if occupied: continue
 			if b == 1 and c.plants > .25 and (d > .22 or c.get("last_gift", -1) == 1): add_prop(12 if d > .5 else 7, p, 40 + c.plants * 14 + d * 9, true)
 			elif b == 0 and d > .87 and c.plants > .55: add_prop(12, p, 42, true)
@@ -49,7 +52,7 @@ func sync(w: Dictionary) -> void:
 			elif b == 0 and d < .07: add_prop(11, p, 26)
 		for s in w.settlements:
 			var p = view.project(w.cells[int(s.cell)])
-			if s.stage == 0: add_prop(13, p, 38)
+			if s.stage == 0: add_prop(13, p, 50)
 			else:
 				add_prop(8 if s.stage == 1 else 9, p, 50 if s.stage == 1 else 68)
 				add_prop(8, p + Vector2(-30, 12), 35)
@@ -75,13 +78,16 @@ func animate(w: Dictionary, delta: float) -> void:
 		var p = view.project(w.cells[int(cr.cell)])
 		var phase = float(cr.phase)
 		var grazing = cr.hunger < .5 and sin(time * .65 + phase) > .45
-		var radius = 3.0 if grazing else 10.0
+		var radius = 3.0 if grazing else (15.0 if cr.get("trait") == "explorer" else 10.0)
 		var target = p + Vector2(sin(time * .42 + phase) * radius, cos(time * .38 + phase) * radius * .42)
+		for home in w.settlements:
+			if int(home.cell) == int(cr.cell): target += Vector2(23 if i % 2 == 0 else -23, 12)
 		if int(w.weather) == 1: target = target.lerp(p + Vector2(-4, 3), .7)
-		var previous = position_memory.get(i, target)
+		var identity = int(cr.get("identity", i))
+		var previous = position_memory.get(identity, target)
 		var next = previous.lerp(target, decay)
 		# A gift can change a cell while a creature is present; its feet still follow the live terrain.
-		position_memory[i] = next
+		position_memory[identity] = next
 		var moving = previous.distance_to(target) > .8
 		var bob = absf(sin(time * (5.0 if cr.species != 5 else 7.0) + phase)) * (1.8 if moving else .35)
 		if cr.species == 5: bob += 2 + sin(time * 2 + phase) * 1.6

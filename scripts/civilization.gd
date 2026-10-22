@@ -2,6 +2,7 @@ class_name Civilization
 extends RefCounted
 
 static func tick(w: Dictionary) -> void:
+	LivingStories.ensure(w)
 	for s in w.settlements:
 		var c = w.cells[int(s.cell)]
 		var harvest = minf(c.resources, 0.35 + c.plants * 0.6)
@@ -15,6 +16,7 @@ static func tick(w: Dictionary) -> void:
 			s.stage = stage
 			w.xp += 20
 			Ecosystem.event(w, "settlement", stage)
+			if stage >= 1: LivingStories.discover(w, "first_village", int(s.cell), s.given_name)
 		c.plants = maxf(0.15, c.plants - s.population * 0.00008)
 	# Neighboring communities share surplus food.
 	if w.settlements.size() > 1:
@@ -32,4 +34,5 @@ static func tick(w: Dictionary) -> void:
 			if suitable:
 				w.settlements.append({"cell": i, "population": 5.0, "food": 20.0, "stage": 0, "tech": 0.0, "blessing": 0})
 				Ecosystem.event(w, "founded")
+				LivingStories.ensure(w)
 				break

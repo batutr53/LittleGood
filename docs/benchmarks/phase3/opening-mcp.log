@@ -1,0 +1,150 @@
+[godot-forge] v0.1.0 project=D:\LittleGod godot=not found launch=none profile=full
+run {
+ "stopped": false
+}
+files {
+ "ok": true
+}
+scene {
+ "reloaded": "res://scenes/main.tscn"
+}
+run {
+ "connected": true,
+ "game": {
+  "fps": 1,
+  "frame": 0,
+  "headless": false,
+  "node_count": 67,
+  "paused": false,
+  "pid": 1604,
+  "renderer": "gl_compatibility",
+  "scene": "res://scenes/main.tscn",
+  "scene_root": "LittleGod",
+  "time_scale": 1,
+  "uptime_s": 1.164,
+  "viewport_size": "Vector2(720, 1280)",
+  "window_size": "Vector2i(540, 960)"
+ },
+ "muted": true,
+ "playing": true,
+ "scene": "main"
+}
+game {
+ "path": "/root/LittleGod",
+ "set": [
+  "is_test_session"
+ ]
+}
+game {
+ "path": "/root/LittleGod/Interface",
+ "set": [
+  "language"
+ ]
+}
+game {
+ "result": null
+}
+game {
+ "result": null
+}
+game {
+ "result": null
+}
+input {
+ "results": [
+  "clicked at Vector2(267.5, 273)",
+  "waited 0.80s",
+  "clicked at Vector2(360, 585)",
+  "waited 3.00s",
+  "clicked at Vector2(267.5, 273)",
+  "waited 0.60s"
+ ],
+ "steps": 6
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+input {
+ "results": [
+  "clicked at Vector2(267.5, 273)",
+  "waited 0.80s",
+  "clicked at Vector2(360, 585)",
+  "waited 9.00s"
+ ],
+ "steps": 4
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+game {
+ "values": {
+  "world.creatures.back()": {
+   "cell": 71,
+   "given_name": "Fern 2",
+   "hunger": 0.0792029401438431,
+   "identity": 18,
+   "phase": 0,
+   "species": 0,
+   "trait": "friendly",
+   "visits": 5
+  },
+  "world.living": {
+   "bloom_after": 91,
+   "findings": [
+    "rain_bloom",
+    "friendship"
+   ],
+   "gifts": 2,
+   "next_id": 19,
+   "observed": [
+    0
+   ],
+   "records": {
+    "friendship": {
+     "amount": 0,
+     "cell": 71,
+     "key": "friendship",
+     "subject": "Fern 2 · Amber Haven",
+     "tick": 6
+    },
+    "rain_bloom": {
+     "amount": 0,
+     "cell": 8,
+     "key": "rain_bloom",
+     "subject": "",
+     "tick": 1
+    }
+   }
+  },
+  "world.settlements": [
+   {
+    "blessing": 0,
+    "cell": 71,
+    "custom": "riverfolk",
+    "food": 27.9605097263343,
+    "friend_id": 18,
+    "given_name": "Amber Haven",
+    "population": 5.56,
+    "stage": 0,
+    "tech": 0.0890157431583574,
+    "visitors": 8
+   }
+  ]
+ }
+}
+run {
+ "entries": [],
+ "last_seq": 279
+}
