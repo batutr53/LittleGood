@@ -30,7 +30,7 @@ static func validate(w: Variant) -> bool:
 		if not w[key] is Array: return false
 	if w.events.size() > 160: return false
 	for e in w.events:
-		if not e is Dictionary or not e.get("key") is String or not e.has("tick"): return false
+		if not e is Dictionary or not e.get("key") is String or not (e.get("tick") is int or e.get("tick") is float): return false
 	for s in w.discoveries:
 		if not (s is float or s is int) or s < 0 or s > 5: return false
 	if not w.creatures is Array or w.creatures.size() > 100 or not w.settlements is Array or w.settlements.size() > 10: return false
@@ -45,6 +45,7 @@ static func validate(w: Variant) -> bool:
 			if not cr.has(key) or not (cr[key] is float or cr[key] is int): return false
 		if cr.cell < 0 or cr.cell >= w.cells.size() or cr.species < 0 or cr.species > 5: return false
 	for s in w.settlements:
+		if not s is Dictionary: return false
 		for key in ["cell", "population", "food", "stage", "tech", "blessing"]:
 			if not s.has(key) or not (s[key] is float or s[key] is int): return false
 		if s.cell < 0 or s.cell >= w.cells.size() or s.stage < 0 or s.stage > 2: return false

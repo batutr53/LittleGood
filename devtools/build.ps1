@@ -7,6 +7,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Godot import failed' }
     & $godotExe --headless --path . --script tests/suite.gd
     if ($LASTEXITCODE -ne 0) { throw 'Tests failed' }
+    & $godotExe --headless --path . --script tests/runtime.gd
+    if ($LASTEXITCODE -ne 0) { throw 'Runtime integration test failed' }
     New-Item -ItemType Directory builds/android,builds/windows -Force | Out-Null
     & $godotExe --headless --path . --export-debug Android builds/android/LittleGod-debug.apk
     if ($LASTEXITCODE -ne 0) { throw 'Android export failed' }

@@ -2,9 +2,11 @@
 
 ## Automated simulation and persistence
 
-Godot 4.7.2 headless ran `tests/suite.gd`: **50/50 checks passed**. The final recorded 1,800-tick simulation took approximately 1.6 seconds on this computer; this is simulation throughput, not a phone frame-rate benchmark.
+Godot 4.7.2 headless ran `tests/suite.gd`: **51/51 checks passed**. The recorded 1,800-tick simulations took approximately 1.3–1.7 seconds on this computer; this is simulation throughput, not a phone frame-rate benchmark.
 
 Coverage includes reproducible terrain/wildlife/RNG; different-seed variation; six land biomes plus river; six creature species; valid generated state; 1,800 ticks; bounded population and history; camp→village→town progression; discoveries and season milestone; all six powers changing real state and charging correct spirit; invalid cell and insufficient-spirit rejection; five save/load cycles; 64-bit RNG state preservation; backup recovery after corruption; invalid save rejection; bounded ten-day absence; actual offline events; clock rollback; invalid creature references; malformed numeric and RNG fields.
+
+An additional scene-level test (`tests/runtime.gd`) instantiated the real main scene, created a test world without writing the player save, closed the menu, waited 3.2 seconds and observed tick 1, `paused=false`, `in_menu=false`, processing enabled. This runtime integration check passed.
 
 Failures found and fixed: drawing transforms placed terrain offscreen; communities stalled because food consumption exceeded renewable resources; raw RNG numbers lost precision across JSON; parsing intentionally corrupt JSON emitted unnecessary errors. The suite was rerun after fixes. See `builds/tests.log`.
 
@@ -26,12 +28,18 @@ Android debug export succeeded for ARM64 and x86_64, minimum API 24 and target A
 
 Headless editor import/export reports Forge-related resource/ObjectDB cleanup warnings after successful work. Standalone capture occasionally reports two ObjectDB instance leaks at automatic exit. These are documented unresolved cleanup issues, not silently counted as clean logs.
 
+Windows App Control blocked an attempt to run `LittleGod.console.exe`. Therefore the exported Windows package is built but its standalone execution is not verified here. Source gameplay through the official Godot runtime is verified; the launch shortcut uses that runtime.
+
 ## Android emulator
 
 A new isolated `LittleGod_Test` API-35 x86_64 AVD was created from the installed system image. The debug APK installed successfully. The exported launcher (`GodotAppLauncher`) starts the engine and main menu. An attempted start of the internal non-exported `GodotApp` activity was rejected normally; using the manifest-resolved launcher fixed the invocation without changing Android security.
 
-SwiftShader initially failed an engine shader uniform limit. Host GPU mode then initialized OpenGL ES 3.1 on the NVIDIA GPU and reached the Godot main loop. The final project also lowers unused 3D light limits. The platform's first-run full-screen hint was dismissed. Menu and creation screens were captured and visually inspected; Android tap input navigated from menu to creation. Physical phones, thermal behavior, and full multi-touch gestures remain unverified.
+SwiftShader initially failed an engine shader uniform limit. Host GPU mode then initialized OpenGL ES 3.1 on the NVIDIA GPU and reached the Godot main loop. The final project also lowers unused 3D light limits. The platform's first-run full-screen hint was dismissed. Menu, creation, live planet and rain screens were captured and visually inspected. Android taps created a planet, chose rain, selected a tile and spent 22 spirit (100→78), with visible rainfall. Swipe panned the planet and + enlarged it. Physical phones, thermal behavior, and full multi-touch gestures remain unverified.
 
 ## Remaining validation
+
+An Android relaunch restored the existing planet and displayed a real two-minute return summary (`builds/android-away.png`). No new recorded event occurred in those two offline ticks, so the panel correctly showed its peaceful fallback instead of inventing discoveries.
+
+A later headless host-GPU Android debug run logged about 2 FPS. Live simulation therefore progressed slowly under the emulator's bounded frame delta. Android screenshots and input checks do not establish suitable phone performance or sustained mobile timing. This remains a priority device-validation issue.
 
 See KNOWN_ISSUES.md and ROADMAP.md. No physical Android or iOS performance claim, store-ready claim, payment flow test, or complete premium-game claim is made.

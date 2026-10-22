@@ -4,7 +4,7 @@ A playable offline Godot 4.7.2 game checkpoint. Create a named, seeded floating 
 
 ## Play
 
-Run `builds/windows/LittleGod.exe` or `Launch LittleGod.cmd`. The Android debug package is `builds/android/LittleGod-debug.apk`. Both are generated locally, without purchases or online services. The Android build is a development build, not a store release.
+Run `Launch LittleGod.cmd` to play through the verified Godot runtime. A Windows executable is exported under `builds/windows/`, but Windows App Control blocked its console launcher during packaged-build testing. No security settings were changed. The Android debug package is `builds/android/LittleGod-debug.apk`; it was installed and played on an emulator. Both builds are generated locally, without purchases or online services. These are development builds, not store releases.
 
 Click **Create a planet**, enter a name and optional seed, then **Let there be life**. Drag the island to pan. Scroll, pinch, or use +/− to zoom. Choose a gift and touch a tile. Blessing requires a settlement tile. With no gift selected, touch a tile to inspect its creatures, settlement, or soil. Tap the selected gift again to return to inspection. Spirit regenerates; every gift shows its cost.
 

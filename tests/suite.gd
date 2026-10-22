@@ -73,5 +73,8 @@ func _initialize() -> void:
 	malformed = beginning.duplicate(true)
 	malformed.rng_state = 1.2
 	check(not Persistence.validate(malformed), "Imprecise RNG save field rejected")
+	malformed = beginning.duplicate(true)
+	malformed.settlements = [12]
+	check(not Persistence.validate(malformed), "Malformed settlement record rejected without exception")
 	print("RESULT: ", checks - failures.size(), "/", checks, " passed")
 	quit(0 if failures.is_empty() else 1)

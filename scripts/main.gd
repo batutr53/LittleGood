@@ -15,6 +15,7 @@ var dragging = false
 var drag_distance = 0.0
 var touch_points: Dictionary = {}
 var capture_frames = 0
+var diagnostic_time = 0.0
 
 func _ready() -> void:
 	get_window().min_size = Vector2i(360, 640)
@@ -42,7 +43,7 @@ func save_settings() -> void:
 	config.set_value("user", "sound", audio.enabled)
 	config.save("user://settings.cfg")
 
-func new_planet(seed_value: int, planet_name: String) -> void:
+func new_planet(seed_value: int, planet_name: String, persist: bool = true) -> void:
 	world = WorldGen.generate(seed_value, planet_name)
 	rng.state = int(world.rng_state)
 	view.world = world
@@ -53,7 +54,7 @@ func new_planet(seed_value: int, planet_name: String) -> void:
 	power = -1
 	paused = false
 	ui.refresh()
-	Persistence.save_world(world)
+	if persist: Persistence.save_world(world)
 
 func restore() -> void:
 	var restored = Persistence.load_world()
@@ -82,6 +83,10 @@ func advance_tick() -> void:
 	$Atmosphere.material.set_shader_parameter("night", maxf(0, -sin(float(world.tick) / 30.0)))
 
 func _process(delta: float) -> void:
+	diagnostic_time += delta
+	if OS.is_debug_build() and diagnostic_time >= 10:
+		diagnostic_time = 0
+		print("LittleGod runtime: tick=", world.get("tick", -1), " paused=", paused, " menu=", in_menu, " fps=", Engine.get_frames_per_second())
 	if "--capture" in OS.get_cmdline_user_args():
 		capture_frames += 1
 		if capture_frames == 120:

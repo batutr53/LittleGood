@@ -10,7 +10,7 @@ The tools and local outputs already exist on this computer. No manual scene setu
 - Desktop build: `D:\LittleGod\builds\windows\LittleGod.exe`
 - Android debug APK: `D:\LittleGod\builds\android\LittleGod-debug.apk`
 
-`Launch LittleGod.cmd` starts the Windows build, falling back to the editor runtime if the build is absent.
+`Launch LittleGod.cmd` starts the project with the verified official Godot runtime. Windows App Control blocked the exported console launcher during testing, so standalone Windows-package execution is not verified on this machine. The project itself runs successfully through Godot. No policy or security control was bypassed.
 
 ## Reproduce checks and exports
 
