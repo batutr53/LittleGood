@@ -35,6 +35,9 @@ func finish() -> void:
 	var report = {"platform": OS.get_name(), "renderer": RenderingServer.get_current_rendering_method(), "quality": "economy" if game.view.low_quality else "smooth", "wall_seconds": elapsed, "frames": frame_times.size(), "average_fps": frame_times.size() / elapsed, "frame_p50_ms": frame_times[int(frame_times.size() * .5)], "frame_p95_ms": frame_times[mini(frame_times.size() - 1, int(frame_times.size() * .95))], "peak_process_ms": peak_process, "draw_calls": Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME), "peak_draw_calls": peak_draws, "static_memory_mb": Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0, "video_memory_mb": Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED) / 1048576.0, "nodes": Performance.get_monitor(Performance.OBJECT_NODE_COUNT), "creatures": game.world.creatures.size(), "simulation_ticks": game.world.tick, "simulation_average_ms": game.simulation_total_ms / maxf(1, game.simulation_samples), "simulation_peak_ms": game.simulation_peak_ms, "terrain_last_build_ms": game.view.terrain.build_ms, "terrain_rebuilds": game.view.terrain.rebuilds, "first_frame_ms": first_frame_ms, "atlas_size": [1024,1024], "effects": game.view.effects.size()}
 	var f = FileAccess.open(destination, FileAccess.WRITE)
 	report["control_scene"] = game.benchmark_control
+	report["pipeline"] = game.pipeline
+	report["props_sync_ms"] = game.view.inhabitants.sync_ms
+	report["props_created_total"] = game.view.inhabitants.props_created
 	f.store_string(JSON.stringify(report, "\t"))
 	f.close()
 	print("PHASE2_PROFILE ", JSON.stringify(report))

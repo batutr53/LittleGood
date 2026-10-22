@@ -57,6 +57,7 @@ func pick(pos: Vector2) -> int:
 
 func invalidate() -> void:
 	scenery_signature = ""
+	terrain_signature = ""
 	selected_creature = -1
 	selected_identity = -1
 

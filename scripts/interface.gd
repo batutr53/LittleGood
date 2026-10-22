@@ -13,6 +13,10 @@ var veil: ColorRect
 var body_font: FontVariation
 var chapter: Button
 var speed_button: Button
+var page = "main"
+var loading_bar: ProgressBar
+var toast_until = 0
+var modal_base_y = 254.0
 
 func ui_font() -> Font:
 	if body_font == null:
@@ -22,14 +26,31 @@ func ui_font() -> Font:
 	return body_font
 
 const TEXT = {
+"loading": ["Your world is waking", "Dünyan uyanıyor"],
+"loading_body": ["Remembering the changes in your world…", "Dünyandaki değişimler hatırlanıyor…"],
+"recovered": ["Your planet was recovered from a safe local copy.", "Gezegenin güvenli bir yerel kopyadan kurtarıldı."],
+"beta": ["Beta tools & privacy", "Beta araçları ve gizlilik"],
+"privacy": ["Diagnostics stay on this device. No names or identifiers. Nothing is uploaded.", "Tanılama bu cihazda kalır. İsim veya kimlik bilgisi içermez. Hiçbir şey yüklenmez."],
+"diagnostics": ["Local diagnostics: %s", "Yerel tanılama: %s"],
+"export": ["Preview optional feedback export", "İsteğe bağlı geri bildirim dışa aktarımını gör"],
+"clear_data": ["Clear diagnostic data", "Tanılama verilerini temizle"],
+"cleared": ["Diagnostic data cleared. Your planet is unchanged.", "Tanılama temizlendi. Gezegenin değişmedi."],
+"copy": ["Copy anonymized feedback", "Anonim geri bildirimi kopyala"],
+"copied": ["Feedback copied. Share it only if you choose.", "Geri bildirim kopyalandı. Yalnızca istersen paylaş."],
+"pulse": ["Explore your world", "Dünyanı keşfet"],
+"visit": ["Visit %s · %d people", "%s yerleşimini ziyaret et · %d kişi"],
+"care": ["Care for dry land · %d%% moisture", "Kuru toprağı besle · %d%% nem"],
+"grow_habitat": ["Grow a forest · shape a habitat", "Orman büyüt · bir yaşam alanı oluştur"],
+"watch": ["Meet %s · watch its habits", "%s ile tanış · davranışlarını izle"],
+"pulse_body": ["A little observation. A thoughtful gift. A new story.", "Biraz gözlem. Düşünceli bir armağan. Yeni bir hikâye."],
 "habitat_full": ["Wildlife habitat is full. Meet your existing neighbors.", "Canlıların yaşam alanı dolu. Mevcut komşularınla tanış."],
 "return_growth": ["%d new chapters · %+d creatures · %+d people\n%d new communities", "%d yeni bölüm · %+d canlı · %+d insan\n%d yeni topluluk"],
-"guide_world": ["Your world has stories → visit your neighbors", "Dünyanın hikâyeleri var → komşularını ziyaret et"],
+"guide_world": ["Your world has stories → explore", "Dünyanın hikâyeleri var → keşfet"],
 "neighbors": ["My neighbors", "Komşularım"],
 "orchard": ["Orchard keepers · cultivate the home meadow", "Bahçeciler · yuvalarındaki çayırı büyütür"],
 "riverfolk": ["Riverfolk · gather more food in the rain", "Nehir halkı · yağmurda daha çok besin toplar"],
 "stargazers": ["Stargazers · learn faster under clear skies", "Yıldız gözlemcileri · açık gökte daha hızlı öğrenir"],
-"guide_rain": ["1 · Wake the meadow → Rain, then touch land", "1 · Çayırı uyandır → Yağmur, sonra toprağa dokun"],
+"guide_rain": ["Wake the meadow · tap to begin", "Çayırı uyandır · başlamak için dokun"],
 "guide_creature": ["2 · Meet a little neighbor → tap to find one", "2 · Küçük bir komşuyla tanış → bulmak için dokun"],
 "guide_bloom": ["Follow the rain → discover a desert bloom", "Yağmuru izle → çöldeki çiçeklenmeyi keşfet"],
 "guide_friend": ["A friendship → bring wildlife beside the camp", "Bir dostluk → obanın yanına canlı getir"],
@@ -242,6 +263,7 @@ func icon_button(key: String, action: Callable) -> Button:
 	return b
 
 func choose_power(i: int) -> void:
+	toast_until = 0
 	game.power = -1 if game.power == i or i < 0 else i
 	hint.text = t("hint_short") if game.power == -1 else t("select") % t(POWER_KEYS[i])
 	for n in range(6):
@@ -263,7 +285,9 @@ func refresh() -> void:
 	if speed_button: speed_button.text = str(game.speed) + "×"
 
 func popup(title: String) -> VBoxContainer:
-	game.dragging = false
+	game.reset_gesture()
+	game.in_menu = true
+	world_controls(false)
 	if modal: modal.queue_free()
 	if not is_instance_valid(veil):
 		veil = ColorRect.new()
@@ -272,6 +296,7 @@ func popup(title: String) -> VBoxContainer:
 	modal = PanelContainer.new()
 	modal.add_theme_stylebox_override("panel", style(Color("173239"), 28))
 	place(modal, Rect2(34, 254 + maxf(0, get_viewport().get_visible_rect().size.y - 1280) * .5, 652, 710))
+	modal_base_y = modal.position.y
 	var v = VBoxContainer.new()
 	v.add_theme_constant_override("separation", 16)
 	modal.add_child(v)
@@ -286,12 +311,15 @@ func close() -> void:
 	if modal: modal.queue_free(); modal = null
 	if is_instance_valid(veil): veil.queue_free(); veil = null
 	game.in_menu = false
+	world_controls(true)
 	refresh()
 
 func add_close(v: VBoxContainer) -> void:
 	v.add_child(button(t("close"), close, true))
 
 func main_menu() -> void:
+	page = "main"
+	world_controls(false)
 	game.in_menu = true
 	var v = popup("LittleGod")
 	v.add_child(label(t("universe"), 16, Color("a1c9b2")))
@@ -310,14 +338,18 @@ func main_menu() -> void:
 		atlas.region = Rect2((frame % 4) * 256, (frame / 4) * 256, 256, 256)
 		picture.texture = atlas
 		artwork.add_child(picture)
-	if FileAccess.file_exists(Persistence.PATH): v.add_child(button(t("continue"), game.restore, true))
+	if Persistence.has_save(game.save_path): v.add_child(button(t("continue"), game.restore, true))
 	v.add_child(button(t("new"), creation, true))
 	v.add_child(button("English / Türkçe", func(): toggle_language(); main_menu()))
+	v.add_child(button(t("beta"), beta_tools))
 
 func creation() -> void:
+	page = "creation"
 	var v = popup(t("new"))
 	v.add_child(label(t("name")))
 	var name_input = LineEdit.new()
+	name_input.name = "PlanetName"
+	name_input.add_theme_font_override("font", ui_font())
 	name_input.text = "Lumi"
 	name_input.max_length = 32
 	name_input.custom_minimum_size.y = 64
@@ -325,11 +357,13 @@ func creation() -> void:
 	v.add_child(name_input)
 	v.add_child(label(t("seed")))
 	var seed_input = LineEdit.new()
+	seed_input.name = "WorldSeed"
+	seed_input.add_theme_font_override("font", ui_font())
 	seed_input.custom_minimum_size.y = 64
 	seed_input.placeholder_text = "2026"
 	seed_input.add_theme_font_size_override("font_size", 24)
 	v.add_child(seed_input)
-	v.add_child(label(t("replace"), 18))
+	if Persistence.has_save(game.save_path): v.add_child(label(t("replace"), 18))
 	v.add_child(button(t("create"), func():
 		var chosen_seed = int(seed_input.text) if seed_input.text.is_valid_int() else int(Time.get_unix_time_from_system())
 		game.new_planet(chosen_seed, name_input.text.strip_edges() if not name_input.text.strip_edges().is_empty() else "Lumi")
@@ -337,6 +371,8 @@ func creation() -> void:
 	v.add_child(button(t("back"), main_menu))
 
 func menu() -> void:
+	page = "menu"
+	game.checkpoint("menu")
 	game.in_menu = true
 	var v = popup(t("menu"))
 	var grid = GridContainer.new()
@@ -356,13 +392,17 @@ func toggle_language() -> void:
 	build()
 
 func settings() -> void:
+	page = "settings"
 	var v = popup(t("settings"))
 	v.add_child(button("English / Türkçe", func(): toggle_language(); settings()))
 	v.add_child(button(t("audio") + "  ·  " + t("on" if game.audio.enabled else "off"), func(): game.audio.set_enabled(not game.audio.enabled); game.save_settings(); settings()))
 	v.add_child(button(t("quality") % t("economy" if game.view.low_quality else "smooth"), func(): game.view.set_quality(not game.view.low_quality); game.save_settings(); settings()))
 	v.add_child(button(t("vibration") + "  ·  " + t("on" if game.haptics else "off"), func(): game.haptics = not game.haptics; game.save_settings(); settings()))
 	v.add_child(button(t("theme"), func():
-		if game.world.xp >= 40: game.world.theme = 1 - int(game.world.theme)))
+		if not game.world.is_empty() and game.world.xp >= 40:
+			game.world.theme = 1 - int(game.world.theme)
+			game.schedule_save()))
+	v.add_child(button(t("beta"), beta_tools))
 	add_close(v)
 
 func scroll_text(v: VBoxContainer, text: String) -> void:
@@ -376,6 +416,7 @@ func scroll_text(v: VBoxContainer, text: String) -> void:
 	sc.add_child(l)
 
 func journal() -> void:
+	page = "journal"
 	var v = popup(t("journal") + "  " + str(game.world.discoveries.size()) + "/6")
 	var scroll = ScrollContainer.new()
 	scroll.custom_minimum_size.y = 470
@@ -422,6 +463,7 @@ func event_text(e: Dictionary) -> String:
 	return text
 
 func history() -> void:
+	page = "history"
 	var v = popup(t("history"))
 	var text = ""
 	var events = game.world.events.duplicate()
@@ -431,6 +473,7 @@ func history() -> void:
 	add_close(v)
 
 func achievements() -> void:
+	page = "achievements"
 	var v = popup(t("achievements"))
 	v.add_child(label(t("chapter_progress") % [game.world.living.findings.size(), game.world.living.observed.size()], 22))
 	v.add_child(button(t(LivingStories.objective(game.world)), func(): close(); follow_chapter()))
@@ -441,6 +484,7 @@ func achievements() -> void:
 	add_close(v)
 
 func away(report: Dictionary) -> void:
+	page = "away"
 	var v = popup(t("away"))
 	v.add_child(label(t("away_body") % report.minutes, 22))
 	if report.has("new_chapters"):
@@ -454,6 +498,10 @@ func away(report: Dictionary) -> void:
 func inspect(cell: int) -> void:
 	var c = game.world.cells[cell]
 	hint.text = t("inspect") % [Biomes.title(int(c.biome), language), int(c.moisture * 100), int(c.plants * 100)]
+	for s in game.world.settlements:
+		if int(s.cell) == cell:
+			inspect_settlement(s)
+			return
 	for cr in game.world.creatures:
 		if int(cr.cell) == cell:
 			LivingStories.observe(game.world, cr)
@@ -465,9 +513,19 @@ func inspect(cell: int) -> void:
 			hint.text = s.given_name + " · " + str(int(s.population)) + " · " + stages()[int(s.stage)] + "\n" + t(s.custom)
 
 func show_creature(cr: Dictionary) -> void:
+	toast_until = 0
+	game.note("first_creature", int(cr.species), true)
+	game.schedule_save()
 	hint.text = cr.given_name + " · " + species(int(cr.species)) + "\n" + t(cr.trait)
 
+func inspect_settlement(s: Dictionary) -> void:
+	toast_until = 0
+	game.note("first_settlement", int(s.stage), true)
+	game.schedule_save()
+	hint.text = s.given_name + " · " + str(int(s.population)) + " · " + stages()[int(s.stage)] + "\n" + t(s.custom)
+
 func neighbors() -> void:
+	page = "neighbors"
 	var v = popup(t("neighbors"))
 	var scroll = ScrollContainer.new()
 	scroll.custom_minimum_size.y = 470
@@ -496,8 +554,7 @@ func follow_chapter() -> void:
 	var w = game.world
 	var goal = LivingStories.objective(w)
 	if goal == "guide_world":
-		game.in_menu = true
-		neighbors()
+		world_pulse()
 		return
 	var cell = 0
 	if goal == "guide_creature":
@@ -520,6 +577,11 @@ func follow_chapter() -> void:
 			if int(w.cells[i].biome) == (2 if goal != "guide_grove" else 1):
 				cell = i
 				break
+		if goal == "guide_grove":
+			for cr in w.creatures:
+				if int(cr.species) == 1:
+					cell = int(cr.cell)
+					break
 	game.view.selected = cell
 	game.view.zoom = 1.15
 	game.view.pan = -game.view.project(w.cells[cell]) * game.view.zoom
@@ -531,3 +593,114 @@ func follow_chapter() -> void:
 
 func toast(text: String) -> void:
 	hint.text = text
+	toast_until = Time.get_ticks_msec() + 8000
+
+func _process(_delta: float) -> void:
+	if toast_until > 0 and Time.get_ticks_msec() > toast_until and not game.in_menu:
+		toast_until = 0
+		hint.text = t("hint_short")
+	if is_instance_valid(modal):
+		var keyboard = DisplayServer.virtual_keyboard_get_height() if OS.has_feature("mobile") else 0
+		var scale_factor = get_viewport().get_visible_rect().size.x / maxf(1, DisplayServer.window_get_size().x)
+		modal.position.y = minf(modal_base_y, maxf(24, get_viewport().get_visible_rect().size.y - keyboard * scale_factor - modal.size.y - 24)) if keyboard > 0 else modal_base_y
+
+func blocks_world(pos: Vector2) -> bool:
+	if game.in_menu or game.loading: return true
+	if not is_instance_valid(root): return false
+	for control in root.get_children():
+		if control is Control and control.visible and control.mouse_filter != Control.MOUSE_FILTER_IGNORE and control.get_global_rect().has_point(pos): return true
+	return false
+
+func world_controls(value: bool) -> void:
+	if not is_instance_valid(root): return
+	for child in root.get_children():
+		if child is Control and child != modal and child != veil: child.visible = value
+
+func loading_screen() -> void:
+	page = "loading"
+	var v = popup(t("loading"))
+	v.add_child(label(t("loading_body"), 23))
+	loading_bar = ProgressBar.new()
+	loading_bar.custom_minimum_size = Vector2(0, 22)
+	loading_bar.show_percentage = false
+	v.add_child(loading_bar)
+
+func loading_progress(value: float) -> void:
+	if is_instance_valid(loading_bar): loading_bar.value = value * 100
+
+func beta_tools() -> void:
+	page = "beta"
+	var v = popup(t("beta"))
+	v.add_child(label(t("privacy"), 20))
+	v.add_child(button(t("diagnostics") % t("on" if game.diagnostics.enabled else "off"), func():
+		game.diagnostics.finish()
+		game.diagnostics.enabled = not game.diagnostics.enabled
+		game.save_settings()
+		beta_tools()))
+	v.add_child(button(t("export"), feedback_preview, true))
+	v.add_child(button(t("clear_data"), func(): game.diagnostics.clear(); toast(t("cleared")); beta_tools()))
+	v.add_child(button(t("back"), func():
+		if game.has_player_world: settings()
+		else: main_menu()))
+
+func feedback_preview() -> void:
+	page = "beta"
+	var v = popup(t("export"))
+	var text = game.diagnostics.export_feedback()
+	var field = TextEdit.new()
+	field.text = text
+	field.editable = false
+	field.custom_minimum_size.y = 380
+	field.add_theme_font_override("font", ui_font())
+	field.add_theme_font_size_override("font_size", 17)
+	v.add_child(field)
+	v.add_child(button(t("copy"), func(): DisplayServer.clipboard_set(text); toast(t("copied"))))
+	v.add_child(button(t("back"), beta_tools))
+
+func world_pulse() -> void:
+	page = "pulse"
+	var w = game.world
+	var v = popup(t("pulse"))
+	v.add_child(label(t("pulse_body"), 21))
+	var driest = -1
+	for i in range(w.cells.size()):
+		if w.cells[i].biome != 6 and (driest < 0 or w.cells[i].moisture < w.cells[driest].moisture): driest = i
+	if driest >= 0:
+		var gift = 4 if w.cells[driest].moisture < .55 else 1
+		if gift == 1:
+			for i in range(w.cells.size()):
+				if w.cells[i].biome == 0 and not w.settlements.any(func(s): return int(s.cell) == i): driest = i; break
+		var title = t("care") % int(w.cells[driest].moisture * 100) if gift == 4 else t("grow_habitat")
+		v.add_child(button(title, func():
+			close()
+			choose_power(gift)
+			game.view.selected = driest
+			game.view.zoom = .88
+			game.view.pan = Vector2.ZERO))
+	if not w.creatures.is_empty():
+		var index = 0
+		for i in range(w.creatures.size()):
+			if not w.living.observed.has(int(w.creatures[i].identity)): index = i; break
+		var cr = w.creatures[index]
+		v.add_child(button(t("watch") % cr.given_name, func():
+			close()
+			game.power = -1
+			game.view.focus_creature(index)
+			game.view.zoom = 1.15
+			game.view.pan = -game.view.project(w.cells[int(cr.cell)]) * 1.15
+			LivingStories.observe(w, cr)
+			show_creature(cr)
+			refresh()))
+	if not w.settlements.is_empty():
+		var home = w.settlements[0]
+		v.add_child(button(t("visit") % [home.given_name, int(home.population)], func():
+			close()
+			game.power = -1
+			game.view.selected = int(home.cell)
+			game.view.selected_creature = -1
+			game.view.selected_identity = -1
+			game.view.zoom = 1.15
+			game.view.pan = -game.view.project(w.cells[int(home.cell)]) * 1.15
+			inspect_settlement(home)))
+	v.add_child(button(t("neighbors"), neighbors))
+	add_close(v)

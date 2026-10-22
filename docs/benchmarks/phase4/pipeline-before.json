@@ -1,0 +1,46 @@
+{
+	"assets": {
+		"lora.ttf": {
+			"already_cached": false,
+			"ms": 0.945
+		},
+		"nunito.ttf": {
+			"already_cached": false,
+			"ms": 3.033
+		},
+		"rain-loop.wav": {
+			"already_cached": false,
+			"ms": 0.353
+		},
+		"world-atlas.png": {
+			"already_cached": false,
+			"ms": 11.483
+		}
+	},
+	"headless": true,
+	"instantiate_ms": 0.096,
+	"offline_480_ms": 163.642,
+	"offline_ticks": 480,
+	"platform": "Windows",
+	"ready_ms": 16.182,
+	"restore_parse_ms": 2.11,
+	"save_ms": 3.108,
+	"scene_load_ms": 72.984,
+	"static_after_mb": 41.0066957473755,
+	"static_before_mb": 25.026686668396,
+	"terrain_ms": [
+		4.289,
+		3.903,
+		3.818,
+		4.302,
+		4.128,
+		3.901,
+		4.015,
+		4.317,
+		3.994,
+		4.433,
+		3.909,
+		4.291
+	],
+	"world_generation_ms": 0.652
+}

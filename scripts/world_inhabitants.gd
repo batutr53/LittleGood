@@ -8,6 +8,10 @@ var animals: Array = []
 var signature = ""
 var time = 0.0
 var position_memory: Dictionary = {}
+var prop_cache: Dictionary = {}
+var capture_key = ""
+var sync_ms = 0.0
+var props_created = 0
 
 func _ready() -> void:
 	y_sort_enabled = true
@@ -20,43 +24,66 @@ func add_prop(frame: int, position_value: Vector2, size: float, sway: bool = fal
 	sprite.position = position_value
 	if sway and not view.low_quality: sprite.material = GameArt.foliage()
 	props.add_child(sprite)
+	if not capture_key.is_empty(): prop_cache[capture_key].sprites.append(sprite)
+	props_created += 1
 	return sprite
 
+func begin_props(key: String, value: String) -> bool:
+	capture_key = key
+	if prop_cache.has(key) and prop_cache[key].signature == value: return false
+	if prop_cache.has(key):
+		for sprite in prop_cache[key].sprites:
+			props.remove_child(sprite)
+			sprite.queue_free()
+	prop_cache[key] = {"signature": value, "sprites": []}
+	return true
+
 func sync(w: Dictionary) -> void:
-	var new_signature = str(w.seed) + ":" + str(view.low_quality)
-	for c in w.cells: new_signature += str(c.biome) + str(int(c.plants * 3))
-	for s in w.settlements: new_signature += ":" + str(s.cell) + str(s.stage)
-	if signature != new_signature:
-		signature = new_signature
-		for child in props.get_children(): child.queue_free()
-		for c in w.cells:
-			var p = view.project(c)
-			var b = int(c.biome)
-			var d = c.detail
-			var occupied = false
-			for s in w.settlements:
-				var home = w.cells[int(s.cell)]
-				if absf(home.x - c.x) <= 1 and absf(home.y - c.y) <= 1: occupied = true
-				var separation = p - view.project(home)
-				# Tall foreground props must not conceal the player's settlement target.
-				if absf(separation.x) < 65 and separation.y > -10 and separation.y < 80: occupied = true
-			if occupied: continue
-			if b == 1 and c.plants > .25 and (d > .22 or c.get("last_gift", -1) == 1): add_prop(12 if d > .5 else 7, p, 40 + c.plants * 14 + d * 9, true)
-			elif b == 0 and d > .87 and c.plants > .55: add_prop(12, p, 42, true)
-			elif b == 3 and (d > .62 or c.get("last_gift", -1) == 2): add_prop(6, p, 64 + d * 27)
-			elif b == 4:
-				if d > .72: add_prop(6, p, 73 + d * 21).modulate = Color("e1f5f4")
-				elif d < .18: add_prop(7, p, 35, true).modulate = Color("c4dfd8")
-			elif b == 2 and d > .84: add_prop(10, p, 48 + d * 8, true)
-			elif b == 5 and d > .84: add_prop(11, p, 27)
-			elif b == 0 and d < .07: add_prop(11, p, 26)
+	var start = Time.get_ticks_usec()
+	var valid: Dictionary = {}
+	var base = str(w.seed) + ":" + str(view.low_quality)
+	for i in range(w.cells.size()):
+		var c = w.cells[i]
+		var p = view.project(c)
+		var b = int(c.biome)
+		var d = c.detail
+		var occupied = false
 		for s in w.settlements:
-			var p = view.project(w.cells[int(s.cell)])
-			if s.stage == 0: add_prop(13, p, 50)
-			else:
-				add_prop(8 if s.stage == 1 else 9, p, 50 if s.stage == 1 else 68)
-				add_prop(8, p + Vector2(-30, 12), 35)
-				if s.stage == 2: add_prop(8, p + Vector2(31, 15), 39)
+			var home = w.cells[int(s.cell)]
+			var separation = p - view.project(home)
+			if (absf(home.x - c.x) <= 1 and absf(home.y - c.y) <= 1) or (absf(separation.x) < 65 and separation.y > -10 and separation.y < 80): occupied = true
+		var key = "c:" + str(i)
+		valid[key] = true
+		var value = base + ":%d:%d:%d:%d:%s" % [b, int(c.height * 1000), int(c.plants * 8), int(c.get("last_gift", -1)), str(occupied)]
+		value += str(c.plants > .25) + str(c.plants > .55)
+		if not begin_props(key, value) or occupied: continue
+		if b == 1 and c.plants > .25 and (d > .22 or c.get("last_gift", -1) == 1): add_prop(12 if d > .5 else 7, p, 40 + c.plants * 14 + d * 9, true)
+		elif b == 0 and d > .87 and c.plants > .55: add_prop(12, p, 42, true)
+		elif b == 3 and (d > .62 or c.get("last_gift", -1) == 2): add_prop(6, p, 64 + d * 27)
+		elif b == 4:
+			if d > .72: add_prop(6, p, 73 + d * 21).modulate = Color("e1f5f4")
+			elif d < .18: add_prop(7, p, 35, true).modulate = Color("c4dfd8")
+		elif b == 2 and d > .84: add_prop(10, p, 48 + d * 8, true)
+		elif b == 5 and d > .84: add_prop(11, p, 27)
+		elif b == 0 and d < .07: add_prop(11, p, 26)
+	for s in w.settlements:
+		var key = "s:" + str(s.cell)
+		valid[key] = true
+		var c = w.cells[int(s.cell)]
+		if not begin_props(key, base + ":" + str(s.stage) + ":" + str(c.height)): continue
+		var p = view.project(c)
+		if s.stage == 0: add_prop(13, p, 50)
+		else:
+			add_prop(8 if s.stage == 1 else 9, p, 50 if s.stage == 1 else 68)
+			add_prop(8, p + Vector2(-30, 12), 35)
+			if s.stage == 2: add_prop(8, p + Vector2(31, 15), 39)
+	for key in prop_cache.keys():
+		if not valid.has(key):
+			for sprite in prop_cache[key].sprites:
+				props.remove_child(sprite)
+				sprite.queue_free()
+			prop_cache.erase(key)
+	capture_key = ""
 	while animals.size() < w.creatures.size():
 		var animal = GameArt.sprite(0, 31)
 		add_child(animal)
@@ -69,6 +96,9 @@ func sync(w: Dictionary) -> void:
 		walkers.append(villager)
 	while walkers.size() > desired_walkers: walkers.pop_back().queue_free()
 
+	signature = base
+	sync_ms = (Time.get_ticks_usec() - start) / 1000.0
+
 func animate(w: Dictionary, delta: float) -> void:
 	time += delta
 	var decay = 1 - exp(-delta * 2.3)
@@ -80,9 +110,9 @@ func animate(w: Dictionary, delta: float) -> void:
 		var grazing = cr.hunger < .5 and sin(time * .65 + phase) > .45
 		var radius = 3.0 if grazing else (15.0 if cr.get("trait") == "explorer" else 10.0)
 		var target = p + Vector2(sin(time * .42 + phase) * radius, cos(time * .38 + phase) * radius * .42)
+		if int(w.weather) == 1: target = target.lerp(p + Vector2(-4, 3), .7)
 		for home in w.settlements:
 			if int(home.cell) == int(cr.cell): target += Vector2(23 if i % 2 == 0 else -23, 12)
-		if int(w.weather) == 1: target = target.lerp(p + Vector2(-4, 3), .7)
 		var identity = int(cr.get("identity", i))
 		var previous = position_memory.get(identity, target)
 		var next = previous.lerp(target, decay)
