@@ -1,0 +1,76 @@
+class_name Persistence
+extends RefCounted
+
+const PATH = "user://planet.json"
+const MAX_OFFLINE_SECONDS = 28800
+
+static func save_world(w: Dictionary, path: String = PATH) -> bool:
+	w.saved_at = Time.get_unix_time_from_system()
+	var payload = JSON.stringify(w)
+	var envelope = JSON.stringify({"checksum": payload.sha256_text(), "payload": payload})
+	var f = FileAccess.open(path + ".tmp", FileAccess.WRITE)
+	if f == null: return false
+	f.store_string(envelope)
+	f.flush()
+	f.close()
+	if FileAccess.file_exists(path):
+		DirAccess.copy_absolute(path, path + ".bak")
+	return DirAccess.rename_absolute(path + ".tmp", path) == OK
+
+static func validate(w: Variant) -> bool:
+	if not w is Dictionary: return false
+	for key in ["version", "seed", "name", "tick", "cells", "creatures", "settlements", "events", "discoveries", "achievements", "energy", "xp", "weather", "rng_state", "saved_at", "theme"]:
+		if not w.has(key): return false
+	if w.version != 1 or not w.cells is Array or w.cells.is_empty() or w.cells.size() > 400: return false
+	if not w.name is String or w.name.length() > 32 or not w.rng_state is String or not w.rng_state.is_valid_int(): return false
+	for key in ["seed", "tick", "energy", "xp", "weather", "saved_at", "theme"]:
+		if not (w[key] is float or w[key] is int) or not is_finite(float(w[key])): return false
+	if w.tick < 0 or w.energy < 0 or w.energy > 100 or w.weather < 0 or w.weather > 3: return false
+	for key in ["events", "discoveries", "achievements"]:
+		if not w[key] is Array: return false
+	if w.events.size() > 160: return false
+	for e in w.events:
+		if not e is Dictionary or not e.get("key") is String or not e.has("tick"): return false
+	for s in w.discoveries:
+		if not (s is float or s is int) or s < 0 or s > 5: return false
+	if not w.creatures is Array or w.creatures.size() > 100 or not w.settlements is Array or w.settlements.size() > 10: return false
+	for c in w.cells:
+		if not c is Dictionary: return false
+		for key in ["x", "y", "biome", "height", "moisture", "plants", "resources", "temperature", "detail"]:
+			if not c.has(key) or not (c[key] is float or c[key] is int) or not is_finite(float(c[key])): return false
+		if c.biome < 0 or c.biome > 6: return false
+	for cr in w.creatures:
+		if not cr is Dictionary: return false
+		for key in ["cell", "species", "hunger", "phase"]:
+			if not cr.has(key) or not (cr[key] is float or cr[key] is int): return false
+		if cr.cell < 0 or cr.cell >= w.cells.size() or cr.species < 0 or cr.species > 5: return false
+	for s in w.settlements:
+		for key in ["cell", "population", "food", "stage", "tech", "blessing"]:
+			if not s.has(key) or not (s[key] is float or s[key] is int): return false
+		if s.cell < 0 or s.cell >= w.cells.size() or s.stage < 0 or s.stage > 2: return false
+	return true
+
+static func load_world(path: String = PATH, backup: bool = true) -> Dictionary:
+	if FileAccess.file_exists(path):
+		var parser = JSON.new()
+		var parse_error = parser.parse(FileAccess.get_file_as_string(path))
+		var envelope = parser.data if parse_error == OK else null
+		if envelope is Dictionary and envelope.get("payload") is String and envelope.get("checksum") == envelope.payload.sha256_text():
+			if parser.parse(envelope.payload) == OK and validate(parser.data): return parser.data
+	return load_world(path + ".bak", false) if backup else {}
+
+static func offline(w: Dictionary, now: float) -> Dictionary:
+	var elapsed = clampf(now - float(w.saved_at), 0, MAX_OFFLINE_SECONDS)
+	var count = mini(480, int(elapsed / 60))
+	var previous = w.events.duplicate(true)
+	var rng = RandomNumberGenerator.new()
+	rng.state = int(w.rng_state)
+	for i in range(count):
+		Ecosystem.tick(w, rng)
+		Civilization.tick(w)
+	w.rng_state = str(rng.state)
+	w.saved_at = now
+	var changes: Array = []
+	for e in w.events:
+		if not previous.has(e): changes.append(e)
+	return {"minutes": int(elapsed / 60), "ticks": count, "events": changes}

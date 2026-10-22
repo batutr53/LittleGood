@@ -1,0 +1,16 @@
+[
+ {"name":"game","arguments":{"action":"set","path":".","props":{"paused":true}}},
+ {"name":"game","arguments":{"action":"eval","expressions":["world.tick","get_node('LivingWorld').zoom","get_node('LivingWorld').pan"]}},
+ {"name":"input","arguments":{"action":"send","steps":[{"click_text":"+"},{"drag":[[350,500],[390,530]],"seconds":0.3},{"click_text":"≈  Water  · 12"},{"click":[360,580]},{"wait":0.3}]}},
+ {"name":"game","arguments":{"action":"eval","expressions":["world.energy","get_node('LivingWorld').zoom","get_node('LivingWorld').pan","get_node('LivingWorld').selected","power"]}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"menu"}},
+ {"name":"input","arguments":{"action":"send","steps":[{"click_text":"Settings"},{"click_text":"English / Türkçe"},{"wait":0.2}]}},
+ {"name":"game","arguments":{"action":"eval","expression":"get_node('Interface').language"}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"journal"}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/journal-tr.png"},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"close"}},
+ {"name":"game","arguments":{"action":"call","path":"Interface","method":"toggle_language"}},
+ {"name":"game","arguments":{"action":"call","path":".","method":"manual_save"}},
+ {"name":"game","arguments":{"action":"perf","sample_seconds":2}},
+ {"name":"run","arguments":{"action":"errors"}}
+]

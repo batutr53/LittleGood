@@ -1,0 +1,11 @@
+# Art direction
+
+LittleGod is a cozy miniature diorama: jade forest, soft mint meadow, turquoise water, warm sandstone, slate mountains, pale snow, and smoky teal wetlands. The sky is deep blue with soft atmospheric glow. Cream typography and sage buttons keep the living island central.
+
+Terrain uses a 2:1 isometric projection with layered earthen sides. Trees use a transparent original image-generated sprite prepared at 256 px; deterministic procedural alternatives remain available. Rocks, cacti, reeds, flowers, mountain caps, houses, six species, clouds, rain, and gift particles use reusable Godot vector drawing. Creature silhouettes differ through ears, horns, wings, tails, colors, and idle motion. They are independently animated and respond to saved simulation positions.
+
+The tree was generated using the built-in imagegen tool, without an external paid API or API key. Its prompt specified an isolated jade tree, rounded gouache/clay foliage, warm trunk, clean alpha, and no scene backdrop. The source image remains in the Codex generated-images directory; the production-sized PNG is copied into `assets/` and used by the renderer. Asset preparation and synthesized WAV generation are reproducible through `devtools/prepare_assets.py` when the original source image is present. The committed tree PNG is sufficient to run and export the game.
+
+Animations: tree foliage changes with a four-Hz cached sway; water ripples with the same terrain cache; creatures bob and interpolate movement each frame; houses emit drifting smoke; sky shader moves slowly; clouds, rain, gift rings and sparks animate separately. Day/night adds a gentle lighting tint. Particle counts and sprite resolution are bounded.
+
+This milestone has a cohesive small-island identity, but procedural tile edges remain visible. More shoreline variants, terrain blending, richer creature sprites, custom vector icons, and hand-authored UI details remain polish tasks. No full-screen illustration substitutes for gameplay.

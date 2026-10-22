@@ -1,0 +1,1 @@
+[{"name":"exec","arguments":{"action":"editor","code":"var s = editor.get_editor_settings()\ns.set_setting(\"export/android/android_sdk_path\", \"C:/Users/batua/AppData/Local/Android/Sdk\")\ns.set_setting(\"export/android/java_sdk_path\", \"D:/LittleGod/tools/jdk/jdk-17.0.20.1+1\")\nreturn \"Android paths configured\""}},{"name":"files","arguments":{"action":"rescan"}}]
