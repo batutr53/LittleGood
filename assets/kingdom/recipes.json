@@ -218,5 +218,80 @@
     "level": 15,
     "ticks": 4,
     "building": "forge"
+  },
+  {
+    "id": "militia_kit",
+    "name": [
+      "Militia kit",
+      "Milis takımı"
+    ],
+    "description": [
+      "11 attack · 3 armor · range 48",
+      "11 saldırı · 3 zırh · menzil 48"
+    ],
+    "cost": {
+      "iron": 1,
+      "wood": 2
+    },
+    "effects": {
+      "attack": 11,
+      "defense": 3,
+      "range": 48,
+      "speed": 100
+    },
+    "category": "military",
+    "level": 17,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "spearman_kit",
+    "name": [
+      "Spearman kit",
+      "Mızrakçı takımı"
+    ],
+    "description": [
+      "14 attack · 2 armor · range 78",
+      "14 saldırı · 2 zırh · menzil 78"
+    ],
+    "cost": {
+      "iron": 1,
+      "wood": 2
+    },
+    "effects": {
+      "attack": 14,
+      "defense": 2,
+      "range": 78,
+      "speed": 90
+    },
+    "category": "military",
+    "level": 17,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "archer_kit",
+    "name": [
+      "Archer kit",
+      "Okçu takımı"
+    ],
+    "description": [
+      "10 attack · 1 armor · range 190",
+      "10 saldırı · 1 zırh · menzil 190"
+    ],
+    "cost": {
+      "iron": 1,
+      "wood": 2
+    },
+    "effects": {
+      "attack": 10,
+      "defense": 1,
+      "range": 190,
+      "speed": 85
+    },
+    "category": "military",
+    "level": 17,
+    "ticks": 4,
+    "building": "forge"
   }
 ]

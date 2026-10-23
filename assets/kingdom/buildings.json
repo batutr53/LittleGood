@@ -229,5 +229,81 @@
     ],
     "site": "land",
     "limit": 2
+  },
+  {
+    "id": "barracks",
+    "name": [
+      "Border Barracks",
+      "Sınır Kışlası"
+    ],
+    "description": [
+      "An assigned instructor trains citizens using real equipment.",
+      "Atanmış eğitmen gerçek donanımla sakinleri eğitir."
+    ],
+    "level": 16,
+    "cost": {
+      "wood": 12,
+      "stone": 8,
+      "gold": 2
+    },
+    "ticks": 6,
+    "slots": 1,
+    "output": "",
+    "role": [
+      "Instructor",
+      "Eğitmen"
+    ],
+    "site": "land",
+    "limit": 1
+  },
+  {
+    "id": "watchtower",
+    "name": [
+      "Beacon Watchtower",
+      "İşaret Gözetleme Kulesi"
+    ],
+    "description": [
+      "Adds 2 attack to defenders during a raid.",
+      "Baskında savunanlara 2 saldırı ekler."
+    ],
+    "level": 18,
+    "cost": {
+      "wood": 10,
+      "stone": 8
+    },
+    "ticks": 6,
+    "slots": 0,
+    "output": "",
+    "role": [
+      "Instructor",
+      "Eğitmen"
+    ],
+    "site": "land",
+    "limit": 1
+  },
+  {
+    "id": "wall",
+    "name": [
+      "Palisade Gate",
+      "Çit Kapısı"
+    ],
+    "description": [
+      "Adds 3 defense to soldiers defending the village.",
+      "Köyü savunan askerlere 3 savunma ekler."
+    ],
+    "level": 18,
+    "cost": {
+      "wood": 6,
+      "stone": 12
+    },
+    "ticks": 6,
+    "slots": 0,
+    "output": "",
+    "role": [
+      "Instructor",
+      "Eğitmen"
+    ],
+    "site": "land",
+    "limit": 1
   }
 ]

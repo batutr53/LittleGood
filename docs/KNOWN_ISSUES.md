@@ -1,4 +1,10 @@
-# Known issues —0.8.5-devC
+# Known issues —0.8.5-devD critical prerequisite
+
+- Current campaign reaches1–20. This is a bounded three-class company with lightweight slide collision, two compact authored battles and nonlethal injuries; no large battlefield navigation, cavalry or siege. D's critical prerequisites pass; a full unseen D specification is not claimed.
+- E1–E6 trading, caravans, new navigable regions, outposts, ruin loot and Desert Sovereign remain outstanding at this checkpoint. There is no final Milestone E tag.
+- Android verification is emulator-only. Short raid55.49FPS/p9528.55ms; phone comfort/thermals/battery/cutouts remain unverified. Existing startup/cleanup warnings remain. See D report and retained C issues for limitations still relevant to C.
+
+## Historical C issues (military absence superseded above)
 
 - Playable scope is realms1–15 / milestones A+B+C. Military D, later0.8.5 regions/campaign content and0.9 remain unimplemented. No completed full0.8.5 or0.9 tag is claimed.
 - Android verification uses emulator-5554/API35/x86_64 with NVIDIA OpenGL translation. Physical touch comfort, simultaneous multitouch, haptics, thermals, battery use, cutouts/OEM layouts and mid-range phone performance remain unverified. Short fresh-emulator samples reach roughly60/30FPS, with a57.76FPS instrumented boss sample; occasional frame spikes remain. These do not establish stable phone performance; see PERFORMANCE_MILESTONE_C.md. A transient emulator package-installer timeout required a reboot without clearing player data.

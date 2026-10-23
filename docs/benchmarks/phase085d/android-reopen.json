@@ -1,0 +1,16 @@
+{
+  "all_passed": true,
+  "checks": {
+    "actual_scene_restored": true,
+    "exact_restored": true,
+    "final_valid": true,
+    "native_retreat": true,
+    "no_quest20": true
+  },
+  "source": "simulated_android_qa",
+  "stage": "army_reopened",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

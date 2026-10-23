@@ -40,7 +40,7 @@ static func multiplier(w: Dictionary,worker: int,role: String) -> int:
 	var owned=tool(w,worker)
 	return int(recipes()[owned.recipe].effects.get(role,SCALE)) if not owned.is_empty() else SCALE
 static func equip(w: Dictionary,worker: int,id: int) -> bool:
-	if not writable(w) or not w.kingdom.workers.any(func(c):return int(c.id)==worker):return false
+	if not writable(w) or load("res://scripts/military.gd").worker_reserved(w,worker) or not w.kingdom.workers.any(func(c):return int(c.id)==worker):return false
 	if id!=0 and item(w,id).is_empty():return false
 	if id!=0 and recipes()[item(w,id).recipe].get("category","tool")!="tool":return false
 	var state=w.kingdom.industry
@@ -54,6 +54,7 @@ static func queue(w: Dictionary,recipe: String,building: int) -> bool:
 	if not writable(w) or not recipes().has(recipe):return false
 	var data=recipes()[recipe];var state=w.kingdom.industry
 	if data.get("category","tool")!="tool" and int(w.kingdom.version)!=3:return false
+	if data.get("category")=="military" and not load("res://scripts/military.gd").enabled(w):return false
 	if state.items.size()+state.queue.size()>=MAX_ITEMS or state.queue.size()>=MAX_QUEUE or w.kingdom.claimed.size()+1<int(data.level):return false
 	if not w.kingdom.buildings.any(func(b):return int(b.id)==building and b.kind=="forge" and int(b.progress)>=int(b.required)):return false
 	for key in data.cost:
@@ -91,6 +92,7 @@ static func validate(w: Dictionary) -> bool:
 	var owned: Dictionary={};var ids: Dictionary={};var workers: Dictionary={};var equipped: Dictionary={}
 	for entry in state.items+state.queue:
 		if not entry is Dictionary or not C.number(entry.get("id"),1,state.next_item-1,true) or ids.has(int(entry.id)) or not entry.get("recipe") is String or not recipes().has(entry.recipe):return false
+		if recipes()[entry.recipe].get("category")=="military" and (not load("res://scripts/military.gd").enabled(w) or w.kingdom.claimed.size()<16):return false
 		ids[int(entry.id)]=true
 	for entry in state.items:
 		if not C.shape(entry,["id","recipe"]):return false

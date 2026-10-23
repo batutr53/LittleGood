@@ -14,6 +14,7 @@ static func new_enemies() -> Array:
 		result.append({"id":id,"kind":row[0],"x":row[1],"y":row[2],"hp":int(enemies()[row[0]].health),"state":"idle","timer":0,"aimx":0,"aimy":0,"pattern":0});id+=1
 	return result
 static func enter(w: Dictionary,home_paused: bool=false) -> bool:
+	if w.get("kingdom",{}).get("military",{}).get("battle",{}).get("active",false):return false
 	if not H.writable(w) or w.kingdom.claimed.size()<11 or H.progress(w,"hero_armed")==0:return false
 	var a=w.kingdom.adventure
 	if a.run.is_empty():

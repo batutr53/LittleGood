@@ -684,5 +684,235 @@
       "gold": 4
     },
     "next": ""
+  },
+  {
+    "id": "main_16",
+    "level": 16,
+    "chapter": 4,
+    "title": [
+      "A Beacon at the Border",
+      "Sınırda Bir İşaret"
+    ],
+    "description": [
+      "Build a barracks and appoint an instructor.",
+      "Kışla kur ve bir eğitmen ata."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_15"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "barracks",
+        "target": 1,
+        "text": [
+          "Build a barracks",
+          "Kışla inşa et"
+        ],
+        "navigate": "build_barracks"
+      },
+      {
+        "kind": "military",
+        "key": "instructor",
+        "target": 1,
+        "text": [
+          "Assign an instructor",
+          "Eğitmen ata"
+        ],
+        "navigate": "workers"
+      }
+    ],
+    "rewards": {
+      "xp": 640,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": "main_17"
+  },
+  {
+    "id": "main_17",
+    "level": 17,
+    "chapter": 4,
+    "title": [
+      "The First Company",
+      "İlk Birlik"
+    ],
+    "description": [
+      "Forge three kits, recruit free citizens and train your company.",
+      "Üç takım döv, boşta sakinler al ve birliğini eğit."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_16"
+    ],
+    "objectives": [
+      {
+        "kind": "military",
+        "key": "trained",
+        "target": 3,
+        "text": [
+          "Train three soldiers",
+          "Üç asker eğit"
+        ],
+        "navigate": "army"
+      }
+    ],
+    "rewards": {
+      "xp": 680,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": "main_18"
+  },
+  {
+    "id": "main_18",
+    "level": 18,
+    "chapter": 4,
+    "title": [
+      "Walls and Resolve",
+      "Duvarlar ve Kararlılık"
+    ],
+    "description": [
+      "Prepare the village and choose a formation.",
+      "Köyü hazırla ve bir düzen seç."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_17"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "watchtower",
+        "target": 1,
+        "text": [
+          "Build a watchtower",
+          "Gözetleme kulesi kur"
+        ],
+        "navigate": "build_watchtower"
+      },
+      {
+        "kind": "building",
+        "key": "wall",
+        "target": 1,
+        "text": [
+          "Build a palisade gate",
+          "Çit kapısı kur"
+        ],
+        "navigate": "build_wall"
+      },
+      {
+        "kind": "military",
+        "key": "formation",
+        "target": 1,
+        "text": [
+          "Choose a formation",
+          "Savaş düzeni seç"
+        ],
+        "navigate": "army"
+      }
+    ],
+    "rewards": {
+      "xp": 720,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": "main_19"
+  },
+  {
+    "id": "main_19",
+    "level": 19,
+    "chapter": 4,
+    "title": [
+      "Hold the Hearth",
+      "Ocağı Savun"
+    ],
+    "description": [
+      "Repel the raiders. Your defenses protect the company. Return to report.",
+      "Baskıncıları püskürt. Savunmaların birliği korur. Rapor vermek için dön."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_18"
+    ],
+    "objectives": [
+      {
+        "kind": "military",
+        "key": "raid",
+        "target": 1,
+        "text": [
+          "Win the village defense",
+          "Köy savunmasını kazan"
+        ],
+        "navigate": "army"
+      },
+      {
+        "kind": "military",
+        "key": "raid_returned",
+        "target": 1,
+        "text": [
+          "Return from the defense",
+          "Savunmadan dön"
+        ],
+        "navigate": "army"
+      }
+    ],
+    "rewards": {
+      "xp": 760,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": "main_20"
+  },
+  {
+    "id": "main_20",
+    "level": 20,
+    "chapter": 4,
+    "title": [
+      "The Border Captain",
+      "Sınır Komutanı"
+    ],
+    "description": [
+      "Lead your company around the camp barricade and defeat its captain.",
+      "Birliğini kamp barikatından geçir ve komutanı yen."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_19"
+    ],
+    "objectives": [
+      {
+        "kind": "military",
+        "key": "camp",
+        "target": 1,
+        "text": [
+          "Defeat the camp captain",
+          "Kamp komutanını yen"
+        ],
+        "navigate": "army"
+      },
+      {
+        "kind": "military",
+        "key": "camp_returned",
+        "target": 1,
+        "text": [
+          "Bring the company home",
+          "Birliği eve getir"
+        ],
+        "navigate": "army"
+      }
+    ],
+    "rewards": {
+      "xp": 800,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": ""
   }
 ]

@@ -1,6 +1,7 @@
 extends RefCounted
 const K=preload("res://scripts/kingdom.gd")
 const I=preload("res://scripts/industry.gd")
+const M=preload("res://scripts/military.gd")
 const H=preload("res://scripts/hero.gd")
 var game
 var ui
@@ -32,7 +33,7 @@ func open() -> void:
 	ui.page="kingdom"
 	var w=game.world;var q=K.current(w)
 	var v=ui.popup(say("The First Kingdom","İlk Krallık"));var list=ui.card_list(v,405)
-	list.add_child(ui.label(say("Realm ","Diyar ")+str(K.level(w))+" · "+say("Development tier ","Gelişim aşaması ")+str(K.tier(w))+" · "+str(w.kingdom.claimed.size())+(" / 15" if H.enabled(w) else " / 10" if I.enabled(w) else " / 5"),22,Color("ecd99f")))
+	list.add_child(ui.label(say("Realm ","Diyar ")+str(K.level(w))+" · "+say("Development tier ","Gelişim aşaması ")+str(K.tier(w))+" · "+str(w.kingdom.claimed.size())+(" / 20" if M.enabled(w) else " / 15" if H.enabled(w) else " / 10" if I.enabled(w) else " / 5"),22,Color("ecd99f")))
 	list.add_child(ui.label(resources(),18))
 	if w.kingdom.advisor:
 		var row=HBoxContainer.new();list.add_child(row)
@@ -51,7 +52,11 @@ func open() -> void:
 	elif not H.enabled(w):
 		list.add_child(ui.label(say("Arin has found a trail beyond the border. Choose a champion for the Wild Lands; your kingdom and equipment remain intact.","Arin sınırın ötesinde bir iz buldu. Yaban Topraklar için şampiyon seç; krallığın ve donanımların korunur."),20))
 		add(list,say("Begin Chapter III · The Wild Lands","Bölüm III'e başla · Yaban Topraklar"),func():if H.enable(w):changed();game.checkpoint("chapter3");game.hero_ui.profile(),true)
-	else:list.add_child(ui.label(say("Chapter III complete! Craft the Heartward, revisit the Wildwood, or watch your kingdom grow.","Bölüm III tamamlandı! Kalpkor'u döv, Yabanorman'ı yeniden keşfet veya krallığını gözet."),20))
+	elif not M.enabled(w):
+		list.add_child(ui.label(say("The border needs a company. Build a barracks, equip real citizens and defend your village.","Sınırın birliğe ihtiyacı var. Kışla kur, gerçek sakinleri donat ve köyünü savun."),20))
+		add(list,say("Begin Chapter IV · The Border Company","Bölüm IV'e başla · Sınır Birliği"),func():if M.enable(w):changed();game.checkpoint("chapter4");open(),true)
+	else:list.add_child(ui.label(say("Chapter IV complete. Your company and kingdom are safe. The Forgotten Realms are not available yet.","Bölüm IV tamamlandı. Birliğin ve krallığın güvende. Unutulmuş Diyarlar henüz açık değil."),20))
+	if M.enabled(w):add(list,say("The Border Company","Sınır Birliği"),game.military_ui.open,true)
 	if H.enabled(w):add(list,say("Hero Hall","Kahraman Salonu"),game.hero_ui.profile)
 	if I.enabled(w):
 		add(list,say("Workshop · craft with a smith","Atölye · demirciyle üret"),workshop)
@@ -90,6 +95,7 @@ func construction() -> void:
 	for id in K.buildings():
 		var data=K.buildings()[id]
 		if int(data.level)>5 and not I.enabled(game.world):continue
+		if int(data.level)>15 and not M.enabled(game.world):continue
 		var row=HBoxContainer.new();list.add_child(row)
 		var image=TextureRect.new();image.texture=load("res://assets/kingdom/"+id+".svg");image.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;image.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;image.custom_minimum_size=Vector2(90,90);row.add_child(image)
 		var button=add(row,localized(data.name)+" · "+say("Realm ","Diyar ")+str(int(data.level))+" · "+str(game.world.kingdom.buildings.filter(func(b):return b.kind==id).size())+"/"+str(int(data.limit))+"\n"+cost(data.cost),func():begin("build",id));button.size_flags_horizontal=Control.SIZE_EXPAND_FILL;button.disabled=K.level(game.world)<int(data.level) or not K.afford(game.world,data.cost) or game.world.kingdom.buildings.size()>=K.MAX_BUILDINGS or game.world.kingdom.buildings.filter(func(b):return b.kind==id).size()>=int(data.limit)
@@ -106,6 +112,7 @@ func workers() -> void:
 		var id=int(c.id);var job=say("Builder / free citizen","İnşaatçı / boşta")
 		for b in w.kingdom.buildings:
 			if int(b.id)==int(c.building):job=localized(K.buildings()[b.kind].role)
+		if M.worker_reserved(w,id):job=say("Border Company · unavailable for civilian work","Sınır Birliği · sivil işe kapalı")
 		var equipped=I.tool(w,id);var tool_text=" · "+localized(I.recipes()[equipped.recipe].name) if not equipped.is_empty() else ""
 		add(list,c.name+" · "+job+" · "+str(snappedf(c.skill/float(K.SCALE),.01))+"×"+tool_text,func():assignments(id))
 	var recruit=add(v,say("Recruit citizen · 2 food + 1 gold","Sakin işe al · 2 besin + 1 altın"),func():
@@ -114,6 +121,7 @@ func workers() -> void:
 	recruit.disabled=K.level(w)<4 or w.kingdom.workers.size()>=K.MAX_WORKERS
 	add(v,ui.t("back"),open)
 func assignments(worker: int) -> void:
+	if M.worker_reserved(game.world,worker):game.military_ui.open();return
 	ui.page="kingdom";var v=ui.popup(say("Choose a profession","Bir meslek seç"));var list=ui.card_list(v,400)
 	if I.enabled(game.world):add(list,say("Choose or compare tool","Alet seç veya karşılaştır"),func():choose_tool(worker))
 	add(list,say("Builder / unassign","İnşaatçı / atamayı kaldır"),func():if K.assign(game.world,worker,0):changed();ui.close())
@@ -139,7 +147,7 @@ func inspect_building(id: int) -> void:
 func history() -> void:
 	ui.page="kingdom";var v=ui.popup(say("The First Kingdom's history","İlk Krallığın tarihi"));var list=ui.card_list(v,450)
 	for h in game.world.kingdom.history:
-		var action={"founding":say("Founding","Kuruluş"),"construction":say("Construction started","İnşaat başladı"),"built":say("Completed","Tamamlandı"),"upgrade":say("Upgrade started","Geliştirme başladı"),"recruit":say("Citizen recruited","Sakin işe alındı"),"quest":say("Quest completed","Görev tamamlandı"),"craft":say("Equipment completed","Donanım tamamlandı"),"boss":say("Guardian defeated","Muhafız yenildi")}.get(h.key,"")
+		var action={"founding":say("Founding","Kuruluş"),"construction":say("Construction started","İnşaat başladı"),"built":say("Completed","Tamamlandı"),"upgrade":say("Upgrade started","Geliştirme başladı"),"recruit":say("Citizen recruited","Sakin işe alındı"),"quest":say("Quest completed","Görev tamamlandı"),"craft":say("Equipment completed","Donanım tamamlandı"),"boss":say("Guardian defeated","Muhafız yenildi"),"military":say("Company victory","Birlik zaferi")}.get(h.key,"")
 		var title=str(h.subject)
 		if K.buildings().has(title):title=localized(K.buildings()[title].name)
 		if I.recipes().has(title):title=localized(I.recipes()[title].name)
@@ -156,6 +164,7 @@ func navigate(action: String) -> void:
 	elif action=="workers":workers()
 	elif action=="workshop":workshop()
 	elif action=="inventory":inventory()
+	elif action=="army":game.military_ui.open()
 	elif action=="hero":game.hero_ui.profile()
 	elif action=="wildwood":game.hero_ui.world_map()
 	elif action.begins_with("build_"):begin("build",action.trim_prefix("build_"))
@@ -176,7 +185,7 @@ func workshop(forge_id: int=0) -> void:
 			var id=int(building.id);add(list,say("Forge #","Demirci #")+str(id)+(" ✓" if id==selected else ""),func():workshop(id))
 	for id in I.recipes():
 		var data=I.recipes()[id];var row=HBoxContainer.new();list.add_child(row)
-		if data.get("category","tool")!="tool" and (not H.enabled(w) or int(data.level)>H.REALM_CAP):row.queue_free();continue
+		if data.get("category","tool")!="tool" and (not H.enabled(w) or (int(data.level)>H.REALM_CAP and not M.enabled(w))):row.queue_free();continue
 		var preview=TextureRect.new();preview.texture=load("res://assets/kingdom/"+id+".svg");preview.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;preview.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;preview.custom_minimum_size=Vector2(82,88);row.add_child(preview)
 		var button=add(row,localized(data.name)+"\n"+cost(data.cost)+"\n"+localized(data.description),func():
 			if selected>0 and I.queue(w,id,selected):changed();workshop(selected);ui.toast(say("Materials reserved · close the menu and watch your smith.","Malzeme ayrıldı · menüyü kapat ve demircini izle."))

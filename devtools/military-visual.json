@@ -1,0 +1,13 @@
+[
+ {"name":"editor","arguments":{"action":"clear_logs"}},
+ {"name":"run","arguments":{"action":"play","mute":true}},
+ {"name":"game","arguments":{"action":"wait","seconds":2}},
+ {"name":"exec","arguments":{"action":"game","code":"scene.is_test_session=true;scene.save_path=\"user://military-mcp.json\";scene.diagnostics.configure(\"user://military-mcp-diagnostics.json\",\"simulated\");var p=preload(\"res://scripts/military_progression_probe.gd\").new();var ok=p.defended();scene.world=p.world;scene.view.world=scene.world;scene.has_player_world=true;scene.paused=true;scene.ui.language=\"tr\";scene.ui.build();scene.military_ui.open();return {\"legal18\":ok,\"claimed\":scene.world.kingdom.claimed.size()};"}},
+ {"name":"game","arguments":{"action":"wait","seconds":1}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase085d/mcp-company-tr.png"},
+ {"name":"exec","arguments":{"action":"game","code":"return scene.enter_army(\"raid\");"}},
+ {"name":"game","arguments":{"action":"wait","seconds":3}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase085d/mcp-defense-tr.png"},
+ {"name":"editor","arguments":{"action":"logs","level":"error"}},
+ {"name":"run","arguments":{"action":"stop"}}
+]

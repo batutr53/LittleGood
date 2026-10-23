@@ -1,4 +1,19 @@
-# LittleGod — Age of Kingdoms C
+# LittleGod — critical D prerequisite for Milestone E
+
+Current playable build: **0.8.5-devD / Android code88**. Audit found Milestone D absent at C checkpoint `f1684d9`; the required critical D slice is now implemented and verified. Campaign1–20 is reachable legally. This is **not completed Milestone E**; E1–E6 are still outstanding at this checkpoint.
+
+Chapter IV adds actual citizen/equipment reservations, barracks instructors and paid training, three soldier classes, upkeep/recovery, three effective formations, visible village defense, fortified captain camp, quests16–20, real touch orders and exact combat restore. It retains C gear/hero/forge jobs and adds an optional record only after15 claims. Twelve original vector assets were added. See [audit/report](AGE085_D_PREREQUISITE_REPORT.md), [military](MILITARY_SYSTEM.md) and [full E brief](MILESTONE_E_BRIEF.md).
+
+Validation: **539 retained +44 new =583 game checks**, separate runtime smoke,12 new legal1–20 seed scenarios, real rendered desktop victory, Godot MCP inspection/error list,10 Android live/touch checks and5 external-process restart checks pass. Player save/backups/settings remained byte-identical through APK update/startup. Short desktop60.15FPS/p9516.76ms; emulator raid55.49FPS/p9528.55ms. No physical-device testing occurred. Native Computer Use was unavailable.
+
+Desktop: `D:/LittleGod/Launch LittleGod.cmd`, verified runtime `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`. Player APK: `D:/LittleGod/builds/android/LittleGod-0.8.5-milestone-D-critical-debug.apk`; separate QA APK uses `...-D-critical-qa-debug.apk`. Checkpoint: `age085-d-critical`; evidence/logs/screens: `D:/LittleGod/builds/phase085d/`. C outputs below remain intact. No paid services, publication or security bypass.
+
+To play: finish C quest15, choose **Begin Chapter IV**, build the barracks, assign an instructor, craft kits/recruit free citizens and train three soldiers. Keep a food producer and free builder. Close panels for work to run. Prepare defenses, select a formation, then fight and actually return for19/20. Battle home/offline time stays paused.
+
+![Actual live Turkish defense](screenshots/phase085d-defense.png)
+![Actual Android camp](screenshots/phase085d-android-camp.png)
+
+## Historical C baseline (retained deliverables)
 
 Current playable version: **0.8.5-devC**, Android version code87. Milestones A, B and the first real adventure C extend the retained living planet. The full Age of Kingdoms campaign and0.9 are not complete. Military Milestone D was not started.
 

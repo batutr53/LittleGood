@@ -1,0 +1,110 @@
+[
+  {
+    "suite": "suite",
+    "passed": true,
+    "exit": 0,
+    "seconds": 1.94
+  },
+  {
+    "suite": "runtime",
+    "passed": true,
+    "exit": 0,
+    "seconds": 3.8
+  },
+  {
+    "suite": "phase2",
+    "passed": true,
+    "exit": 0,
+    "seconds": 9.47
+  },
+  {
+    "suite": "phase3",
+    "passed": true,
+    "exit": 0,
+    "seconds": 0.92
+  },
+  {
+    "suite": "phase4",
+    "passed": true,
+    "exit": 0,
+    "seconds": 1.48
+  },
+  {
+    "suite": "phase5",
+    "passed": true,
+    "exit": 0,
+    "seconds": 1.67
+  },
+  {
+    "suite": "phase6",
+    "passed": true,
+    "exit": 0,
+    "seconds": 3.7
+  },
+  {
+    "suite": "phase7",
+    "passed": true,
+    "exit": 0,
+    "seconds": 0.36
+  },
+  {
+    "suite": "phase8",
+    "passed": true,
+    "exit": 0,
+    "seconds": 1.11
+  },
+  {
+    "suite": "phase085",
+    "passed": true,
+    "exit": 0,
+    "seconds": 0.75
+  },
+  {
+    "suite": "industry",
+    "passed": true,
+    "exit": 0,
+    "seconds": 3.14
+  },
+  {
+    "suite": "hero",
+    "passed": true,
+    "exit": 0,
+    "seconds": 0.56
+  },
+  {
+    "suite": "exploration",
+    "passed": true,
+    "exit": 0,
+    "seconds": 0.64
+  },
+  {
+    "suite": "combat",
+    "passed": true,
+    "exit": 0,
+    "seconds": 1.3
+  },
+  {
+    "suite": "combat_crafting",
+    "passed": true,
+    "exit": 0,
+    "seconds": 1.31
+  },
+  {
+    "suite": "boss",
+    "passed": true,
+    "exit": 0,
+    "seconds": 4.72
+  },
+  {
+    "suite": "adventure_invariants",
+    "passed": true,
+    "exit": 0,
+    "seconds": 1.39
+  },
+  {
+    "suite": "boss_patterns",
+    "passed": true,
+    "exit": 0,
+    "seconds": 1.39
+  }
+]

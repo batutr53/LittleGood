@@ -1,0 +1,11 @@
+{
+  "draw_calls": 69.0,
+  "fps": 60.1496094796881,
+  "frames": 439,
+  "p95_ms": 16.761,
+  "source": "desktop_rendered_live_army",
+  "startup_ms": 5.356,
+  "static_memory_bytes": 49528215,
+  "step_us": 152,
+  "victory": true
+}

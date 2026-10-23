@@ -1,0 +1,32 @@
+{
+  "all_passed": true,
+  "checks": {
+    "active_save": true,
+    "camp_entry": true,
+    "claim19": true,
+    "entry": true,
+    "legal18": true,
+    "native_advance": true,
+    "native_formation": true,
+    "native_hold": true,
+    "native_resume": true,
+    "visible_victory": true
+  },
+  "profile": {
+    "cap": 60,
+    "draw_calls": 65.0,
+    "fps": 55.4888516331103,
+    "frames": 431,
+    "memory_bytes": 48870664,
+    "p95_ms": 28.548,
+    "startup_ms": 7.836,
+    "step_us": 191,
+    "video_memory_bytes": 28596362.0
+  },
+  "source": "simulated_android_qa",
+  "stage": "army_complete",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

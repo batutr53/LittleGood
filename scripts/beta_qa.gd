@@ -37,6 +37,9 @@ func run() -> void:
 	game.ui.build()
 	game.ui.main_menu()
 	await get_tree().process_frame
+	if options.get("phase", "new") in ["army","army_reopen"]:
+		var qa=preload("res://scripts/military_qa.gd").new();qa.game=game;qa.host=self;add_child(qa)
+		Engine.max_fps=int(options.get("fps",60));await qa.run();return
 	if options.get("phase", "new")=="adventure_reopen":
 		var expected=Persistence.load_world(game.save_path);await game.restore()
 		checks.real_scene_restored=is_instance_valid(game.adventure_scene) and game.world.kingdom.adventure.run.active
