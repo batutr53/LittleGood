@@ -1,0 +1,9 @@
+# Milestone C implementation log
+
+Base: `age085-milestone-b`, commit6bb4100. Safe base `age085-c-base-b`. All459 baseline checks passed before changes. No0.9 work or military development.
+
+## C1 — verified hero foundation
+
+Explicit chapter migration preserves2200XP, earlier claims, original common balances, civilian IDs/equipment and pending forge queues. Campaignv3 adds private hero/adventure state and zero material balances. A named Warrior has separate hero XP/level, deterministic stats, compatible weapon/shield/armor/artifact slots and persistent health/cooldowns. Combat equipment is made in the existing paid-material, worker-driven forge queue; it cannot be equipped by civilians. Existing tools remain unchanged.
+
+Twelve new hero checks pass, including an authentic tagged-B fixture with a pending job, migration idempotency, exact preservation, legal1–11 progression and an actual sword's attack effect. The real Godot profile was rendered/inspected. C1 checkpoint is `age085-c1-hero`; adventure movement/combat/loot/boss remain pending at this checkpoint. The final `age085-milestone-c` tag is reserved for complete C verification.

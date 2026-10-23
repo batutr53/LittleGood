@@ -1,6 +1,7 @@
 extends RefCounted
 const K=preload("res://scripts/kingdom.gd")
 const I=preload("res://scripts/industry.gd")
+const H=preload("res://scripts/hero.gd")
 var game
 var ui
 var active=false
@@ -47,7 +48,11 @@ func open() -> void:
 	elif not I.enabled(w):
 		list.add_child(ui.label(say("Your village is ready for the Iron Age. Continue with five quests about mines, smelting and tools. Your existing citizens, resources and rewards stay yours.","Köyün Demir Çağı'na hazır. Maden, döküm ve aletlerle ilgili beş görevle devam et. Sakinlerin, kaynakların ve ödüllerin korunur."),20))
 		add(list,say("Begin Chapter II · the Iron Age","Bölüm II'ye başla · Demir Çağı"),func():if I.enable(w):changed();game.checkpoint("iron-age");open(),true)
-	else:list.add_child(ui.label(say("Chapter II complete · keep building and making useful tools. Adventures, armies and levels 11–50 are not implemented yet.","Bölüm II tamamlandı · inşa etmeye ve yararlı aletler üretmeye devam et. Maceralar, ordular ve 11–50. seviyeler henüz eklenmedi."),20))
+	elif not H.enabled(w):
+		list.add_child(ui.label(say("Arin has found a trail beyond the border. Choose a champion for the Wild Lands; your kingdom and equipment remain intact.","Arin sınırın ötesinde bir iz buldu. Yaban Topraklar için şampiyon seç; krallığın ve donanımların korunur."),20))
+		add(list,say("Begin Chapter III · The Wild Lands","Bölüm III'e başla · Yaban Topraklar"),func():if H.enable(w):changed();game.checkpoint("chapter3");game.hero_ui.profile(),true)
+	else:list.add_child(ui.label(say("Your champion is ready. Continue caring for the kingdom.","Şampiyonun hazır. Krallığınla ilgilenmeye devam et."),20))
+	if H.enabled(w):add(list,say("Hero Hall","Kahraman Salonu"),game.hero_ui.profile)
 	if I.enabled(w):
 		add(list,say("Workshop · craft with a smith","Atölye · demirciyle üret"),workshop)
 		add(list,say("Inventory & citizen tools","Envanter ve sakin aletleri"),inventory)
@@ -151,6 +156,7 @@ func navigate(action: String) -> void:
 	elif action=="workers":workers()
 	elif action=="workshop":workshop()
 	elif action=="inventory":inventory()
+	elif action=="hero":game.hero_ui.profile()
 	elif action.begins_with("build_"):begin("build",action.trim_prefix("build_"))
 	elif action.begins_with("gather_"):begin("gather",action.trim_prefix("gather_"))
 	else:open()
@@ -169,6 +175,7 @@ func workshop(forge_id: int=0) -> void:
 			var id=int(building.id);add(list,say("Forge #","Demirci #")+str(id)+(" ✓" if id==selected else ""),func():workshop(id))
 	for id in I.recipes():
 		var data=I.recipes()[id];var row=HBoxContainer.new();list.add_child(row)
+		if data.get("category","tool")!="tool" and (not H.enabled(w) or int(data.level)>H.REALM_CAP):row.queue_free();continue
 		var preview=TextureRect.new();preview.texture=load("res://assets/kingdom/"+id+".svg");preview.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;preview.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;preview.custom_minimum_size=Vector2(82,88);row.add_child(preview)
 		var button=add(row,localized(data.name)+"\n"+cost(data.cost)+"\n"+localized(data.description),func():
 			if selected>0 and I.queue(w,id,selected):changed();workshop(selected);ui.toast(say("Materials reserved · close the menu and watch your smith.","Malzeme ayrıldı · menüyü kapat ve demircini izle."))

@@ -41,6 +41,7 @@ var input_feedback_ms = -1.0
 var online
 var decorator
 var realm_ui
+var hero_ui
 
 func measure_input_feedback(started: int) -> void:
 	await RenderingServer.frame_post_draw
@@ -66,6 +67,7 @@ func _ready() -> void:
 	ui.game = self
 	decorator=preload("res://scripts/customization_interface.gd").new(ui,self)
 	realm_ui=preload("res://scripts/kingdom_interface.gd").new(self,ui)
+	hero_ui=preload("res://scripts/hero_interface.gd").new(self,ui)
 	view.set_quality(false)
 	var config = ConfigFile.new()
 	if config.load("user://settings.cfg") == OK:

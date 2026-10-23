@@ -463,6 +463,226 @@
       "stone": 8,
       "gold": 3
     },
+    "next": "main_11"
+  },
+  {
+    "id": "main_11",
+    "level": 11,
+    "chapter": 3,
+    "title": [
+      "The Chosen Champion",
+      "Seçilmiş Şampiyon"
+    ],
+    "description": [
+      "Arin asks a brave citizen to follow the forest trail. Name your Warrior and forge a sword.",
+      "Arin, cesur bir yurttaştan orman izini takip etmesini ister. Savaşçını adlandır ve bir kılıç döv."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_10"
+    ],
+    "objectives": [
+      {
+        "kind": "adventure",
+        "key": "hero_armed",
+        "target": 1,
+        "text": [
+          "Recruit and arm your Warrior",
+          "Savaşçını çağır ve silah kuşandır"
+        ],
+        "navigate": "hero"
+      }
+    ],
+    "rewards": {
+      "xp": 440,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": "main_12"
+  },
+  {
+    "id": "main_12",
+    "level": 12,
+    "chapter": 3,
+    "title": [
+      "Beyond the Border",
+      "Sınırın Ötesinde"
+    ],
+    "description": [
+      "Wildwood remembers an older kingdom. Find the Sunstone landmark and return to tell Arin.",
+      "Yabanorman eski bir krallığı hatırlar. Güneştaşı anıtını bul ve Arin’e anlatmak için dön."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_11"
+    ],
+    "objectives": [
+      {
+        "kind": "adventure",
+        "key": "landmark",
+        "target": 1,
+        "text": [
+          "Discover the Sunstone",
+          "Güneştaşını keşfet"
+        ],
+        "navigate": "wildwood"
+      },
+      {
+        "kind": "adventure",
+        "key": "returned",
+        "target": 1,
+        "text": [
+          "Return to your kingdom",
+          "Krallığına dön"
+        ],
+        "navigate": "wildwood"
+      }
+    ],
+    "rewards": {
+      "xp": 480,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": "main_13"
+  },
+  {
+    "id": "main_13",
+    "level": 13,
+    "chapter": 3,
+    "title": [
+      "The First Hunt",
+      "İlk Av"
+    ],
+    "description": [
+      "The forest is hurting. Defeat its hostile beasts, bring back their materials, and learn to heal.",
+      "Orman acı çekiyor. Düşman yaratıkları yen, malzemelerini geri getir ve iyileşmeyi öğren."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_12"
+    ],
+    "objectives": [
+      {
+        "kind": "adventure",
+        "key": "kills",
+        "target": 3,
+        "text": [
+          "Defeat three hostile creatures",
+          "Üç düşman yaratığı yen"
+        ],
+        "navigate": "wildwood"
+      },
+      {
+        "kind": "adventure",
+        "key": "banked",
+        "target": 3,
+        "text": [
+          "Bring three loot pickups home",
+          "Üç ganimet alımını eve getir"
+        ],
+        "navigate": "wildwood"
+      },
+      {
+        "kind": "adventure",
+        "key": "healed",
+        "target": 1,
+        "text": [
+          "Use a healing herb or potion",
+          "Şifalı bitki veya iksir kullan"
+        ],
+        "navigate": "wildwood"
+      }
+    ],
+    "rewards": {
+      "xp": 520,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": "main_14"
+  },
+  {
+    "id": "main_14",
+    "level": 14,
+    "chapter": 3,
+    "title": [
+      "The Blacksmith’s Secret",
+      "Demircinin Sırrı"
+    ],
+    "description": [
+      "Thornhide can bind a sharper iron edge. Craft and equip the Thornhide Blade before facing its source.",
+      "Dikenderi demirin keskinliğini bağlar. Kaynağıyla yüzleşmeden Dikenderi Kılıcı üret ve kuşan."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_13"
+    ],
+    "objectives": [
+      {
+        "kind": "adventure",
+        "key": "combat_upgrade",
+        "target": 1,
+        "text": [
+          "Craft and equip a Thornhide Blade",
+          "Dikenderi Kılıcı üret ve kuşan"
+        ],
+        "navigate": "hero"
+      }
+    ],
+    "rewards": {
+      "xp": 560,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": "main_15"
+  },
+  {
+    "id": "main_15",
+    "level": 15,
+    "chapter": 3,
+    "title": [
+      "Guardian of the Forest",
+      "Ormanın Muhafızı"
+    ],
+    "description": [
+      "Thornheart guards the broken grove. Read its warnings, dodge its roots, and bring peace to Wildwood.",
+      "Dikenyürek kırık koruluğu korur. Uyarıları oku, köklerinden kaç ve Yabanorman’a huzur getir."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_14"
+    ],
+    "objectives": [
+      {
+        "kind": "adventure",
+        "key": "boss",
+        "target": 1,
+        "text": [
+          "Defeat Thornheart",
+          "Dikenyürek’i yen"
+        ],
+        "navigate": "wildwood"
+      },
+      {
+        "kind": "adventure",
+        "key": "banked",
+        "target": 4,
+        "text": [
+          "Return with the guardian’s reward",
+          "Muhafızın ödülüyle dön"
+        ],
+        "navigate": "wildwood"
+      }
+    ],
+    "rewards": {
+      "xp": 600,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
     "next": ""
   }
 ]

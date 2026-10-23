@@ -84,5 +84,139 @@
     "level": 9,
     "ticks": 4,
     "building": "forge"
+  },
+  {
+    "id": "iron_sword",
+    "name": [
+      "Iron Sword",
+      "Demir Kılıç"
+    ],
+    "description": [
+      "+8 attack. A real forged weapon.",
+      "+8 saldırı. Gerçek dövülmüş silah."
+    ],
+    "cost": {
+      "iron": 2,
+      "wood": 1
+    },
+    "effects": {
+      "attack": 8
+    },
+    "category": "weapon",
+    "level": 11,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "reinforced_shield",
+    "name": [
+      "Reinforced Shield",
+      "Güçlendirilmiş Kalkan"
+    ],
+    "description": [
+      "+3 defense against incoming hits.",
+      "Gelen darbelere karşı +3 savunma."
+    ],
+    "cost": {
+      "iron": 2,
+      "wood": 2
+    },
+    "effects": {
+      "defense": 3
+    },
+    "category": "shield",
+    "level": 11,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "leather_armor",
+    "name": [
+      "Trailguard Armor",
+      "Patika Muhafızı Zırhı"
+    ],
+    "description": [
+      "+4 defense. Made from recovered leather.",
+      "+4 savunma. Getirilen deriden üretilir."
+    ],
+    "cost": {
+      "leather": 2,
+      "iron": 1
+    },
+    "effects": {
+      "defense": 4
+    },
+    "category": "armor",
+    "level": 13,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "healing_potion",
+    "name": [
+      "Herbal Draught",
+      "Şifalı Bitki İksiri"
+    ],
+    "description": [
+      "Restore 35 health. Consumed once.",
+      "35 can yeniler. Bir kez tüketilir."
+    ],
+    "cost": {
+      "herb": 1,
+      "wood": 1
+    },
+    "effects": {
+      "heal": 35
+    },
+    "category": "consumable",
+    "level": 13,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "thornblade",
+    "name": [
+      "Thornhide Blade",
+      "Dikenderi Kılıcı"
+    ],
+    "description": [
+      "+16 attack. Thornhide makes a sharper edge.",
+      "+16 saldırı. Dikenderi keskinliği artırır."
+    ],
+    "cost": {
+      "thornhide": 2,
+      "iron": 2,
+      "leather": 1
+    },
+    "effects": {
+      "attack": 16
+    },
+    "category": "weapon",
+    "level": 14,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "heartward",
+    "name": [
+      "Heart of Wildwood",
+      "Yabanorman Kalbi"
+    ],
+    "description": [
+      "+20 maximum health and +2 attack.",
+      "+20 azami can ve +2 saldırı."
+    ],
+    "cost": {
+      "heart": 1,
+      "iron": 1
+    },
+    "effects": {
+      "health": 20,
+      "attack": 2
+    },
+    "category": "artifact",
+    "level": 15,
+    "ticks": 4,
+    "building": "forge"
   }
 ]

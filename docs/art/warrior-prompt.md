@@ -1,0 +1,5 @@
+# Warrior sprite
+
+Built-in image_gen, transparent_background=true, new image. Original generated file copied into assets/adventure/warrior.png; alpha preserved. Runtime import bounded384². No external paid API or fallback CLI.
+
+Prompt: Use case: illustration-story. Original production game sprite for LittleGod, cozy ancient-fantasy painted miniature world, soft gouache/clay texture with clean readable silhouette. ONE full-body friendly adult Warrior champion, warm brown skin, short dark curls, simple bronze-and-iron chest armor, sage teal cape, cream linen, boots, holding an iron sword down in right hand and a small round shield in left. Three-quarter front view from slightly above, feet near bottom, entire body and weapons visible with ample transparent margins. Single isolated character, centered square, transparent alpha background. Soft warm rim light, muted celadon and ochre, painterly commercial indie game sprite readable at 80 pixels. No lettering, no logo, no terrain, no backdrop, no separate panels, no other characters. Original design, not a copied existing character.

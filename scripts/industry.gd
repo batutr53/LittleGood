@@ -10,7 +10,7 @@ static func recipes() -> Dictionary:
 	if recipe_data.is_empty():
 		for data in JSON.parse_string(FileAccess.get_file_as_string("res://assets/kingdom/recipes.json")):recipe_data[data.id]=data
 	return recipe_data
-static func enabled(w: Dictionary) -> bool:return w.has("kingdom") and int(w.kingdom.get("version",1))==2
+static func enabled(w: Dictionary) -> bool:return w.has("kingdom") and int(w.kingdom.get("version",1)) in [2,3]
 static func writable(w: Dictionary) -> bool:return enabled(w) and not w.get("_read_only",false)
 static func enable(w: Dictionary) -> bool:
 	if w.get("_read_only",false) or not w.has("kingdom") or enabled(w) or w.kingdom.claimed.size()<5:return false
@@ -42,6 +42,7 @@ static func multiplier(w: Dictionary,worker: int,role: String) -> int:
 static func equip(w: Dictionary,worker: int,id: int) -> bool:
 	if not writable(w) or not w.kingdom.workers.any(func(c):return int(c.id)==worker):return false
 	if id!=0 and item(w,id).is_empty():return false
+	if id!=0 and recipes()[item(w,id).recipe].get("category","tool")!="tool":return false
 	var state=w.kingdom.industry
 	# Moving a tool is explicit and atomic; no item can equip to two citizens.
 	state.equipped=state.equipped.filter(func(slot):return int(slot.worker)!=worker and int(slot.item)!=id)
@@ -52,6 +53,7 @@ static func event(w: Dictionary,key: String,amount: int=1) -> void:
 static func queue(w: Dictionary,recipe: String,building: int) -> bool:
 	if not writable(w) or not recipes().has(recipe):return false
 	var data=recipes()[recipe];var state=w.kingdom.industry
+	if data.get("category","tool")!="tool" and int(w.kingdom.version)!=3:return false
 	if state.items.size()+state.queue.size()>=MAX_ITEMS or state.queue.size()>=MAX_QUEUE or w.kingdom.claimed.size()+1<int(data.level):return false
 	if not w.kingdom.buildings.any(func(b):return int(b.id)==building and b.kind=="forge" and int(b.progress)>=int(b.required)):return false
 	for key in data.cost:
@@ -99,5 +101,6 @@ static func validate(w: Dictionary) -> bool:
 	for slot in state.equipped:
 		if not C.shape(slot,["worker","item"]) or not C.number(slot.worker,1,w.kingdom.next_worker-1,true) or not C.number(slot.item,1,state.next_item-1,true):return false
 		if workers.has(int(slot.worker)) or equipped.has(int(slot.item)) or not owned.has(int(slot.item)) or not w.kingdom.workers.any(func(c):return int(c.id)==int(slot.worker)):return false
+		if recipes()[item(w,int(slot.item)).recipe].get("category","tool")!="tool":return false
 		workers[int(slot.worker)]=true;equipped[int(slot.item)]=true
 	return true

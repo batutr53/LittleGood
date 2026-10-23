@@ -7,6 +7,7 @@ const MAX_BUILDINGS=24
 const MAX_WORKERS=12
 const RESOURCES=["wood","stone","gold"]
 const INDUSTRY=preload("res://scripts/industry.gd")
+const HERO=preload("res://scripts/hero.gd")
 static var building_data: Dictionary={}
 static var quest_data: Array=[]
 static func buildings() -> Dictionary:
@@ -28,6 +29,7 @@ static func normalize(w: Dictionary) -> void:
 	for key in w.kingdom.stock:w.kingdom.stock[key]=int(w.kingdom.stock[key])
 	for key in w.kingdom.events:w.kingdom.events[key]=int(w.kingdom.events[key])
 	INDUSTRY.normalize(w)
+	HERO.normalize(w)
 static func home(w: Dictionary) -> Dictionary:return w.settlements[0]
 static func enable(w: Dictionary) -> bool:
 	if w.get("_read_only",false) or w.has("kingdom") or w.settlements.is_empty():return false
@@ -42,7 +44,7 @@ static func add_worker(w: Dictionary) -> void:
 static func level(w: Dictionary) -> int:
 	if not w.has("kingdom"):return 1
 	var n=1
-	var cap=10 if INDUSTRY.enabled(w) else PLAYABLE_LEVEL_CAP
+	var cap=HERO.REALM_CAP if HERO.enabled(w) else 10 if INDUSTRY.enabled(w) else PLAYABLE_LEVEL_CAP
 	while n<cap and int(w.kingdom.xp)>=20*n*(n+1):n+=1
 	return n
 static func ready(b: Dictionary) -> bool:return float(b.progress)>=float(b.required)
@@ -190,6 +192,7 @@ static func current(w: Dictionary) -> Dictionary:
 	if not w.has("kingdom"):return {}
 	for q in quests():
 		if int(q.level)>5 and not INDUSTRY.enabled(w):return {}
+		if int(q.level)>10 and (not HERO.enabled(w) or int(q.level)>HERO.REALM_CAP):return {}
 		if not w.kingdom.claimed.has(q.id):return q
 	return {}
 static func progress(w: Dictionary,o: Dictionary) -> float:
@@ -198,6 +201,7 @@ static func progress(w: Dictionary,o: Dictionary) -> float:
 		"building":return count(w,o.key)
 		"tier":return tier(w)
 		"equipment":return w.kingdom.industry.equipped.size() if INDUSTRY.enabled(w) else 0
+		"adventure":return HERO.progress(w,o.key)
 	return 0
 static func complete(w: Dictionary,q: Dictionary) -> bool:
 	for prerequisite in q.prerequisites:
@@ -215,9 +219,10 @@ static func validate(w: Dictionary) -> bool:
 	if not w.has("kingdom"):return true
 	var k=w.kingdom;var fields=["version","xp","stock","workers","buildings","claimed","events","history","next_worker","next_building","last_tick","gather_at","stability","legacy_capacity","advisor"]
 	var C=preload("res://scripts/cosmetics.gd")
-	if not k is Dictionary or not C.number(k.get("version"),1,2,true):return false
+	if not k is Dictionary or not C.number(k.get("version"),1,3,true):return false
 	var resources=RESOURCES.duplicate()
-	if int(k.version)==2:fields.append("industry");resources.append_array(INDUSTRY.EXTRA_RESOURCES)
+	if int(k.version)>=2:fields.append("industry");resources.append_array(INDUSTRY.EXTRA_RESOURCES)
+	if int(k.version)==3:fields.append("adventure");resources.append_array(HERO.MATERIALS)
 	if not C.shape(k,fields) or not C.number(k.xp,0,100000,true) or not C.number(k.stability,550,1000,true) or not k.advisor is bool:return false
 	if not C.shape(k.stock,resources):return false
 	for key in resources:
@@ -226,13 +231,14 @@ static func validate(w: Dictionary) -> bool:
 		if not C.number(k[key],1,1000000,true):return false
 	if not C.number(k.legacy_capacity,5,80,true) or not C.number(k.last_tick,0,w.tick,true) or not C.number(k.gather_at,-4,w.tick,true):return false
 	if not k.workers is Array or k.workers.size()>MAX_WORKERS or not k.buildings is Array or k.buildings.size()>MAX_BUILDINGS or not k.claimed is Array or k.claimed.size()>quests().size():return false
-	if int(k.version)==2 and k.claimed.size()<5:return false
+	if int(k.version)>=2 and k.claimed.size()<5:return false
+	if int(k.version)==3 and k.claimed.size()<10:return false
 	if w.settlements.is_empty() or k.workers.size()>floori(home(w).population):return false
 	var ids: Dictionary={};var cells: Dictionary={}
 	for b in k.buildings:
 		if not C.shape(b,["id","kind","cell","level","progress","required"]) or not C.number(b.id,1,k.next_building-1,true) or ids.has(int(b.id)) or not b.kind is String or not buildings().has(b.kind) or not C.number(b.cell,0,w.cells.size()-1,true) or cells.has(int(b.cell)) or not C.number(b.level,1,3,true):return false
 		if not C.number(b.required,1,100000,true) or not C.number(b.progress,0,b.required,true):return false
-		if int(buildings()[b.kind].level)>5 and int(k.version)!=2:return false
+		if int(buildings()[b.kind].level)>5 and int(k.version)<2:return false
 		ids[int(b.id)]=b;cells[int(b.cell)]=true
 	for kind in buildings():
 		if k.buildings.filter(func(b):return b.kind==kind).size()>int(buildings()[kind].limit):return false
@@ -247,12 +253,13 @@ static func validate(w: Dictionary) -> bool:
 	var xp=0
 	for i in range(k.claimed.size()):
 		if not k.claimed[i] is String or k.claimed[i]!=quests()[i].id:return false
-		if i>=5 and int(k.version)!=2:return false
+		if i>=5 and int(k.version)<2:return false
+		if i>=10 and int(k.version)!=3:return false
 		xp+=int(quests()[i].rewards.xp)
-	if k.xp!=xp or not k.events is Dictionary or k.events.size()>(40 if int(k.version)==2 else 24):return false
+	if k.xp!=xp or not k.events is Dictionary or k.events.size()>(40 if int(k.version)>=2 else 24):return false
 	var event_keys=["observe_settlement","gather_wood","gather_stone","recruit","produce_wood","produce_food"]
 	for key in buildings():event_keys.append("build_"+key)
-	if int(k.version)==2:
+	if int(k.version)>=2:
 		event_keys.append_array(["produce_stone","produce_ore","produce_iron","equip_tool","tool_work"])
 		for key in INDUSTRY.recipes():event_keys.append("craft_"+key)
 	for key in k.events:
@@ -260,4 +267,4 @@ static func validate(w: Dictionary) -> bool:
 	if not k.history is Array or k.history.size()>30:return false
 	for h in k.history:
 		if not C.shape(h,["tick","key","subject"]) or not C.number(h.tick,0,w.tick,true) or not h.key in ["founding","construction","built","upgrade","recruit","quest","craft"] or not h.subject is String or h.subject.length()>32:return false
-	return INDUSTRY.validate(w)
+	return INDUSTRY.validate(w) and HERO.validate(w)
