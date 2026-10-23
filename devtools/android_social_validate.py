@@ -10,7 +10,7 @@ args = parser.parse_args()
 adb = Path.home() / 'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 pkg = 'org.littlegod.livinguniverse.betaqa'
 base = [str(adb), '-s', args.serial]
-out = root / 'builds/phase6/android-social'
+out = root / 'builds/phase7/android-social'
 out.mkdir(parents=True, exist_ok=True)
 
 def run(*cmd, check=True):
@@ -57,7 +57,7 @@ def tap_text(text):
     return False
 
 run('shell','am','force-stop',pkg)
-run('install','-r',str(root/'builds/android/LittleGod-0.6-qa-debug.apk'))
+run('install','-r',str(root/'builds/android/LittleGod-0.7-qa-debug.apk'))
 run('shell','run-as',pkg,'rm','-f','files/phase6_qa_import')
 put('phase4_qa.json',json.dumps({'phase':'social_dialogs'}))
 run('shell','am','start','-n',pkg+'/com.godot.game.GodotAppLauncher')

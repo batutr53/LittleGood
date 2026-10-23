@@ -1,6 +1,8 @@
 # Closed beta — 10–20 invited testers
 
-Current candidate: **LittleGod 0.6**, `D:\LittleGod\builds\android\LittleGod-0.6-debug.apk`. Keep 0.5 and its evidence for comparison; test the final 0.6 candidate for new feedback. Split the invited group across newer/mid-range/older phones and sandbox newcomers/experienced players. Record actual hardware separately from emulator automation.
+Current candidate: **LittleGod 0.7**, `D:\LittleGod\builds\android\LittleGod-0.7-debug.apk`. Keep 0.6 and its evidence for comparison. Split an eventual invited group across newer/mid-range/older phones and sandbox newcomers/experienced players. Record actual hardware separately from emulator automation. No human recruitment or public hosting has occurred.
+
+Online testing is currently local-only. Follow ONLINE_ARCHITECTURE.md to run the real API/PostgreSQL stack, configure desktop/emulator addresses, then use two independent test accounts: explicitly publish a friends-only snapshot, request/accept friendship, visit/inspect/return, send a reaction and inspect real activity. Test public opt-in, profile and planet privacy separately, block/unpublish/account deletion, and turn off the API while keeping the local world usable. Do not expose the development service to external testers; authorized TLS hosting/security/operations remain prerequisites. Report keyboard, accessibility and device findings separately from the scripted client/API checks.
 
 No external testers have been recruited or measured. Human enjoyment, clarity and next-day/seven-day return rates remain unknown. Invite testers manually; do not upload local diagnostics automatically.
 

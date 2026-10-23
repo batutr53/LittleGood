@@ -108,7 +108,7 @@ func run() -> void:
 	diag.configure("user://phase6-metrics.json","simulated");diag.clear();diag.begin()
 	diag.record("first_launch",0,true);diag.record("first_launch",0,true);diag.advance(.5);diag.finish()
 	verify(diag.feedback().events.filter(func(e):return e.event=="first_launch").size()==1,"First launch is recorded once in local diagnostic export")
-	verify(diag.feedback().events.all(func(e):return e.source=="simulated") and diag.feedback().game_version=="0.6.0","Automated diagnostic evidence stays labeled simulated")
+	verify(diag.feedback().events.all(func(e):return e.source=="simulated") and diag.feedback().game_version==ProjectSettings.get_setting("application/config/version"),"Automated diagnostic evidence stays labeled simulated")
 	diag.begin()
 	var interrupted=LocalDiagnostics.new();interrupted.configure("user://phase6-metrics.json","simulated");interrupted.begin();interrupted.finish()
 	verify(interrupted.feedback().events.any(func(e):return e.event=="unclean_previous_session"),"An unfinished session is detectable without claiming a confirmed crash")

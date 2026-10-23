@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2f086b10-2ab9-40ef-8317-e634da159a16" name="batua@BATU 2026-10-23 08:40:47" runUser="BATU\batua" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-23T08:40:47.9895268+03:00" queuing="2026-10-23T08:40:47.9895272+03:00" start="2026-10-23T08:40:37.1120196+03:00" finish="2026-10-23T08:40:48.1867240+03:00" />
+  <TestSettings name="default" id="5948cebf-6afb-4f2c-b11a-b234a34d6b7d">
+    <Deployment runDeploymentRoot="batua_BATU_2026-10-23_08_40_47" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="bdc77907-abb5-40e6-8224-ce4ef3fa919e" testId="44aa787c-d532-6f51-7dd7-3c7c1dff7e9c" testName="LittleGod.Tests.SnapshotTests.DuplicateJsonPropertiesRefused" computerName="BATU" duration="00:00:00.0002207" startTime="2026-10-23T08:40:47.9732669+03:00" endTime="2026-10-23T08:40:47.9734021+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bdc77907-abb5-40e6-8224-ce4ef3fa919e" />
+    <UnitTestResult executionId="a2f1e9fc-993b-4956-8e9c-ad2edbe1478f" testId="96593778-d1a8-9161-6eac-75478fb2319d" testName="LittleGod.Tests.SnapshotTests.UnsafePublicNamesRefused(value: &quot;https://tracking.example&quot;)" computerName="BATU" duration="00:00:00.0050981" startTime="2026-10-23T08:40:47.9716887+03:00" endTime="2026-10-23T08:40:47.9717249+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2f1e9fc-993b-4956-8e9c-ad2edbe1478f" />
+    <UnitTestResult executionId="6488db0e-ccbb-4869-84b9-3654720a7c9b" testId="bffba761-0ce6-7351-39b9-371b94d248eb" testName="LittleGod.Tests.SnapshotTests.ExtraPrivateAndExecutableFieldsRefused(key: &quot;token&quot;, value: &quot;secret&quot;)" computerName="BATU" duration="00:00:00.0051182" startTime="2026-10-23T08:40:48.0824614+03:00" endTime="2026-10-23T08:40:48.0874986+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6488db0e-ccbb-4869-84b9-3654720a7c9b" />
+    <UnitTestResult executionId="9262d6b0-5009-4373-b1b0-6b10c34529a1" testId="cce75660-3c90-b704-3892-b6f7270ddd8f" testName="LittleGod.Tests.SnapshotTests.SelfRelationshipRefused" computerName="BATU" duration="00:00:00.0235459" startTime="2026-10-23T08:40:47.9934264+03:00" endTime="2026-10-23T08:40:48.0168981+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9262d6b0-5009-4373-b1b0-6b10c34529a1" />
+    <UnitTestResult executionId="6d2f80ec-f383-4b45-9170-3331a896de64" testId="9f0082dd-4675-000d-2c31-48a1b489e666" testName="LittleGod.Tests.SnapshotTests.FutureOrInvalidVersionRefused(key: &quot;version&quot;, value: 999)" computerName="BATU" duration="00:00:00.0054776" startTime="2026-10-23T08:40:47.9740702+03:00" endTime="2026-10-23T08:40:47.9775334+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d2f80ec-f383-4b45-9170-3331a896de64" />
+    <UnitTestResult executionId="cca170e8-65c2-4dc4-aba3-ab22632fcd76" testId="ce4f6d29-28f5-8145-5c5e-dd646e4f4f9b" testName="LittleGod.Tests.SnapshotTests.DuplicateCoordinatesRefused" computerName="BATU" duration="00:00:00.0053271" startTime="2026-10-23T08:40:48.0663650+03:00" endTime="2026-10-23T08:40:48.0715799+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cca170e8-65c2-4dc4-aba3-ab22632fcd76" />
+    <UnitTestResult executionId="393d727f-8b67-4cb9-8ea0-c3e3b5327d2e" testId="b58a55fc-d462-196a-998e-3fe80112d610" testName="LittleGod.Tests.SnapshotTests.UnknownEventRefused" computerName="BATU" duration="00:00:00.0172936" startTime="2026-10-23T08:40:48.1027092+03:00" endTime="2026-10-23T08:40:48.1199448+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="393d727f-8b67-4cb9-8ea0-c3e3b5327d2e" />
+    <UnitTestResult executionId="582c62c8-5820-4afa-b0d9-262ee4f0d367" testId="d131bf21-180f-d9d6-42eb-fd5a1f11ddc1" testName="LittleGod.Tests.SnapshotTests.UnsafePublicNamesRefused(value: &quot;../planet.json&quot;)" computerName="BATU" duration="00:00:10.1379143" startTime="2026-10-23T08:40:37.8033095+03:00" endTime="2026-10-23T08:40:47.9484453+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="582c62c8-5820-4afa-b0d9-262ee4f0d367" />
+    <UnitTestResult executionId="f7103a2f-b8c4-4bf1-a8ed-9e91cc1a682f" testId="b33d6c50-e07f-cfad-b186-27dceeca25fd" testName="LittleGod.Tests.SnapshotTests.UnsafePublicNamesRefused(value: &quot;name\nsecret&quot;)" computerName="BATU" duration="00:00:00.0058322" startTime="2026-10-23T08:40:47.9715560+03:00" endTime="2026-10-23T08:40:47.9716009+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f7103a2f-b8c4-4bf1-a8ed-9e91cc1a682f" />
+    <UnitTestResult executionId="167577cc-31e7-4d51-9e60-993a41cfbdde" testId="25092f2e-578f-b3ea-4b08-e2c007e85734" testName="LittleGod.Tests.SnapshotTests.NullDocumentRefused" computerName="BATU" duration="00:00:00.0001786" startTime="2026-10-23T08:40:48.1207049+03:00" endTime="2026-10-23T08:40:48.1207464+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="167577cc-31e7-4d51-9e60-993a41cfbdde" />
+    <UnitTestResult executionId="1643d630-6c91-4c1a-9924-2bf478545c60" testId="72eea1df-b40e-d2df-b722-c8a90aff4d43" testName="LittleGod.Tests.SnapshotTests.IntegralFloatRepresentationCompatible" computerName="BATU" duration="00:00:00.0236415" startTime="2026-10-23T08:40:48.0185816+03:00" endTime="2026-10-23T08:40:48.0406413+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1643d630-6c91-4c1a-9924-2bf478545c60" />
+    <UnitTestResult executionId="be660d85-f2d0-4300-bc66-e001a58857d9" testId="966b8a13-236a-3fa7-5adc-fb5ca0f91c4a" testName="LittleGod.Tests.SnapshotTests.UnsafePublicNamesRefused(value: &quot;[img]resource[/img]&quot;)" computerName="BATU" duration="00:00:00.0058040" startTime="2026-10-23T08:40:47.9703193+03:00" endTime="2026-10-23T08:40:47.9705012+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be660d85-f2d0-4300-bc66-e001a58857d9" />
+    <UnitTestResult executionId="108614ef-6ae8-4c71-89a6-dfcb4650f369" testId="d554a39e-2473-0622-25e3-cf1109ee6c01" testName="LittleGod.Tests.SnapshotTests.ExtraPrivateAndExecutableFieldsRefused(key: &quot;seed&quot;, value: &quot;private seed&quot;)" computerName="BATU" duration="00:00:00.0050235" startTime="2026-10-23T08:40:48.0717831+03:00" endTime="2026-10-23T08:40:48.0767061+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="108614ef-6ae8-4c71-89a6-dfcb4650f369" />
+    <UnitTestResult executionId="87833d0f-3051-453d-8e6a-2618cef07243" testId="8739431d-6e15-61ca-66dd-0447962993d3" testName="LittleGod.Tests.SnapshotTests.ExtraPrivateAndExecutableFieldsRefused(key: &quot;script&quot;, value: &quot;res://evil.gd&quot;)" computerName="BATU" duration="00:00:00.0055976" startTime="2026-10-23T08:40:48.0768221+03:00" endTime="2026-10-23T08:40:48.0823570+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87833d0f-3051-453d-8e6a-2618cef07243" />
+    <UnitTestResult executionId="53100b2c-e752-4e27-bd4e-95946aa32a15" testId="0147fcf8-3be5-3091-db28-bb88f658139b" testName="LittleGod.Tests.SnapshotTests.ExistingPublicSnapshotsRemainCompatible(name: &quot;Nacre&quot;)" computerName="BATU" duration="00:00:00.0119583" startTime="2026-10-23T08:40:48.0542764+03:00" endTime="2026-10-23T08:40:48.0662149+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="53100b2c-e752-4e27-bd4e-95946aa32a15" />
+    <UnitTestResult executionId="452e78a9-edbc-4087-b36e-d1f832a57dbd" testId="766c72f7-ab91-83dc-5c92-d95667262754" testName="LittleGod.Tests.SnapshotTests.FutureOrInvalidVersionRefused(key: &quot;version&quot;, value: 0)" computerName="BATU" duration="00:00:00.0056713" startTime="2026-10-23T08:40:47.9737144+03:00" endTime="2026-10-23T08:40:47.9738499+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="452e78a9-edbc-4087-b36e-d1f832a57dbd" />
+    <UnitTestResult executionId="a1249a4e-8426-41b4-8ee5-9a95c1205b69" testId="f29c9a7f-3f48-445f-6ba4-2a3121a6ec02" testName="LittleGod.Tests.SnapshotTests.ExistingPublicSnapshotsRemainCompatible(name: &quot;Lumi&quot;)" computerName="BATU" duration="00:00:00.0134288" startTime="2026-10-23T08:40:48.0408105+03:00" endTime="2026-10-23T08:40:48.0541479+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a1249a4e-8426-41b4-8ee5-9a95c1205b69" />
+    <UnitTestResult executionId="43aefe17-b1b3-4aca-9eab-b1003d1ed021" testId="d0958394-c41f-07ef-e449-91d9398c7d63" testName="LittleGod.Tests.SnapshotTests.UnknownTraitRefused" computerName="BATU" duration="00:00:00.0156303" startTime="2026-10-23T08:40:47.9777006+03:00" endTime="2026-10-23T08:40:47.9932264+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="43aefe17-b1b3-4aca-9eab-b1003d1ed021" />
+    <UnitTestResult executionId="11c0747b-743a-485f-bf84-845e52c8769a" testId="8d75d7ab-839a-6af9-d098-b3283b565e03" testName="LittleGod.Tests.SnapshotTests.FractionalIndexRefused" computerName="BATU" duration="00:00:00.0128384" startTime="2026-10-23T08:40:48.1208416+03:00" endTime="2026-10-23T08:40:48.1330444+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="11c0747b-743a-485f-bf84-845e52c8769a" />
+    <UnitTestResult executionId="d3955b44-47c1-486e-a44a-d3d8d60523fe" testId="adfd98fe-f3ac-c24d-421e-696f413aee88" testName="LittleGod.Tests.SnapshotTests.CreatureReferenceBounded" computerName="BATU" duration="00:00:00.0149281" startTime="2026-10-23T08:40:48.0876210+03:00" endTime="2026-10-23T08:40:48.1025339+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3955b44-47c1-486e-a44a-d3d8d60523fe" />
+    <UnitTestResult executionId="233c0a04-4ce4-4621-9100-ee577488ce8e" testId="440f3884-5327-29d2-8b90-995ffa98b247" testName="LittleGod.Tests.SnapshotTests.UndefinedDocumentRefused" computerName="BATU" duration="00:00:00.0001127" startTime="2026-10-23T08:40:47.9727520+03:00" endTime="2026-10-23T08:40:47.9728929+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="233c0a04-4ce4-4621-9100-ee577488ce8e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.ExistingPublicSnapshotsRemainCompatible(name: &quot;Lumi&quot;)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="f29c9a7f-3f48-445f-6ba4-2a3121a6ec02">
+      <Execution id="a1249a4e-8426-41b4-8ee5-9a95c1205b69" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="ExistingPublicSnapshotsRemainCompatible" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.UndefinedDocumentRefused" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="440f3884-5327-29d2-8b90-995ffa98b247">
+      <Execution id="233c0a04-4ce4-4621-9100-ee577488ce8e" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="UndefinedDocumentRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.UnsafePublicNamesRefused(value: &quot;https://tracking.example&quot;)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="96593778-d1a8-9161-6eac-75478fb2319d">
+      <Execution id="a2f1e9fc-993b-4956-8e9c-ad2edbe1478f" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="UnsafePublicNamesRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.UnsafePublicNamesRefused(value: &quot;name\nsecret&quot;)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="b33d6c50-e07f-cfad-b186-27dceeca25fd">
+      <Execution id="f7103a2f-b8c4-4bf1-a8ed-9e91cc1a682f" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="UnsafePublicNamesRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.FractionalIndexRefused" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="8d75d7ab-839a-6af9-d098-b3283b565e03">
+      <Execution id="11c0747b-743a-485f-bf84-845e52c8769a" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="FractionalIndexRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.DuplicateCoordinatesRefused" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="ce4f6d29-28f5-8145-5c5e-dd646e4f4f9b">
+      <Execution id="cca170e8-65c2-4dc4-aba3-ab22632fcd76" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="DuplicateCoordinatesRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.ExtraPrivateAndExecutableFieldsRefused(key: &quot;script&quot;, value: &quot;res://evil.gd&quot;)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="8739431d-6e15-61ca-66dd-0447962993d3">
+      <Execution id="87833d0f-3051-453d-8e6a-2618cef07243" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="ExtraPrivateAndExecutableFieldsRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.UnsafePublicNamesRefused(value: &quot;[img]resource[/img]&quot;)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="966b8a13-236a-3fa7-5adc-fb5ca0f91c4a">
+      <Execution id="be660d85-f2d0-4300-bc66-e001a58857d9" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="UnsafePublicNamesRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.ExistingPublicSnapshotsRemainCompatible(name: &quot;Nacre&quot;)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="0147fcf8-3be5-3091-db28-bb88f658139b">
+      <Execution id="53100b2c-e752-4e27-bd4e-95946aa32a15" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="ExistingPublicSnapshotsRemainCompatible" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.DuplicateJsonPropertiesRefused" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="44aa787c-d532-6f51-7dd7-3c7c1dff7e9c">
+      <Execution id="bdc77907-abb5-40e6-8224-ce4ef3fa919e" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="DuplicateJsonPropertiesRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.FutureOrInvalidVersionRefused(key: &quot;version&quot;, value: 0)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="766c72f7-ab91-83dc-5c92-d95667262754">
+      <Execution id="452e78a9-edbc-4087-b36e-d1f832a57dbd" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="FutureOrInvalidVersionRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.NullDocumentRefused" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="25092f2e-578f-b3ea-4b08-e2c007e85734">
+      <Execution id="167577cc-31e7-4d51-9e60-993a41cfbdde" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="NullDocumentRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.IntegralFloatRepresentationCompatible" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="72eea1df-b40e-d2df-b722-c8a90aff4d43">
+      <Execution id="1643d630-6c91-4c1a-9924-2bf478545c60" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="IntegralFloatRepresentationCompatible" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.SelfRelationshipRefused" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="cce75660-3c90-b704-3892-b6f7270ddd8f">
+      <Execution id="9262d6b0-5009-4373-b1b0-6b10c34529a1" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="SelfRelationshipRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.ExtraPrivateAndExecutableFieldsRefused(key: &quot;seed&quot;, value: &quot;private seed&quot;)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="d554a39e-2473-0622-25e3-cf1109ee6c01">
+      <Execution id="108614ef-6ae8-4c71-89a6-dfcb4650f369" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="ExtraPrivateAndExecutableFieldsRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.ExtraPrivateAndExecutableFieldsRefused(key: &quot;token&quot;, value: &quot;secret&quot;)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="bffba761-0ce6-7351-39b9-371b94d248eb">
+      <Execution id="6488db0e-ccbb-4869-84b9-3654720a7c9b" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="ExtraPrivateAndExecutableFieldsRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.FutureOrInvalidVersionRefused(key: &quot;version&quot;, value: 999)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="9f0082dd-4675-000d-2c31-48a1b489e666">
+      <Execution id="6d2f80ec-f383-4b45-9170-3331a896de64" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="FutureOrInvalidVersionRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.UnknownEventRefused" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="b58a55fc-d462-196a-998e-3fe80112d610">
+      <Execution id="393d727f-8b67-4cb9-8ea0-c3e3b5327d2e" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="UnknownEventRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.UnsafePublicNamesRefused(value: &quot;../planet.json&quot;)" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="d131bf21-180f-d9d6-42eb-fd5a1f11ddc1">
+      <Execution id="582c62c8-5820-4afa-b0d9-262ee4f0d367" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="UnsafePublicNamesRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.UnknownTraitRefused" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="d0958394-c41f-07ef-e449-91d9398c7d63">
+      <Execution id="43aefe17-b1b3-4aca-9eab-b1003d1ed021" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="UnknownTraitRefused" />
+    </UnitTest>
+    <UnitTest name="LittleGod.Tests.SnapshotTests.CreatureReferenceBounded" storage="d:\littlegod\server\littlegod.tests\bin\debug\net10.0\littlegod.tests.dll" id="adfd98fe-f3ac-c24d-421e-696f413aee88">
+      <Execution id="d3955b44-47c1-486e-a44a-d3d8d60523fe" />
+      <TestMethod codeBase="D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="LittleGod.Tests.SnapshotTests" name="CreatureReferenceBounded" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="44aa787c-d532-6f51-7dd7-3c7c1dff7e9c" executionId="bdc77907-abb5-40e6-8224-ce4ef3fa919e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="96593778-d1a8-9161-6eac-75478fb2319d" executionId="a2f1e9fc-993b-4956-8e9c-ad2edbe1478f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bffba761-0ce6-7351-39b9-371b94d248eb" executionId="6488db0e-ccbb-4869-84b9-3654720a7c9b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cce75660-3c90-b704-3892-b6f7270ddd8f" executionId="9262d6b0-5009-4373-b1b0-6b10c34529a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9f0082dd-4675-000d-2c31-48a1b489e666" executionId="6d2f80ec-f383-4b45-9170-3331a896de64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ce4f6d29-28f5-8145-5c5e-dd646e4f4f9b" executionId="cca170e8-65c2-4dc4-aba3-ab22632fcd76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b58a55fc-d462-196a-998e-3fe80112d610" executionId="393d727f-8b67-4cb9-8ea0-c3e3b5327d2e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d131bf21-180f-d9d6-42eb-fd5a1f11ddc1" executionId="582c62c8-5820-4afa-b0d9-262ee4f0d367" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b33d6c50-e07f-cfad-b186-27dceeca25fd" executionId="f7103a2f-b8c4-4bf1-a8ed-9e91cc1a682f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="25092f2e-578f-b3ea-4b08-e2c007e85734" executionId="167577cc-31e7-4d51-9e60-993a41cfbdde" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72eea1df-b40e-d2df-b722-c8a90aff4d43" executionId="1643d630-6c91-4c1a-9924-2bf478545c60" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="966b8a13-236a-3fa7-5adc-fb5ca0f91c4a" executionId="be660d85-f2d0-4300-bc66-e001a58857d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d554a39e-2473-0622-25e3-cf1109ee6c01" executionId="108614ef-6ae8-4c71-89a6-dfcb4650f369" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8739431d-6e15-61ca-66dd-0447962993d3" executionId="87833d0f-3051-453d-8e6a-2618cef07243" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0147fcf8-3be5-3091-db28-bb88f658139b" executionId="53100b2c-e752-4e27-bd4e-95946aa32a15" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="766c72f7-ab91-83dc-5c92-d95667262754" executionId="452e78a9-edbc-4087-b36e-d1f832a57dbd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f29c9a7f-3f48-445f-6ba4-2a3121a6ec02" executionId="a1249a4e-8426-41b4-8ee5-9a95c1205b69" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0958394-c41f-07ef-e449-91d9398c7d63" executionId="43aefe17-b1b3-4aca-9eab-b1003d1ed021" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d75d7ab-839a-6af9-d098-b3283b565e03" executionId="11c0747b-743a-485f-bf84-845e52c8769a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="adfd98fe-f3ac-c24d-421e-696f413aee88" executionId="d3955b44-47c1-486e-a44a-d3d8d60523fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="440f3884-5327-29d2-8b90-995ffa98b247" executionId="233c0a04-4ce4-4621-9100-ee577488ce8e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="21" executed="21" passed="21" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.9)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: LittleGod.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  LittleGod.Tests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    LittleGod.Tests&#xD;
+[xUnit.net 00:00:10.53]   Finished:    LittleGod.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

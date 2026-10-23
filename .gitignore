@@ -5,3 +5,7 @@ builds/*
 *.tmp
 .forge/
 .mcp.json
+**/bin/
+**/obj/
+server/.env
+server/.local/

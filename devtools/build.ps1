@@ -21,8 +21,12 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Phase 5 checks failed' }
     & $godotExe --headless --path . --script tests/phase6.gd
     if ($LASTEXITCODE -ne 0) { throw 'Phase 6 checks failed' }
+    & $godotExe --headless --path . --script tests/phase7.gd
+    if ($LASTEXITCODE -ne 0) { throw 'Phase 7 checks failed' }
+    dotnet test server/LittleGod.Tests -c Release
+    if ($LASTEXITCODE -ne 0) { throw 'Backend validation checks failed' }
     New-Item -ItemType Directory builds/android,builds/windows -Force | Out-Null
-    & $godotExe --headless --path . --export-debug Android builds/android/LittleGod-0.6-debug.apk
+    & $godotExe --headless --path . --export-debug Android builds/android/LittleGod-0.7-debug.apk
     if ($LASTEXITCODE -ne 0) { throw 'Android export failed' }
     & $godotExe --headless --path . --export-debug 'Windows Desktop' builds/windows/LittleGod.exe
     if ($LASTEXITCODE -ne 0) { throw 'Windows export failed' }

@@ -1,5 +1,7 @@
 # Local planet universe — 0.6
 
+This document records the preserved local-file provider. Version 0.7 adds a separate real HTTP provider; see ONLINE_ARCHITECTURE.md. The local reactions described here remain local, while the new Online universe screen sends authenticated server reactions.
+
 The social layer has no network transport, account system or remote service. A `.lgplanet` file is an inert, versioned public snapshot. Import it from Local universe, inspect its profile, then visit. The simulation stays frozen while water, foliage, creatures and weather continue visual animation. Reactions are saved only on this device and are never delivered to an owner. Copy summary uses the clipboard. PNG/JSON saving opens an OS file picker; users share the resulting file with their chosen app. Direct Android ACTION_SEND integration is not implemented.
 
 ## Public schema v1

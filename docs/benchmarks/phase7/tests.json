@@ -1,0 +1,17 @@
+{
+  "game_checks": 295,
+  "preserved_phase6_checks": 280,
+  "phase7_checks": 15,
+  "dotnet_tests": 21,
+  "http_integration_checks": 65,
+  "security_checks": 6,
+  "godot_online_checks": 34,
+  "android_online_checks": 34,
+  "android_server_stopped_checks": 5,
+  "android_regression_checks": 26,
+  "native_file_checks": 3,
+  "balance_scenarios": 40,
+  "physical_devices": 0,
+  "human_testers": 0,
+  "apk_sha256": "875aaad0597de7d2ac7a487ffa07c756cdca99c00effdd909aca47f5996af05c"
+}

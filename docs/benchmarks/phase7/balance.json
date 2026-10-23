@@ -1,0 +1,1042 @@
+{
+	"failures": [],
+	"live_seconds_per_tick": 2,
+	"offline_cap_ticks": 480,
+	"offline_seconds_per_tick": 60,
+	"rows": [
+		{
+			"chapters": 4,
+			"creatures": 25,
+			"energy": 100.0,
+			"food": 200.0,
+			"interventions": false,
+			"memories": 35,
+			"peak_live_tick_ms": 0.844,
+			"people": 38.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [
+				"rainbow_choir"
+			],
+			"seed": 2026,
+			"settlements": 2,
+			"simulation_ms": 152.049,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 25,
+			"energy": 100.0,
+			"food": 200.0,
+			"interventions": true,
+			"memories": 34,
+			"peak_live_tick_ms": 0.983,
+			"people": 44.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [
+				"mountain_spring"
+			],
+			"seed": 2026,
+			"settlements": 2,
+			"simulation_ms": 185.497,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 62,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": false,
+			"memories": 64,
+			"peak_live_tick_ms": 1.187,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 2026,
+			"settlements": 4,
+			"simulation_ms": 1232.258,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 62,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 1.295,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 2026,
+			"settlements": 4,
+			"simulation_ms": 1407.207,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 61,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 2026,
+			"settlements": 3,
+			"simulation_ms": 251.294,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 2026,
+			"settlements": 3,
+			"simulation_ms": 313.075,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 61,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 2026,
+			"settlements": 3,
+			"simulation_ms": 258.305,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 2026,
+			"settlements": 3,
+			"simulation_ms": 304.436,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 25,
+			"energy": 100.0,
+			"food": 198.77,
+			"interventions": false,
+			"memories": 36,
+			"peak_live_tick_ms": 1.014,
+			"people": 38.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [
+				"rainbow_choir"
+			],
+			"seed": 42,
+			"settlements": 2,
+			"simulation_ms": 152.662,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 25,
+			"energy": 100.0,
+			"food": 195.52,
+			"interventions": true,
+			"memories": 38,
+			"peak_live_tick_ms": 1.116,
+			"people": 44.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir"
+			],
+			"seed": 42,
+			"settlements": 2,
+			"simulation_ms": 182.117,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 62,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": false,
+			"memories": 64,
+			"peak_live_tick_ms": 1.743,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 42,
+			"settlements": 4,
+			"simulation_ms": 1286.48,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 62,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 2.182,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 42,
+			"settlements": 4,
+			"simulation_ms": 1512.225,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 42,
+			"settlements": 3,
+			"simulation_ms": 266.715,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 42,
+			"settlements": 3,
+			"simulation_ms": 320.017,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 42,
+			"settlements": 3,
+			"simulation_ms": 252.591,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 42,
+			"settlements": 3,
+			"simulation_ms": 316.21,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 25,
+			"energy": 100.0,
+			"food": 195.71,
+			"interventions": false,
+			"memories": 36,
+			"peak_live_tick_ms": 0.806,
+			"people": 38.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [
+				"rainbow_choir"
+			],
+			"seed": 7,
+			"settlements": 2,
+			"simulation_ms": 163.986,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 25,
+			"energy": 100.0,
+			"food": 195.71,
+			"interventions": true,
+			"memories": 38,
+			"peak_live_tick_ms": 0.95,
+			"people": 44.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir"
+			],
+			"seed": 7,
+			"settlements": 2,
+			"simulation_ms": 194.331,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 58,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": false,
+			"memories": 64,
+			"peak_live_tick_ms": 1.459,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 7,
+			"settlements": 4,
+			"simulation_ms": 1213.191,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 60,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 1.729,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 7,
+			"settlements": 4,
+			"simulation_ms": 1411.825,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 26,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 59,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 7,
+			"settlements": 3,
+			"simulation_ms": 268.95,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 7,
+			"settlements": 3,
+			"simulation_ms": 312.295,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 26,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 59,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 7,
+			"settlements": 3,
+			"simulation_ms": 260.156,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 7,
+			"settlements": 3,
+			"simulation_ms": 315.229,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 15,
+			"energy": 100.0,
+			"food": 200.0,
+			"interventions": false,
+			"memories": 38,
+			"peak_live_tick_ms": 0.762,
+			"people": 38.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [],
+			"seed": 301,
+			"settlements": 2,
+			"simulation_ms": 158.727,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 25,
+			"energy": 100.0,
+			"food": 200.0,
+			"interventions": true,
+			"memories": 39,
+			"peak_live_tick_ms": 0.907,
+			"people": 44.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [
+				"mountain_spring"
+			],
+			"seed": 301,
+			"settlements": 2,
+			"simulation_ms": 186.697,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 49,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": false,
+			"memories": 64,
+			"peak_live_tick_ms": 1.371,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"silver_fox",
+				"rainbow_choir"
+			],
+			"seed": 301,
+			"settlements": 4,
+			"simulation_ms": 1120.907,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 57,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 1.544,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"mountain_spring",
+				"rainbow_choir"
+			],
+			"seed": 301,
+			"settlements": 4,
+			"simulation_ms": 1381.069,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 17,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 52,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [],
+			"seed": 301,
+			"settlements": 3,
+			"simulation_ms": 245.931,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [
+				"mountain_spring"
+			],
+			"seed": 301,
+			"settlements": 3,
+			"simulation_ms": 307.378,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 17,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 52,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [],
+			"seed": 301,
+			"settlements": 3,
+			"simulation_ms": 241.272,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [
+				"mountain_spring"
+			],
+			"seed": 301,
+			"settlements": 3,
+			"simulation_ms": 312.415,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 23,
+			"energy": 100.0,
+			"food": 195.71,
+			"interventions": false,
+			"memories": 36,
+			"peak_live_tick_ms": 0.915,
+			"people": 38.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [
+				"rainbow_choir"
+			],
+			"seed": 99991,
+			"settlements": 2,
+			"simulation_ms": 159.333,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 25,
+			"energy": 100.0,
+			"food": 195.7,
+			"interventions": true,
+			"memories": 35,
+			"peak_live_tick_ms": 1.052,
+			"people": 44.8,
+			"save_compatible": true,
+			"scenario": "10m",
+			"secrets": [
+				"mountain_spring"
+			],
+			"seed": 99991,
+			"settlements": 2,
+			"simulation_ms": 186.312,
+			"stages": [
+				2,
+				0
+			],
+			"ticks": 300,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 60,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": false,
+			"memories": 64,
+			"peak_live_tick_ms": 1.469,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 99991,
+			"settlements": 4,
+			"simulation_ms": 1266.787,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 62,
+			"energy": 100.0,
+			"food": 400.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 1.774,
+			"people": 320.0,
+			"save_compatible": true,
+			"scenario": "1h",
+			"secrets": [
+				"mountain_spring",
+				"silver_fox",
+				"rainbow_choir"
+			],
+			"seed": 99991,
+			"settlements": 4,
+			"simulation_ms": 1527.765,
+			"stages": [
+				2,
+				2,
+				2,
+				2
+			],
+			"ticks": 1800,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 27,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 58,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 99991,
+			"settlements": 3,
+			"simulation_ms": 255.39,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "24h_offline",
+			"secrets": [
+				"mountain_spring",
+				"silver_fox"
+			],
+			"seed": 99991,
+			"settlements": 3,
+			"simulation_ms": 299.399,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 27,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": false,
+			"memories": 58,
+			"peak_live_tick_ms": 0.0,
+			"people": 72.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [
+				"rainbow_choir",
+				"silver_fox"
+			],
+			"seed": 99991,
+			"settlements": 3,
+			"simulation_ms": 247.785,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		},
+		{
+			"chapters": 4,
+			"creatures": 29,
+			"energy": 100.0,
+			"food": 220.0,
+			"interventions": true,
+			"memories": 64,
+			"peak_live_tick_ms": 0.0,
+			"people": 78.6,
+			"save_compatible": true,
+			"scenario": "7d_offline",
+			"secrets": [
+				"mountain_spring",
+				"silver_fox"
+			],
+			"seed": 99991,
+			"settlements": 3,
+			"simulation_ms": 315.421,
+			"stages": [
+				2,
+				1,
+				0
+			],
+			"ticks": 480,
+			"valid": true
+		}
+	],
+	"source": "seeded_automated_simulation",
+	"wall_ms": 21642
+}

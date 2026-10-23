@@ -372,6 +372,7 @@ func refresh() -> void:
 		stats.text = t("visiting") + "\n" + t("population") % [w.creatures.size(), people]
 		spirit.text = "◇ " + t("readonly_tag")
 		chapter.text = t("visit_profile")
+		if game.visited_id.begins_with("online:"): chapter.text="Paylaşılan görüntü ve tepkiler" if language=="tr" else "Published snapshot & reactions"
 		speed_button.visible = false
 		var extra = maxf(0,get_viewport().get_visible_rect().size.y-1280)
 		for child in root.get_children():
@@ -444,6 +445,7 @@ func main_menu() -> void:
 		b.add_theme_font_size_override("font_size",18)
 		row.add_child(b)
 	v.add_child(row)
+	v.add_child(button("Çevrimiçi evren" if language=="tr" else "Online universe",online_screen))
 
 func creation() -> void:
 	page = "creation"
@@ -486,6 +488,9 @@ func menu() -> void:
 	scroll.custom_minimum_size.y = 470
 	v.add_child(scroll)
 	scroll.add_child(grid)
+	var online_button = button("Çevrimiçi evren" if language=="tr" else "Online universe",online_screen)
+	online_button.custom_minimum_size.x=294
+	grid.add_child(online_button)
 	for entry in [["local_universe", local_universe], ["wonders", wonders], ["journal", journal], ["neighbors", neighbors], ["chronicle", history], ["achievements", achievements], ["settings", settings], ["save", game.manual_save], ["load", game.restore], ["favorites", favorite_places], ["showcase", capture_postcard], ["new", creation], ["pause", func(): game.paused = not game.paused; close()]]:
 		var b = button(t(entry[0]), entry[1])
 		b.custom_minimum_size.x = 294
@@ -1035,6 +1040,11 @@ func local_universe() -> void:
 	if game.world.is_empty(): v.add_child(button(t("back"),main_menu))
 	else: add_close(v)
 
+var online_ui
+func online_screen() -> void:
+	if online_ui==null: online_ui=preload("res://scripts/online_interface.gd").new(self,game,game.online)
+	online_ui.home()
+
 func import_planet_text(text: String) -> String:
 	return game.showcases.import_text(text)
 
@@ -1080,6 +1090,10 @@ func portrait(frame: int, size_value: Vector2) -> TextureRect:
 	return picture
 
 func planet_profile(data: Dictionary = {}, id: String = "") -> void:
+	if game.visiting and game.visited_id.begins_with("online:"):
+		if online_ui==null: online_ui=preload("res://scripts/online_interface.gd").new(self,game,game.online)
+		online_ui.snapshot_profile(game.visited_id.trim_prefix("online:"))
+		return
 	if data.is_empty():
 		if game.world.is_empty(): local_universe(); return
 		data = game.showcases.project(game.world)
@@ -1155,6 +1169,10 @@ func visit_menu() -> void:
 	var v = popup(t("visit_menu"))
 	v.add_child(label(t("snapshot_notice"),21))
 	var list = card_list(v,350)
+	if game.visited_id.begins_with("online:"):
+		list.add_child(button("Çevrimiçi profil" if language=="tr" else "Online profile",func():
+			if online_ui==null: online_ui=preload("res://scripts/online_interface.gd").new(self,game,game.online)
+			online_ui.snapshot_profile(game.visited_id.trim_prefix("online:"))))
 	for entry in [["my_profile",planet_profile],["collection",neighbors],["chronicle",history],["showcase",capture_postcard],["settings",settings]]:
 		list.add_child(button(t(entry[0]),entry[1]))
 	v.add_child(button(t("leave_visit"),game.stop_visit,true))

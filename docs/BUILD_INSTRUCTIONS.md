@@ -8,7 +8,9 @@ The tools and local outputs already exist on this computer. No manual scene setu
 - Console editor: same directory, `Godot_v4.7.2-stable_win64_console.exe`
 - Project: `D:\LittleGod\project.godot`
 - Desktop build: `D:\LittleGod\builds\windows\LittleGod.exe`
-- Current Android debug APK: `D:\LittleGod\builds\android\LittleGod-0.3-debug.apk`
+- Current Android debug APK: `D:\LittleGod\builds\android\LittleGod-0.7-debug.apk`
+
+Optional online development: .NET 10 SDK is installed. `Launch Online Server.cmd` runs the already configured native PostgreSQL/API stack; the online menu documents desktop/emulator addresses. See ONLINE_ARCHITECTURE.md for Compose, migrations, environment secrets, real integration tests and the recorded Docker startup blocker. Local worlds remain playable with this service stopped.
 
 `Launch LittleGod.cmd` starts the project with the verified official Godot runtime. Windows App Control blocked the exported console launcher during testing, so standalone Windows-package execution is not verified on this machine. The project itself runs successfully through Godot. No policy or security control was bypassed.
 

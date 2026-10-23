@@ -10,7 +10,7 @@ func _ready() -> void:
 
 func publish(stage: String, extra: Dictionary = {}) -> void:
 	var report = {"stage": stage, "source": "simulated_android_qa", "checks": checks, "viewport": [game.get_viewport_rect().size.x, game.get_viewport_rect().size.y]}
-	report.merge(extra)
+	report.merge(extra,true)
 	var f = FileAccess.open("user://phase4_qa_status.json", FileAccess.WRITE)
 	f.store_string(JSON.stringify(report))
 	f.close()
@@ -35,6 +35,34 @@ func run() -> void:
 	game.ui.build()
 	game.ui.main_menu()
 	await get_tree().process_frame
+	if options.get("phase", "new") == "offline_shutdown":
+		game.is_test_session=false
+		game.new_planet(2026,"Offline after shutdown",false)
+		game.has_player_world=true
+		game.online.endpoint="http://10.0.2.2:5087"
+		var r=await game.online.call_api(HTTPClient.METHOD_GET,"/me")
+		checks.server_actually_unreachable=not r.ok and r.status==0
+		var tick=game.world.tick
+		for i in range(12):game.advance_tick()
+		checks.offline_simulation=game.world.tick>tick
+		var target=game.world.creatures[0].cell
+		checks.offline_power=Powers.apply(game.world,0,target)
+		checks.offline_save=game.checkpoint()
+		checks.offline_load=Persistence.load_world(game.save_path).get("name","")=="Offline after shutdown"
+		game.ui.close()
+		publish("offline_complete",{"source":"real_backend_stopped_android_qa"})
+		return
+	if options.get("phase", "new") == "online":
+		game.is_test_session=true
+		var online_qa=preload("res://scripts/online_qa.gd").new()
+		add_child(online_qa)
+		online_qa.game=game
+		online_qa.endpoint="http://10.0.2.2:5087"
+		online_qa.image_dir="user://"
+		var result=await online_qa.run()
+		checks=result.checks
+		publish("online_complete",result)
+		return
 	if options.get("phase", "new") == "social_dialogs":
 		game.new_planet(42,"PickerQA",true)
 		game.showcases.directory = "user://beta-picker-showcases"

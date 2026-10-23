@@ -1,10 +1,10 @@
 # LittleGod — Your Living Universe
 
-A playable offline Godot 4.7.2 game, now at **LittleGod 0.6**. Create a named, seeded floating planet, meet individual creatures, influence habitats and communities, collect illustrated memories and make a postcard of your world.
+A playable offline Godot 4.7.2 game, now at **LittleGod 0.7**, with an optional locally tested online universe. Create a named, seeded floating planet, meet individual creatures, influence habitats and communities, collect illustrated memories and visit friends' published worlds.
 
 ## Play
 
-Run `Launch LittleGod.cmd` to play the current source through the verified Godot runtime. The current Android debug package is **`builds/android/LittleGod-0.6-debug.apk`**. Previous milestone builds remain under `builds/`. Windows App Control blocked the older exported console launcher, so no security settings were changed or bypassed. These are development builds, not store releases.
+Run `Launch LittleGod.cmd` to play the current source through the verified Godot runtime. The current Android debug package is **`builds/android/LittleGod-0.7-debug.apk`**. Previous milestone builds remain under `builds/`. Windows App Control blocked the older exported console launcher, so no security settings were changed or bypassed. These are development builds, not store releases.
 
 Phase two adds painted creature and environment sprites, connected terrain with blended biome colors and flowing water, evolving village art, illustrated discoveries, consistent icons/fonts, smoother camera gestures, haptics support, ambient rain, and a battery-saver option. Read `docs/STATUS.md` for actual desktop/Android measurements, screenshots, tests, and remaining limits.
 
@@ -20,6 +20,8 @@ Local universe opens from the title or planet menu. Review a planet profile, exp
 
 Open `project.godot` in the locally installed editor at `tools/godot/Godot_v4.7.2-stable_win64.exe`. `tests/suite.gd` runs with Godot headless and covers generation, simulation, powers, saves, corruption recovery, and offline progression. See `docs/TEST_REPORT.md` for actual results and `docs/KNOWN_ISSUES.md` for limits.
 
-This is a closed beta candidate. Long-term content depth and enjoyment still need human testing. Optional diagnostics stay locally, can be previewed/cleared/disabled and never upload. No payment system, multiplayer backend, external analytics or publishing is present.
+Online universe is optional. Run `Launch Online Server.cmd` for the local ASP.NET Core/PostgreSQL service, then set the connection in the game's online menu: desktop `http://127.0.0.1:5087`, Android emulator `http://10.0.2.2:5087`. Create a private username/password identity, choose profile visibility, and explicitly publish a reviewed public snapshot. Share your exact invitation code, accept a friend, visit their published planet and send a friendly reaction. Offline creation and saves need no account or server. See `docs/ONLINE_ARCHITECTURE.md` for setup, migrations, Compose and limits. No public hosting is configured; Docker Desktop failed here, so native PostgreSQL supplies actual test evidence.
+
+This is a closed beta candidate. Long-term content depth and enjoyment still need human testing. Optional diagnostics stay locally, can be previewed/cleared/disabled and never upload. No payment system, external analytics, public deployment or publishing is present. Online visits are read-only snapshots, not real-time multiplayer. OAuth/email recovery and public-hosting security/operational prerequisites remain pending.
 
 All game art, vector assets, shader code, synthesized audio, and game source were created for this project. Godot Forge is an MIT-licensed third-party editor integration. License details: `docs/ASSET_INVENTORY.md`.

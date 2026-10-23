@@ -1,0 +1,271 @@
+{
+  "source": "real_http_postgresql",
+  "checks": [
+    {
+      "name": "unauthenticated denied",
+      "passed": true
+    },
+    {
+      "name": "A registration",
+      "passed": true
+    },
+    {
+      "name": "A login",
+      "passed": true
+    },
+    {
+      "name": "A private default",
+      "passed": true
+    },
+    {
+      "name": "B registration",
+      "passed": true
+    },
+    {
+      "name": "B login",
+      "passed": true
+    },
+    {
+      "name": "B private default",
+      "passed": true
+    },
+    {
+      "name": "C registration",
+      "passed": true
+    },
+    {
+      "name": "C login",
+      "passed": true
+    },
+    {
+      "name": "C private default",
+      "passed": true
+    },
+    {
+      "name": "duplicate registration same response",
+      "passed": true
+    },
+    {
+      "name": "wrong password generic",
+      "passed": true
+    },
+    {
+      "name": "unknown account generic",
+      "passed": true
+    },
+    {
+      "name": "Test guardian A profile update",
+      "passed": true
+    },
+    {
+      "name": "Test guardian B profile update",
+      "passed": true
+    },
+    {
+      "name": "private account not enumerated",
+      "passed": true
+    },
+    {
+      "name": "guest planet explicitly published",
+      "passed": true
+    },
+    {
+      "name": "nonfriend showcase denied",
+      "passed": true
+    },
+    {
+      "name": "request sent",
+      "passed": true
+    },
+    {
+      "name": "duplicate request idempotent",
+      "passed": true
+    },
+    {
+      "name": "sender cannot accept",
+      "passed": true
+    },
+    {
+      "name": "recipient sees request",
+      "passed": true
+    },
+    {
+      "name": "friend request notification",
+      "passed": true
+    },
+    {
+      "name": "request accepted",
+      "passed": true
+    },
+    {
+      "name": "actual snapshot downloaded",
+      "passed": true
+    },
+    {
+      "name": "no internal user IDs",
+      "passed": true
+    },
+    {
+      "name": "real visit accepted",
+      "passed": true
+    },
+    {
+      "name": "reaction delivered",
+      "passed": true
+    },
+    {
+      "name": "reaction duplicate idempotent",
+      "passed": true
+    },
+    {
+      "name": "one reaction notification in stable newest-first inbox",
+      "passed": true
+    },
+    {
+      "name": "invalid reaction refused",
+      "passed": true
+    },
+    {
+      "name": "friends only not public",
+      "passed": true
+    },
+    {
+      "name": "public profile opt in",
+      "passed": true
+    },
+    {
+      "name": "public planet opt in",
+      "passed": true
+    },
+    {
+      "name": "real discovery entry",
+      "passed": true
+    },
+    {
+      "name": "publish idempotent",
+      "passed": true
+    },
+    {
+      "name": "extra script field refused",
+      "passed": true
+    },
+    {
+      "name": "invalid cell refused",
+      "passed": true
+    },
+    {
+      "name": "resource URL refused",
+      "passed": true
+    },
+    {
+      "name": "oversized payload refused",
+      "passed": true
+    },
+    {
+      "name": "cross owner field refused",
+      "passed": true
+    },
+    {
+      "name": "pagination input bounded",
+      "passed": true
+    },
+    {
+      "name": "block succeeds",
+      "passed": true
+    },
+    {
+      "name": "block denies alternate snapshot",
+      "passed": true
+    },
+    {
+      "name": "block denies profile",
+      "passed": true
+    },
+    {
+      "name": "block hides discovery",
+      "passed": true
+    },
+    {
+      "name": "block denies invitations",
+      "passed": true
+    },
+    {
+      "name": "block removes friendship",
+      "passed": true
+    },
+    {
+      "name": "block removes reaction activity",
+      "passed": true
+    },
+    {
+      "name": "unblock",
+      "passed": true
+    },
+    {
+      "name": "new request after unblock",
+      "passed": true
+    },
+    {
+      "name": "reject request",
+      "passed": true
+    },
+    {
+      "name": "request removed",
+      "passed": true
+    },
+    {
+      "name": "visibility revoked",
+      "passed": true
+    },
+    {
+      "name": "private profile denies public snapshot",
+      "passed": true
+    },
+    {
+      "name": "private profile absent discovery",
+      "passed": true
+    },
+    {
+      "name": "unpublish",
+      "passed": true
+    },
+    {
+      "name": "owner sees unpublished absent",
+      "passed": true
+    },
+    {
+      "name": "real session refresh",
+      "passed": true
+    },
+    {
+      "name": "logout server revokes",
+      "passed": true
+    },
+    {
+      "name": "old access revoked",
+      "passed": true
+    },
+    {
+      "name": "old refresh revoked",
+      "passed": true
+    },
+    {
+      "name": "relogin",
+      "passed": true
+    },
+    {
+      "name": "account deletion",
+      "passed": true
+    },
+    {
+      "name": "deleted token denied",
+      "passed": true
+    }
+  ],
+  "passed": 65,
+  "total": 65,
+  "latency_median_ms": 24.193249992094934,
+  "latency_p95_ms": 93.79139996599406,
+  "snapshot_bytes": 77726,
+  "temporary_accounts_deleted": true
+}

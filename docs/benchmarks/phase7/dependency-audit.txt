@@ -1,0 +1,8 @@
+  Geri yüklenecek projeler belirleniyor...
+  Geri yükleme için tüm projeler güncel.
+
+Şu kaynaklar kullanıldı:
+   https://api.nuget.org/v3/index.json
+   C:\Program Files (x86)\Microsoft SDKs\NuGetPackages\
+
+Belirtilen `LittleGod.Api` projesinin geçerli kaynaklarda güvenlik açığı olan paketi yok.

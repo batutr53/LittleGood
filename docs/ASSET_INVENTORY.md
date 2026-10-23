@@ -1,5 +1,9 @@
 # Asset inventory and provenance
 
+## Phase 7 additions
+
+All painted creature/environment atlases, typefaces and existing icon art remain. Six existing species portraits serve as selectable guardian avatars. `assets/phase2/icons/online.svg` is a new original vector planet/orbit emblem. `scripts/showcase_preview.gd` draws a terrain map from the server's actual public tile coordinates/biomes using the established palette. No remote image loading, concept-art substitution, paid service or new raster generation is used. UI retains the game's typography, colors and transitions.
+
 ## Phase 3 additions
 
 The phase-two atlas, fonts, audio, icons and shaders are retained. No raster asset was replaced and no generation service was called in this phase. New meadow flowers, lantern fireflies, friendship hearts, labels and discovery effects are original procedural runtime graphics in `world_view.gd`. Power/camera icons use the existing SVG textures in GUI texture controls. No new external asset license or paid service was introduced.

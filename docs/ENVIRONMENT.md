@@ -1,5 +1,9 @@
 # Environment and setup — 22 October 2026
 
+Phase 7 update, 23 October 2026: .NET SDK 10.0.301 is available. ASP.NET Core/EF Core Identity packages 10.0.12 and Npgsql EF provider 10.0.3 restore/build/test. Official PostgreSQL 17.11-4 Windows binaries were downloaded, checked against vendor SHA256 `b9424ee7bc60b52450ff910a3630225df32e633f3cb29c1d126d9299d59aea28`, and run as a local process with SCRAM on loopback port 55437. No Windows service or public port was installed. Docker Desktop exists but fails starting its Inference manager; native PostgreSQL supplies actual integration evidence. See ONLINE_ARCHITECTURE.md and SECURITY_REVIEW.md for setup and deployment limits.
+
+Primary references: [ASP.NET Identity bearer API](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization?view=aspnetcore-10.0), [Npgsql 10](https://www.npgsql.org/efcore/release-notes/10.0.html), [official PostgreSQL Windows distribution](https://www.postgresql.org/download/windows/), [vendor checksum confirmation](https://github.com/EnterpriseDB/edb-installers/issues/706).
+
 Workspace: `D:\LittleGod`, initially empty. Windows 11 Pro x64 (build 26200). NVIDIA GeForce RTX 4070 Laptop GPU plus Intel UHD Graphics. Godot desktop captures confirmed the NVIDIA OpenGL renderer.
 
 | Tool | Verified state |

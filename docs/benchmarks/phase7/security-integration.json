@@ -1,0 +1,14 @@
+{
+  "source": "real_http_identity_postgresql",
+  "checks": {
+    "registered": true,
+    "initial_login": true,
+    "five_failures_generic": true,
+    "correct_password_blocked_during_lockout": true,
+    "temporary_account_deleted": true,
+    "auth_rate_limit_real_429": true
+  },
+  "all_passed": true,
+  "auth_limit": 20,
+  "window_seconds": 60
+}

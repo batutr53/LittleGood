@@ -38,6 +38,7 @@ var visiting = false
 var visited_id = ""
 var visit_origin: Dictionary = {}
 var input_feedback_ms = -1.0
+var online
 
 func measure_input_feedback(started: int) -> void:
 	await RenderingServer.frame_post_draw
@@ -58,6 +59,8 @@ func _ready() -> void:
 	$Atmosphere.size = get_viewport_rect().size
 	audio = Soundscape.new()
 	add_child(audio)
+	online = preload("res://scripts/online_client.gd").new()
+	add_child(online)
 	ui.game = self
 	view.set_quality(false)
 	var config = ConfigFile.new()
@@ -109,7 +112,7 @@ func _ready() -> void:
 			in_menu = true
 		var probe = PerformanceProbe.new()
 		probe.duration = options.get("duration", 15)
-		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase6/desktop-" + ("economy" if view.low_quality else "smooth") + ".json"
+		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase7/desktop-" + ("economy" if view.low_quality else "smooth") + ".json"
 		add_child(probe)
 	set_process_input(true)
 	if OS.is_debug_build() and FileAccess.file_exists("user://phase4_qa.json"):
@@ -288,7 +291,8 @@ func navigate_back() -> void:
 		elif in_menu: ui.visit_menu()
 		else: ui.visit_menu()
 		return
-	if ui.page == "beta": ui.settings()
+	if ui.page == "online": ui.menu() if not world.is_empty() else ui.main_menu()
+	elif ui.page == "beta": ui.settings()
 	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse", "detail", "favorites", "postcard", "universe", "profile", "wonders"]: ui.menu() if not world.is_empty() else ui.main_menu()
 	elif in_menu and has_player_world: ui.close()
 	elif has_player_world: ui.menu()

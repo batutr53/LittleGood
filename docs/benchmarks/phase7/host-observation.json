@@ -1,0 +1,11 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "emulator_powered": true,
+  "date": "2026-10-23",
+  "emulator_awake": true,
+  "pstate": "P8",
+  "graphics_clock_mhz": 210,
+  "phase": "late matched 0.6/0.7 profiling",
+  "system_settings_changed": false,
+  "causality_isolated": false
+}

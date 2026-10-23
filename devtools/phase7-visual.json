@@ -1,0 +1,19 @@
+[
+ {"name":"run","arguments":{"action":"stop"}},
+ {"name":"editor","arguments":{"action":"clear_logs"}},
+ {"name":"files","arguments":{"action":"rescan"}},
+ {"name":"scene","arguments":{"action":"reload","path":"res://scenes/main.tscn"}},
+ {"name":"run","arguments":{"action":"play","mute":true}},
+ {"name":"game","arguments":{"action":"wait","seconds":2}},
+ {"name":"exec","arguments":{"action":"game","code":"scene.is_test_session=true; scene.ui.language=\"en\"; scene.ui.online_screen(); return scene.ui.page"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.6}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase7-mcp-online.png"},
+ {"name":"exec","arguments":{"action":"game","code":"scene.ui.online_ui.account(); return scene.ui.page"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.6}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase7-mcp-account.png"},
+ {"name":"exec","arguments":{"action":"game","code":"scene.ui.online_ui.connection(); return scene.ui.page"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.6}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/docs/screenshots/phase7-mcp-connection.png"},
+ {"name":"run","arguments":{"action":"errors"}},
+ {"name":"run","arguments":{"action":"stop"}}
+]

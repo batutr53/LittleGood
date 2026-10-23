@@ -71,7 +71,7 @@ func feedback() -> Dictionary:
 	for e in data.events:
 		if not e is Dictionary or not ALLOWED.has(e.get("event")): continue
 		events.append({"event": e.event, "seconds": maxi(0, int(e.get("seconds", 0))), "value": maxi(0, int(e.get("value", 0))), "source": "simulated" if e.get("source") == "simulated" else "player"})
-	return {"schema": 1, "game_version": "0.6.0", "platform": OS.get_name(), "scope": "local_optional_feedback", "events": events.slice(maxi(0, events.size() - 200))}
+	return {"schema": 1, "game_version": ProjectSettings.get_setting("application/config/version"), "platform": OS.get_name(), "scope": "local_optional_feedback", "events": events.slice(maxi(0, events.size() - 200))}
 
 func export_feedback() -> String:
 	var text = JSON.stringify(feedback(), "\t")

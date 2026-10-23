@@ -1,0 +1,47 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: New beta save commits a verified file
+PASS: Backup retains previous committed generation
+PASS: Corrupt primary recovers healthy backup
+PASS: Saving over corruption never destroys healthy backup
+PASS: Complete interrupted temporary write can restore a missing primary
+PASS: Explicit primary-only read never silently uses recovery
+PASS: Actual 0.2 fixture migrates without losing its world
+PASS: Actual 0.3 fixture migrates without losing its world
+PASS: Non-finite creature state cannot be committed
+PASS: Malformed pause metadata is rejected
+PASS: Sliced replay exactly matches all 480 synchronous ticks and RNG
+PASS: Explicit world pause persists across offline restoration
+PASS: Diagnostics records first actions once
+PASS: Export whitelist excludes personal names and injected fields
+PASS: Simulated diagnostics are explicitly distinguished from players
+PASS: Local diagnostics remain bounded
+PASS: Clean session records duration and removes open marker
+PASS: Unexpected termination is recorded as unclean, without inventing a crash cause
+PASS: Clear removes diagnostic events, marker and export only
+PASS: Disabled diagnostics records nothing
+PASS: Start screen performs no unused planet generation or mesh rebuild
+PASS: A named world initializes once and activates the real renderer
+PASS: Unchanged habitats retain existing scene objects
+PASS: Touch beginning on UI never joins the world pinch gesture
+PASS: Dragging out of a UI control cannot pan the world
+PASS: A fresh world drag still pans after UI interaction
+PASS: Device back returns from settings to planet menu
+PASS: Back closes menu and clears stale gestures
+PASS: Opening interactions still produce real rain, discovery and friendship
+PASS: Longer-session choices describe current world state
+PASS: Actual scene actions can record onboarding completion
+PASS: Opening a menu checkpoints recent world changes
+PASS: Backgrounding from a menu saves world state and ends the foreground session
+PASS: Brief resume preserves open UI without replaying active time
+PASS: Background/resume respects explicit pause
+PASS: Longer resume uses real sliced offline ticks once
+PASS: Save/load restores the committed planet through staged initialization
+PASS: Initialization and replay timings are measured
+PASS: Feedback preview is available without sending anything
+PASS: Entire beta integration run preserves the real player save bytes
+PHASE4_RESULT: 40 passed, 0 failed
+WARNING: 4 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
