@@ -1,0 +1,12 @@
+{
+  "retained_checks": 689,
+  "new_desert_checks": 56,
+  "game_checks": 745,
+  "all_passed": true,
+  "desert_suite_seconds": 4.918,
+  "legal_1_22_seeds": [
+    7,
+    42,
+    2026
+  ]
+}

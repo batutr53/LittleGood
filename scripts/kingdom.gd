@@ -49,6 +49,7 @@ static func level(w: Dictionary) -> int:
 	if not w.has("kingdom"):return 1
 	var n=1
 	var cap=TRADE.CAP if TRADE.enabled(w) else MILITARY.CAP if MILITARY.enabled(w) else HERO.REALM_CAP if HERO.enabled(w) else 10 if INDUSTRY.enabled(w) else PLAYABLE_LEVEL_CAP
+	if load("res://scripts/ashen_desert.gd").enabled(w):cap=22
 	while n<cap and int(w.kingdom.xp)>=20*n*(n+1):n+=1
 	return n
 static func ready(b: Dictionary) -> bool:return float(b.progress)>=float(b.required)
@@ -204,6 +205,7 @@ static func current(w: Dictionary) -> Dictionary:
 		if int(q.level)>10 and not HERO.enabled(w):return {}
 		if int(q.level)>15 and not MILITARY.enabled(w):return {}
 		if int(q.level)>20 and not TRADE.enabled(w):return {}
+		if int(q.level)>21 and not load("res://scripts/ashen_desert.gd").enabled(w):return {}
 		if not w.kingdom.claimed.has(q.id):return q
 	return {}
 static func progress(w: Dictionary,o: Dictionary) -> float:
@@ -215,6 +217,7 @@ static func progress(w: Dictionary,o: Dictionary) -> float:
 		"adventure":return HERO.progress(w,o.key)
 		"military":return MILITARY.progress(w,o.key)
 		"trade":return TRADE.progress(w,o.key)
+		"desert":return load("res://scripts/ashen_desert.gd").progress(w,o.key)
 	return 0
 static func complete(w: Dictionary,q: Dictionary) -> bool:
 	for prerequisite in q.prerequisites:
@@ -236,6 +239,7 @@ static func validate(w: Dictionary) -> bool:
 	var resources=RESOURCES.duplicate()
 	if int(k.version)>=2:fields.append("industry");resources.append_array(INDUSTRY.EXTRA_RESOURCES)
 	if int(k.version)==3:fields.append("adventure");resources.append_array(HERO.MATERIALS)
+	if load("res://scripts/ashen_desert.gd").enabled(w):resources.append_array(load("res://scripts/ashen_desert.gd").MATERIALS)
 	if k.has("military"):fields.append("military")
 	if k.has("trade"):fields.append("trade")
 	if not C.shape(k,fields) or not C.number(k.xp,0,100000,true) or not C.number(k.stability,550,1000,true) or not k.advisor is bool:return false

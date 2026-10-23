@@ -1,12 +1,13 @@
-# Iron Hills enemies — E2B
+# E2 regional enemies
 
-No desert archetypes or new bosses are claimed. The original Wildwood enemy behavior and Thornheart patterns remain.
+The original Wildwood enemies/Thornheart remain unchanged. Mountains retain Stone Crawler (74HP/7armor, slow aimed1050ms heavy strike/1550ms recovery) and Cave Stalker (46HP/1armor,420ms locked lunge/850ms recovery with diagonal disengagement). Original artwork, death/loot identities and finite mountain state persist.
 
-| Enemy | HP / armor | Motion and attack | Reward |
+| Desert enemy | HP / armor | Behavior | Real reward |
 |---|---|---|---|
-| Stone Crawler |74 /7|Slow55 units/s;83-unit reach;1050ms heavy warning, aimed cone recheck,1550ms recovery|3 ore,36 heroXP; one weighted stone/iron drop|
-| Cave Stalker |46 /1|150 units/s pursuit;420ms locked lunge warning; up to75-unit lunge;55-unit landing check;850ms recovery with a350ms diagonal disengagement|2 leather,34 heroXP; one weighted herb/ore drop|
+|Sand Stalker|50 /1|165units/s pursuit;350ms short melee warning;1000ms recovery with350ms disengagement; no wolf-identical idle recovery|2 leather,36XP, weighted herb/gold|
+|Dune Scorpion|80 /8|58units/s;1050ms aimed107-unit heavy sting;2000ms recovery with armor reduced to0; actual hit applies poison|2 crystals,42XP, weighted herb/iron|
+|Ruin Sentinel|88 /5|72units/s;guards650,350; returns when hero leaves330-unit guard area;900ms locked65-radius ranged impact warning and1500ms recovery; terrain line-of-sight checks|2 crystals,48XP, weighted iron/gold|
 
-Telegraphs are rendered from saved state/timers. The crawler's conservative warning circle bounds its aimed heavy swing; the stalker's warning marks its locked landing area. Dodge, armor, normal/strong attacks and healing use the original hero rules. Hits resolve at20Hz; recovery cannot attack again immediately. A zero-distance stalker landing now still chooses a bounded disengagement direction. Original SVG silhouettes have movement sway, windup feedback, health bars, hit numbers and defeat fade through the existing scene.
+Poison is non-stacking four-second status: four2HP ticks on authoritative simulation time. It persists across an active save/relaunch with no duplicate tick or offline damage, and clears on home return, defeat, purification tonic or the once-only oasis recovery. Actual damage requires a hit and can be dodged. Scorpion recovery opens a real armor window. Saved states drive visible telegraphs, HP bars, attack sway, hit numbers and defeat fade; no text-only combat or new boss is substituted for an encounter.
 
-There is exactly one of each enemy in the finite mountain expedition. Returning or loading cannot reroll defeated enemies or their loot. Canonical IDs, HP/state, regional kind restrictions, duplicate IDs and loot ownership are validated. The legal regional journeys defeat both using actual movement/combat commands; dedicated combat tests check warning duration, no early heavy hit, actual damage, dodgeable miss, lunge and recovery motion. No test grants XP or quest flags to obtain the legal journey result.
+Each region has bounded canonical enemies, no reward reroll/respawn and exactly-once loot IDs per run. The desert enemies reuse shared hit/dodge/gear/collision/loot infrastructure but have separate state logic. Automated and rendered tests verify genuine warnings, damage, misses, poison timing, pursuit/recovery/guard behavior and legal victory with currently available gear.

@@ -1,0 +1,41 @@
+{
+  "all_passed": true,
+  "checks": {
+    "clock_and_trade": true,
+    "crystal_path": true,
+    "exact_poison_restore": true,
+    "native_attack": true,
+    "native_crystal": true,
+    "native_dodge": true,
+    "native_quest22": true,
+    "native_registered": true,
+    "real_kills": true,
+    "road": true,
+    "saved_home": true,
+    "status_restore": true
+  },
+  "combat_profile": {
+    "cap": 60,
+    "fps": 60.2229631804043,
+    "frames": 183,
+    "p95_ms": 19.368,
+    "scene": "ashen_desert_encounters",
+    "step_us": 190
+  },
+  "profile": {
+    "cap": 60,
+    "draw_calls": 55.0,
+    "fps": 60.1543410004218,
+    "p95_ms": 18.99,
+    "scene": "ashen_desert_cleared_road",
+    "setup_ms": 26.029,
+    "static_bytes": 51851532,
+    "video_bytes": 46773312.0
+  },
+  "source": "external_adb_controls_and_process_restart_with_bot_navigation",
+  "stage": "desert_complete",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

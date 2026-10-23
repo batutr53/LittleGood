@@ -2,19 +2,20 @@ extends RefCounted
 # Trusted, local scene registry. Trade destinations remain owned by trade.gd.
 const WILD=preload("res://scripts/wildwood_map.gd")
 const HILLS=preload("res://scripts/iron_hills_map.gd")
+const DESERT=preload("res://scripts/ashen_desert_map.gd")
 const IDS=["wildwood","iron_hills","ashen_desert"]
 static func data(id: String) -> Dictionary:
 	return {
 		"wildwood":{"name":["Wildwood","Yabanorman"],"level":2,"risk":["Familiar trail","Tanıdık patika"],"resources":["Herbs · leather · thornhide","Bitki · deri · diken postu"],"enemies":["Wolves · thorn beasts · ancient spiders","Kurt · diken canavarı · kadim örümcek"],"landmark":["Sunstone · guardian's grove","Güneştaşı · muhafız korusu"],"preview":"wildwood-ground","playable":true},
 		"iron_hills":{"name":["Iron Hills","Demir Tepeler"],"level":4,"risk":["Armored enemies · dodge heavy strikes","Zırhlı düşman · ağır darbelerden kaçın"],"resources":["Iron ore → furnace · mountain stone → building","Demir cevheri → fırın · dağ taşı → inşaat"],"enemies":["Stone Crawler · Cave Stalker","Taş Sürüngeni · Mağara Avcısı"],"landmark":["The Forgotten Mine","Unutulmuş Maden"],"preview":"iron-hills-preview","playable":true},
-		"ashen_desert":{"name":["Ashen Desert","Kül Çölü"],"level":5,"risk":["Not playable in this E2B checkpoint","Bu E2B sürümünde henüz oynanamaz"],"resources":["Desert expedition coming in E2C","Çöl seferi E2C'de gelecek"],"enemies":["Not yet implemented","Henüz uygulanmadı"],"landmark":["Oasis · planned E2C","Vaha · E2C için planlandı"],"preview":"ashen-desert-preview","playable":false}
+		"ashen_desert":{"name":["Ashen Desert","Kül Çölü"],"level":5,"risk":["Venom · dodge stings and glowing targets","Zehir · iğneden ve parlayan hedeften kaç"],"resources":["Desert Crystal → curative forge tonic","Çöl Kristali → demircide arındırıcı iksir"],"enemies":["Sand Stalker · Dune Scorpion · Ruin Sentinel","Kum Avcısı · Kumul Akrebi · Harabe Nöbetçisi"],"landmark":["Oasis · ancient road","Vaha · kadim yol"],"preview":"ashen-desert-preview","playable":true}
 	}.get(id,{})
 static func current(w: Dictionary) -> String:return str(w.kingdom.adventure.run.get("region","wildwood"))
-static func map(id: String):return HILLS if id=="iron_hills" else WILD
+static func map(id: String):return DESERT if id=="ashen_desert" else HILLS if id=="iron_hills" else WILD
 static func unlocked(w: Dictionary,id: String) -> bool:
 	if not id in IDS or not data(id).playable:return false
 	var H=load("res://scripts/hero.gd")
-	return H.writable(w) and not w.kingdom.adventure.hero.is_empty() and H.progress(w,"hero_armed")>0 and w.kingdom.claimed.size()>=(21 if id=="iron_hills" else 11)
+	return H.writable(w) and not w.kingdom.adventure.hero.is_empty() and H.progress(w,"hero_armed")>0 and w.kingdom.claimed.size()>=(21 if id!="wildwood" else 11) and (id!="ashen_desert" or load("res://scripts/ashen_desert.gd").mine_found(w))
 static func seen(w: Dictionary,id: String) -> bool:
 	var a=w.kingdom.adventure
 	return (not a.run.is_empty() and current(w)==id) or a.get("regions",{}).get("stored",{}).has(id)
@@ -23,6 +24,7 @@ static func prepare(w: Dictionary,id: String) -> bool:
 	if not unlocked(w,id):return false
 	var a=w.kingdom.adventure
 	if not a.run.is_empty() and a.run.active:return false
+	if id=="ashen_desert" and not load("res://scripts/ashen_desert.gd").enable(w):return false
 	if current(w)==id:return true
 	if not a.has("regions"):a.regions={"version":1,"stored":{}}
 	if not a.run.is_empty():a.regions.stored[current(w)]=a.run
@@ -62,15 +64,17 @@ static func validate(w: Dictionary) -> bool:
 	var a=w.kingdom.adventure
 	if not a.has("regions"):return a.run.get("region","wildwood")=="wildwood"
 	var C=load("res://scripts/cosmetics.gd");var r=a.regions
-	if w.kingdom.claimed.size()<21 or not C.shape(r,["version","stored"]) or not C.number(r.version,1,1,true) or not r.stored is Dictionary or r.stored.size()>2:return false
+	var fields=["version","stored"]
+	if int(r.get("version",0))==2:fields.append("quest")
+	if w.kingdom.claimed.size()<21 or not C.shape(r,fields) or not C.number(r.version,1,2,true) or not r.stored is Dictionary or r.stored.size()>2:return false
 	var ids=[]
 	if not a.run.is_empty():ids.append(int(a.run.id))
 	for id in r.stored:
 		var s=r.stored[id]
-		if not id in ["wildwood","iron_hills"] or id==current(w) or not s is Dictionary or s.is_empty() or s.get("region","wildwood")!=id or s.get("active",true):return false
+		if not id in IDS or id==current(w) or not s is Dictionary or s.is_empty() or s.get("region","wildwood")!=id or s.get("active",true):return false
 		if not load("res://scripts/adventure.gd").validate_run(w,s) or ids.has(int(s.id)):return false
 		ids.append(int(s.id))
-	return true
+	return load("res://scripts/ashen_desert.gd").validate(w)
 static func validate_nodes(r: Dictionary) -> bool:
 	for id in HILLS.NODES:
 		var loot_id=91000 if id=="ore" else 91001;var node=HILLS.NODES[id]

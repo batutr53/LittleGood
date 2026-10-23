@@ -2,7 +2,7 @@
 from pathlib import Path
 import os,subprocess,argparse
 root=Path(__file__).resolve().parents[1]
-parser=argparse.ArgumentParser();parser.add_argument('--qa',action='store_true');parser.add_argument('--milestone',choices=['C','D-critical','E1','E2B'],default='C');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--qa',action='store_true');parser.add_argument('--milestone',choices=['C','D-critical','E1','E2B','E2'],default='C');args=parser.parse_args()
 preset=root/'export_presets.cfg';original=preset.read_bytes()
 env=os.environ.copy();env['JAVA_HOME']=str(root/'tools/jdk/jdk-17.0.20.1+1')
 try:

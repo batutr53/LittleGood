@@ -293,5 +293,28 @@
     "level": 17,
     "ticks": 4,
     "building": "forge"
+  },
+  {
+    "id": "crystal_tonic",
+    "name": [
+      "Crystal Purification Tonic",
+      "Kristal Arındırma İksiri"
+    ],
+    "description": [
+      "Restore 35 health and remove scorpion poison. Heal button uses it first in the desert.",
+      "35 can yeniler ve akrep zehrini temizler. Çölde İyileş önce bunu kullanır."
+    ],
+    "cost": {
+      "desert_crystal": 2,
+      "herb": 1,
+      "gold": 1
+    },
+    "effects": {
+      "heal": 35
+    },
+    "category": "consumable",
+    "level": 22,
+    "ticks": 4,
+    "building": "forge"
   }
 ]

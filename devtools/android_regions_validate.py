@@ -2,8 +2,8 @@
 from pathlib import Path
 import argparse,subprocess,json,time,re,hashlib
 r=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser();p.add_argument('--serial',default='emulator-5554');p.add_argument('--fps',type=int,choices=[30,60],default=60);a=p.parse_args()
-out=r/f'builds/phase085e2/android-{a.serial}-{a.fps}';out.mkdir(parents=True,exist_ok=True)
+p=argparse.ArgumentParser();p.add_argument('--serial',default='emulator-5554');p.add_argument('--fps',type=int,choices=[30,60],default=60);p.add_argument('--milestone',choices=['E2B','E2'],default='E2B');a=p.parse_args()
+out=r/(f'builds/phase085e2full/android-iron-{a.fps}' if a.milestone=='E2' else f'builds/phase085e2/android-{a.serial}-{a.fps}');out.mkdir(parents=True,exist_ok=True)
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe';pkg='org.littlegod.livinguniverse.betaqa';player='org.littlegod.livinguniverse'
 def run(*args,check=True):return subprocess.run([str(adb),'-s',a.serial,*args],capture_output=True,check=check,timeout=120).stdout
 def read(name,package=pkg):
@@ -22,7 +22,7 @@ def stage(name):
   time.sleep(.4)
  raise RuntimeError('Missing '+name+' latest='+str(d))
 names=['planet.json','planet.json.bak','planet.json.tmp','settings.cfg'];before={n:read(n,player) for n in names}
-run('shell','am','force-stop',pkg);run('install','--no-incremental','-r',str(r/'builds/android/LittleGod-0.8.5-milestone-E2B-qa-debug.apk'))
+run('shell','am','force-stop',pkg);run('install','--no-incremental','-r',str(r/('builds/android/LittleGod-0.8.5-milestone-'+a.milestone+'-qa-debug.apk')))
 assert b'Success' in run('shell','pm','clear',pkg);run('shell','run-as',pkg,'mkdir','-p','files')
 put('phase4_qa.json',json.dumps({'phase':'regions','fps':a.fps}));run('logcat','-c')
 (out/'startup.txt').write_bytes(run('shell','am','start','-W','-n',pkg+'/com.godot.game.GodotAppLauncher'))

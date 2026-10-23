@@ -37,6 +37,9 @@ func run() -> void:
 	game.ui.build()
 	game.ui.main_menu()
 	await get_tree().process_frame
+	if options.get("phase", "new") in ["desert","desert_reopen"]:
+		var qa=preload("res://scripts/desert_qa.gd").new();qa.game=game;qa.host=self;add_child(qa)
+		game.view.set_quality(int(options.get("fps",60))==30);await qa.run();return
 	if options.get("phase", "new") in ["regions","regions_reopen"]:
 		var qa=preload("res://scripts/regions_qa.gd").new();qa.game=game;qa.host=self;add_child(qa)
 		game.view.set_quality(int(options.get("fps",60))==30);await qa.run();return

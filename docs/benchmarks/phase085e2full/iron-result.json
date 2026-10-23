@@ -1,0 +1,50 @@
+{
+  "all_passed": true,
+  "checks": {
+    "encounter_path": true,
+    "enemy_damage": true,
+    "home_clock_paused": true,
+    "legal21": true,
+    "mine_path": true,
+    "movement_no_attack": true,
+    "native_attack": true,
+    "native_card": true,
+    "native_dodge": true,
+    "native_entry": true,
+    "native_mine": true,
+    "native_move": true,
+    "native_ore": true,
+    "native_stone": true,
+    "ore_path": true,
+    "pending_route": true,
+    "real_kills": true,
+    "saved": true,
+    "stone_path": true,
+    "telegraph": true
+  },
+  "combat_profile": {
+    "cap": 60,
+    "fps": 60.2336895875362,
+    "frames": 211,
+    "p95_ms": 19.355,
+    "scene": "iron_hills_active_encounters",
+    "step_us": 158
+  },
+  "profile": {
+    "cap": 60,
+    "draw_calls": 62.0,
+    "fps": 60.0783116420652,
+    "p95_ms": 19.37,
+    "scene": "iron_hills_cleared_mine",
+    "setup_ms": 27.836,
+    "static_bytes": 50781022,
+    "step_us": 133,
+    "video_bytes": 48767656.0
+  },
+  "source": "rendered_bot_navigation_with_external_adb_controls",
+  "stage": "regions_complete",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

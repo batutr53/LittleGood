@@ -980,5 +980,91 @@
       "gold": 4
     },
     "next": ""
+  },
+  {
+    "id": "main_22",
+    "level": 22,
+    "chapter": 5,
+    "title": [
+      "The Ashen Desert",
+      "Kül Çölü"
+    ],
+    "description": [
+      "The mine points beyond the hills. Find the oasis, face the desert and bring a crystal home to Arin.",
+      "Maden, tepelerin ötesini gösteriyor. Vahayı bul, çölle yüzleş ve Arin’e bir kristal getir."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_21"
+    ],
+    "objectives": [
+      {
+        "kind": "desert",
+        "key": "entered",
+        "target": 1,
+        "text": [
+          "Enter the Ashen Desert",
+          "Kül Çölü’ne gir"
+        ],
+        "navigate": "desert"
+      },
+      {
+        "kind": "desert",
+        "key": "oasis",
+        "target": 1,
+        "text": [
+          "Discover the oasis",
+          "Vahayı keşfet"
+        ],
+        "navigate": "desert"
+      },
+      {
+        "kind": "desert",
+        "key": "kill",
+        "target": 1,
+        "text": [
+          "Defeat a desert enemy",
+          "Çöl düşmanını yen"
+        ],
+        "navigate": "desert"
+      },
+      {
+        "kind": "desert",
+        "key": "picked",
+        "target": 1,
+        "text": [
+          "Collect a regional crystal",
+          "Bölgeden kristal topla"
+        ],
+        "navigate": "desert"
+      },
+      {
+        "kind": "desert",
+        "key": "returned",
+        "target": 1,
+        "text": [
+          "Return safely with expedition proof",
+          "Sefer kanıtıyla güvenle dön"
+        ],
+        "navigate": "desert"
+      },
+      {
+        "kind": "desert",
+        "key": "registered",
+        "target": 1,
+        "text": [
+          "Register one real crystal at home",
+          "Evde gerçek bir kristali kaydet"
+        ],
+        "navigate": "desert_register"
+      }
+    ],
+    "rewards": {
+      "xp": 880,
+      "gold": 4,
+      "wood": 4,
+      "stone": 4
+    },
+    "next": ""
   }
 ]

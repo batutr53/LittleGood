@@ -53,6 +53,7 @@ static func event(w: Dictionary,key: String,amount: int=1) -> void:
 static func queue(w: Dictionary,recipe: String,building: int) -> bool:
 	if not writable(w) or not recipes().has(recipe):return false
 	var data=recipes()[recipe];var state=w.kingdom.industry
+	if recipe=="crystal_tonic" and not load("res://scripts/ashen_desert.gd").can_spend(w,2000):return false
 	if data.get("category","tool")!="tool" and int(w.kingdom.version)!=3:return false
 	if data.get("category")=="military" and not load("res://scripts/military.gd").enabled(w):return false
 	if state.items.size()+state.queue.size()>=MAX_ITEMS or state.queue.size()>=MAX_QUEUE or w.kingdom.claimed.size()+1<int(data.level):return false
@@ -93,6 +94,7 @@ static func validate(w: Dictionary) -> bool:
 	for entry in state.items+state.queue:
 		if not entry is Dictionary or not C.number(entry.get("id"),1,state.next_item-1,true) or ids.has(int(entry.id)) or not entry.get("recipe") is String or not recipes().has(entry.recipe):return false
 		if recipes()[entry.recipe].get("category")=="military" and (not load("res://scripts/military.gd").enabled(w) or w.kingdom.claimed.size()<16):return false
+		if entry.recipe=="crystal_tonic" and not load("res://scripts/ashen_desert.gd").enabled(w):return false
 		ids[int(entry.id)]=true
 	for entry in state.items:
 		if not C.shape(entry,["id","recipe"]):return false

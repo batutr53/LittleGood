@@ -168,5 +168,86 @@
         2
       ]
     ]
+  },
+  {
+    "id": "sand_stalker",
+    "name": [
+      "Sand Stalker",
+      "Kum Avcısı"
+    ],
+    "health": 50,
+    "attack": 17,
+    "defense": 1,
+    "speed": 165,
+    "range": 55,
+    "warning": 350,
+    "cooldown": 1000,
+    "xp": 36,
+    "material": "leather",
+    "quantity": 2,
+    "weights": [
+      [
+        "herb",
+        3
+      ],
+      [
+        "gold",
+        1
+      ]
+    ]
+  },
+  {
+    "id": "dune_scorpion",
+    "name": [
+      "Dune Scorpion",
+      "Kumul Akrebi"
+    ],
+    "health": 80,
+    "attack": 22,
+    "defense": 8,
+    "speed": 58,
+    "range": 95,
+    "warning": 1050,
+    "cooldown": 2000,
+    "xp": 42,
+    "material": "desert_crystal",
+    "quantity": 2,
+    "weights": [
+      [
+        "herb",
+        3
+      ],
+      [
+        "iron",
+        1
+      ]
+    ]
+  },
+  {
+    "id": "ruin_sentinel",
+    "name": [
+      "Ruin Sentinel",
+      "Harabe Nöbetçisi"
+    ],
+    "health": 88,
+    "attack": 20,
+    "defense": 5,
+    "speed": 72,
+    "range": 220,
+    "warning": 900,
+    "cooldown": 1500,
+    "xp": 48,
+    "material": "desert_crystal",
+    "quantity": 2,
+    "weights": [
+      [
+        "iron",
+        2
+      ],
+      [
+        "gold",
+        1
+      ]
+    ]
   }
 ]

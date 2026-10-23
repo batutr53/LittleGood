@@ -24,7 +24,7 @@ func profile() -> void:
 			var owned=I.item(game.world,int(h.equipment[slot]));var title={"weapon":say("Weapon","Silah"),"shield":say("Shield","Kalkan"),"armor":say("Armor","Zırh"),"artifact":say("Artifact","Eser")}[slot]
 			add(list,title+" · "+(game.realm_ui.localized(I.recipes()[owned.recipe].name) if not owned.is_empty() else say("Empty","Boş")),func():equipment(slot))
 		add(v,say("Forge equipment","Donanım döv"),game.realm_ui.workshop)
-		if game.world.kingdom.claimed.size()>=11:add(v,say("World map · Wildwood","Dünya haritası · Yabanorman"),world_map,true)
+		if game.world.kingdom.claimed.size()>=11:add(v,say("World map · expeditions","Dünya haritası · seferler"),world_map,true)
 	add(v,ui.t("back"),game.realm_ui.open)
 func legacy_world_map() -> void:
 	ui.page="kingdom";var v=ui.popup(say("Beyond the Border","Sınırın Ötesinde"))
@@ -53,7 +53,8 @@ func destination(id: String) -> void:
 	list.add_child(ui.label(say("ADVENTURE DESTINATION · Hero level ","MACERA BÖLGESİ · Kahraman seviyesi ")+str(d.level)+"\n"+game.realm_ui.localized(d.risk)+"\n\n"+game.realm_ui.localized(d.resources)+"\n"+game.realm_ui.localized(d.enemies)+"\n"+game.realm_ui.localized(d.landmark),21))
 	if id=="iron_hills":list.add_child(ui.label(say("Two finite mineral deposits. They do not refresh when you leave or reload. Ore feeds your existing furnace; stone can build your kingdom. No travel fee.","İki sınırlı maden damarı. Ayrılınca veya kayıt yükleyince yenilenmez. Cevher mevcut fırınında eritilir; taş krallığında kullanılır. Yol ücreti yok."),19))
 	if R.unlocked(game.world,id):add(v,say("Enter ","Gir: ")+game.realm_ui.localized(d.name),func():game.enter_adventure(id),true)
-	else:list.add_child(ui.label(say("Requires quest 21 completed and an armed Warrior.","21. görev tamamlanmalı ve Savaşçı silahlı olmalı.") if d.playable and id=="iron_hills" else say("Requires an armed Warrior and quest 11.","Silahlı Savaşçı ve 11. görev gerekli.") if d.playable else say("Playable desert is not included yet. Your trade route remains available.","Oynanabilir çöl henüz bu sürümde yok. Ticaret yolun kullanılabilir."),20))
+	else:list.add_child(ui.label(say("Complete quest 21, discover the Forgotten Mine in Iron Hills, return home and equip a Warrior.","21. görevi tamamla, Demir Tepeler'deki Unutulmuş Maden'i keşfet, eve dön ve Savaşçı'yı silahlandır.") if id=="ashen_desert" else say("Requires quest 21 completed and an armed Warrior.","21. görev tamamlanmalı ve Savaşçı silahlı olmalı.") if id=="iron_hills" else say("Requires an armed Warrior and quest 11.","Silahlı Savaşçı ve 11. görev gerekli."),20))
+	if id=="ashen_desert":list.add_child(ui.label(say("A real oasis, three enemy styles and finite crystals. Bring a tonic or herbs. The oasis heals once; Home clears poison and preserves your loot. Discover the mine first. No travel fee.","Gerçek vaha, üç düşman türü ve sınırlı kristaller. İksir veya bitki getir. Vaha bir kez iyileştirir; Dön zehri temizler ve ganimeti korur. Önce madeni keşfet. Yol ücreti yok."),19))
 	if id=="wildwood":
 		var r=game.world.kingdom.adventure.run
 		if not r.is_empty() and not r.active and r.get("region","wildwood")=="wildwood" and not r.enemies.any(func(e):return e.hp>0) and not r.loot.any(func(l):return not l.taken):add(v,say("Refresh cleared trail","Temizlenen patikayı yenile"),func():if load("res://scripts/adventure.gd").revisit(game.world):game.checkpoint("new-expedition");destination(id))

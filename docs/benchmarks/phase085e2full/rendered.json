@@ -1,0 +1,29 @@
+{
+  "all_passed": true,
+  "checks": {
+    "active_save": true,
+    "crystal": true,
+    "crystal_path": true,
+    "entry": true,
+    "home": true,
+    "oasis": true,
+    "oasis_path": true,
+    "quest22": true,
+    "real_kills": true,
+    "register": true,
+    "road": true,
+    "road_path": true,
+    "scorpion_path": true,
+    "sting": true,
+    "warning": true
+  },
+  "profile": {
+    "draw_calls": 54.0,
+    "fps": 60.5006580706996,
+    "p95_ms": 16.982,
+    "scene": "ashen_desert_cleared_road",
+    "setup_ms": 18.392,
+    "static_bytes": 53198764,
+    "step_us": 105
+  }
+}
