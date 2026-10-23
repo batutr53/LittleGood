@@ -56,3 +56,22 @@ func hunt(seed: int=2026) -> bool:
 		pickups()
 	if not A.exit(world) or not K.claim(world,"main_13"):error="quest13";return false
 	return true
+func craft(recipe: String) -> bool:
+	var data=I.recipes()[recipe];var base=foundation.base
+	var mine=world.kingdom.buildings.filter(func(b):return b.kind=="mine")[0];var furnace=world.kingdom.buildings.filter(func(b):return b.kind=="furnace")[0];var forge=world.kingdom.buildings.filter(func(b):return b.kind=="forge")[0]
+	var required=float(data.cost.get("iron",0))
+	if world.kingdom.stock.iron<required*1000:
+		K.assign(world,int(world.kingdom.workers[2].id),int(mine.id))
+		if not base.wait_stock("ore",required*2+2):return false
+		K.assign(world,int(world.kingdom.workers[2].id),int(furnace.id))
+		if not base.wait_stock("iron",required):return false
+	K.assign(world,int(world.kingdom.workers[3].id),int(forge.id))
+	if not I.queue(world,recipe,int(forge.id)):error="recipe "+recipe;return false
+	for i in range(20):base.driver.step()
+	return true
+func equipped_upgrade(seed: int=2026) -> bool:
+	if not hunt(seed) or not craft("thornblade"):return false
+	var item=world.kingdom.industry.items.filter(func(owned):return owned.recipe=="thornblade")[0]
+	if not H.equip(world,"weapon",int(item.id)) or not K.claim(world,"main_14"):error="quest14";return false
+	if not craft("reinforced_shield"):return false
+	item=world.kingdom.industry.items.filter(func(owned):return owned.recipe=="reinforced_shield")[0];return H.equip(world,"shield",int(item.id))

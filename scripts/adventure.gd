@@ -28,6 +28,11 @@ static func exit(w: Dictionary) -> bool:
 	H.event(w,"returned");a.hero.hp=int(H.stats(w).health);a.hero.defeated=false
 	for key in a.hero.cooldowns:a.hero.cooldowns[key]=0
 	r.x=240;r.y=1260;return true
+static func revisit(w: Dictionary) -> bool:
+	if not H.writable(w):return false
+	var r=w.kingdom.adventure.run
+	if r.is_empty() or r.active or r.enemies.any(func(e):return e.hp>0) or r.loot.any(func(l):return not l.taken):return false
+	w.kingdom.adventure.run={};return true
 static func move_actor(w: Dictionary,id: int,p: Vector2,delta: Vector2,mover: Callable) -> Vector2:
 	return mover.call(id,p,delta) if mover.is_valid() else MAP.move(p,delta,w.kingdom.claimed.size()<14)
 static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> Array:

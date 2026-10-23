@@ -13,3 +13,6 @@ Separate playable scene, real CharacterBody2D/StaticBody2D collision, touch move
 
 ## C3 - verified real combat
 Wolf bite/chase, armored slow Thorn Beast heavy warning and Spider locked-target leap use distinct real state machines. Equipment-derived attacks, cooldowns, dodge invulnerability, herb/potion healing, death and weighted persisted drops work. Legal1-13 model journey, exact loot/death restoration and actual rendered physics fight (enemy hit back, warning visible, enemy defeated and loot picked up) pass. Texture lifetime was fixed after visual inspection caught a white herb quad. C3 checkpoint: age085-c3-combat.
+
+## C4 - verified blacksmith integration
+A legal1-14 journey brings real leather/thornhide/herbs home, pays iron/material costs through the existing forge and equips the Thornhide Blade and reinforced shield. Attack/defense, material consumption, exact inventory restoration and explicit cleared-trail revisits pass six checks. C4 checkpoint: age085-c4-equipment. Boss is next.
