@@ -13,8 +13,8 @@ func command(target: Vector2,attack: bool=true) -> Dictionary:
 	var input={"move":direction,"attack":attack,"skill":attack,"heal":world.kingdom.adventure.hero.hp<H.stats(world).health}
 	for e in r.enemies:
 		if e.hp>0 and e.state=="windup" and e.timer<=250:
-			var danger=Vector2(e.aimx,e.aimy) if e.kind=="spider" else Vector2(e.x,e.y)
-			if p.distance_to(danger)<110:input.move=(p-danger).normalized();input.dodge=true
+			var danger=Vector2(e.aimx,e.aimy) if e.kind=="spider" or (e.kind=="thornheart" and e.pattern==1) else Vector2(e.x,e.y)
+			if p.distance_to(danger)<155:input.move=(p-danger).normalized();input.dodge=true
 	return input
 func tick(input: Dictionary) -> void:A.step(world,input);steps+=1
 func travel(target: Vector2) -> bool:
@@ -75,3 +75,10 @@ func equipped_upgrade(seed: int=2026) -> bool:
 	if not H.equip(world,"weapon",int(item.id)) or not K.claim(world,"main_14"):error="quest14";return false
 	if not craft("reinforced_shield"):return false
 	item=world.kingdom.industry.items.filter(func(owned):return owned.recipe=="reinforced_shield")[0];return H.equip(world,"shield",int(item.id))
+func complete(seed: int=2026) -> bool:
+	if not equipped_upgrade(seed) or not A.enter(world):return false
+	var boss=world.kingdom.adventure.run.enemies.filter(func(e):return e.kind=="thornheart")[0]
+	if not travel(Vector2(boss.x,boss.y)) or not fight(boss):return false
+	pickups()
+	if not A.exit(world) or not K.claim(world,"main_15"):error="quest15";return false
+	return true

@@ -28,6 +28,7 @@ func ui_font() -> Font:
 	return body_font
 
 const TEXT = {
+"guardian_victory": ["Thornheart's roots release the Wildwood. Your champion brought its living heart home.", "Thornheart'ın kökleri Yabanorman'ı serbest bıraktı. Şampiyonun onun yaşayan kalbini eve getirdi."],
 "local_universe": ["Local universe", "Yerel evren"],
 "universe_body": ["Visit shared snapshots on this device. No accounts or live connection.", "Bu cihazdaki paylaşılan görüntüleri ziyaret et. Hesap veya canlı bağlantı yok."],
 "my_profile": ["Planet profile", "Gezegen profili"],

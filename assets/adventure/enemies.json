@@ -1,5 +1,118 @@
 [
- {"id":"wolf","name":["Forest Wolf","Orman Kurdu"],"health":32,"attack":9,"defense":0,"speed":132,"range":55,"warning":500,"cooldown":1100,"xp":24,"material":"leather","quantity":2,"weights":[["gold",4],["herb",2],["iron",1]]},
- {"id":"thorn","name":["Thorn Beast","Diken Canavarı"],"health":48,"attack":15,"defense":3,"speed":72,"range":75,"warning":900,"cooldown":1500,"xp":32,"material":"thornhide","quantity":2,"weights":[["herb",4],["gold",2],["iron",1]]},
- {"id":"spider","name":["Ancient Spider","Kadim Örümcek"],"health":30,"attack":10,"defense":1,"speed":115,"range":190,"warning":750,"cooldown":1400,"xp":28,"material":"herb","quantity":2,"weights":[["leather",4],["iron",2],["gold",1]]}
+  {
+    "id": "wolf",
+    "name": [
+      "Forest Wolf",
+      "Orman Kurdu"
+    ],
+    "health": 32,
+    "attack": 9,
+    "defense": 0,
+    "speed": 132,
+    "range": 55,
+    "warning": 500,
+    "cooldown": 1100,
+    "xp": 24,
+    "material": "leather",
+    "quantity": 2,
+    "weights": [
+      [
+        "gold",
+        4
+      ],
+      [
+        "herb",
+        2
+      ],
+      [
+        "iron",
+        1
+      ]
+    ]
+  },
+  {
+    "id": "thorn",
+    "name": [
+      "Thorn Beast",
+      "Diken Canavarı"
+    ],
+    "health": 48,
+    "attack": 15,
+    "defense": 3,
+    "speed": 72,
+    "range": 75,
+    "warning": 900,
+    "cooldown": 1500,
+    "xp": 32,
+    "material": "thornhide",
+    "quantity": 2,
+    "weights": [
+      [
+        "herb",
+        4
+      ],
+      [
+        "gold",
+        2
+      ],
+      [
+        "iron",
+        1
+      ]
+    ]
+  },
+  {
+    "id": "spider",
+    "name": [
+      "Ancient Spider",
+      "Kadim Örümcek"
+    ],
+    "health": 30,
+    "attack": 10,
+    "defense": 1,
+    "speed": 115,
+    "range": 190,
+    "warning": 750,
+    "cooldown": 1400,
+    "xp": 28,
+    "material": "herb",
+    "quantity": 2,
+    "weights": [
+      [
+        "leather",
+        4
+      ],
+      [
+        "iron",
+        2
+      ],
+      [
+        "gold",
+        1
+      ]
+    ]
+  },
+  {
+    "id": "thornheart",
+    "name": {
+      "en": "Thornheart",
+      "tr": "Dikenyürek"
+    },
+    "health": 220,
+    "attack": 22,
+    "defense": 4,
+    "speed": 58,
+    "range": 175,
+    "warning": 1100,
+    "cooldown": 1200,
+    "xp": 150,
+    "material": "heart",
+    "quantity": 1,
+    "weights": [
+      [
+        "gold",
+        1
+      ]
+    ]
+  }
 ]

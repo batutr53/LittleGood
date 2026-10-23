@@ -32,7 +32,7 @@ func open() -> void:
 	ui.page="kingdom"
 	var w=game.world;var q=K.current(w)
 	var v=ui.popup(say("The First Kingdom","İlk Krallık"));var list=ui.card_list(v,405)
-	list.add_child(ui.label(say("Realm ","Diyar ")+str(K.level(w))+" · "+say("Development tier ","Gelişim aşaması ")+str(K.tier(w))+" · "+str(w.kingdom.claimed.size())+(" / 10" if I.enabled(w) else " / 5"),22,Color("ecd99f")))
+	list.add_child(ui.label(say("Realm ","Diyar ")+str(K.level(w))+" · "+say("Development tier ","Gelişim aşaması ")+str(K.tier(w))+" · "+str(w.kingdom.claimed.size())+(" / 15" if H.enabled(w) else " / 10" if I.enabled(w) else " / 5"),22,Color("ecd99f")))
 	list.add_child(ui.label(resources(),18))
 	if w.kingdom.advisor:
 		var row=HBoxContainer.new();list.add_child(row)
@@ -51,7 +51,7 @@ func open() -> void:
 	elif not H.enabled(w):
 		list.add_child(ui.label(say("Arin has found a trail beyond the border. Choose a champion for the Wild Lands; your kingdom and equipment remain intact.","Arin sınırın ötesinde bir iz buldu. Yaban Topraklar için şampiyon seç; krallığın ve donanımların korunur."),20))
 		add(list,say("Begin Chapter III · The Wild Lands","Bölüm III'e başla · Yaban Topraklar"),func():if H.enable(w):changed();game.checkpoint("chapter3");game.hero_ui.profile(),true)
-	else:list.add_child(ui.label(say("Your champion is ready. Continue caring for the kingdom.","Şampiyonun hazır. Krallığınla ilgilenmeye devam et."),20))
+	else:list.add_child(ui.label(say("Chapter III complete! Craft the Heartward, revisit the Wildwood, or watch your kingdom grow.","Bölüm III tamamlandı! Kalpkor'u döv, Yabanorman'ı yeniden keşfet veya krallığını gözet."),20))
 	if H.enabled(w):add(list,say("Hero Hall","Kahraman Salonu"),game.hero_ui.profile)
 	if I.enabled(w):
 		add(list,say("Workshop · craft with a smith","Atölye · demirciyle üret"),workshop)
@@ -73,7 +73,7 @@ func intro() -> void:
 func cost(data: Dictionary) -> String:
 	var terms: Array[String]=[]
 	for key in data:
-		var title={"wood":say("wood","odun"),"stone":say("stone","taş"),"gold":say("gold","altın"),"ore":say("ore","cevher"),"iron":say("iron","demir"),"xp":say("Realm XP","Diyar XP")}.get(key,key)
+		var title={"wood":say("wood","odun"),"stone":say("stone","taş"),"gold":say("gold","altın"),"ore":say("ore","cevher"),"iron":say("iron","demir"),"leather":say("leather","deri"),"thornhide":say("thornhide","dikenderi"),"herb":say("herb","şifalı bitki"),"heart":say("living heart","yaşayan kalp"),"xp":say("Realm XP","Diyar XP")}.get(key,key)
 		terms.append(str(int(data[key]))+" "+title)
 	return " · ".join(terms)
 func claim_reward(id: String) -> void:
@@ -195,6 +195,9 @@ func inventory() -> void:
 		var owned=I.tool(w,int(c.id));var id=int(c.id)
 		add(list,c.name+" · "+(localized(I.recipes()[owned.recipe].name) if not owned.is_empty() else say("No tool","Alet yok")),func():choose_tool(id))
 	add(v,say("Craft another tool","Yeni alet üret"),workshop);add(v,ui.t("back"),open)
+	if H.enabled(w):
+		list.add_child(ui.label(cost({"leather":w.kingdom.stock.leather/1000,"thornhide":w.kingdom.stock.thornhide/1000,"herb":w.kingdom.stock.herb/1000,"heart":w.kingdom.stock.heart/1000}),19))
+		add(v,say("Hero equipment","Kahraman donanımı"),game.hero_ui.profile)
 func choose_tool(worker: int) -> void:
 	if not I.enabled(game.world):return
 	var w=game.world;var citizens=w.kingdom.workers.filter(func(c):return int(c.id)==worker)
@@ -204,6 +207,7 @@ func choose_tool(worker: int) -> void:
 	list.add_child(ui.label(say("Current: ","Mevcut: ")+(localized(I.recipes()[equipped.recipe].name)+"\n"+localized(I.recipes()[equipped.recipe].description) if not equipped.is_empty() else say("No tool · base work rate","Alet yok · temel iş hızı")),21))
 	for owned in w.kingdom.industry.items:
 		var data=I.recipes()[owned.recipe];var id=int(owned.id)
+		if data.get("category","tool")!="tool":continue
 		add(list,localized(data.name)+" #"+str(id)+"\n"+localized(data.description),func():if I.equip(w,worker,id):changed();inventory(),true)
 	add(list,say("Unequip · return to inventory","Çıkar · envantere dönsün"),func():if I.equip(w,worker,0):changed();inventory())
 	add(v,ui.t("back"),inventory)

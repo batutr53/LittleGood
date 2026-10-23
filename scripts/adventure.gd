@@ -19,6 +19,8 @@ static func enter(w: Dictionary,home_paused: bool=false) -> bool:
 	if a.run.is_empty():
 		a.run={"id":int(a.next_run),"active":true,"home_paused":home_paused,"clock":0,"x":240,"y":1260,"facing":[0,-1000],"invulnerable":0,"dash":0,"swing":0,"enemies":new_enemies(),"loot":[],"cargo":{},"picked":0,"chest":false,"harvest":false,"landmark":false,"rng":str(int(w.seed)+int(a.next_run)*7919)};a.next_run+=1
 	else:a.run.active=true;a.run.home_paused=home_paused
+	if w.kingdom.claimed.size()>=14 and not a.run.enemies.any(func(e):return e.kind=="thornheart"):
+		a.run.enemies.append({"id":4,"kind":"thornheart","x":720,"y":230,"hp":220,"state":"idle","timer":0,"aimx":0,"aimy":0,"pattern":0})
 	return true
 static func exit(w: Dictionary) -> bool:
 	if not H.writable(w) or w.kingdom.adventure.run.is_empty() or not w.kingdom.adventure.run.active:return false
@@ -78,13 +80,19 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 				var hit=false
 				if e.kind=="spider":
 					var landing=Vector2(e.aimx,e.aimy);var moved=move_actor(w,int(e.id),ep,(landing-ep).limit_length(180),mover);e.x=roundi(moved.x);e.y=roundi(moved.y);hit=p.distance_to(landing)<60
+				elif e.kind=="thornheart":
+					if e.pattern==0:hit=distance<140 and offset.normalized().dot((Vector2(e.aimx,e.aimy)-ep).normalized())>.35
+					elif e.pattern==1:hit=p.distance_to(Vector2(e.aimx,e.aimy))<85
+					else:hit=distance<145
 				else:hit=distance<float(data.range)+12
 				if hit and hurt(w,int(data.attack)):feedback.append("hurt")
 				e.state="recover";e.timer=int(data.cooldown)
+				if e.kind=="thornheart":e.pattern=(int(e.pattern)+1)%(3 if e.hp<=110 else 2)
 			continue
 		if e.state=="recover" and e.timer>0:continue
 		if distance>270:e.state="idle";continue
-		if distance<=float(data.range):e.state="windup";e.timer=int(data.warning);e.aimx=r.x;e.aimy=r.y;continue
+		if distance<=float(data.range):
+			e.state="windup";e.timer=700 if e.kind=="thornheart" and e.hp<=110 and e.pattern==1 else int(data.warning);e.aimx=r.x;e.aimy=r.y;continue
 		e.state="chase";var motion=offset.normalized()*float(data.speed)*.05
 		var moved=move_actor(w,int(e.id),ep,motion,mover)
 		if moved.distance_to(ep)<1:motion=offset.normalized().orthogonal()*float(data.speed)*.05;moved=move_actor(w,int(e.id),ep,motion,mover)
@@ -117,6 +125,13 @@ static func defeat_enemy(w: Dictionary,e: Dictionary) -> void:
 	e=candidates[0]
 	if e.state=="dead" or e.hp>0:return
 	e.state="dead";var a=w.kingdom.adventure;var r=a.run;var data=enemies()[e.kind];var before=int(H.stats(w).health);a.hero.xp+=int(data.xp);a.hero.hp+=int(H.stats(w).health)-before;H.event(w,"kills")
+	if e.kind=="thornheart":
+		if not a.boss_rewarded:
+			a.boss_rewarded=true;H.event(w,"boss");drop(r,40,Vector2(e.x,e.y),"heart",1);drop(r,41,Vector2(e.x+24,e.y),"gold",5)
+			Ecosystem.event(w,"guardian_victory")
+			w.kingdom.history.append({"tick":int(w.tick),"key":"boss","subject":"Thornheart"})
+			if w.kingdom.history.size()>30:w.kingdom.history.pop_front()
+		return
 	drop(r,int(e.id)*10,Vector2(e.x,e.y),data.material,int(data.quantity))
 	var rng=RandomNumberGenerator.new();rng.state=int(r.rng);var total=0
 	for row in data.weights:total+=int(row[1])

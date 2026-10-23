@@ -26,6 +26,9 @@ var startup_ms=0.0
 var effects
 var floats: Array=[]
 var effect_textures: Dictionary={}
+var attack_held=false
+var mouse_aim=Vector2.ZERO
+var button_titles: Dictionary={}
 func say(en: String,tr: String) -> String:return tr if game.ui.language=="tr" else en
 func _ready() -> void:
 	var started=Time.get_ticks_usec();game.show_world(false);game.ui.root.hide()
@@ -39,10 +42,13 @@ func _ready() -> void:
 	for rect in MAP.solids(game.world.kingdom.claimed.size()<14):
 		var wall=StaticBody2D.new();wall.position=rect.get_center();var shape=CollisionShape2D.new();var box=RectangleShape2D.new();box.size=rect.size;shape.shape=box;wall.add_child(shape);add_child(wall)
 	make_body(0,Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y),load("res://assets/adventure/warrior.png"),110)
-	for e in game.world.kingdom.adventure.run.enemies:make_body(int(e.id),Vector2(e.x,e.y),load("res://assets/adventure/"+e.kind+".svg"),100)
+	for e in game.world.kingdom.adventure.run.enemies:make_body(int(e.id),Vector2(e.x,e.y),load("res://assets/adventure/"+e.kind+".svg"),180 if e.kind=="thornheart" else 100)
 	effects=preload("res://scripts/adventure_effects.gd").new();add_child(effects)
-	camera=Camera2D.new();camera.zoom=Vector2.ONE*.9;camera.position=bodies[0].position;camera.position_smoothing_enabled=false;add_child(camera);camera.make_current()
+	camera=Camera2D.new();camera.zoom=Vector2.ONE*1.15;camera.position=camera_target();camera.position_smoothing_enabled=false;add_child(camera);camera.make_current()
 	build_hud();startup_ms=(Time.get_ticks_usec()-started)/1000.0
+func camera_target() -> Vector2:
+	var half=get_viewport_rect().size/(camera.zoom*2);var p=bodies[0].position
+	return Vector2(clampf(p.x,half.x,MAP.SIZE.x-half.x),clampf(p.y,half.y,MAP.SIZE.y-half.y))
 func make_body(id: int,p: Vector2,texture: Texture2D,size: float) -> void:
 	var body=CharacterBody2D.new();body.position=p;body.collision_layer=2;body.collision_mask=1;actors.add_child(body)
 	var collision=CollisionShape2D.new();var circle=CircleShape2D.new();circle.radius=14;collision.shape=circle;body.add_child(collision)
@@ -53,28 +59,35 @@ func move_body(id: int,p: Vector2,delta: Vector2) -> Vector2:
 func place(node: Control,rect: Rect2) -> void:
 	hud.add_child(node);node.position=rect.position;node.size=rect.size
 func add_button(id: String,text: String,rect: Rect2,cb: Callable) -> void:
-	var b=game.ui.button(text,cb,true);b.add_theme_font_size_override("font_size",18);place(b,rect);buttons[id]=b
+	var b=game.ui.button(text,cb,true);b.add_theme_font_size_override("font_size",18);place(b,rect);buttons[id]=b;button_titles[id]=text
 func build_hud() -> void:
 	var layer=CanvasLayer.new();layer.layer=12;add_child(layer);hud=Control.new();hud.mouse_filter=Control.MOUSE_FILTER_IGNORE;layer.add_child(hud)
 	var height=get_viewport_rect().size.y
 	var bg=ColorRect.new();bg.color=Color(.035,.09,.12,.92);bg.mouse_filter=Control.MOUSE_FILTER_IGNORE;place(bg,Rect2(0,0,720,165))
 	health=game.ui.label("",24,Color("d7e5ba"));place(health,Rect2(25,30,550,35))
 	objective=game.ui.label("",19);place(objective,Rect2(25,75,650,77))
-	message=game.ui.label(say("Left stick / WASD to move · E to inspect the Sunstone.","Sol çubuk / WASD ile yürü · Güneştaşı için E veya İncele."),18);place(message,Rect2(30,height-340,660,65))
+	var message_bg=ColorRect.new();message_bg.color=Color(.035,.09,.12,.86);message_bg.mouse_filter=Control.MOUSE_FILTER_IGNORE;place(message_bg,Rect2(20,height-386,680,70))
+	message=game.ui.label(say("Move: stick / WASD · Attack: Space · Strike: Q\nDodge: Shift · Inspect: E · Heal: F", "Yürü: çubuk / WASD · Saldır: Boşluk · Darbe: Q\nKaçın: Shift · İncele: E · İyileş: F"),18,Color("f0e4bc"));place(message,Rect2(30,height-380,660,65))
 	add_button("return",say("Home","Dön"),Rect2(605,20,95,48),go_home)
 	add_button("interact",say("Inspect","İncele"),Rect2(588,height-192,110,85),interact)
 	buttons.interact.position=Vector2(582,height-300);buttons.interact.size=Vector2(115,76)
 	for row in [["attack",say("Attack","Saldır"),Vector2(460,height-178)],["skill",say("Strike","Darbe"),Vector2(582,height-178)],["dodge",say("Dodge","Kaçın"),Vector2(338,height-178)],["heal",say("Heal","İyileş"),Vector2(460,height-300)]]:
 		var key=row[0];add_button(key,row[1],Rect2(row[2],Vector2(112,76)),func():actions[key]=true)
-		if key=="attack":buttons[key].button_down.connect(func():actions.attack=true)
-	add_button("pause",say("Pause","Dur"),Rect2(605,108,95,44),func():frozen=not frozen)
+		if key=="attack":
+			buttons[key].button_down.connect(func():attack_held=true;actions.attack=true)
+			buttons[key].button_up.connect(func():attack_held=false)
+	add_button("pause",say("Pause","Dur"),Rect2(605,108,95,44),toggle_pause)
 	stick=preload("res://scripts/adventure_stick.gd").new();stick.position=Vector2(125,height-145);layer.add_child(stick)
 	refresh_hud()
 func refresh_hud() -> void:
 	var h=game.world.kingdom.adventure.hero;var r=game.world.kingdom.adventure.run
 	health.text=h.name+" · "+str(int(h.hp))+" / "+str(H.stats(game.world).health)+say(" HP"," Can")
+	for key in ["attack","skill","dodge","heal"]:
+		var cd=int(h.cooldowns[key]);buttons[key].text=button_titles[key]+("\n"+str(snappedf(cd/1000.0,.1))+"s" if cd>0 else "")
 	var q=preload("res://scripts/kingdom.gd").current(game.world)
 	objective.text=say("WILDWOOD · ","YABANORMAN · ")+(game.realm_ui.localized(q.title) if not q.is_empty() else say("Explore and return safely","Keşfet ve güvenle dön"))
+	for e in r.enemies:
+		if e.kind=="thornheart" and e.hp>0 and Vector2(r.x,r.y).distance_to(Vector2(e.x,e.y))<320:objective.text+="\nThornheart · "+str(int(e.hp))+" / 220 · "+say("Phase ","Evre ")+("II" if e.hp<=110 else "I")
 	if h.defeated:message.text=say("Your champion fell. Home restores health and keeps your collected loot.","Şampiyonun düştü. Dön canı yeniler; toplanmış ganimetin korunur.")
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
@@ -87,7 +100,14 @@ func _input(event: InputEvent) -> void:
 		if event.keycode==KEY_Q:actions.skill=true
 		if event.keycode==KEY_SHIFT:actions.dodge=true
 		if event.keycode==KEY_F:actions.heal=true
-		if event.keycode==KEY_ESCAPE:frozen=not frozen;message.text=say("Paused · Escape to resume, Home to retreat.","Duraklatıldı · Escape sürdürür; Dön geri çeker.") if frozen else ""
+		if event.keycode==KEY_ESCAPE:toggle_pause()
+func toggle_pause() -> void:
+	frozen=not frozen;attack_held=false;actions.clear();movement=Vector2.ZERO
+	buttons.pause.text=say("Resume","Sürdür") if frozen else button_titles.pause
+	message.text=say("Paused · Resume to continue; Home keeps collected loot.","Duraklatıldı · Sürdür ile devam et; Dön ganimeti korur.") if frozen else say("Watch the warning, then dodge. Attack during recovery.","Uyarıyı izle, sonra kaçın. Dinlenme aralığında saldır.")
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed:
+		mouse_aim=get_global_mouse_position()-bodies[0].position;actions.attack=true
 func _physics_process(delta: float) -> void:
 	if frozen or game.suspended:return
 	var direction=movement
@@ -95,11 +115,15 @@ func _physics_process(delta: float) -> void:
 		direction+=Vector2(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT))-float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))-float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)))
 	stick.vector=direction.limit_length(1);stick.queue_redraw();accumulator+=minf(delta,.2)
 	while accumulator>=.05:
-		accumulator-=.05;var started=Time.get_ticks_usec();var command=actions.duplicate();command.move=direction;var feedback=A.step(game.world,command,move_body);actions.clear();combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
+		accumulator-=.05;var started=Time.get_ticks_usec();var command=actions.duplicate();command.move=direction
+		if attack_held or (not controlled and Input.is_physical_key_pressed(KEY_SPACE)):command.attack=true
+		if mouse_aim.length()>.1:command.aim=mouse_aim;mouse_aim=Vector2.ZERO
+		var feedback=A.step(game.world,command,move_body);actions.clear();combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
 		for cue in feedback:
 			if cue is Dictionary:floats.append({"point":Vector2(cue.x,cue.y),"text":str(cue.damage),"age":0.0})
 			elif cue in ["swing","kill","heal"]:game.audio.chime(6 if cue=="kill" else 0 if cue=="swing" else 5)
 			elif cue=="hurt":game.audio.chime(2)
+			if cue is String and cue=="kill" and game.world.kingdom.adventure.boss_rewarded:message.text=say("Thornheart falls! Inspect the living heart, then return to Arin.","Dikenyürek düştü! Yaşayan kalbi İncele ile al; Arin'e dön.")
 	var r=game.world.kingdom.adventure.run;bodies[0].position=Vector2(r.x,r.y)
 	bodies[0].get_node("Art").rotation=sin(r.clock*.012)*.025*direction.length()
 	for e in r.enemies:
@@ -107,7 +131,7 @@ func _physics_process(delta: float) -> void:
 	bodies[0].get_node("Art").modulate=Color(1,.7,.6) if r.invulnerable>0 and r.dash==0 else Color(1,1,1,.6) if r.dash>0 else Color.WHITE
 	for f in floats:f.age+=delta;f.point.y-=delta*30
 	floats=floats.filter(func(f):return f.age<.8)
-	camera.position=camera.position.lerp(bodies[0].position,1-exp(-delta*7))
+	camera.position=camera.position.lerp(camera_target(),1-exp(-delta*7))
 	hud_clock+=delta;save_clock+=delta
 	if hud_clock>.2:hud_clock=0;refresh_hud()
 	if save_clock>5:save_clock=0;game.checkpoint("adventure")
@@ -123,7 +147,12 @@ func draw_effects(canvas: Node2D) -> void:
 		var p=Vector2(e.x,e.y);var data=A.enemies()[e.kind]
 		canvas.draw_rect(Rect2(p-Vector2(30,95),Vector2(60,6)),Color("203e3e"));canvas.draw_rect(Rect2(p-Vector2(30,95),Vector2(60*e.hp/float(data.health),6)),Color("d3d09c"))
 		if e.state=="windup":
-			var warning=Vector2(e.aimx,e.aimy) if e.kind=="spider" else p;var radius=60 if e.kind=="spider" else int(data.range)+12
+			if e.kind=="thornheart" and e.pattern==0:
+				var angle=(Vector2(e.aimx,e.aimy)-p).angle();var points=PackedVector2Array([p])
+				for i in range(25):points.append(p+Vector2.from_angle(angle-1.21+i*2.42/24)*140)
+				canvas.draw_colored_polygon(points,Color(.95,.38,.24,.3));canvas.draw_arc(p,140,angle-1.21,angle+1.21,32,Color("f3bb7b"),3,true);continue
+			var root=e.kind=="thornheart" and e.pattern==1
+			var warning=Vector2(e.aimx,e.aimy) if e.kind=="spider" or root else p;var radius=60 if e.kind=="spider" else 85 if root else 145 if e.kind=="thornheart" else int(data.range)+12
 			canvas.draw_circle(warning,radius,Color(.95,.38,.24,.25));canvas.draw_arc(warning,radius,0,TAU,40,Color("f3bb7b"),3,true)
 	if r.swing>0:
 		var p=Vector2(r.x,r.y);var angle=Vector2(r.facing[0],r.facing[1]).angle();canvas.draw_arc(p,65,angle-.9,angle+.9,20,Color("f8e3a7"),9,true)

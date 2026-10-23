@@ -1,6 +1,6 @@
 extends RefCounted
 const I=preload("res://scripts/industry.gd")
-const REALM_CAP=14
+const REALM_CAP=15
 const MATERIALS=["leather","thornhide","herb","heart"]
 const SLOTS=["weapon","shield","armor","artifact"]
 static func enabled(w: Dictionary) -> bool:return w.has("kingdom") and int(w.kingdom.get("version",1))==3

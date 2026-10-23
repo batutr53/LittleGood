@@ -16,3 +16,7 @@ Wolf bite/chase, armored slow Thorn Beast heavy warning and Spider locked-target
 
 ## C4 - verified blacksmith integration
 A legal1-14 journey brings real leather/thornhide/herbs home, pays iron/material costs through the existing forge and equips the Thornhide Blade and reinforced shield. Attack/defense, material consumption, exact inventory restoration and explicit cleared-trail revisits pass six checks. C4 checkpoint: age085-c4-equipment. Boss is next.
+
+## C5 — verified guardian encounter
+Thornheart now has a locked frontal sweep, targeted roots and a phase-II radial shockwave. Three legal routes (seeds2026,77,138) completed all15 quests, banked the unique living heart, forged Heartward and verified its health effect; 18 assertions passed. Real rendered CharacterBody2D combat verified warning, phase II, two dodges and victory; screenshots builds/phase085c/thornheart-*.png. Initial desktop sample:60.13FPS,16.884ms p95,72us/20Hz combat step,8.609ms scene construction,48,469,520 static tracked bytes,505 draw calls. This is an RTX4070 laptop measurement, not Android. Visual inspection exposed unclamped camera edges; camera bounds and readable combat messages are being polished for C6. Android and final full regression suite remain outstanding.
+
