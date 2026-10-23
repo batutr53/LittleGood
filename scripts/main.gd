@@ -42,6 +42,12 @@ var online
 var decorator
 var realm_ui
 var hero_ui
+var adventure_scene
+
+func enter_adventure() -> bool:
+	if is_instance_valid(adventure_scene) or visiting:return false
+	if not preload("res://scripts/adventure.gd").enter(world,paused):return false
+	ui.close();adventure_scene=load("res://scenes/adventure.tscn").instantiate();adventure_scene.game=self;add_child(adventure_scene);checkpoint("adventure-entry");return true
 
 func measure_input_feedback(started: int) -> void:
 	await RenderingServer.frame_post_draw
@@ -217,6 +223,7 @@ func restore() -> void:
 	accumulator = 0
 	note("world_restored", 1 if recovery != "none" else 0)
 	checkpoint("restore")
+	if world.get("kingdom",{}).get("adventure",{}).get("run",{}).get("active",false):enter_adventure();return
 	if report.minutes >= 1: in_menu = true; ui.away(report)
 	elif recovery != "none": ui.toast(ui.t("recovered"))
 
@@ -303,6 +310,7 @@ func reset_gesture() -> void:
 	ui_pointer_blocked = true
 
 func navigate_back() -> void:
+	if is_instance_valid(adventure_scene):adventure_scene.frozen=not adventure_scene.frozen;return
 	if loading: return
 	if realm_ui!=null and realm_ui.active:realm_ui.finish();return
 	if decorator!=null and decorator.active:decorator.finish();return
@@ -367,6 +375,7 @@ func _process(delta: float) -> void:
 	var simulation_delta = clampf((clock_ms - last_clock_ms) / 1000.0, 0, 1)
 	last_clock_ms = clock_ms
 	diagnostics.advance(simulation_delta if not suspended else 0)
+	if is_instance_valid(adventure_scene):return
 	diagnostic_time += delta
 	if OS.is_debug_build() and diagnostic_time >= 10:
 		diagnostic_time = 0
@@ -403,6 +412,7 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_RESUMED: resume_session()
 
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(adventure_scene):return
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		navigate_back()
 		get_viewport().set_input_as_handled()
@@ -438,6 +448,7 @@ func _input(event: InputEvent) -> void:
 		else: touch_points[event.index] = event.position
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_instance_valid(adventure_scene):return
 	if in_menu or loading or suspended: return
 	if event is InputEventMouseButton:
 		if (event.button_index == MOUSE_BUTTON_LEFT and ui_pointer_blocked) or ui.blocks_world(event.position): return

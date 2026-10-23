@@ -157,6 +157,7 @@ func navigate(action: String) -> void:
 	elif action=="workshop":workshop()
 	elif action=="inventory":inventory()
 	elif action=="hero":game.hero_ui.profile()
+	elif action=="wildwood":game.hero_ui.world_map()
 	elif action.begins_with("build_"):begin("build",action.trim_prefix("build_"))
 	elif action.begins_with("gather_"):begin("gather",action.trim_prefix("gather_"))
 	else:open()

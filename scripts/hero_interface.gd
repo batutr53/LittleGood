@@ -24,7 +24,13 @@ func profile() -> void:
 			var owned=I.item(game.world,int(h.equipment[slot]));var title={"weapon":say("Weapon","Silah"),"shield":say("Shield","Kalkan"),"armor":say("Armor","Zırh"),"artifact":say("Artifact","Eser")}[slot]
 			add(list,title+" · "+(game.realm_ui.localized(I.recipes()[owned.recipe].name) if not owned.is_empty() else say("Empty","Boş")),func():equipment(slot))
 		add(v,say("Forge equipment","Donanım döv"),game.realm_ui.workshop)
+		if game.world.kingdom.claimed.size()>=11:add(v,say("World map · Wildwood","Dünya haritası · Yabanorman"),world_map,true)
 	add(v,ui.t("back"),game.realm_ui.open)
+func world_map() -> void:
+	ui.page="kingdom";var v=ui.popup(say("Beyond the Border","Sınırın Ötesinde"))
+	v.add_child(ui.label(say("WILDWOOD\nThe northern trail leads to the Sunstone, an ancient landmark. Explore at your own pace; Home always brings you back safely. Kingdom work pauses while you explore.","YABANORMAN\nKuzey patikası eski Güneştaşı anıtına ulaşır. Kendi hızında keşfet; Dön seni güvenle eve getirir. Keşfederken krallık işleri durur."),24))
+	add(v,say("Enter Wildwood","Yabanorman'a gir"),func():game.enter_adventure(),true)
+	add(v,ui.t("back"),profile)
 func equipment(slot: String) -> void:
 	ui.page="kingdom";var v=ui.popup(say("Compare equipment","Donanımı karşılaştır"));var list=ui.card_list(v,430)
 	var s=H.stats(game.world);list.add_child(ui.label(say("Current attack / defense: ","Mevcut saldırı / savunma: ")+str(s.attack)+" / "+str(s.defense),21))

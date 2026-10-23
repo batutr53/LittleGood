@@ -203,6 +203,7 @@ static func offline_begin(w: Dictionary, now: float) -> Dictionary:
 	var people_before = 0.0
 	for s in w.settlements: people_before += s.population
 	var actual_elapsed = 0.0 if w.get("user_paused", false) else maxf(0, now - float(w.saved_at))
+	if w.get("kingdom",{}).get("adventure",{}).get("run",{}).get("active",false):actual_elapsed=0.0
 	var elapsed = minf(actual_elapsed, MAX_OFFLINE_SECONDS)
 	var count = mini(480, int(elapsed / 60))
 	var previous = w.events.duplicate(true)

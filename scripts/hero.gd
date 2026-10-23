@@ -1,6 +1,6 @@
 extends RefCounted
 const I=preload("res://scripts/industry.gd")
-const REALM_CAP=11
+const REALM_CAP=12
 const MATERIALS=["leather","thornhide","herb","heart"]
 const SLOTS=["weapon","shield","armor","artifact"]
 static func enabled(w: Dictionary) -> bool:return w.has("kingdom") and int(w.kingdom.get("version",1))==3
@@ -58,6 +58,7 @@ static func normalize(w: Dictionary) -> void:
 		for key in ["id","xp","hp"]:a.hero[key]=int(a.hero[key])
 		for key in SLOTS:a.hero.equipment[key]=int(a.hero.equipment[key])
 		for key in a.hero.cooldowns:a.hero.cooldowns[key]=int(a.hero.cooldowns[key])
+	load("res://scripts/adventure.gd").normalize(w)
 static func validate(w: Dictionary) -> bool:
 	if not enabled(w):return true
 	var C=preload("res://scripts/cosmetics.gd");var a=w.kingdom.get("adventure")
@@ -81,4 +82,4 @@ static func validate(w: Dictionary) -> bool:
 	for key in h.cooldowns:
 		if not C.number(h.cooldowns[key],0,10000,true):return false
 	if not C.number(h.hp,0,stats(w).health,true) or h.defeated!=(h.hp==0):return false
-	return a.run.is_empty()
+	return load("res://scripts/adventure.gd").validate(w)
