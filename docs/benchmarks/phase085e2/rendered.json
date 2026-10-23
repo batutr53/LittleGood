@@ -1,0 +1,26 @@
+{
+  "all_passed": true,
+  "checks": {
+    "enemy_damage": true,
+    "enter": true,
+    "gather_ore": true,
+    "gather_stone": true,
+    "home": true,
+    "mine": true,
+    "mine_path": true,
+    "real_kills": true,
+    "save": true,
+    "walk_to_enemy": true,
+    "walk_to_ore": true,
+    "walk_to_stone": true,
+    "warning": true
+  },
+  "profile": {
+    "draw_calls": 61.0,
+    "fps": 60.6678519367369,
+    "p95_ms": 16.936,
+    "setup_ms": 10.759,
+    "static_bytes": 49985921,
+    "step_us": 108
+  }
+}

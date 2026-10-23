@@ -114,5 +114,59 @@
         1
       ]
     ]
+  },
+  {
+    "id": "stone_crawler",
+    "name": [
+      "Stone Crawler",
+      "Taş Sürüngeni"
+    ],
+    "health": 74,
+    "attack": 26,
+    "defense": 7,
+    "speed": 55,
+    "range": 83,
+    "warning": 1050,
+    "cooldown": 1550,
+    "xp": 36,
+    "material": "ore",
+    "quantity": 3,
+    "weights": [
+      [
+        "stone",
+        4
+      ],
+      [
+        "iron",
+        1
+      ]
+    ]
+  },
+  {
+    "id": "cave_stalker",
+    "name": [
+      "Cave Stalker",
+      "Mağara Avcısı"
+    ],
+    "health": 46,
+    "attack": 17,
+    "defense": 1,
+    "speed": 150,
+    "range": 78,
+    "warning": 420,
+    "cooldown": 850,
+    "xp": 34,
+    "material": "leather",
+    "quantity": 2,
+    "weights": [
+      [
+        "herb",
+        3
+      ],
+      [
+        "ore",
+        2
+      ]
+    ]
   }
 ]

@@ -1,0 +1,21 @@
+{
+  "retained_checks": 639,
+  "new_checks": 50,
+  "game_checks": 689,
+  "new_suites": [
+    {
+      "suite": "regions",
+      "passed": true,
+      "checks": 40,
+      "seconds": 4.916
+    },
+    {
+      "suite": "regional_combat",
+      "passed": true,
+      "checks": 10,
+      "seconds": 4.826
+    }
+  ],
+  "all_passed": true,
+  "legal_campaigns": "6 seeds, real levels 1\u201321 then Iron Hills; no level22 claim"
+}

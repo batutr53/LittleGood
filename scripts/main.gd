@@ -47,9 +47,9 @@ var trade_ui
 var army_scene
 var adventure_scene
 
-func enter_adventure() -> bool:
+func enter_adventure(region: String="") -> bool:
 	if is_instance_valid(adventure_scene) or visiting:return false
-	if not preload("res://scripts/adventure.gd").enter(world,paused):return false
+	if not preload("res://scripts/adventure.gd").enter(world,paused,region):return false
 	ui.close();adventure_scene=load("res://scenes/adventure.tscn").instantiate();adventure_scene.game=self;add_child(adventure_scene);checkpoint("adventure-entry");return true
 
 func enter_army(mission: String="") -> bool:

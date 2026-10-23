@@ -1,0 +1,7 @@
+Starting: Intent { cmp=org.littlegod.livinguniverse.betaqa/com.godot.game.GodotAppLauncher }
+Status: ok
+LaunchState: COLD
+Activity: org.littlegod.livinguniverse.betaqa/com.godot.game.GodotApp
+TotalTime: 9152
+WaitTime: 9179
+Complete

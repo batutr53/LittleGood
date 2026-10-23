@@ -1,25 +1,34 @@
-# LittleGod — E1: The First Trade Road
+# LittleGod — E2A/E2B: Beyond the Kingdom
 
-Current build: **0.8.5-devE1 / Android code89**, campaign1–21. **Milestone E is partial: E1 is verified; E2–E6 are not implemented.** No `age085-milestone-e` tag is claimed. The audit found D absent at C; critical D was implemented first at `38c7f0d` / `age085-d-critical`. Existing C/D saves, artwork, hero gear and pending jobs remain.
+Current build: **0.8.5-devE2B / Android code90**. Playable Iron Hills and expanded world map are implemented and verified. **E2 remains partial: Ashen Desert and quest22 are not implemented. Realm campaign remains1–21.** No full E2/E/0.9 tag is claimed.
 
-E1 adds the Lantern Marketplace, real merchant jobs, six ordinary trade goods, local buy/sell and regional price comparisons, two strategic trade routes, capacity/supply/cargo/escort reservations, animated wagon monitoring, exactly-once returns and quest21. Weak escorts meet a safe decision gate: pay for a longer detour or return the actual cargo. Offline absence cannot destroy the caravan. Unused-item salvage also works at a staffed forge before E1, so inventory32 cannot block military crafting; equipped gear, army kits and artifacts are protected.
+Explore a real mountain map with the existing Warrior controls, collision, two distinct fighting enemies, finite ore/stone deposits, Forgotten Mine discovery/history and safe material banking. Original Wildwood, E1 trade posts/caravans, military, equipment, saves and artwork remain. Mine/deposit persistence prevents reloading for free resources. Warehouse capacity is checked before depleting a node.
 
-**639 game assertions pass**:539 retained,44 military and56 E1. Separate runtime smoke,12 legal1–20 and8 legal1–21 seed scenarios pass. Actual rendered/MCP gameplay, native Android cargo/dispatch/collection/detour and genuine external-process restart pass at60/30 caps. Player planet/backups/settings were byte-compared through package updates/startup. No physical phone was connected; no phone performance claim is made.
+**689 game assertions pass:**639 retained plus50 regional/combat. Six legal1–21-plus-mountains seeds,13 rendered desktop checks, Turkish Godot MCP inspection and26 native/restart Android checks per60/30 cap pass. Native ADB touches and bot navigation are explicitly distinguished. Player save/settings files remain byte-identical during isolated QA. The connected phone was unauthorized during E2B verification; results are emulator-only.
 
-Final emulator live-route samples:60-cap **59.80FPS / p95 19.38ms**,30-cap **30.00FPS / p95 34.88ms**. Home simulation averaged1.48ms/tick, peak1.79ms. The covered planet renderer is suspended during route watch while simulation continues. Fresh-session visibility comparisons are in the performance report; initial degraded-session results are retained, not treated as phone measurements.
+Measured final Iron Hills samples (different scene from E1 route watch):
+
+| Scene / cap | FPS | p95 ms | Model step µs |
+|---|---:|---:|---:|
+|Emulator 60 cap · Active mountain encounters|59.69|21.13|152|
+|Emulator 60 cap · Cleared Forgotten Mine|59.83|18.94|142|
+|Emulator 30 cap · Active mountain encounters|30.22|38.90|137|
+|Emulator 30 cap · Cleared Forgotten Mine|30.22|36.44|163|
+
+Exact measurements, degraded-session observations, memory and limits: PERFORMANCE_MILESTONE_E2.md and benchmarks/phase085e2.
 
 - Launch: `D:/LittleGod/Launch LittleGod.cmd`.
-- Verified runtime: `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`.
-- Player APK: `D:/LittleGod/builds/android/LittleGod-0.8.5-milestone-E1-debug.apk`.
-- Isolated QA APK: `D:/LittleGod/builds/android/LittleGod-0.8.5-milestone-E1-qa-debug.apk`.
-- Source: `D:/LittleGod/builds/LittleGod-0.8.5-milestone-E1-source.zip`.
-- Checkpoint: `age085-e1-trade`; exact commit/hashes: `D:/LittleGod/builds/phase085e1/checkpoint-manifest.json`.
-- APK SHA256: `ae6384a4a227bf55ccfd95c2d85cb6ed4729454849b7b5c8a1ae861c090d8e68` (60620621bytes).
+- Runtime: `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`.
+- Player APK: `D:/LittleGod/builds/android/LittleGod-0.8.5-milestone-E2B-debug.apk`.
+- Isolated QA APK: `D:/LittleGod/builds/android/LittleGod-0.8.5-milestone-E2B-qa-debug.apk`.
+- Source archive: `D:/LittleGod/builds/LittleGod-0.8.5-milestone-E2B-source.zip`.
+- Baseline tag: `age085-e2-base-e1`; partial release tag: `age085-e2b-iron-hills`.
+- APK SHA256: `8e816d4ff84a321dc85106d3f2b9eb34f86bf94403571390ef13f6d277b6f969`.
+- Exact commit/archive hashes: `D:/LittleGod/builds/phase085e2/checkpoint-manifest.json`.
 
-After quest20, choose **Begin Chapter V**, build the marketplace, assign a merchant and inspect prices. Prepare1–8 units plus up to two escorts, review the fixed quote, then confirm departure. Live Route Watch advances the home simulation even from a paused village, preserving the prior pause setting on exit. Collect at home to finish21. Safe routes may complete offline into escrow; unsafe routes await a decision. The Iron Hills trading post is a strategic destination, **not yet a playable hero region**.
+After real quest21, use Hero Hall → world map → Iron Hills → Enter. Inspect mineral rings within reach, dodge warnings and inspect the northern mine. Home banks cargo; ore feeds your furnace/forge and stone pays construction. Deposits/enemies do not refresh in E2B. The Ashen Desert card explicitly says it is unavailable.
 
-See [E1 report](AGE085_E1_REPORT.md), [trade/caravans](TRADE_SYSTEM.md), [performance](PERFORMANCE_MILESTONE_E1.md), [known issues](KNOWN_ISSUES.md), [D report](AGE085_D_PREREQUISITE_REPORT.md), [military](MILITARY_SYSTEM.md) and [exact E continuation](MILESTONE_E_CONTINUATION.md). Historical C/D status is archived. All older builds/tags remain. No paid service, publishing, security change or App Control bypass occurred.
+See AGE085_E2_REPORT.md, REGIONAL_ADVENTURE_ARCHITECTURE.md, REGIONAL_ENEMIES.md, SAVE_MIGRATION_MILESTONE_E2.md, QUEST_22_DESIGN.md, KNOWN_ISSUES.md and MILESTONE_E_CONTINUATION.md. Historical E1 status/issues are preserved under docs/history. No publishing or paid service occurred.
 
-![Actual Turkish wagon preparation](screenshots/phase085e1-draft-tr.png)
-![Actual strategic route gameplay](screenshots/phase085e1-road.png)
-![Actual Android returned caravan](screenshots/phase085e1-android-returned.png)
+![Actual mountain entry](screenshots/phase085e2b-entry-tr.png)
+![Actual mine discovery](screenshots/phase085e2b-forgotten-mine.png)

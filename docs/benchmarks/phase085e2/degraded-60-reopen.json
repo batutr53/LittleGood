@@ -1,0 +1,17 @@
+{
+  "all_passed": true,
+  "checks": {
+    "exact_restore": true,
+    "home": true,
+    "material_banked": true,
+    "region_restore": true,
+    "saved_home": true,
+    "trade_preserved": true
+  },
+  "source": "external_adb_process_restart",
+  "stage": "regions_reopened",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

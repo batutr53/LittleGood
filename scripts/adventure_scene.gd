@@ -2,6 +2,9 @@ extends Node2D
 const A=preload("res://scripts/adventure.gd")
 const H=preload("res://scripts/hero.gd")
 const MAP=preload("res://scripts/wildwood_map.gd")
+var region="wildwood"
+var region_map=MAP
+var regional_textures: Dictionary={}
 var game
 var bodies: Dictionary={}
 var actors: Node2D
@@ -36,30 +39,44 @@ var effects_were_dynamic=true
 func say(en: String,tr: String) -> String:return tr if game.ui.language=="tr" else en
 func _ready() -> void:
 	var started=Time.get_ticks_usec();game.show_world(false);game.ui.root.hide()
+	region=preload("res://scripts/regions.gd").current(game.world);region_map=preload("res://scripts/regions.gd").map(region)
 	for key in ["chest","herb"]:effect_textures[key]=load("res://assets/adventure/"+key+".svg")
-	var ground=preload("res://scripts/wildwood_ground.gd").new();add_child(ground)
+	var ground=preload("res://scripts/iron_hills_ground.gd").new() if region=="iron_hills" else preload("res://scripts/wildwood_ground.gd").new();add_child(ground)
 	actors=Node2D.new();actors.y_sort_enabled=true;add_child(actors)
-	for p in MAP.trees():
-		var tree=GameArt.sprite(7 if int(p.x)%2==0 else 12,100);tree.position=p
-		if not game.view.low_quality:tree.material=GameArt.foliage()
+	for p in region_map.trees():
+		var tree=Sprite2D.new() if region=="iron_hills" else GameArt.sprite(7 if int(p.x)%2==0 else 12,100);tree.position=p
+		if region=="iron_hills":tree.texture=load("res://assets/adventure/mountain-pine.svg");tree.scale=Vector2.ONE*.7;tree.position.y-=55
+		elif not game.view.low_quality:tree.material=GameArt.foliage()
 		actors.add_child(tree)
-	for rect in MAP.solids(game.world.kingdom.claimed.size()<14):
+	for rect in region_map.solids(game.world.kingdom.claimed.size()<14):
 		var wall=StaticBody2D.new();wall.position=rect.get_center();var shape=CollisionShape2D.new();var box=RectangleShape2D.new();box.size=rect.size;shape.shape=box;wall.add_child(shape);add_child(wall)
+		if region=="iron_hills" and rect.size.x>60 and rect.size.y>60:
+			# Art follows the physical obstacle footprint, rather than blocking invisible ground.
+			var art=Sprite2D.new();art.texture=load("res://assets/adventure/mountain-rock.svg");art.position=rect.get_center();art.scale=rect.size/Vector2(180,160);art.position.y-=rect.size.y*.15;actors.add_child(art)
+	if region=="iron_hills":
+		for key in ["ore-vein","mountain-rock","forgotten-mine","mine-cart"]:regional_textures[key]=load("res://assets/adventure/"+key+".svg")
+		regional_prop("forgotten-mine",Vector2(480,310),250,.5)
+		regional_prop("mine-cart",Vector2(560,370),100,.5)
+		for key in region_map.NODES:regional_prop("ore-vein" if key=="ore" else "mountain-rock",region_map.NODES[key].point,110,.42,.4 if game.world.kingdom.adventure.run.nodes[key] else 1.0)
 	make_body(0,Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y),load("res://assets/adventure/warrior.png"),110)
 	for e in game.world.kingdom.adventure.run.enemies:make_body(int(e.id),Vector2(e.x,e.y),load("res://assets/adventure/"+e.kind+".svg"),180 if e.kind=="thornheart" else 100)
 	props=preload("res://scripts/adventure_props.gd").new();add_child(props)
 	effects=preload("res://scripts/adventure_effects.gd").new();add_child(effects)
 	camera=Camera2D.new();camera.zoom=Vector2.ONE*1.15;camera.position=camera_target();camera.position_smoothing_enabled=false;add_child(camera);camera.make_current()
 	build_hud();startup_ms=(Time.get_ticks_usec()-started)/1000.0
+func regional_prop(key: String,point: Vector2,size: float,anchor: float,alpha: float=1.0) -> void:
+	var base=Node2D.new();base.position=point;actors.add_child(base)
+	var sprite=Sprite2D.new();sprite.texture=regional_textures[key];sprite.position.y=-size*anchor;sprite.scale=Vector2.ONE*size/sprite.texture.get_width();sprite.modulate.a=alpha;base.add_child(sprite)
+	if key in ["ore-vein","mountain-rock"]:base.name="deposit_ore" if key=="ore-vein" else "deposit_stone"
 func camera_target() -> Vector2:
 	var half=get_viewport_rect().size/(camera.zoom*2);var p=bodies[0].position
-	return Vector2(clampf(p.x,half.x,MAP.SIZE.x-half.x),clampf(p.y+100/camera.zoom.y,half.y-165/camera.zoom.y,MAP.SIZE.y-half.y+350/camera.zoom.y))
+	return Vector2(clampf(p.x,half.x,region_map.SIZE.x-half.x),clampf(p.y+100/camera.zoom.y,half.y-165/camera.zoom.y,region_map.SIZE.y-half.y+350/camera.zoom.y))
 func make_body(id: int,p: Vector2,texture: Texture2D,size: float) -> void:
 	var body=CharacterBody2D.new();body.position=p;body.collision_layer=2;body.collision_mask=1;actors.add_child(body)
 	var collision=CollisionShape2D.new();var circle=CircleShape2D.new();circle.radius=14;collision.shape=circle;body.add_child(collision)
 	var sprite=Sprite2D.new();sprite.name="Art";sprite.texture=texture;sprite.scale=Vector2.ONE*size/texture.get_width();sprite.position.y=-size*.42;body.add_child(sprite);bodies[id]=body
 func move_body(id: int,p: Vector2,delta: Vector2) -> Vector2:
-	if not bodies.has(id):return MAP.move(p,delta,game.world.kingdom.claimed.size()<14)
+	if not bodies.has(id):return region_map.move(p,delta,game.world.kingdom.claimed.size()<14)
 	var body=bodies[id];body.position=p;body.move_and_collide(delta);return body.position.round()
 func place(node: Control,rect: Rect2) -> void:
 	hud.add_child(node);node.position=rect.position;node.size=rect.size
@@ -90,7 +107,8 @@ func refresh_hud() -> void:
 	for key in ["attack","skill","dodge","heal"]:
 		var cd=int(h.cooldowns[key]);buttons[key].text=button_titles[key]+("\n"+str(snappedf(cd/1000.0,.1))+"s" if cd>0 else "")
 	var q=preload("res://scripts/kingdom.gd").current(game.world)
-	objective.text=say("WILDWOOD · ","YABANORMAN · ")+(game.realm_ui.localized(q.title) if not q.is_empty() else say("Explore and return safely","Keşfet ve güvenle dön"))
+	objective.text=say("IRON HILLS · Find the mine to the north.\nInspect ore veins; take materials home.","DEMİR TEPELER · Kuzeydeki madeni bul.\nCevheri incele; malzemeyi eve taşı.") if region=="iron_hills" else say("WILDWOOD · ","YABANORMAN · ")+(game.realm_ui.localized(q.title) if not q.is_empty() else say("Explore and return safely","Keşfet ve güvenle dön"))
+	if region=="iron_hills" and r.landmark:objective.text=say("IRON HILLS · Forgotten Mine discovered\nOre and stone are finite · Home banks cargo.","DEMİR TEPELER · Unutulmuş Maden keşfedildi\nCevher ve taş sınırlı · Dön ganimeti depolar.")
 	for e in r.enemies:
 		if e.kind=="thornheart" and e.hp>0 and Vector2(r.x,r.y).distance_to(Vector2(e.x,e.y))<320:objective.text+="\nThornheart · "+str(int(e.hp))+" / 220 · "+say("Phase ","Evre ")+("II" if e.hp<=110 else "I")
 	if h.defeated:message.text=say("Your champion fell. Home restores health and keeps your collected loot.","Şampiyonun düştü. Dön canı yeniler; toplanmış ganimetin korunur.")
@@ -166,7 +184,7 @@ func draw_effects(canvas: Node2D) -> void:
 				for i in range(25):points.append(p+Vector2.from_angle(angle-1.21+i*2.42/24)*140)
 				canvas.draw_colored_polygon(points,Color(.95,.38,.24,.3));canvas.draw_arc(p,140,angle-1.21,angle+1.21,32,Color("f3bb7b"),3,true);continue
 			var root=e.kind=="thornheart" and e.pattern==1
-			var warning=Vector2(e.aimx,e.aimy) if e.kind=="spider" or root else p;var radius=60 if e.kind=="spider" else 85 if root else 145 if e.kind=="thornheart" else int(data.range)+12
+			var warning=Vector2(e.aimx,e.aimy) if e.kind in ["spider","cave_stalker"] or root else p;var radius=55 if e.kind=="cave_stalker" else 60 if e.kind=="spider" else 85 if root else 145 if e.kind=="thornheart" else int(data.range)+12
 			canvas.draw_circle(warning,radius,Color(.95,.38,.24,.25));canvas.draw_arc(warning,radius,0,TAU,40,Color("f3bb7b"),3,true)
 	if r.swing>0:
 		var p=Vector2(r.x,r.y);var angle=Vector2(r.facing[0],r.facing[1]).angle();canvas.draw_arc(p,65,angle-.9,angle+.9,20,Color("f8e3a7"),9,true)
@@ -181,6 +199,15 @@ func draw_effects(canvas: Node2D) -> void:
 	for f in floats:canvas.draw_string(ThemeDB.fallback_font,f.point,f.text,HORIZONTAL_ALIGNMENT_CENTER,-1,24,Color("ffe4a7"))
 func draw_props(canvas: Node2D) -> void:
 	var r=game.world.kingdom.adventure.run
+	if region=="iron_hills":
+		for id in region_map.NODES:
+			var node=region_map.NODES[id];var p=node.point
+			actors.get_node("deposit_"+id).get_child(0).modulate.a=.4 if r.nodes[id] else 1.0
+			if not r.nodes[id]:canvas.draw_arc(p,48,0,TAU,32,Color("edc886"),2,true)
+			canvas.draw_string(game.ui.ui_font(),p+Vector2(-72,45),say("Ore · Inspect","Cevher · İncele") if id=="ore" else say("Stone · Inspect","Taş · İncele"),HORIZONTAL_ALIGNMENT_LEFT,-1,19,Color("f0d6a3"))
+		canvas.draw_arc(region_map.LANDMARK,70,0,TAU,32,Color("b4dbc6") if r.landmark else Color("f0c987"),3,true)
+		canvas.draw_string(game.ui.ui_font(),region_map.LANDMARK+Vector2(-120,85),say("The Forgotten Mine","Unutulmuş Maden"),HORIZONTAL_ALIGNMENT_LEFT,-1,21,Color("f0d6a3"))
+		return
 	if game.world.kingdom.claimed.size()<14:
 		canvas.draw_line(Vector2(560,362),Vector2(942,362),Color("aec18a"),14,true);canvas.draw_string(game.ui.ui_font(),Vector2(580,345),say("Roots sealed · quest 14","Kökler mühürlü · görev 14"),HORIZONTAL_ALIGNMENT_LEFT,-1,20,Color("f2dfab"))
 	for p in [MAP.CHEST,MAP.HERBS]:
@@ -193,6 +220,8 @@ func interact() -> void:
 	var result=A.interact(game.world)
 	props.queue_redraw();effects.queue_redraw()
 	if result=="landmark":message.text=say("The Sunstone remembers your kingdom. Arin will want to hear this.","Güneştaşı krallığını hatırlıyor. Arin bunu duymak isteyecek.");game.audio.chime(6);game.checkpoint("landmark")
+	elif result=="mine":message.text=say("Forgotten Mine discovered. Its last miners left rails pointing home. Recorded in the chronicle.","Unutulmuş Maden keşfedildi. Son madenciler eve uzanan raylar bıraktı. Tarihçeye kaydedildi.");game.audio.chime(6);game.checkpoint("forgotten-mine")
+	elif result=="mineral":message.text=say("Mineral gathered · finite vein. Return home to smelt ore or build with stone.","Maden toplandı · damar sınırlı. Cevheri eritmek veya taşla inşa etmek için eve dön.");game.audio.chime(5);game.checkpoint("mineral")
 	elif result=="full":message.text=say("Storage is full. Loot stays here; return home to use materials or equipment.","Depo dolu. Ganimet burada kalır; malzeme veya donanımı kullanmak için eve dön.")
 	elif not result.is_empty():message.text=say("Collected · loot stays yours when you return. Herbs can heal (F).","Toplandı · döndüğünde ganimet senin. Bitkiler iyileştirir (F).");game.audio.chime(5);game.checkpoint("loot")
 	if result=="loot":

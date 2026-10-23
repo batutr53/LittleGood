@@ -1,0 +1,15 @@
+[
+ {"name":"editor","arguments":{"action":"clear_logs"}},
+ {"name":"files","arguments":{"action":"rescan"}},
+ {"name":"scene","arguments":{"action":"reload","path":"res://scenes/main.tscn"}},
+ {"name":"run","arguments":{"action":"play","mute":true}},
+ {"name":"game","arguments":{"action":"wait","seconds":2}},
+ {"name":"exec","arguments":{"action":"game","code":"scene.is_test_session=true;scene.save_path=\"user://regions-mcp-private.json\";scene.world=Persistence.load_world(\"res://tests/fixtures/planet-v085e1.json\");scene.view.world=scene.world;scene.has_player_world=true;scene.paused=true;scene.ui.language=\"tr\";scene.ui.build();scene.hero_ui.world_map();return {\"valid_e1\":Persistence.validate(scene.world),\"claims\":scene.world.kingdom.claimed.size()};"}},
+ {"name":"game","arguments":{"action":"wait","seconds":1}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase085e2/mcp-map-tr.png"},
+ {"name":"exec","arguments":{"action":"game","code":"var entered=scene.enter_adventure(\"iron_hills\");return {\"entered\":entered,\"region\":scene.adventure_scene.region,\"bodies\":scene.adventure_scene.bodies.size()};"}},
+ {"name":"game","arguments":{"action":"wait","seconds":1}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase085e2/mcp-iron-tr.png"},
+ {"name":"run","arguments":{"action":"errors"}},
+ {"name":"run","arguments":{"action":"stop"}}
+]

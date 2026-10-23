@@ -1,0 +1,30 @@
+"""Original vector props for the live region renderer; no external art dependencies."""
+from pathlib import Path
+r=Path(__file__).resolve().parents[1]/'assets/adventure'
+def svg(name,body,w=200,h=200):
+ (r/(name+'.svg')).write_text(f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">{body}</svg>',encoding='utf-8')
+svg('mountain-rock','''<ellipse cx="100" cy="177" rx="92" ry="16" fill="#233c40" opacity=".5"/><path d="M10 165 28 75 77 19 135 27 188 114 179 173 90 186Z" fill="#52666d" stroke="#273e49" stroke-width="5"/><path d="M28 75 77 19 102 92 69 168 10 165Z" fill="#8a9691"/><path d="M77 19 135 27 188 114 121 100 102 92Z" fill="#bac0a4"/><path d="m69 168 33-76 19 8 58 73-89 13Z" fill="#657b7e"/><path d="m77 19 25 73 19 8 67 14M102 92 69 168" fill="none" stroke="#354e59" stroke-width="5"/><path d="m34 117 26-20m75-49 16 22" stroke="#d1ae7c" stroke-width="5"/>''')
+svg('ore-vein','''<ellipse cx="100" cy="174" rx="78" ry="17" fill="#243b40" opacity=".5"/><path d="M20 162 29 84 82 49 134 61 179 131 161 176 79 186Z" fill="#52666d" stroke="#263e48" stroke-width="5"/><path d="m29 84 53-35 31 59-34 78-59-24Z" fill="#899790"/><path d="m53 123 19-34 17 9-8 40Zm43 20 16-40 18 7-4 36Zm37-55 15 14-7 27-16-13Z" fill="#db9d60" stroke="#7f5946" stroke-width="4"/><path d="m59 123 13-24m32 39 9-22" stroke="#ffda8b" stroke-width="4"/>''')
+svg('forgotten-mine','''<ellipse cx="100" cy="179" rx="95" ry="15" fill="#20343c" opacity=".6"/><path d="M5 173 12 84 53 24 113 11 163 51 193 166Z" fill="#6d7c7b" stroke="#344b53" stroke-width="5"/><path d="m12 84 41-60 60-13-19 62-45 36Z" fill="#b0b59a"/><path d="M49 178V101Q99 42 151 101V178Z" fill="#182b34"/><path d="M42 178V94L98 52 158 94V178M43 102 155 102" fill="none" stroke="#8c6349" stroke-width="13"/><path d="M42 178V94L98 52 158 94" fill="none" stroke="#d2a56e" stroke-width="4"/><path d="m78 183 9-59m38 59-9-59m-34 18h39m-41 17h44" stroke="#9ba49a" stroke-width="5"/><circle cx="32" cy="124" r="27" fill="#f8b653" opacity=".13"/><path d="M32 146v-28" stroke="#73513d" stroke-width="6"/><path d="M32 123q-16-10 0-31 15 21 0 31" fill="#ffc86d"/>''')
+svg('mine-cart','''<ellipse cx="100" cy="165" rx="73" ry="14" fill="#263e48" opacity=".5"/><path d="m43 96 8 52h103l8-52Z" fill="#536a72" stroke="#273e49" stroke-width="6"/><path d="m48 96 19-28 20 8 22-28 33 35 15 13" fill="#a1aaa0" stroke="#536a72" stroke-width="4"/><path d="M53 100h100m-80 0 5 42m47-42-4 42" stroke="#b0a17d" stroke-width="6"/><circle cx="67" cy="155" r="15" fill="#2e4149" stroke="#c39f69" stroke-width="5"/><circle cx="138" cy="155" r="15" fill="#2e4149" stroke="#c39f69" stroke-width="5"/>''')
+svg('mountain-pine','''<ellipse cx="100" cy="184" rx="64" ry="13" fill="#263e43" opacity=".4"/><path d="M93 185V91h14v94" fill="#976b4c"/><path d="M26 154 61 107H43L77 63H65L100 9l36 54h-12l34 44h-18l35 47Z" fill="#294e50" stroke="#233f45" stroke-width="4"/><path d="m100 9-35 54h12l-34 44h18l-35 47 74-19Z" fill="#527663"/><path d="m100 9 18 49-18-5-22 10Z" fill="#d4d2a6"/>''')
+svg('stone_crawler','''<ellipse cx="100" cy="177" rx="76" ry="15" fill="#142e35" opacity=".5"/><path d="m42 126-24 23 2 18 38-12m86-29 38 23-2 18-38-12m-94-13-14 32m104-32 14 32" stroke="#4a5a60" stroke-width="15" stroke-linecap="round"/><path d="M33 127 44 74 86 40 144 59 169 128 126 158 63 153Z" fill="#697c79" stroke="#263e48" stroke-width="6"/><path d="m44 74 42-34 16 62-69 25Zm42-34 58 19 25 69-67-26Z" fill="#a6ad91"/><path d="m86 40 16 62 24 56m-24-56-69 25m69-25 67 26" fill="none" stroke="#435e61" stroke-width="6"/><path d="m55 135 25 7m43 0 24-7" stroke="#ffce7a" stroke-width="8"/><path d="m92 147 10 8 10-8" fill="#213b44"/>''')
+svg('cave_stalker','''<ellipse cx="100" cy="176" rx="72" ry="14" fill="#142d36" opacity=".5"/><path d="m58 128-27 25-5 22 31-8 30-24m45-15 37 25 5 22-33-8-24-24" fill="#526780" stroke="#26364c" stroke-width="6"/><path d="M48 129 51 86 35 41 79 62 111 56 164 33 147 91 153 131 104 158Z" fill="#627a90" stroke="#25394d" stroke-width="6"/><path d="m51 86 28-24 32-6 36 35-43 23Z" fill="#9aa6a8"/><path d="m57 108 29 9-12 13m42-13 28-13-16 25" fill="#91e7d6" stroke="#263b4c" stroke-width="4"/><path d="m83 143 21 9 20-13-13 25-15 1Z" fill="#26394b"/><path d="m87 146 4 13m21-13-3 13" stroke="#e5d4a7" stroke-width="5"/><path d="M151 137q42-9 36-55" fill="none" stroke="#526780" stroke-width="13"/>''')
+for name,sky,sand,title in [('iron-hills-preview','#203d50','#687a78',''),('ashen-desert-preview','#713f47','#d69960','')]:
+ svg(name,f'''<rect width="360" height="180" rx="18" fill="{sky}"/><circle cx="290" cy="41" r="23" fill="#f2cd8e"/><path d="M0 160 57 54 103 97 167 21 231 99 278 61 360 154V180H0Z" fill="{sand}"/><path d="m112 93 55-72 43 53-27-9-16-23-27 39Z" fill="#d2c3a0"/><path d="M0 180q115-55 191-35t169-12v47Z" fill="#344f57" opacity=".5"/><path d="M102 180q118-43 66-78" fill="none" stroke="#dbb07b" stroke-width="13"/>''',360,180)
+import random
+rng=random.Random(22085)
+ground='<rect width="960" height="1440" fill="#65766f"/>'
+for i in range(240):
+ x,y=round(rng.uniform(20,940)),round(rng.uniform(20,1420));radius=round(rng.uniform(6,29));color='#73816e' if i%2 else '#5b706c'
+ ground+=f'<ellipse cx="{x}" cy="{y}" rx="{radius}" ry="{round(radius*.65)}" fill="{color}"/>'
+path='M240 1440V1260Q240 1130 305 1100L540 1040 560 830 760 740 530 620 520 390 480 240'
+for color,width in [('#485c5e',121),('#9b9478',101),('#b6aa87',66)]:ground+=f'<path d="{path}" fill="none" stroke="{color}" stroke-width="{width}" stroke-linejoin="round"/>'
+for i in range(420):
+ x,y=round(rng.uniform(25,935)),round(rng.uniform(30,1410));color='#a4a787' if i%3 else '#4b635f'
+ ground+=f'<path d="m{x} {y} 5-2 3 1" fill="none" stroke="{color}" stroke-width="2" opacity=".5"/>'
+ground+='<path d="M466 390V255M490 390V255" stroke="#485660" stroke-width="5"/>'
+for y in range(266,391,18):ground+=f'<path d="M457 {y}h43" stroke="#ad8c64" stroke-width="6"/>'
+ground+='<circle cx="240" cy="1260" r="49" fill="#d4bb88" stroke="#ede0b8" stroke-width="3"/>'
+svg('iron-hills-ground',ground,960,1440)
+print('Created 10 original scalable region assets')

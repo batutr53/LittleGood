@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+E2B_COMBAT_SEEDS [{ "seed": 99, "legal": true, "error": "" }, { "seed": 123, "legal": true, "error": "" }, { "seed": 31415, "legal": true, "error": "" }]
+E2B_COMBAT { &"crawler_warning": true, &"no_early_heavy_hit": true, &"heavy_hit": true, &"heavy_recovery": true, &"missed_heavy": true, &"stalker_quick_warning": true, &"stalker_lunge": true, &"stalker_repositions": true, &"no_bonus_damage_during_recovery": true, &"more_legal_campaigns": true }

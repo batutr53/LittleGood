@@ -71,7 +71,9 @@ static func normalize(w: Dictionary) -> void:
 static func validate(w: Dictionary) -> bool:
 	if not enabled(w):return true
 	var C=preload("res://scripts/cosmetics.gd");var a=w.kingdom.get("adventure")
-	if not C.shape(a,["version","hero","events","run","boss_rewarded","next_run","tutorial"]) or not C.number(a.version,1,1,true) or not C.number(a.next_run,1,1000000,true) or not a.boss_rewarded is bool or not a.tutorial is bool or not a.run is Dictionary:return false
+	var fields=["version","hero","events","run","boss_rewarded","next_run","tutorial"]
+	if a.has("regions"):fields.append("regions")
+	if not C.shape(a,fields) or not C.number(a.version,1,1,true) or not C.number(a.next_run,1,1000000,true) or not a.boss_rewarded is bool or not a.tutorial is bool or not a.run is Dictionary:return false
 	if not a.events is Dictionary or a.events.size()>16:return false
 	for key in a.events:
 		if not key in ["landmark","returned","kills","picked","banked","healed","boss","chest","harvest","dodged","heart_returned"] or not C.number(a.events[key],0,1000000,true):return false

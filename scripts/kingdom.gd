@@ -285,5 +285,5 @@ static func validate(w: Dictionary) -> bool:
 		if not event_keys.has(key) or not C.number(k.events[key],0,1000000000,true):return false
 	if not k.history is Array or k.history.size()>30:return false
 	for h in k.history:
-		if not C.shape(h,["tick","key","subject"]) or not C.number(h.tick,0,w.tick,true) or not h.key in ["founding","construction","built","upgrade","recruit","quest","craft","boss","military","trade"] or not h.subject is String or h.subject.length()>32:return false
+		if not C.shape(h,["tick","key","subject"]) or not C.number(h.tick,0,w.tick,true) or not h.key in ["founding","construction","built","upgrade","recruit","quest","craft","boss","military","trade","exploration"] or not h.subject is String or h.subject.length()>32:return false
 	return INDUSTRY.validate(w) and HERO.validate(w) and MILITARY.validate(w) and TRADE.validate(w)

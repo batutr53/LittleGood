@@ -58,7 +58,9 @@ func open() -> void:
 		add(list,say("Begin Chapter IV · The Border Company","Bölüm IV'e başla · Sınır Birliği"),func():if M.enable(w):changed();game.checkpoint("chapter4");open(),true)
 	elif not T.enabled(w):
 		add(list,say("Begin Chapter V · The First Trade Road","Bölüm V'e başla · İlk Ticaret Yolu"),func():if T.enable(w):changed();game.checkpoint("chapter5-trade");open(),true)
-	else:list.add_child(ui.label(say("The First Trade Road is open. Further Forgotten Realms expeditions are still being prepared.","İlk Ticaret Yolu açık. Unutulmuş Diyarlar'ın diğer seferleri hazırlanıyor."),20))
+	else:
+		list.add_child(ui.label(say("The merchants found an old mining road. Explore Iron Hills, discover the mine, and bring minerals home. The desert is still being prepared.","Tüccarlar eski bir maden yolu buldu. Demir Tepeler'i keşfet, madeni bul ve kaynakları eve getir. Çöl hâlâ hazırlanıyor."),20))
+		add(list,say("Explore Iron Hills · world map","Demir Tepeler'i keşfet · dünya haritası"),game.hero_ui.world_map,true)
 	if T.enabled(w):add(list,say("Market & caravans","Pazar ve kervanlar"),game.trade_ui.open,true)
 	if M.enabled(w):add(list,say("The Border Company","Sınır Birliği"),game.military_ui.open,true)
 	if H.enabled(w):add(list,say("Hero Hall","Kahraman Salonu"),game.hero_ui.profile)
@@ -155,8 +157,9 @@ func inspect_building(id: int) -> void:
 func history() -> void:
 	ui.page="kingdom";var v=ui.popup(say("The First Kingdom's history","İlk Krallığın tarihi"));var list=ui.card_list(v,450)
 	for h in game.world.kingdom.history:
-		var action={"founding":say("Founding","Kuruluş"),"construction":say("Construction started","İnşaat başladı"),"built":say("Completed","Tamamlandı"),"upgrade":say("Upgrade started","Geliştirme başladı"),"recruit":say("Citizen recruited","Sakin işe alındı"),"quest":say("Quest completed","Görev tamamlandı"),"craft":say("Equipment completed","Donanım tamamlandı"),"boss":say("Guardian defeated","Muhafız yenildi"),"military":say("Company victory","Birlik zaferi")}.get(h.key,"")
+		var action={"founding":say("Founding","Kuruluş"),"construction":say("Construction started","İnşaat başladı"),"built":say("Completed","Tamamlandı"),"upgrade":say("Upgrade started","Geliştirme başladı"),"recruit":say("Citizen recruited","Sakin işe alındı"),"quest":say("Quest completed","Görev tamamlandı"),"craft":say("Equipment completed","Donanım tamamlandı"),"boss":say("Guardian defeated","Muhafız yenildi"),"military":say("Company victory","Birlik zaferi"),"trade":say("Trade","Ticaret"),"exploration":say("Discovered · the last miners left rails pointing home","Keşfedildi · son madenciler eve uzanan raylar bıraktı")}.get(h.key,"")
 		var title=str(h.subject)
+		if title=="forgotten_mine":title=say("The Forgotten Mine","Unutulmuş Maden")
 		if K.buildings().has(title):title=localized(K.buildings()[title].name)
 		if I.recipes().has(title):title=localized(I.recipes()[title].name)
 		for q in K.quests():
