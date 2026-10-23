@@ -17,7 +17,7 @@ static func unit(w: Dictionary,id: int) -> Dictionary:
 	return {}
 static func worker_reserved(w: Dictionary,id: int) -> bool:return enabled(w) and w.kingdom.military.units.any(func(u):return int(u.worker)==id)
 static func item_reserved(w: Dictionary,id: int) -> bool:return enabled(w) and w.kingdom.military.units.any(func(u):return int(u.gear)==id)
-static func available(w: Dictionary) -> Array:return w.kingdom.military.units.filter(func(u):return u.status=="ready" and u.hp>0) if enabled(w) else []
+static func available(w: Dictionary) -> Array:return w.kingdom.military.units.filter(func(u):return u.status=="ready" and u.hp>0 and not load("res://scripts/trade.gd").guard_reserved(w,int(u.id))) if enabled(w) else []
 static func train(w: Dictionary,worker: int,kind: String,gear: int,barracks: int) -> bool:
 	if not writable(w) or not TYPES.has(kind) or w.kingdom.military.units.size()>=6 or K().home(w).food<3 or not K().afford(w,{"gold":2}) or worker_reserved(w,worker):return false
 	var citizens=w.kingdom.workers.filter(func(c):return int(c.id)==worker and c.building==0)
@@ -31,6 +31,7 @@ static func retire(w: Dictionary,id: int) -> bool:
 	if not writable(w):return false
 	var u=unit(w,id)
 	if u.is_empty() or not u.status in ["ready","injured"]:return false
+	if load("res://scripts/trade.gd").guard_reserved(w,id):return false
 	if w.kingdom.military.battle.get("active",false):return false
 	if w.kingdom.military.battle.get("friends",[]).any(func(a):return int(a.id)==id):w.kingdom.military.battle={}
 	w.kingdom.military.units.erase(u);return true
@@ -38,6 +39,7 @@ static func recover(w: Dictionary,id: int) -> bool:
 	if not writable(w) or K().home(w).food<2 or not K().afford(w,{"gold":1}):return false
 	var u=unit(w,id)
 	if u.is_empty() or not u.status in ["injured","ready"] or u.hp>=100 or w.kingdom.military.battle.get("active",false):return false
+	if load("res://scripts/trade.gd").guard_reserved(w,id):return false
 	K().home(w).food-=2;K().spend(w,{"gold":1});u.status="recovering";u.progress=0;return true
 static func tick(w: Dictionary) -> void:
 	if not writable(w) or w.kingdom.military.last_tick>=w.tick:return
@@ -79,7 +81,7 @@ static func deploy(w: Dictionary,mission: String,ids: Array) -> bool:
 	var seen=[]
 	for id in ids:
 		var u=unit(w,int(id))
-		if seen.has(int(id)) or u.is_empty() or u.status!="ready" or u.hp<=0:return false
+		if seen.has(int(id)) or u.is_empty() or u.status!="ready" or u.hp<=0 or load("res://scripts/trade.gd").guard_reserved(w,int(id)):return false
 		seen.append(int(id))
 	K().home(w).food-=3
 	var friends=[];var enemies=[]

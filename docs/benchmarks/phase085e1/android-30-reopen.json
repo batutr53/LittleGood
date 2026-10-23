@@ -1,0 +1,17 @@
+{
+  "all_passed": true,
+  "checks": {
+    "exact_pending": true,
+    "menu_pause_restored": true,
+    "merchant_reserved": true,
+    "native_collect": true,
+    "native_detour": true,
+    "no_replay": true
+  },
+  "source": "simulated_android_qa",
+  "stage": "trade_reopened",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

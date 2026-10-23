@@ -17,5 +17,12 @@ with zipfile.ZipFile(dest) as z:
   assert not n.startswith('builds/') or n=='builds/.gdignore'
 apk=r/f'builds/android/LittleGod-0.8.5-milestone-{a.slice}-debug.apk'
 report={'checkpoint':tag,'commit':commit,'final_E_complete':False,'physical_device_verified':False,'source':str(dest),'source_sha256':hashlib.sha256(dest.read_bytes()).hexdigest(),'source_bytes':dest.stat().st_size,'crc_ok':True,'apk':str(apk),'apk_sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'apk_bytes':apk.stat().st_size}
+if a.slice=='E1':
+ verification=json.loads((r/'builds/phase085e1/verification-summary.json').read_text(encoding='utf-8'));assert verification['all_passed']
+ report['game_checks']=verification['game_checks'];report['native_android_checks']={}
+ for fps in [60,30]:
+  folder=r/f'builds/phase085e1/android-{fps}';live=json.loads((folder/'result.json').read_text());reopen=json.loads((folder/'reopen-result.json').read_text())
+  assert live['all_passed'] and reopen['all_passed'] and live['checks']['menu_pause_restored'] and reopen['checks']['menu_pause_restored']
+  report['native_android_checks'][str(fps)]=len(live['checks'])+len(reopen['checks'])
 out=r/('builds/phase085d' if a.slice=='D-critical' else 'builds/phase085e1');out.mkdir(exist_ok=True)
 (out/'checkpoint-manifest.json').write_text(json.dumps(report,indent=2),encoding='utf-8');print(json.dumps(report,indent=2))

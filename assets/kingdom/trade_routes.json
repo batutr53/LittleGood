@@ -1,0 +1,4 @@
+[
+ {"id":"river","name":["River Guild","Nehir Loncası"],"ticks":12,"danger":18,"capacity":8,"fee":1000,"sell":{"wood":600,"stone":500,"ore":900,"iron":1800,"leather":1000,"herb":800}},
+ {"id":"hills","name":["Iron Hills Trading Post","Demirtepeler Ticaret Karakolu"],"ticks":18,"danger":35,"capacity":8,"fee":1000,"sell":{"wood":800,"stone":650,"ore":1100,"iron":2200,"leather":1200,"herb":1000}}
+]

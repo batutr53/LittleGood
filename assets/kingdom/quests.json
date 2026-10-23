@@ -914,5 +914,71 @@
       "gold": 4
     },
     "next": ""
+  },
+  {
+    "id": "main_21",
+    "level": 21,
+    "chapter": 5,
+    "title": [
+      "The First Trade Road",
+      "İlk Ticaret Yolu"
+    ],
+    "description": [
+      "A road joins your kingdom to distant traders. Build a market, compare prices, and bring an actual caravan home.",
+      "Bir yol krallığını uzak tüccarlara bağlar. Pazar kur, fiyatları karşılaştır ve gerçek kervanı eve getir."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_20"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "marketplace",
+        "target": 1,
+        "text": [
+          "Build a marketplace",
+          "Pazaryeri inşa et"
+        ],
+        "navigate": "build_marketplace"
+      },
+      {
+        "kind": "trade",
+        "key": "merchant",
+        "target": 1,
+        "text": [
+          "Assign a merchant",
+          "Tüccar ata"
+        ],
+        "navigate": "workers"
+      },
+      {
+        "kind": "trade",
+        "key": "prices",
+        "target": 1,
+        "text": [
+          "Inspect regional prices",
+          "Bölgesel fiyatları incele"
+        ],
+        "navigate": "trade"
+      },
+      {
+        "kind": "trade",
+        "key": "delivered",
+        "target": 1,
+        "text": [
+          "Collect a returned delivery",
+          "Dönen teslimatı al"
+        ],
+        "navigate": "trade"
+      }
+    ],
+    "rewards": {
+      "xp": 840,
+      "wood": 8,
+      "stone": 4,
+      "gold": 4
+    },
+    "next": ""
   }
 ]

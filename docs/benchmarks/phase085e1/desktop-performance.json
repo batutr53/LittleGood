@@ -1,0 +1,10 @@
+{
+  "actual_progress": 7,
+  "all_passed": true,
+  "draw_calls": 47.0,
+  "fps": 60.239309810604,
+  "p95_ms": 16.701,
+  "source": "desktop_live_strategic_caravan",
+  "static_memory_bytes": 49542699,
+  "world_tick": 355
+}

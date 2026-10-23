@@ -9,7 +9,7 @@ var clock=0.0
 var seed_key=""
 var rates: Dictionary={}
 func texture(kind: String) -> Texture2D:
-	if kind in ["barracks","watchtower","wall"]:return load("res://assets/kingdom/"+kind+".svg")
+	if kind in ["barracks","watchtower","wall","marketplace"]:return load("res://assets/kingdom/"+kind+".svg")
 	var t=AtlasTexture.new();var index=["lumber","farm","house","storage","townhall","scaffold"].find(kind)
 	if index>=0:t.atlas=ATLAS;t.region=Rect2((index%3)*192,(index/3)*192,192,192)
 	else:t.atlas=INDUSTRY_ATLAS;t.region=Rect2(["quarry","mine","furnace","forge"].find(kind)*192,0,192,192)
@@ -48,7 +48,7 @@ func animate(delta: float) -> void:
 			var active=rates.get(int(b.id),0)>0
 			structures[int(b.id)].sprite.self_modulate=Color(1.12+.06*sin(clock*5),1.03,.90) if active else Color.WHITE
 	for i in range(mini(workers.size(),w.kingdom.workers.size())):
-		var soldier=preload("res://scripts/military.gd").worker_reserved(w,int(w.kingdom.workers[i].id))
+		var soldier=preload("res://scripts/military.gd").worker_reserved(w,int(w.kingdom.workers[i].id)) or preload("res://scripts/trade.gd").worker_reserved(w,int(w.kingdom.workers[i].id))
 		workers[i].visible=not soldier
 		if soldier:continue
 		var worker=w.kingdom.workers[i];var target=int(K.home(w).cell);var working=false

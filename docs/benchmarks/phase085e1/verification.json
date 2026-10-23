@@ -1,0 +1,151 @@
+{
+  "retained_game_checks": 539,
+  "new_military_checks": 44,
+  "new_trade_checks": 56,
+  "game_checks": 639,
+  "baseline_suites": [
+    {
+      "suite": "suite",
+      "passed": true,
+      "exit": 0,
+      "seconds": 2.16
+    },
+    {
+      "suite": "runtime",
+      "passed": true,
+      "exit": 0,
+      "seconds": 3.81
+    },
+    {
+      "suite": "phase2",
+      "passed": true,
+      "exit": 0,
+      "seconds": 10.3
+    },
+    {
+      "suite": "phase3",
+      "passed": true,
+      "exit": 0,
+      "seconds": 1.02
+    },
+    {
+      "suite": "phase4",
+      "passed": true,
+      "exit": 0,
+      "seconds": 1.77
+    },
+    {
+      "suite": "phase5",
+      "passed": true,
+      "exit": 0,
+      "seconds": 1.95
+    },
+    {
+      "suite": "phase6",
+      "passed": true,
+      "exit": 0,
+      "seconds": 4.2
+    },
+    {
+      "suite": "phase7",
+      "passed": true,
+      "exit": 0,
+      "seconds": 0.47
+    },
+    {
+      "suite": "phase8",
+      "passed": true,
+      "exit": 0,
+      "seconds": 1.22
+    },
+    {
+      "suite": "phase085",
+      "passed": true,
+      "exit": 0,
+      "seconds": 0.84
+    },
+    {
+      "suite": "industry",
+      "passed": true,
+      "exit": 0,
+      "seconds": 3.42
+    },
+    {
+      "suite": "hero",
+      "passed": true,
+      "exit": 0,
+      "seconds": 0.56
+    },
+    {
+      "suite": "exploration",
+      "passed": true,
+      "exit": 0,
+      "seconds": 0.66
+    },
+    {
+      "suite": "combat",
+      "passed": true,
+      "exit": 0,
+      "seconds": 1.3
+    },
+    {
+      "suite": "combat_crafting",
+      "passed": true,
+      "exit": 0,
+      "seconds": 1.39
+    },
+    {
+      "suite": "boss",
+      "passed": true,
+      "exit": 0,
+      "seconds": 4.83
+    },
+    {
+      "suite": "adventure_invariants",
+      "passed": true,
+      "exit": 0,
+      "seconds": 1.39
+    },
+    {
+      "suite": "boss_patterns",
+      "passed": true,
+      "exit": 0,
+      "seconds": 1.38
+    }
+  ],
+  "new_suites": [
+    {
+      "suite": "military",
+      "passed": true,
+      "exit": 0,
+      "seconds": 1.77,
+      "checks": 44
+    },
+    {
+      "suite": "military_campaign",
+      "passed": true,
+      "exit": 0,
+      "seconds": 14.36,
+      "checks": 0
+    },
+    {
+      "suite": "trade",
+      "passed": true,
+      "exit": 0,
+      "seconds": 2.12,
+      "checks": 56
+    },
+    {
+      "suite": "trade_campaign",
+      "passed": true,
+      "exit": 0,
+      "seconds": 10.02,
+      "checks": 0
+    }
+  ],
+  "all_passed": true,
+  "campaign_seeds": {
+    "D_legal_1_20": 12,
+    "E1_legal_1_21": 8
+  }
+}

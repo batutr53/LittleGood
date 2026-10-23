@@ -3,11 +3,12 @@ extends RefCounted
 # Optional private-save extension. The existing civilization remains the food/population authority.
 const PLAYABLE_LEVEL_CAP=5
 const SCALE=1000
-const MAX_BUILDINGS=24
+const MAX_BUILDINGS=25
 const MAX_WORKERS=12
 const RESOURCES=["wood","stone","gold"]
 const INDUSTRY=preload("res://scripts/industry.gd")
 const MILITARY=preload("res://scripts/military.gd")
+const TRADE=preload("res://scripts/trade.gd")
 const HERO=preload("res://scripts/hero.gd")
 static var building_data: Dictionary={}
 static var quest_data: Array=[]
@@ -32,6 +33,7 @@ static func normalize(w: Dictionary) -> void:
 	INDUSTRY.normalize(w)
 	HERO.normalize(w)
 	MILITARY.normalize(w)
+	TRADE.normalize(w)
 static func home(w: Dictionary) -> Dictionary:return w.settlements[0]
 static func enable(w: Dictionary) -> bool:
 	if w.get("_read_only",false) or w.has("kingdom") or w.settlements.is_empty():return false
@@ -46,7 +48,7 @@ static func add_worker(w: Dictionary) -> void:
 static func level(w: Dictionary) -> int:
 	if not w.has("kingdom"):return 1
 	var n=1
-	var cap=MILITARY.CAP if MILITARY.enabled(w) else HERO.REALM_CAP if HERO.enabled(w) else 10 if INDUSTRY.enabled(w) else PLAYABLE_LEVEL_CAP
+	var cap=TRADE.CAP if TRADE.enabled(w) else MILITARY.CAP if MILITARY.enabled(w) else HERO.REALM_CAP if HERO.enabled(w) else 10 if INDUSTRY.enabled(w) else PLAYABLE_LEVEL_CAP
 	while n<cap and int(w.kingdom.xp)>=20*n*(n+1):n+=1
 	return n
 static func ready(b: Dictionary) -> bool:return float(b.progress)>=float(b.required)
@@ -62,7 +64,8 @@ static func storage(w: Dictionary) -> float:
 	for b in w.kingdom.buildings:
 		if b.kind=="storage":total+=80*(int(b.level) if ready(b) else maxi(0,int(b.level)-1))
 	return total
-static func assigned(w: Dictionary,id: int) -> Array:return w.kingdom.workers.filter(func(c):return int(c.building)==id and not MILITARY.worker_reserved(w,int(c.id)))
+static func assigned(w: Dictionary,id: int) -> Array:return w.kingdom.workers.filter(func(c):return int(c.building)==id and not MILITARY.worker_reserved(w,int(c.id)) and not TRADE.worker_reserved(w,int(c.id)))
+static func occupied(w: Dictionary,id: int) -> int:return w.kingdom.workers.filter(func(c):return int(c.building)==id).size()
 static func tier(w: Dictionary) -> int:
 	if not w.has("kingdom"):return 1
 	return 2 if count(w,"townhall")>0 and count(w,"house")>0 and count(w,"farm")>0 and count(w,"lumber")>0 and w.kingdom.workers.size()>=4 and home(w).population>=6 and home(w).food>=8 and w.kingdom.stability>=600 else 1
@@ -91,6 +94,7 @@ static func valid_site(w: Dictionary,kind: String,cell: int,ignore: int=0) -> bo
 	var c=w.cells[cell];var site=buildings()[kind].site
 	if int(buildings()[kind].level)>5 and not INDUSTRY.enabled(w):return false
 	if int(buildings()[kind].level)>15 and not MILITARY.enabled(w):return false
+	if int(buildings()[kind].level)>20 and not TRADE.enabled(w):return false
 	var capital=w.cells[int(home(w).cell)]
 	if Vector2(c.x-capital.x,c.y-capital.y).length()>(7.0 if INDUSTRY.enabled(w) else 5.5):return false
 	return int(c.biome)==1 if site=="forest" else int(c.biome) in [0,1,5] if site=="fertile" else int(c.biome) in [3,4] if site=="rock" else int(c.biome) in [0,1,2,5]
@@ -108,7 +112,7 @@ static func upgrade_cost(b: Dictionary) -> Dictionary:
 	for key in result:result[key]*=int(b.level)+1
 	return result
 static func upgrade(w: Dictionary,id: int) -> bool:
-	if not writable(w):return false
+	if not writable(w) or TRADE.building_reserved(w,id):return false
 	for b in w.kingdom.buildings:
 		if int(b.id)==id and ready(b) and int(b.level)<3 and afford(w,upgrade_cost(b)):
 			spend(w,upgrade_cost(b));b.level=int(b.level)+1;b.progress=0;b.required=int(buildings()[b.kind].ticks)*int(b.level)*SCALE;record(w,"upgrade",b.kind);return true
@@ -119,10 +123,10 @@ static func move(w: Dictionary,id: int,cell: int) -> bool:
 		if int(b.id)==id and valid_site(w,b.kind,cell,id):b.cell=cell;return true
 	return false
 static func assign(w: Dictionary,worker: int,building: int) -> bool:
-	if not writable(w) or MILITARY.worker_reserved(w,worker):return false
+	if not writable(w) or MILITARY.worker_reserved(w,worker) or TRADE.worker_reserved(w,worker):return false
 	if building!=0:
 		var match_build=w.kingdom.buildings.filter(func(b):return int(b.id)==building and ready(b))
-		if match_build.is_empty() or assigned(w,building).size()>=int(buildings()[match_build[0].kind].slots):return false
+		if match_build.is_empty() or occupied(w,building)>=int(buildings()[match_build[0].kind].slots):return false
 	for c in w.kingdom.workers:
 		if int(c.id)==worker:c.building=building;return true
 	return false
@@ -192,12 +196,14 @@ static func tick(w: Dictionary) -> void:
 			if INDUSTRY.multiplier(w,int(worker.id),b.kind)>SCALE:event(w,"tool_work")
 	INDUSTRY.tick(w)
 	MILITARY.tick(w)
+	TRADE.tick(w)
 static func current(w: Dictionary) -> Dictionary:
 	if not w.has("kingdom"):return {}
 	for q in quests():
 		if int(q.level)>5 and not INDUSTRY.enabled(w):return {}
 		if int(q.level)>10 and not HERO.enabled(w):return {}
 		if int(q.level)>15 and not MILITARY.enabled(w):return {}
+		if int(q.level)>20 and not TRADE.enabled(w):return {}
 		if not w.kingdom.claimed.has(q.id):return q
 	return {}
 static func progress(w: Dictionary,o: Dictionary) -> float:
@@ -208,6 +214,7 @@ static func progress(w: Dictionary,o: Dictionary) -> float:
 		"equipment":return w.kingdom.industry.equipped.size() if INDUSTRY.enabled(w) else 0
 		"adventure":return HERO.progress(w,o.key)
 		"military":return MILITARY.progress(w,o.key)
+		"trade":return TRADE.progress(w,o.key)
 	return 0
 static func complete(w: Dictionary,q: Dictionary) -> bool:
 	for prerequisite in q.prerequisites:
@@ -230,6 +237,7 @@ static func validate(w: Dictionary) -> bool:
 	if int(k.version)>=2:fields.append("industry");resources.append_array(INDUSTRY.EXTRA_RESOURCES)
 	if int(k.version)==3:fields.append("adventure");resources.append_array(HERO.MATERIALS)
 	if k.has("military"):fields.append("military")
+	if k.has("trade"):fields.append("trade")
 	if not C.shape(k,fields) or not C.number(k.xp,0,100000,true) or not C.number(k.stability,550,1000,true) or not k.advisor is bool:return false
 	if not C.shape(k.stock,resources):return false
 	for key in resources:
@@ -247,6 +255,7 @@ static func validate(w: Dictionary) -> bool:
 		if not C.number(b.required,1,100000,true) or not C.number(b.progress,0,b.required,true):return false
 		if int(buildings()[b.kind].level)>5 and int(k.version)<2:return false
 		if int(buildings()[b.kind].level)>15 and not MILITARY.enabled(w):return false
+		if int(buildings()[b.kind].level)>20 and not TRADE.enabled(w):return false
 		ids[int(b.id)]=b;cells[int(b.cell)]=true
 	for kind in buildings():
 		if k.buildings.filter(func(b):return b.kind==kind).size()>int(buildings()[kind].limit):return false
@@ -264,6 +273,7 @@ static func validate(w: Dictionary) -> bool:
 		if i>=5 and int(k.version)<2:return false
 		if i>=10 and int(k.version)!=3:return false
 		if i>=15 and not MILITARY.enabled(w):return false
+		if i>=20 and not TRADE.enabled(w):return false
 		xp+=int(quests()[i].rewards.xp)
 	if k.xp!=xp or not k.events is Dictionary or k.events.size()>(40 if int(k.version)>=2 else 24):return false
 	var event_keys=["observe_settlement","gather_wood","gather_stone","recruit","produce_wood","produce_food"]
@@ -275,5 +285,5 @@ static func validate(w: Dictionary) -> bool:
 		if not event_keys.has(key) or not C.number(k.events[key],0,1000000000,true):return false
 	if not k.history is Array or k.history.size()>30:return false
 	for h in k.history:
-		if not C.shape(h,["tick","key","subject"]) or not C.number(h.tick,0,w.tick,true) or not h.key in ["founding","construction","built","upgrade","recruit","quest","craft","boss","military"] or not h.subject is String or h.subject.length()>32:return false
-	return INDUSTRY.validate(w) and HERO.validate(w) and MILITARY.validate(w)
+		if not C.shape(h,["tick","key","subject"]) or not C.number(h.tick,0,w.tick,true) or not h.key in ["founding","construction","built","upgrade","recruit","quest","craft","boss","military","trade"] or not h.subject is String or h.subject.length()>32:return false
+	return INDUSTRY.validate(w) and HERO.validate(w) and MILITARY.validate(w) and TRADE.validate(w)

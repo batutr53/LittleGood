@@ -1,0 +1,59 @@
+[
+  {
+    "cap": 60,
+    "checks": {},
+    "draw_calls": 47.0,
+    "fps": 59.8651576872399,
+    "memory_bytes": 40517885,
+    "p95_ms": 20.146,
+    "planet_rendering": false,
+    "source": "simulated_android_qa",
+    "stage": "trade_profile_complete",
+    "valid": true,
+    "viewport": [
+      720.0,
+      1600.0
+    ],
+    "sample": "hidden_A",
+    "physical_device": false,
+    "serial": "emulator-5554"
+  },
+  {
+    "cap": 60,
+    "checks": {},
+    "draw_calls": 206.0,
+    "fps": 30.8739602611354,
+    "memory_bytes": 41142882,
+    "p95_ms": 36.853,
+    "planet_rendering": true,
+    "source": "simulated_android_qa",
+    "stage": "trade_profile_complete",
+    "valid": true,
+    "viewport": [
+      720.0,
+      1600.0
+    ],
+    "sample": "visible_control",
+    "physical_device": false,
+    "serial": "emulator-5554"
+  },
+  {
+    "cap": 60,
+    "checks": {},
+    "draw_calls": 47.0,
+    "fps": 60.0413694195565,
+    "memory_bytes": 40518557,
+    "p95_ms": 18.105,
+    "planet_rendering": false,
+    "source": "simulated_android_qa",
+    "stage": "trade_profile_complete",
+    "valid": true,
+    "viewport": [
+      720.0,
+      1600.0
+    ],
+    "sample": "hidden_B",
+    "physical_device": false,
+    "serial": "emulator-5554"
+  }
+]

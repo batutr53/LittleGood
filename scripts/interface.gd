@@ -396,6 +396,7 @@ func refresh() -> void:
 		if icon.visible: icon.queue_redraw()
 
 func popup(title: String) -> VBoxContainer:
+	end_live_route()
 	game.reset_gesture()
 	game.in_menu = true
 	world_controls(false)
@@ -418,7 +419,13 @@ func popup(title: String) -> VBoxContainer:
 	create_tween().tween_property(modal, "modulate:a", 1.0, .18)
 	return v
 
+func end_live_route() -> void:
+	if game.trade_ui!=null and game.trade_ui.watching:
+		game.trade_ui.watching=false
+		game.show_world(true)
+
 func close() -> void:
+	end_live_route()
 	if modal: modal.queue_free(); modal = null
 	if is_instance_valid(veil): veil.queue_free(); veil = null
 	game.in_menu = false

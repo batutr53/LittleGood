@@ -1,0 +1,17 @@
+# Known issues —0.8.5-devD critical prerequisite
+
+- Current campaign reaches1–20. This is a bounded three-class company with lightweight slide collision, two compact authored battles and nonlethal injuries; no large battlefield navigation, cavalry or siege. D's critical prerequisites pass; a full unseen D specification is not claimed.
+- E1–E6 trading, caravans, new navigable regions, outposts, ruin loot and Desert Sovereign remain outstanding at this checkpoint. There is no final Milestone E tag.
+- Android verification is emulator-only. Short raid55.49FPS/p9528.55ms; phone comfort/thermals/battery/cutouts remain unverified. Existing startup/cleanup warnings remain. See D report and retained C issues for limitations still relevant to C.
+
+## Historical C issues (military absence superseded above)
+
+- Playable scope is realms1–15 / milestones A+B+C. Military D, later0.8.5 regions/campaign content and0.9 remain unimplemented. No completed full0.8.5 or0.9 tag is claimed.
+- Android verification uses emulator-5554/API35/x86_64 with NVIDIA OpenGL translation. Physical touch comfort, simultaneous multitouch, haptics, thermals, battery use, cutouts/OEM layouts and mid-range phone performance remain unverified. Short fresh-emulator samples reach roughly60/30FPS, with a57.76FPS instrumented boss sample; occasional frame spikes remain. These do not establish stable phone performance; see PERFORMANCE_MILESTONE_C.md. A transient emulator package-installer timeout required a reboot without clearing player data.
+- Wildwood is one compact authored region with four bounded enemies, simple chase/slide AI and fixed landmarks. Enemies can hug obstacles; this is not general navigation/pathfinding or a procedurally generated dungeon. Sprite bob/sway/attack rotation/defeat fade are procedural animations, not full skeletal animation. No additional hero classes or skill tree.
+- Material stock is shared; equipment/potions occupy32 unique inventory slots including four queued jobs. No item discard/sale/salvage or forge cancellation/refund exists. Full inventory leaves loot in the region and can block a new expedition until collected; use potions/equipment planning. An explicit replay restores ordinary enemies/chest/plants, but never another unique living heart.
+- Home simulation pauses during active adventure, including while the app is closed. This is deliberate and prevents unattended combat damage. Collected loot survives retreat/defeat; there is no punitive absence mechanic.
+- Menus pause kingdom work; keep an idle builder and assign actual smelters/smiths. Existing generic rocks regrow; finite deposits, coal and complex logistics are absent. Housing/plot/queue bounds and old-capital preservation remain.
+- Existing headless test/editor shutdown ObjectDB/resource cleanup warnings persist; the runtime assertions pass. Export logs contain cleanup warnings. No new gameplay script errors were accepted as successful tests. Native Computer Use was unavailable; actual Godot/MCP/ADB screenshots supplied visual evidence.
+- Existing0.8 API/.NET runtime remains Windows-App-Control blocked. No bypass or backend change was made. Offline play and existing snapshot visits remain; new live guild readiness is not claimed. Purchases remain disabled and no paid service or publication was authorized/performed.
+- Automated playtests do not establish long-term player enjoyment, human beta success or complete balancing. Prior reports/issues are preserved in docs/archive/iron-age-b and earlier archives.

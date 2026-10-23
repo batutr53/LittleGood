@@ -1,0 +1,15 @@
+[
+ {"name":"editor","arguments":{"action":"clear_logs"}},
+ {"name":"files","arguments":{"action":"rescan"}},
+ {"name":"scene","arguments":{"action":"reload","path":"res://scenes/main.tscn"}},
+ {"name":"run","arguments":{"action":"play","mute":true}},
+ {"name":"game","arguments":{"action":"wait","seconds":2}},
+ {"name":"exec","arguments":{"action":"game","code":"scene.is_test_session=true;scene.save_path=\"user://trade-mcp.json\";scene.diagnostics.configure(\"user://trade-mcp-diagnostics.json\",\"simulated\");var p=preload(\"res://scripts/trade_progression_probe.gd\").new();var ok=p.marketplace();scene.world=p.world;scene.view.world=scene.world;scene.has_player_world=true;scene.paused=true;scene.ui.language=\"tr\";scene.ui.build();scene.trade_ui.merchant=p.merchant;scene.trade_ui.guards=preload(\"res://scripts/military.gd\").available(scene.world).slice(0,2).map(func(u):return int(u.id));scene.trade_ui.draft();return {\"legal_market21\":ok,\"merchant\":p.merchant};"}},
+ {"name":"game","arguments":{"action":"wait","seconds":1}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase085e1/mcp-draft-tr.png"},
+ {"name":"exec","arguments":{"action":"game","code":"var id=preload(\"res://scripts/trade.gd\").dispatch(scene.world,\"river\",scene.trade_ui.merchant,scene.trade_ui.guards,{\"wood\":4});scene.trade_ui.watch(id);return {\"caravan_id\":id};"}},
+ {"name":"game","arguments":{"action":"wait","seconds":5}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase085e1/mcp-caravan-tr.png"},
+ {"name":"editor","arguments":{"action":"logs","level":"error"}},
+ {"name":"run","arguments":{"action":"stop"}}
+]

@@ -43,6 +43,7 @@ var decorator
 var realm_ui
 var hero_ui
 var military_ui
+var trade_ui
 var army_scene
 var adventure_scene
 
@@ -84,6 +85,7 @@ func _ready() -> void:
 	decorator=preload("res://scripts/customization_interface.gd").new(ui,self)
 	realm_ui=preload("res://scripts/kingdom_interface.gd").new(self,ui)
 	military_ui=preload("res://scripts/military_interface.gd").new(self,ui)
+	trade_ui=preload("res://scripts/trade_interface.gd").new(self,ui)
 	hero_ui=preload("res://scripts/hero_interface.gd").new(self,ui)
 	view.set_quality(false)
 	var config = ConfigFile.new()
@@ -404,7 +406,7 @@ func _process(delta: float) -> void:
 	if save_pending >= 0:
 		save_pending -= simulation_delta
 		if save_pending <= 0: checkpoint("interaction")
-	if paused or in_menu or visiting: return
+	if visiting or ((paused or in_menu) and not (trade_ui!=null and trade_ui.watching)): return
 	accumulator += simulation_delta * speed
 	autosave_time += simulation_delta
 	while accumulator >= 2:

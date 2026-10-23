@@ -305,5 +305,31 @@
     ],
     "site": "land",
     "limit": 1
+  },
+  {
+    "id": "marketplace",
+    "name": [
+      "Lantern Marketplace",
+      "Fener Pazarı"
+    ],
+    "description": [
+      "Assign merchants to buy, sell and send real caravans.",
+      "Alım, satım ve gerçek kervanlar için tüccar ata."
+    ],
+    "level": 21,
+    "cost": {
+      "wood": 16,
+      "stone": 8,
+      "gold": 3
+    },
+    "ticks": 6,
+    "slots": 2,
+    "output": "",
+    "role": [
+      "Merchant",
+      "Tüccar"
+    ],
+    "site": "land",
+    "limit": 1
   }
 ]

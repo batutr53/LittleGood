@@ -1,0 +1,30 @@
+{
+  "all_passed": true,
+  "checks": {
+    "actual_ready": true,
+    "legal_market": true,
+    "menu_pause_restored": true,
+    "native_cargo": true,
+    "native_collect": true,
+    "native_dispatch": true,
+    "pending_checkpoint": true,
+    "quest21": true
+  },
+  "profile": {
+    "cap": 60,
+    "draw_calls": 46.0,
+    "fps": 59.797533899941,
+    "frames": 2836,
+    "memory_bytes": 50284072,
+    "p95_ms": 19.38,
+    "simulation_average_ms": 1.48295833333333,
+    "simulation_peak_ms": 1.789,
+    "video_memory_bytes": 28026646.0
+  },
+  "source": "simulated_android_qa",
+  "stage": "trade_complete",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

@@ -2,6 +2,7 @@ extends RefCounted
 const K=preload("res://scripts/kingdom.gd")
 const I=preload("res://scripts/industry.gd")
 const M=preload("res://scripts/military.gd")
+const T=preload("res://scripts/trade.gd")
 const H=preload("res://scripts/hero.gd")
 var game
 var ui
@@ -33,7 +34,7 @@ func open() -> void:
 	ui.page="kingdom"
 	var w=game.world;var q=K.current(w)
 	var v=ui.popup(say("The First Kingdom","İlk Krallık"));var list=ui.card_list(v,405)
-	list.add_child(ui.label(say("Realm ","Diyar ")+str(K.level(w))+" · "+say("Development tier ","Gelişim aşaması ")+str(K.tier(w))+" · "+str(w.kingdom.claimed.size())+(" / 20" if M.enabled(w) else " / 15" if H.enabled(w) else " / 10" if I.enabled(w) else " / 5"),22,Color("ecd99f")))
+	list.add_child(ui.label(say("Realm ","Diyar ")+str(K.level(w))+" · "+say("Development tier ","Gelişim aşaması ")+str(K.tier(w))+" · "+str(w.kingdom.claimed.size())+(" / 21" if T.enabled(w) else " / 20" if M.enabled(w) else " / 15" if H.enabled(w) else " / 10" if I.enabled(w) else " / 5"),22,Color("ecd99f")))
 	list.add_child(ui.label(resources(),18))
 	if w.kingdom.advisor:
 		var row=HBoxContainer.new();list.add_child(row)
@@ -55,7 +56,10 @@ func open() -> void:
 	elif not M.enabled(w):
 		list.add_child(ui.label(say("The border needs a company. Build a barracks, equip real citizens and defend your village.","Sınırın birliğe ihtiyacı var. Kışla kur, gerçek sakinleri donat ve köyünü savun."),20))
 		add(list,say("Begin Chapter IV · The Border Company","Bölüm IV'e başla · Sınır Birliği"),func():if M.enable(w):changed();game.checkpoint("chapter4");open(),true)
-	else:list.add_child(ui.label(say("Chapter IV complete. Your company and kingdom are safe. The Forgotten Realms are not available yet.","Bölüm IV tamamlandı. Birliğin ve krallığın güvende. Unutulmuş Diyarlar henüz açık değil."),20))
+	elif not T.enabled(w):
+		add(list,say("Begin Chapter V · The First Trade Road","Bölüm V'e başla · İlk Ticaret Yolu"),func():if T.enable(w):changed();game.checkpoint("chapter5-trade");open(),true)
+	else:list.add_child(ui.label(say("The First Trade Road is open. Further Forgotten Realms expeditions are still being prepared.","İlk Ticaret Yolu açık. Unutulmuş Diyarlar'ın diğer seferleri hazırlanıyor."),20))
+	if T.enabled(w):add(list,say("Market & caravans","Pazar ve kervanlar"),game.trade_ui.open,true)
 	if M.enabled(w):add(list,say("The Border Company","Sınır Birliği"),game.military_ui.open,true)
 	if H.enabled(w):add(list,say("Hero Hall","Kahraman Salonu"),game.hero_ui.profile)
 	if I.enabled(w):
@@ -96,6 +100,7 @@ func construction() -> void:
 		var data=K.buildings()[id]
 		if int(data.level)>5 and not I.enabled(game.world):continue
 		if int(data.level)>15 and not M.enabled(game.world):continue
+		if int(data.level)>20 and not T.enabled(game.world):continue
 		var row=HBoxContainer.new();list.add_child(row)
 		var image=TextureRect.new();image.texture=load("res://assets/kingdom/"+id+".svg");image.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;image.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;image.custom_minimum_size=Vector2(90,90);row.add_child(image)
 		var button=add(row,localized(data.name)+" · "+say("Realm ","Diyar ")+str(int(data.level))+" · "+str(game.world.kingdom.buildings.filter(func(b):return b.kind==id).size())+"/"+str(int(data.limit))+"\n"+cost(data.cost),func():begin("build",id));button.size_flags_horizontal=Control.SIZE_EXPAND_FILL;button.disabled=K.level(game.world)<int(data.level) or not K.afford(game.world,data.cost) or game.world.kingdom.buildings.size()>=K.MAX_BUILDINGS or game.world.kingdom.buildings.filter(func(b):return b.kind==id).size()>=int(data.limit)
@@ -113,6 +118,7 @@ func workers() -> void:
 		for b in w.kingdom.buildings:
 			if int(b.id)==int(c.building):job=localized(K.buildings()[b.kind].role)
 		if M.worker_reserved(w,id):job=say("Border Company · unavailable for civilian work","Sınır Birliği · sivil işe kapalı")
+		if T.worker_reserved(w,id):job=say("Caravan merchant · reserved","Kervan tüccarı · ayrılmış")
 		var equipped=I.tool(w,id);var tool_text=" · "+localized(I.recipes()[equipped.recipe].name) if not equipped.is_empty() else ""
 		add(list,c.name+" · "+job+" · "+str(snappedf(c.skill/float(K.SCALE),.01))+"×"+tool_text,func():assignments(id))
 	var recruit=add(v,say("Recruit citizen · 2 food + 1 gold","Sakin işe al · 2 besin + 1 altın"),func():
@@ -121,6 +127,7 @@ func workers() -> void:
 	recruit.disabled=K.level(w)<4 or w.kingdom.workers.size()>=K.MAX_WORKERS
 	add(v,ui.t("back"),open)
 func assignments(worker: int) -> void:
+	if T.worker_reserved(game.world,worker):game.trade_ui.open();return
 	if M.worker_reserved(game.world,worker):game.military_ui.open();return
 	ui.page="kingdom";var v=ui.popup(say("Choose a profession","Bir meslek seç"));var list=ui.card_list(v,400)
 	if I.enabled(game.world):add(list,say("Choose or compare tool","Alet seç veya karşılaştır"),func():choose_tool(worker))
@@ -128,8 +135,8 @@ func assignments(worker: int) -> void:
 	for b in game.world.kingdom.buildings:
 		var data=K.buildings()[b.kind];var id=int(b.id)
 		if not K.ready(b) or int(data.slots)==0:continue
-		var button=add(list,localized(data.name)+" · "+str(K.assigned(game.world,id).size())+" / "+str(int(data.slots)),func():if K.assign(game.world,worker,id):changed();ui.close();ui.toast(say("Assigned · watch your worker at the building","Atandı · işçini binada izle")),true)
-		button.disabled=K.assigned(game.world,id).size()>=int(data.slots)
+		var button=add(list,localized(data.name)+" · "+str(K.occupied(game.world,id))+" / "+str(int(data.slots)),func():if K.assign(game.world,worker,id):changed();ui.close();ui.toast(say("Assigned · watch your worker at the building","Atandı · işçini binada izle")),true)
+		button.disabled=K.occupied(game.world,id)>=int(data.slots)
 	add(v,ui.t("back"),workers)
 func inspect_building(id: int) -> void:
 	for b in game.world.kingdom.buildings:
@@ -141,7 +148,8 @@ func inspect_building(id: int) -> void:
 		v.add_child(ui.label(say("Requires assigned workers, moisture/forest and available local resources. Full storage stops production. Unassign one worker if construction is stalled.","Atanmış işçi, nem/orman ve yerel kaynak gerekir. Dolu depo üretimi durdurur. İnşaat durmuşsa bir işçiyi boşa çıkar."),19))
 		if data.has("inputs"):v.add_child(ui.label(say("Consumes per iron: ","Demir başına tüketim: ")+cost(data.inputs),19))
 		if b.kind=="forge":add(v,say("Open workshop","Atölyeyi aç"),func():workshop(id),true)
-		var upgrade=add(v,say("Upgrade · ","Geliştir · ")+cost(K.upgrade_cost(b)),func():if K.upgrade(game.world,id):changed();ui.close(),true);upgrade.disabled=not K.ready(b) or int(b.level)>=3 or not K.afford(game.world,K.upgrade_cost(b))
+		var upgrade=add(v,say("Upgrade · ","Geliştir · ")+cost(K.upgrade_cost(b)),func():if K.upgrade(game.world,id):changed();ui.close(),true);upgrade.disabled=not K.ready(b) or int(b.level)>=3 or not K.afford(game.world,K.upgrade_cost(b)) or T.building_reserved(game.world,id)
+		if T.building_reserved(game.world,id):v.add_child(ui.label(say("Collect this market's caravans before upgrading.","Geliştirmeden önce bu pazarın kervanlarını teslim al."),19))
 		add(v,say("Relocate","Yerini değiştir"),func():begin("build",b.kind,id));add(v,say("Assign workers","İşçi ata"),workers);add(v,say("Watch work","Çalışmayı izle"),func():focus(int(b.cell)))
 		return
 func history() -> void:
@@ -165,6 +173,7 @@ func navigate(action: String) -> void:
 	elif action=="workshop":workshop()
 	elif action=="inventory":inventory()
 	elif action=="army":game.military_ui.open()
+	elif action=="trade":game.trade_ui.open()
 	elif action=="hero":game.hero_ui.profile()
 	elif action=="wildwood":game.hero_ui.world_map()
 	elif action.begins_with("build_"):begin("build",action.trim_prefix("build_"))
@@ -204,6 +213,7 @@ func inventory() -> void:
 		var owned=I.tool(w,int(c.id));var id=int(c.id)
 		add(list,c.name+" · "+(localized(I.recipes()[owned.recipe].name) if not owned.is_empty() else say("No tool","Alet yok")),func():choose_tool(id))
 	add(v,say("Craft another tool","Yeni alet üret"),workshop);add(v,ui.t("back"),open)
+	add(v,say("Salvage unused equipment","Kullanılmayan donanımı sök"),game.trade_ui.inventory)
 	if H.enabled(w):
 		list.add_child(ui.label(cost({"leather":w.kingdom.stock.leather/1000,"thornhide":w.kingdom.stock.thornhide/1000,"herb":w.kingdom.stock.herb/1000,"heart":w.kingdom.stock.heart/1000}),19))
 		add(v,say("Hero equipment","Kahraman donanımı"),game.hero_ui.profile)
