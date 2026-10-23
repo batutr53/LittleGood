@@ -23,9 +23,13 @@ var controlled=false
 var physics_steps=0
 var combat_cpu_us=0
 var startup_ms=0.0
+var effects
+var floats: Array=[]
+var effect_textures: Dictionary={}
 func say(en: String,tr: String) -> String:return tr if game.ui.language=="tr" else en
 func _ready() -> void:
 	var started=Time.get_ticks_usec();game.show_world(false);game.ui.root.hide()
+	for key in ["chest","herb"]:effect_textures[key]=load("res://assets/adventure/"+key+".svg")
 	var ground=preload("res://scripts/wildwood_ground.gd").new();add_child(ground)
 	actors=Node2D.new();actors.y_sort_enabled=true;add_child(actors)
 	for p in MAP.trees():
@@ -35,6 +39,8 @@ func _ready() -> void:
 	for rect in MAP.solids(game.world.kingdom.claimed.size()<14):
 		var wall=StaticBody2D.new();wall.position=rect.get_center();var shape=CollisionShape2D.new();var box=RectangleShape2D.new();box.size=rect.size;shape.shape=box;wall.add_child(shape);add_child(wall)
 	make_body(0,Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y),load("res://assets/adventure/warrior.png"),110)
+	for e in game.world.kingdom.adventure.run.enemies:make_body(int(e.id),Vector2(e.x,e.y),load("res://assets/adventure/"+e.kind+".svg"),100)
+	effects=preload("res://scripts/adventure_effects.gd").new();add_child(effects)
 	camera=Camera2D.new();camera.zoom=Vector2.ONE*.9;camera.position=bodies[0].position;camera.position_smoothing_enabled=false;add_child(camera);camera.make_current()
 	build_hud();startup_ms=(Time.get_ticks_usec()-started)/1000.0
 func make_body(id: int,p: Vector2,texture: Texture2D,size: float) -> void:
@@ -57,12 +63,19 @@ func build_hud() -> void:
 	message=game.ui.label(say("Left stick / WASD to move · E to inspect the Sunstone.","Sol çubuk / WASD ile yürü · Güneştaşı için E veya İncele."),18);place(message,Rect2(30,height-340,660,65))
 	add_button("return",say("Home","Dön"),Rect2(605,20,95,48),go_home)
 	add_button("interact",say("Inspect","İncele"),Rect2(588,height-192,110,85),interact)
+	buttons.interact.position=Vector2(582,height-300);buttons.interact.size=Vector2(115,76)
+	for row in [["attack",say("Attack","Saldır"),Vector2(460,height-178)],["skill",say("Strike","Darbe"),Vector2(582,height-178)],["dodge",say("Dodge","Kaçın"),Vector2(338,height-178)],["heal",say("Heal","İyileş"),Vector2(460,height-300)]]:
+		var key=row[0];add_button(key,row[1],Rect2(row[2],Vector2(112,76)),func():actions[key]=true)
+		if key=="attack":buttons[key].button_down.connect(func():actions.attack=true)
+	add_button("pause",say("Pause","Dur"),Rect2(605,108,95,44),func():frozen=not frozen)
 	stick=preload("res://scripts/adventure_stick.gd").new();stick.position=Vector2(125,height-145);layer.add_child(stick)
 	refresh_hud()
 func refresh_hud() -> void:
 	var h=game.world.kingdom.adventure.hero;var r=game.world.kingdom.adventure.run
 	health.text=h.name+" · "+str(int(h.hp))+" / "+str(H.stats(game.world).health)+say(" HP"," Can")
-	objective.text=say("WILDWOOD · ","YABANORMAN · ")+(say("Sunstone found · return home","Güneştaşı bulundu · eve dön") if r.landmark else say("Find the ancient Sunstone on the north trail","Kuzey patikasında eski Güneştaşını bul"))
+	var q=preload("res://scripts/kingdom.gd").current(game.world)
+	objective.text=say("WILDWOOD · ","YABANORMAN · ")+(game.realm_ui.localized(q.title) if not q.is_empty() else say("Explore and return safely","Keşfet ve güvenle dön"))
+	if h.defeated:message.text=say("Your champion fell. Home restores health and keeps your collected loot.","Şampiyonun düştü. Dön canı yeniler; toplanmış ganimetin korunur.")
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed and event.position.distance_to(stick.position)<115 and stick_index<0:stick_index=event.index
@@ -70,6 +83,10 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventScreenDrag and event.index==stick_index:movement=((event.position-stick.position)/65).limit_length(1)
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode==KEY_E:interact()
+		if event.keycode==KEY_SPACE:actions.attack=true
+		if event.keycode==KEY_Q:actions.skill=true
+		if event.keycode==KEY_SHIFT:actions.dodge=true
+		if event.keycode==KEY_F:actions.heal=true
 		if event.keycode==KEY_ESCAPE:frozen=not frozen;message.text=say("Paused · Escape to resume, Home to retreat.","Duraklatıldı · Escape sürdürür; Dön geri çeker.") if frozen else ""
 func _physics_process(delta: float) -> void:
 	if frozen or game.suspended:return
@@ -78,25 +95,50 @@ func _physics_process(delta: float) -> void:
 		direction+=Vector2(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT))-float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))-float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)))
 	stick.vector=direction.limit_length(1);stick.queue_redraw();accumulator+=minf(delta,.2)
 	while accumulator>=.05:
-		accumulator-=.05;var started=Time.get_ticks_usec();A.step(game.world,{"move":direction},move_body);combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
+		accumulator-=.05;var started=Time.get_ticks_usec();var command=actions.duplicate();command.move=direction;var feedback=A.step(game.world,command,move_body);actions.clear();combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
+		for cue in feedback:
+			if cue is Dictionary:floats.append({"point":Vector2(cue.x,cue.y),"text":str(cue.damage),"age":0.0})
+			elif cue in ["swing","kill","heal"]:game.audio.chime(6 if cue=="kill" else 0 if cue=="swing" else 5)
+			elif cue=="hurt":game.audio.chime(2)
 	var r=game.world.kingdom.adventure.run;bodies[0].position=Vector2(r.x,r.y)
 	bodies[0].get_node("Art").rotation=sin(r.clock*.012)*.025*direction.length()
+	for e in r.enemies:
+		var body=bodies[int(e.id)];body.position=Vector2(e.x,e.y);var sprite=body.get_node("Art");sprite.rotation=sin(r.clock*.012+int(e.id))*(.12 if e.state=="windup" else .035);sprite.modulate.a=.22 if e.hp==0 else 1.0
+	bodies[0].get_node("Art").modulate=Color(1,.7,.6) if r.invulnerable>0 and r.dash==0 else Color(1,1,1,.6) if r.dash>0 else Color.WHITE
+	for f in floats:f.age+=delta;f.point.y-=delta*30
+	floats=floats.filter(func(f):return f.age<.8)
 	camera.position=camera.position.lerp(bodies[0].position,1-exp(-delta*7))
 	hud_clock+=delta;save_clock+=delta
 	if hud_clock>.2:hud_clock=0;refresh_hud()
 	if save_clock>5:save_clock=0;game.checkpoint("adventure")
-	queue_redraw()
-func _draw() -> void:
+	effects.queue_redraw()
+func draw_effects(canvas: Node2D) -> void:
 	if not game:return
 	var r=game.world.kingdom.adventure.run
-	draw_circle(MAP.START,34,Color(.7,.85,.65,.5));draw_arc(MAP.START,40,0,TAU,32,Color("e8d7a4"),3,true)
-	draw_style_box(ruin_style(),Rect2(MAP.LANDMARK-Vector2(22,65),Vector2(44,72)))
-	draw_arc(MAP.LANDMARK-Vector2(0,45),18,0,TAU,24,Color("ead797"),4,true)
+	canvas.draw_circle(MAP.START,34,Color(.7,.85,.65,.5));canvas.draw_arc(MAP.START,40,0,TAU,32,Color("e8d7a4"),3,true)
+	canvas.draw_style_box(ruin_style(),Rect2(MAP.LANDMARK-Vector2(22,65),Vector2(44,72)))
+	canvas.draw_arc(MAP.LANDMARK-Vector2(0,45),18,0,TAU,24,Color("ead797"),4,true)
+	for e in r.enemies:
+		if e.hp<=0:continue
+		var p=Vector2(e.x,e.y);var data=A.enemies()[e.kind]
+		canvas.draw_rect(Rect2(p-Vector2(30,95),Vector2(60,6)),Color("203e3e"));canvas.draw_rect(Rect2(p-Vector2(30,95),Vector2(60*e.hp/float(data.health),6)),Color("d3d09c"))
+		if e.state=="windup":
+			var warning=Vector2(e.aimx,e.aimy) if e.kind=="spider" else p;var radius=60 if e.kind=="spider" else int(data.range)+12
+			canvas.draw_circle(warning,radius,Color(.95,.38,.24,.25));canvas.draw_arc(warning,radius,0,TAU,40,Color("f3bb7b"),3,true)
+	if r.swing>0:
+		var p=Vector2(r.x,r.y);var angle=Vector2(r.facing[0],r.facing[1]).angle();canvas.draw_arc(p,65,angle-.9,angle+.9,20,Color("f8e3a7"),9,true)
+	for l in r.loot:
+		if not l.taken:
+			var p=Vector2(l.x,l.y);canvas.draw_circle(p,11,Color("c5d39c"));canvas.draw_arc(p,18,0,TAU,24,Color(.96,.85,.55,.7),2,true)
+	for p in [MAP.CHEST,MAP.HERBS]:
+		var image=effect_textures["chest" if p==MAP.CHEST else "herb"];canvas.draw_texture_rect(image,Rect2(p-Vector2(38,55),Vector2(76,76)),false,Color(1,1,1,.4 if (r.chest if p==MAP.CHEST else r.harvest) else 1))
+	for f in floats:canvas.draw_string(ThemeDB.fallback_font,f.point,f.text,HORIZONTAL_ALIGNMENT_CENTER,-1,24,Color("ffe4a7"))
 func ruin_style() -> StyleBoxFlat:
 	var style=StyleBoxFlat.new();style.bg_color=Color("9cbbaa");style.border_color=Color("d8d8ae");style.set_border_width_all(4);style.set_corner_radius_all(9);return style
 func interact() -> void:
 	var result=A.interact(game.world)
 	if result=="landmark":message.text=say("The Sunstone remembers your kingdom. Arin will want to hear this.","Güneştaşı krallığını hatırlıyor. Arin bunu duymak isteyecek.");game.audio.chime(6);game.checkpoint("landmark")
+	elif not result.is_empty():message.text=say("Collected · loot stays yours when you return. Herbs can heal (F).","Toplandı · döndüğünde ganimet senin. Bitkiler iyileştirir (F).");game.audio.chime(5);game.checkpoint("loot")
 	refresh_hud()
 func go_home() -> void:
 	var paused=game.world.kingdom.adventure.run.home_paused

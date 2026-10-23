@@ -10,3 +10,6 @@ Twelve new hero checks pass, including an authentic tagged-B fixture with a pend
 
 ## C2 - verified Wildwood exploration
 Separate playable scene, real CharacterBody2D/StaticBody2D collision, touch movement, AStar path checks, actual Sunstone interaction, safe return and quest12 pass. Nine model checks and rendered physics traversal pass. Home simulation/offline combat pause explicitly while away. C2 checkpoint: age085-c2-wildwood. Combat is next; no complete-C claim.
+
+## C3 - verified real combat
+Wolf bite/chase, armored slow Thorn Beast heavy warning and Spider locked-target leap use distinct real state machines. Equipment-derived attacks, cooldowns, dodge invulnerability, herb/potion healing, death and weighted persisted drops work. Legal1-13 model journey, exact loot/death restoration and actual rendered physics fight (enemy hit back, warning visible, enemy defeated and loot picked up) pass. Texture lifetime was fixed after visual inspection caught a white herb quad. C3 checkpoint: age085-c3-combat.

@@ -1,0 +1,19 @@
+from pathlib import Path
+root=Path(__file__).resolve().parents[1];out=root/'assets/adventure';kingdom=root/'assets/kingdom'
+head='<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">'
+shadow='<ellipse cx="96" cy="158" rx="62" ry="19" fill="#102d2b" opacity=".35"/>'
+art={
+'wolf':'<path d="m33 131 9-39 33-17 37 6 28-35 12 29 19 17-17 29-25 4-9 34-14 0-4-29-29 0-15 31-14-3 6-32-25 6-20-37Z" fill="#afc6b6" stroke="#436b65" stroke-width="4"/><path d="m115 80 14 30 26-2-16-15Z" fill="#d6dcc1"/><path d="m132 67 8-14 3 24" fill="#698d83"/><circle cx="147" cy="90" r="4" fill="#e0b976"/><path d="m162 101 9-5-5 9Z" fill="#254e4d"/>',
+'thorn':'<path d="m37 143 8-53 25-29 62 4 27 38-12 43-30 13-47-7Z" fill="#729875" stroke="#3b695c" stroke-width="4"/><path d="m44 103-17-30 31 10 4-40 25 23 20-39 13 39 35-15-10 34 30 14-28 16Z" fill="#abc18a" stroke="#567c64" stroke-width="3"/><path d="m66 123 10 38m49-34 6 33" stroke="#799267" stroke-width="16"/><circle cx="137" cy="110" r="5" fill="#edc274"/>',
+'spider':''.join(f'<path d="M96 {80+i*10} {30 if i%2==0 else 163} {45+i*20} {18 if i%2==0 else 176} {83+i*15}" fill="none" stroke="#8eaea0" stroke-width="10" stroke-linecap="round"/>' for i in range(4))+'<ellipse cx="96" cy="97" rx="38" ry="46" fill="#487c79" stroke="#b9ccad" stroke-width="4"/><path d="m78 81 18-25 19 25-19 20Z" fill="#bcceaa"/><ellipse cx="96" cy="133" rx="25" ry="21" fill="#779e8c"/><circle cx="86" cy="132" r="5" fill="#efd28c"/><circle cx="105" cy="132" r="5" fill="#efd28c"/>',
+'thornheart':'<path d="m42 173 8-54-20-35 17-22 17 23 8-42 24-17 26 17 6 42 23-28 21 24-27 40 9 49-36-14-21 20-23-20Z" fill="#658d71" stroke="#244f45" stroke-width="5"/><path d="M61 72 38 40 45 15m76 52 29-32-1-27M81 47 65 18m43 27 8-31" stroke="#b7bb86" stroke-width="12" fill="none" stroke-linecap="round"/><path d="m74 86 21-17 23 18-21 51Z" fill="#d0c485"/><circle cx="81" cy="80" r="5" fill="#fae3a1"/><circle cx="111" cy="80" r="5" fill="#fae3a1"/><path d="m28 172 33-15m82 5 29 14" stroke="#a7b98a" stroke-width="10"/>',
+'chest':'<path d="m43 93 54-24 52 24v53l-52 25-54-25Z" fill="#ab9165" stroke="#dfc68d" stroke-width="5"/><path d="m43 94 0-22 54-24 52 24v22l-52 25Z" fill="#678e78" stroke="#d9c596" stroke-width="4"/><path d="m88 111 17-8v28l-17 7Z" fill="#ebd591"/>',
+'herb':'<path d="M95 166V70m0 53q-59-10-50-52 48 0 50 40m0-20q53-6 48-51-42 3-48 36" stroke="#c4d0a2" stroke-width="7" fill="#7fab81"/>',
+'iron_sword':'<path d="m58 163 66-96" stroke="#ae946b" stroke-width="16"/><path d="m85 118 53-94 13 0 3 17-53 93Z" fill="#dbe1c0" stroke="#6f9688" stroke-width="4"/><path d="m70 112 44 28" stroke="#d6bc80" stroke-width="11"/>',
+'reinforced_shield':'<path d="m43 48 53-25 53 25-9 76-44 46-44-46Z" fill="#669986" stroke="#dbcb9d" stroke-width="8"/><path d="M96 25v138M48 75h98" stroke="#b4c3a1" stroke-width="7"/>',
+'leather_armor':'<path d="m68 32 28 13 29-13 31 43-27 22v64H63V97L36 76Z" fill="#a89b75" stroke="#dbcb9d" stroke-width="5"/><path d="M96 49v108m-30-49h60" stroke="#6d8970" stroke-width="9"/>',
+'healing_potion':'<path d="M79 24h34v39q47 27 37 76-55 43-105 0-9-49 34-76Z" fill="#75b4a0" stroke="#d2d8af" stroke-width="5"/><path d="M72 24h48v19H72Z" fill="#aa946b"/><path d="M96 85v46m-23-23h46" stroke="#e6dfb0" stroke-width="11"/>',
+'heartward':'<path d="m96 164-61-76 21-48 40 21 40-21 21 48Z" fill="#89bc94" stroke="#decd98" stroke-width="6"/><path d="m96 71-16 35 16 32 16-32Z" fill="#e6d38e"/>'}
+art['thornblade']=art['iron_sword']+'<path d="m118 72 23 4-11 12m-30 13 22 4-12 12" fill="none" stroke="#84ac78" stroke-width="7"/>'
+for key,body in art.items():(out/(key+'.svg')).write_text(head+shadow+body+'</svg>',encoding='utf-8')
+for key in ['iron_sword','reinforced_shield','leather_armor','healing_potion','heartward','thornblade']:(kingdom/(key+'.svg')).write_text((out/(key+'.svg')).read_text(),encoding='utf-8')

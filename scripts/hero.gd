@@ -1,6 +1,6 @@
 extends RefCounted
 const I=preload("res://scripts/industry.gd")
-const REALM_CAP=12
+const REALM_CAP=13
 const MATERIALS=["leather","thornhide","herb","heart"]
 const SLOTS=["weapon","shield","armor","artifact"]
 static func enabled(w: Dictionary) -> bool:return w.has("kingdom") and int(w.kingdom.get("version",1))==3
@@ -49,6 +49,7 @@ static func progress(w: Dictionary,key: String) -> float:
 		return 1 if not owned.is_empty() and owned.recipe=="thornblade" else 0
 	return float(a.events.get(key,0))
 static func event(w: Dictionary,key: String,amount: int=1) -> void:
+	if not writable(w):return
 	var events=w.kingdom.adventure.events;events[key]=mini(1000000,int(events.get(key,0))+amount)
 static func normalize(w: Dictionary) -> void:
 	if not enabled(w):return
