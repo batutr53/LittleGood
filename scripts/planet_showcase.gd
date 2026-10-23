@@ -39,6 +39,11 @@ static func index_list(value: Variant, limit: int, highest: int) -> bool:
 	return true
 
 static func validate(data: Variant) -> bool:
+	if data is Dictionary and number(data.get("version"),2,2,true):
+		if not shape(data,["format","version","planet","cells","creatures","settlements","memories","discoveries","secrets","findings","appearance"]):return false
+		var legacy=data.duplicate();legacy.erase("appearance");legacy.version=1
+		if not validate(legacy):return false
+		return preload("res://scripts/cosmetics.gd").public_valid(data.appearance,data.cells.size(),data.creatures.size())
 	if not shape(data, ["format", "version", "planet", "cells", "creatures", "settlements", "memories", "discoveries", "secrets", "findings"]): return false
 	if data.format != FORMAT or not number(data.version, 1, 1, true): return false
 	var p = data.planet
@@ -150,6 +155,9 @@ static func project(w: Dictionary) -> Dictionary:
 		memory.identity = ids.get(int(m.identity),-1)
 		memory.subject = public_text(m.subject,192,"")
 		data.memories.append(memory)
+	if w.has("wardrobe"):
+		var appearance=preload("res://scripts/cosmetics.gd").appearance(w,ids)
+		if appearance.theme!="enchanted" or appearance.sky!="" or appearance.frame!="" or not appearance.placements.is_empty() or not appearance.coats.is_empty():data.version=2;data.appearance=appearance
 	return data
 
 static func encode(w: Dictionary) -> String:
@@ -191,6 +199,7 @@ static func world_from(data: Dictionary) -> Dictionary:
 			w.living.records[m.key] = m.duplicate(true)
 			w.living.remembered.append(m.key)
 	w = Persistence.normalize_integer_fields(w)
+	if data.get("version")==2:w.wardrobe=preload("res://scripts/cosmetics.gd").from_appearance(data.appearance)
 	for i in range(w.cells.size()):
 		for kind in ["canopy_arch","reed_shelter"]:
 			if w.cells[i][kind]:

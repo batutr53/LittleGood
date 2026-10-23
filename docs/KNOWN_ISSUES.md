@@ -1,4 +1,15 @@
-# Known issues — LittleGod 0.7
+# Known issues — LittleGod 0.8
+
+- Updated native API and final .NET test assembly blocked by Windows App Control. New online v2 publishing, entitlement authorization/concurrency and restore HTTP flow need execution on an authorized runtime. No bypass performed; offline game/export/visit fallback works. Last live service baseline is0.7.
+- Live purchases are disabled. Native Google/Apple adapters, authoritative store verification, receipt acknowledgement/refund notifications, actual store restore, account setup/signing/TLS hosting and premium equipment consumer remain external/future work. Earned cosmetics are local, not account-cloud-synced.
+- Current emulator FPS: normal 14.70, 32decor 13.04, saver 17.05, 70creatures+32decor 11.42. Same-host old0.7 control 13.76. Host variation is material; stable phone60 and this host's stable saver30 are unverified. Android theme/capture-loop stalls remain despite eliminating terrain/sprite rebuilds. No physical device was connected.
+- Vector cosmetics intentionally complement retained painted art; they are flatter and four presentation themes share original terrain structure. Isometric rotation is four mirrored/foreshortened facings. One ornament per tile; 32concurrent props. Undo/redo retains20layout states only until a world switch and does not refund purchases.
+- Terrain can change after a valid placement; decor may then need manual move/store. Large props protect current settlements at placement, not future settlement expansion. No functional terrain is deleted. Rare-condition clarity and generous early collection pacing need real testers; finite rewards stop at525 and catalog costs450.
+- Private local soft-currency saves are validated for consistency, not protected from deliberate local file editing. Never use that ledger as proof of premium ownership. Existing ambiguous diagnostics from early desktop QA were retained and are not human evidence; current visual harness uses an isolated simulated destination.
+- Shutdown ObjectDB/resource warnings and emulator shader-cache recompilation warnings remain. Physical touch, haptics, thermals, battery, OEM safe areas/keyboards and accessibility need device testing. Windows Computer Use activation was unavailable; actual Godot/MCP and Android ADB rendering supplied visual inspection.
+- Human testers/retention/monetization demand remain zero/unvalidated. No public deployment, paid service, live payment or store publication occurred.
+
+## Retained 0.7 limitations (historical measurements)
 
 - Current emulator samples: 33.87 FPS normal, 29.97 saver, 29.38 at 70 creatures; physical-device/max-population 60 FPS remains unverified. Prior host-editor interference evidence remains in PERFORMANCE_PHASE6.md. Current raw results are in benchmarks/phase7.
 - Online accounts/friends/showcases/reactions/discovery/inbox work against a locally tested real API/PostgreSQL service. There is no public endpoint, external OAuth, email recovery, presence, real-time co-simulation or push. Explicit profile/showcase visibility defaults private. A server outage leaves offline play usable; private cached visits still require reauthorization.

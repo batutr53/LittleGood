@@ -42,3 +42,7 @@ No stock-art marketplace, external music license, account, or paid asset was use
 ## Phase six additions
 
 Original favorite SVG: assets/phase2/icons/favorite.svg. Procedural canopy arches, reed shelters, active trade trails and favorite halos are drawn by world_view.gd; settlement culture tinting extends retained sprites. Collection/profile/postcard screens reuse the original atlas and fonts. No raster asset was replaced, downloaded or generated through a paid service. Real gameplay screenshots and public inert showcase examples are under docs/screenshots/phase6-* and docs/examples.
+
+## Phase eight additions
+
+24 original 128×128 SVG assets, their shared 768×512 rendering atlas and the bilingual cosmetic catalog are in assets/cosmetics, reproducible with devtools/create_cosmetic_art.py. Four presentation palettes, stars/prisms/motes, sky ribbons and glints extend the existing shaders/procedural renderer. Original painted atlas, font licenses, simulation art and synthesized sound remain. No paid API, stock pack, copied commercial art or new raster service was used. Captures in docs/screenshots/phase8-* show actual rendered gameplay with a controlled QA collection, not player progression or concept art.

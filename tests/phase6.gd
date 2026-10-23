@@ -56,7 +56,7 @@ func run() -> void:
 	for key in ["version","planet","cells","creatures","settlements","memories"]:
 		var bad = data.duplicate(true); bad[key] = "wrong type"
 		verify(Showcase.parse(JSON.stringify(bad)).is_empty(),"Untrusted field type rejected: "+key)
-	var bad = data.duplicate(true); bad.version = 2
+	var bad = data.duplicate(true); bad.version = 99
 	verify(not Showcase.validate(bad),"Unsupported future format versions are rejected")
 	bad = data.duplicate(true); bad.cells[0].canopy_arch=true;bad.cells[1].canopy_arch=true
 	verify(not Showcase.validate(bad),"Imported landmarks cannot exceed systemic per-kind limits")

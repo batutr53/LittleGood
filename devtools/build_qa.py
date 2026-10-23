@@ -12,6 +12,6 @@ try:
     preset.write_bytes(original.replace(b'org.littlegod.livinguniverse"', b'org.littlegod.livinguniverse.betaqa"'))
     subprocess.run([str(root / 'tools/godot/Godot_v4.7.2-stable_win64_console.exe'),
                     '--headless', '--path', str(root), '--export-debug', 'Android',
-                    str(root / 'builds/android/LittleGod-0.7-qa-debug.apk')], env=env, check=True)
+                    str(root / 'builds/android/LittleGod-0.8-qa-debug.apk')], env=env, check=True)
 finally:
     preset.write_bytes(original)

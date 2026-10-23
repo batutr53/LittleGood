@@ -475,6 +475,7 @@ func creation() -> void:
 	v.add_child(button(t("back"), main_menu))
 
 func menu() -> void:
+	if game.decorator!=null and game.decorator.active:game.decorator.finish()
 	if game.visiting: visit_menu(); return
 	page = "menu"
 	game.checkpoint("menu")
@@ -488,6 +489,8 @@ func menu() -> void:
 	scroll.custom_minimum_size.y = 470
 	v.add_child(scroll)
 	scroll.add_child(grid)
+	var wardrobe_button=button("Atölye ve koleksiyon" if language=="tr" else "Atelier & collection",func():game.decorator.collection())
+	wardrobe_button.custom_minimum_size.x=294;grid.add_child(wardrobe_button)
 	var online_button = button("Çevrimiçi evren" if language=="tr" else "Online universe",online_screen)
 	online_button.custom_minimum_size.x=294
 	grid.add_child(online_button)
@@ -945,6 +948,7 @@ func inspect_selected() -> void:
 	for e in game.world.living.memories:
 		if (not cr.is_empty() and int(e.identity) == int(cr.identity)) or (not home.is_empty() and int(e.cell) == cell): memory_card(list, e)
 	if not subject.is_empty() and not game.visiting:
+		if not cr.is_empty():list.add_child(button("Canlı gardırobu" if language=="tr" else "Creature wardrobe",func():game.decorator.creature_looks(int(cr.identity))))
 		var input = LineEdit.new()
 		input.name = "PersonalName"
 		input.text = subject.given_name
@@ -1076,7 +1080,11 @@ func profile_summary(data: Dictionary) -> String:
 	for s in data.settlements: people += int(s.population)
 	for c in data.cells: biomes[int(c.biome)] = true
 	var monuments = data.settlements.filter(func(s): return s.landmark).size()
-	return data.planet.name + "\n" + t("profile_stats") % [1+int(data.planet.tick)/30,data.creatures.size(),people,data.settlements.size(),biomes.size()] + "\n" + t("profile_discoveries") % [data.discoveries.size(),data.secrets.size()] + " · " + t("landmarks_count") % monuments
+	var summary=data.planet.name + "\n" + t("profile_stats") % [1+int(data.planet.tick)/30,data.creatures.size(),people,data.settlements.size(),biomes.size()] + "\n" + t("profile_discoveries") % [data.discoveries.size(),data.secrets.size()] + " · " + t("landmarks_count") % monuments
+	if data.has("appearance"):
+		var look=preload("res://scripts/cosmetics.gd").items()[data.appearance.theme]
+		summary+="\n"+str(look.name[1 if language=="tr" else 0])+" · "+str(data.appearance.placements.size())+(" dekor" if language=="tr" else " decorations")
+	return summary
 
 func portrait(frame: int, size_value: Vector2) -> TextureRect:
 	var picture = TextureRect.new()

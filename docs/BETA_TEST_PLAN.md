@@ -1,6 +1,12 @@
-# Closed beta — 10–20 invited testers
+# Closed beta — LittleGod 0.8 customization candidate
 
-Current candidate: **LittleGod 0.7**, `D:\LittleGod\builds\android\LittleGod-0.7-debug.apk`. Keep 0.6 and its evidence for comparison. Split an eventual invited group across newer/mid-range/older phones and sandbox newcomers/experienced players. Record actual hardware separately from emulator automation. No human recruitment or public hosting has occurred.
+Current package: `D:/LittleGod/builds/android/LittleGod-0.8-debug.apk`; source launcher `D:/LittleGod/Launch LittleGod.cmd`. Update the existing player package with install -r; never clear/uninstall it to test an update. Keep a private backup before a downgrade. No physical phone or human participant was available in this run.
+
+Use CUSTOMIZATION_FEEDBACK.md for the optional 10–20-person test. Allocate two minutes for uncoached first use and 10–15 minutes for decorating, inventory/shop comprehension, creature attachment, theme preference and local sharing. Include portrait devices with different notches/scales, mid-range hardware, actual two-finger pinch, haptic/audio and accessibility checks. Record measured results, including criticism, without turning opinions into validated demand or retention statistics. No recruitment, notifications or sharing with others was performed.
+
+The offline customization loop and export/visit fallback work without a server. Online v2 cosmetics and prepared purchase endpoints need a new live integration run on an authorized machine: Windows App Control blocked the updated API and .NET test assembly here. Do not bypass it. Preserve the last verified 0.7 evidence; do not expose local development services to external testers. Live payments remain disabled.
+
+## Retained gameplay/online scenarios from 0.7
 
 Online testing is currently local-only. Follow ONLINE_ARCHITECTURE.md to run the real API/PostgreSQL stack, configure desktop/emulator addresses, then use two independent test accounts: explicitly publish a friends-only snapshot, request/accept friendship, visit/inspect/return, send a reaction and inspect real activity. Test public opt-in, profile and planet privacy separately, block/unpublish/account deletion, and turn off the API while keeping the local world usable. Do not expose the development service to external testers; authorized TLS hosting/security/operations remain prerequisites. Report keyboard, accessibility and device findings separately from the scripted client/API checks.
 

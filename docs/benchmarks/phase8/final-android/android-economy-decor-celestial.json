@@ -1,0 +1,61 @@
+{
+  "atlas_size": [
+    1024,
+    1024
+  ],
+  "average_fps": 17.0481353103521,
+  "content_scale_mode": 2,
+  "control_scene": false,
+  "cosmetic_count": 32,
+  "cosmetic_draw_average_ms": 3.7476432748538,
+  "cosmetic_sync_ms": 1.001,
+  "cosmetic_theme": "celestial",
+  "creature_animation_average_ms": 0.331239766081872,
+  "creatures": 18,
+  "draw_calls": 150.0,
+  "effects": 0,
+  "first_frame_ms": 8257,
+  "foreground_cpu_average_ms": 19.7553187134503,
+  "frame_p50_ms": 55.604,
+  "frame_p95_ms": 87.05,
+  "frames": 342,
+  "nodes": 166.0,
+  "peak_draw_calls": 171.0,
+  "peak_process_ms": 246.803,
+  "pipeline": {
+    "scene_ready_ms": 43.978,
+    "world_generation_ms": 3.212
+  },
+  "platform": "Android",
+  "props_created_total": 144,
+  "props_sync_ms": 2.676,
+  "quality": "economy",
+  "render_size": [
+    720,
+    1600
+  ],
+  "renderer": "gl_compatibility",
+  "simulation_average_ms": 1.336,
+  "simulation_peak_ms": 1.898,
+  "simulation_ticks": 10,
+  "static_memory_mb": 43.4751234054565,
+  "terrain_last_build_ms": 10.401,
+  "terrain_rebuilds": 3,
+  "video_memory_mb": 24.8287734985352,
+  "wall_seconds": 20.060845,
+  "world_cpu_average_ms": 0.566649122807017,
+  "installed_version": "0.8.0",
+  "installed_apk_sha256": "8d15d42f4fac7727557716785fc1668987eab081b94dd87f23c4e8e175e9cf0c",
+  "requested_options": {
+    "duration": 20.0,
+    "economy": true,
+    "control": false,
+    "stress": false,
+    "cosmetics": true,
+    "cosmetic_theme": "celestial"
+  },
+  "host_launch_to_report_seconds": 29.579,
+  "player_save_unchanged": true,
+  "device_serial": "emulator-5554",
+  "package": "org.littlegod.livinguniverse"
+}

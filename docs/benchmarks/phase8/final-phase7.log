@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS No startup credentials
+PASS Token header injection refused
+PASS Empty tokens refused
+PASS Valid opaque code
+PASS Code traversal refused
+PASS Nonhex code refused
+PASS Public cleartext refused
+PASS URL credentials refused
+PASS Query secrets refused
+PASS Debug loopback allowed
+PASS Tokens absent from configuration
+PASS Logout clears private memory
+PASS Invalid identifier rejected before transport
+PASS Unconfigured online service returns without blocking local play
+PASS Local simulation independent of API
+PHASE7 15/15

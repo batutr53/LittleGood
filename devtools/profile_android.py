@@ -8,6 +8,8 @@ parser.add_argument('--package',default='org.littlegod.livinguniverse',choices=[
 parser.add_argument('--control',action='store_true')
 parser.add_argument('--economy',action='store_true')
 parser.add_argument('--stress',action='store_true')
+parser.add_argument('--cosmetics',action='store_true')
+parser.add_argument('--cosmetic-theme',default='celestial',choices=['enchanted','crystal','celestial','ancient'])
 parser.add_argument('--duration',type=float,default=30)
 parser.add_argument('--output-dir',default='builds/phase3')
 args=parser.parse_args()
@@ -23,7 +25,7 @@ installed_version=version_match.group(1) if version_match else 'unavailable'
 apk_path=run('shell','pm','path',pkg).decode().strip().removeprefix('package:')
 installed_hash=run('shell','sha256sum',apk_path).decode().split()[0] if re.fullmatch(r'/data/app/[A-Za-z0-9_=/+.~-]+/base\.apk',apk_path) else 'unavailable'
 before=run('shell','run-as',pkg,'cat','files/planet.json',check=False)
-options={'duration':args.duration,'economy':args.economy,'control':args.control,'stress':args.stress}
+options={'duration':args.duration,'economy':args.economy,'control':args.control,'stress':args.stress,'cosmetics':args.cosmetics,'cosmetic_theme':args.cosmetic_theme}
 output=root/args.output_dir
 output.mkdir(parents=True,exist_ok=True)
 marker=output/'benchmark-options.json'
@@ -51,6 +53,9 @@ report['player_save_unchanged']=before==after
 report['device_serial']=args.serial
 report['package']=pkg
 kind='control' if args.control else 'economy' if args.economy else 'stress' if args.stress else 'smooth'
+if args.cosmetics:
+    assert report.get('cosmetic_count')==32 and report.get('cosmetic_theme')==args.cosmetic_theme, 'Wrong cosmetic profile fixture'
+    kind+='-decor-'+args.cosmetic_theme
 dest=output/f'android-{kind}'
 dest.with_suffix('.json').write_text(json.dumps(report,indent=2))
 for _ in range(10):

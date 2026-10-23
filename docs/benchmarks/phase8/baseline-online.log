@@ -1,0 +1,9 @@
+{
+  "source": "real_http_postgresql",
+  "passed": 65,
+  "total": 65,
+  "latency_median_ms": 13.37354996940121,
+  "latency_p95_ms": 58.27010003849864,
+  "snapshot_bytes": 77726,
+  "temporary_accounts_deleted": true
+}

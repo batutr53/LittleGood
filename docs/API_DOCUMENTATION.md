@@ -35,7 +35,7 @@ Registration never returns tokens. The game stores tokens only in memory and cle
 
 | Method and path | Behavior |
 |---|---|
-| PUT /planets/showcase | `{snapshot,visibility}` publishes the authenticated owner's exact public v1 document; never accepts an owner field/private save. Returns `{version:1,status:"published"}`. |
+| PUT /planets/showcase | `{snapshot,visibility}` publishes the authenticated owner's exact public v1 or v2 document; never accepts an owner field/private save. Returns `{version:1,status:"published"}`. |
 | DELETE /planets/showcase | Deletes own showcase, retained versions and reactions. |
 | GET /planets/{code}/showcase | Current accessible `{version:1,revision,updated,hash,snapshot}`. Both profile and showcase visibility apply, plus blocks. |
 | POST /visits/{code} | `{}` rechecks visit authorization, 204; no fictitious engagement counter or real-time synchronization. |
@@ -51,3 +51,9 @@ GET `/notifications?before=<id>` returns up to 20 own activity records, newest f
 401: sign in/renew; 404: absent or inaccessible without distinguishing private existence; 400: invalid input; 409: conflicting concurrent update, refresh state before a deliberate retry; 413: body too large; 429: rate limit, wait for next minute window; 503: service/database unavailable. Some authorization failures have an empty body. Application validation errors use `{error:<stable_code>}` without exception or credential detail. The client uses status codes, generic localized feedback, a six-second timeout and one 401 renewal attempt, with no automatic write replay after network loss.
 
 Limits: auth 20/IP/minute, writes 20/actor/minute, all routes 120/actor-or-unauthenticated-IP/minute. They are process-local for this single-instance development stack. Pagination validates offset bounds. No external push, user text comments, ranking based on fabricated activity, or public hosting is configured.
+
+## 0.8 source extension and verification limit
+
+API envelope version remains 1. Snapshot version 2 adds exact `appearance={theme,sky,frame,placements,coats}`; limits are 32 unique cells/IDs and 100 creature looks, bounded indices, four facings and known non-premium catalog IDs. No economy/private inventory is accepted. Plain worlds still export v1. Old clients reject v2; there is no silent downgrade that discards decorations. The game validates/reconstructs local v2 visits; updated server validation compiles but final v2 HTTP publishing could not run because Windows App Control blocked the updated native API. API_SCHEMA.json is the retained generated Phase 7 schema, not newly generated endpoint evidence.
+
+Prepared authenticated purchase endpoints and exact limitations are in MONETIZATION_ARCHITECTURE.md. Products report disabled, verify fails closed, entitlements are owner-scoped and restore explicitly cannot reconcile a store. New database schema was applied twice and constraints tested with rolled-back fixtures. This is not live purchase validation.

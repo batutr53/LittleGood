@@ -9,10 +9,10 @@ def saves():return {name:run('exec-out','run-as',pkg,'cat','files/'+name,check=F
 run('wait-for-device')
 run('shell','am','force-stop',pkg)
 before=saves()
-apk=root/'builds/android/LittleGod-0.7-debug.apk'
+apk=root/'builds/android/LittleGod-0.8-debug.apk'
 installed=run('install','-r',str(apk)).decode()
 after=saves()
 report={'package':pkg,'emulator':'emulator-5554','install':installed.strip(),'preserved':{k:before[k]==after[k] for k in before},'apk_bytes':apk.stat().st_size,'apk_sha256':hashlib.sha256(apk.read_bytes()).hexdigest()}
-(root/'builds/phase7/android-install.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+(root/'builds/phase8/android-install.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
 print(json.dumps(report,indent=2))
 assert all(report['preserved'].values())

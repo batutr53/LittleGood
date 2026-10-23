@@ -22,6 +22,7 @@ var terrain_signature = ""
 var frame_cpu_ms = 0.0
 var foreground_cpu_ms = 0.0
 var decoration_cells: Array = []
+var cosmetic_layer
 
 func _ready() -> void:
 	origin.y += maxf(0, get_viewport_rect().size.y - 1280) * .5
@@ -33,6 +34,9 @@ func _ready() -> void:
 	inhabitants = WorldInhabitants.new()
 	inhabitants.view = self
 	world_root.add_child(inhabitants)
+	cosmetic_layer=preload("res://scripts/cosmetic_renderer.gd").new()
+	cosmetic_layer.view=self
+	world_root.add_child(cosmetic_layer)
 
 func project(c: Dictionary) -> Vector2:
 	return Vector2((c.x - c.y) * 30, (c.x + c.y - 16) * 15 - c.height * 42)
@@ -64,6 +68,13 @@ func invalidate() -> void:
 	decoration_cells.clear()
 	selected_creature = -1
 	selected_identity = -1
+	if cosmetic_layer!=null:cosmetic_layer.signature=""
+
+func invalidate_cosmetics() -> void:
+	# Appearance changes do not change terrain geometry or creature selection.
+	scenery_signature=""
+	if cosmetic_layer!=null:cosmetic_layer.signature=""
+	queue_redraw()
 
 func focus_creature(index: int) -> void:
 	selected_creature = index
@@ -116,8 +127,10 @@ func _process(delta: float) -> void:
 					terrain_signature = geometry
 					terrain.rebuild(world)
 				inhabitants.sync(world)
+				cosmetic_layer.sync(world)
 				reconcile_selection()
 		inhabitants.animate(world, delta)
+		cosmetic_layer.animate(delta)
 	for i in range(effects.size() - 1, -1, -1):
 		effects[i].age += delta
 		if effects[i].age > 1.6: effects.remove_at(i)
@@ -131,6 +144,37 @@ func ellipse(p: Vector2, radius: float, color: Color, ratio: float = .45) -> voi
 
 func _draw() -> void:
 	if world.is_empty(): return
+	var appearance=world.get("wardrobe",{})
+	var look=appearance.get("theme","enchanted")
+	var hue={"enchanted":Color("b9d8a5"),"crystal":Color("b8d8ed"),"celestial":Color("c4c1ec"),"ancient":Color("e6c992")}.get(look,Color.WHITE)
+	var moon=Vector2(570,330)
+	draw_circle(moon,25,hue*Color(1,1,1,.16))
+	draw_circle(moon,17,hue*Color(1,1,1,.32))
+	if look=="celestial" or appearance.get("frame","")=="orbit":
+		draw_set_transform(origin+display_pan+Vector2(0,22),-.14,Vector2(1,.44))
+		draw_arc(Vector2.ZERO,325*display_zoom,0,TAU,64,Color(hue,.3),1.4,true)
+		draw_set_transform(Vector2.ZERO)
+	if look=="crystal":
+		for i in range(5):
+			var point=Vector2(100+i*122,340+sin(time*.3+i)*22)
+			draw_colored_polygon(PackedVector2Array([point+Vector2(0,-8),point+Vector2(5,0),point+Vector2(0,8),point+Vector2(-5,0)]),Color(hue,.32))
+	if look=="ancient":
+		var motes=PackedVector2Array()
+		for i in range(9):
+			var point=Vector2(90+i*69,350+sin(time*.2+i)*20)
+			motes.append(point-Vector2(1,0));motes.append(point+Vector2(1,0))
+		draw_multiline(motes,Color(hue,.5),1.5,false)
+	if look=="celestial" or appearance.get("sky","")=="comets":
+		var stars=PackedVector2Array()
+		for i in range(14):
+			var point=Vector2(40+fmod(i*57.3,650),290+fmod(i*34.7,200))
+			stars.append(point-Vector2(1+sin(time*.7+i)*.4,0));stars.append(point+Vector2(1,0))
+		draw_multiline(stars,Color(hue,.55),1.4,false)
+	if appearance.get("sky","")=="aurora":
+		for band in range(2):
+			var points=PackedVector2Array()
+			for i in range(20):points.append(Vector2(i*38,330+band*18+sin(i*.25+time*.1)*27))
+			draw_polyline(points,Color(.55,.8,.73,.09),10,true)
 	if int(world.get("theme", 0)) != 0: draw_rect(Rect2(0, 0, 720, 1280), Color(.16, .15, .24, .65))
 	ellipse(origin + display_pan + Vector2(0, 100) * display_zoom, 230 * display_zoom, Color(.02, .08, .1, .2), .35)
 	for i in range(16 if not low_quality else 6):
@@ -146,6 +190,18 @@ func _draw() -> void:
 func draw_foreground(canvas: Node2D) -> void:
 	if world.is_empty(): return
 	var started = Time.get_ticks_usec()
+	var editor=get_parent().decorator
+	if editor!=null and editor.active and editor.cell>=0:
+		var point=screen_point(world.cells[editor.cell])
+		var valid=preload("res://scripts/cosmetics.gd").valid_place(world,editor.item,editor.cell,editor.moving)
+		var color=Color(.6,1,.75,.55) if valid else Color(1,.5,.45,.5)
+		var size_scale=.34 if editor.item in ["flowers","stones","banner","lanterns","statue"] else .48
+		if editor.rotation>=2:size_scale*=.85
+		if preload("res://scripts/cosmetics.gd").items()[editor.item].category=="settlement":point+=Vector2(27,10)*display_zoom
+		var rect=Rect2(point-Vector2(64,112)*size_scale*display_zoom,Vector2(128,128)*size_scale*display_zoom)
+		if editor.rotation%2==1:rect.position.x+=rect.size.x;rect.size.x=-rect.size.x
+		canvas.draw_texture_rect(load("res://assets/cosmetics/"+editor.item+".svg"),rect,false,color)
+		canvas.draw_arc(point,23*display_zoom,0,TAU,24,color,2,true)
 	for c in decoration_cells:
 		if c.get("canopy_arch",false):
 			var points = PackedVector2Array()

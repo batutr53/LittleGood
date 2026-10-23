@@ -1,42 +1,41 @@
-# LittleGod 0.7 — locally tested optional online universe
+# LittleGod 0.8 — playable customization checkpoint
 
-Verified 2026-10-23. Phase 0.6 was completed and checkpointed as `littlegod-0.6` before online changes. The 0.7 release checkpoint/tag is `littlegod-0.7`, created only after verification. Hosting is **local development only**, with real ASP.NET Core + PostgreSQL and actual desktop/Android HTTP clients. No public deployment, paid service, store publication or human beta is claimed.
+Verified locally 2026-10-23. Built on `littlegod-0.7` commit 0e74f508b3d0e29c9ef4b9c2f2b2889ed72c05ad, with safe base tag `phase8-base-0.7`. The `littlegod-0.8` tag is a local source checkpoint with the limits below, not store/online production approval.
 
-## Implemented
+Implemented: four coordinated original presentation themes; 24 reusable cosmetic illustrations and a shared atlas; depth-sorted magical vegetation, crystals, ruins, statues, banners, lanterns and compatible waterfalls; creature tints/accessory/idle looks; skies/frame; EN/TR inventory, categories/featured/favorites/rarity/previews/requirements, owned counts, explicit unlock confirmation and unavailable premium preview. Decoration mode supports validated ghost placement, movement, four isometric facings, storing, 20-step undo/redo, pan/pinch, pause-state restoration and saving, capped at 32 pieces. The normal living simulation, powers, original artwork, stories, communities and existing favorite/name/history tools remain.
 
-- Offline creation, artwork, animations, creatures, civilizations, stories, discoveries, local showcases, saves, localization and battery saver remain. No account/network request is needed to launch, simulate, use powers or save.
-- Optional Identity accounts, in-memory access/renewal sessions, server-side logout revocation and account deletion. Existing local worlds link through an explicit reviewed Publish action; there is no silent upload. Local beta uses private usernames, not email; OAuth/email recovery remain pending.
-- EN/TR guardian profiles, six retained creature avatars, explicit profile/showcase visibility, exact invitation codes, real requests/accept/reject/remove/block/unblock, friend snapshot profiles and visits, four delivered reactions, opt-in discovery with actual terrain previews and a persisted activity inbox.
-- Exact inert v1 snapshot validation in both server and client, revision/hash/update metadata, three retained versions, bounded private memory cache and reauthorization on each visit. The existing read-only boundary preserves the home world and save. Snapshot visits are not real-time multiplayer.
-- .NET 10 LTS modular monolith, EF Core/PostgreSQL migration and idempotent SQL, OpenAPI, strict DTOs, request limits, rate limiting, Identity lockout and Data Protection. Docker Compose/API Dockerfile/health checks are included; native PostgreSQL was actually run because Docker Desktop failed during its Inference manager startup.
-- New original online SVG and procedural public-terrain preview; existing painted assets retained. Rendered Android/desktop screenshots were examined; stale local-reaction text, duplicate portraits, tiny selectors and preview alignment were corrected.
+Stardust rewards durable discoveries/restoration/community milestones once, with 525 available against 450 total catalog cost, no paid currency or daily pressure. Save schema v1 retains an optional strict wardrobe v1 extension; actual old 0.7/0.5 fixtures, offline rewards, backup and interrupted-write recovery pass. Cosmetic showcase v2 strips private economy data and reconstructs a read-only decorated visit; plain v1 examples still work. Backend v2 validation and closed purchase interfaces compile, with migration constraints verified on PostgreSQL.
 
-## Verification
+Windows App Control blocked the updated native API executable and final Release test assembly; source compilation succeeds, but new v2 HTTP publishing/entitlement routes and EF receipt concurrency have no final live integration result. No bypass or security change was attempted. The pre-change 65 real HTTP/PostgreSQL checks are a 0.7 baseline. Updated SQL migration/idempotency and database constraints pass separately. Payments remain disabled and native billing adapters/store restore/refund feeds are not implemented. No public deployment, paid service, store publication, physical phone or human beta occurred.
 
-295 game checks (all 280 prior checks plus 15 online transport/session checks); 40 seeded balance scenarios, no failures. 21 .NET validation tests; 65 real HTTP/PostgreSQL integration checks; 6 real lockout/throttling checks. Two independent disposable users complete 34 actual Godot-to-server checks on Windows and 34 on the Android emulator. A third account tests privacy boundaries in the API suite. QA names are development fixtures, not human activity.
+Verification: **356 game checks**, including all prior 295 and 61 additions; 30 economy and 40 extended live/offline balance scenarios, no failures. **20** desktop rendered checks and **22** Android customization checks pass, including actual external ADB tile/Place taps and persisted result. Prior 26 Android interaction/lifecycle checks, three native JSON Save/Open checks and five server-unreachable offline checks pass. .NET source has 42 cases; the final blocked attempt is not counted as passing. All four player save/settings files survived Android updates and the temporary old-APK performance control.
 
-The API was then stopped and its listener absence verified: all 5 Android offline simulation/power/save/load/connectivity checks pass. The prior 26 Android interaction/lifecycle checks and 3 native JSON file checks also pass on the final APK. Physical devices: **0**. Human beta testers: **0**. Save/backup/temp/settings bytes all survived the player-package update. Actual old-save fixtures through 0.5 remain covered. No test was removed; the version assertion now checks project version instead of hardcoding 0.6.
+| Emulator scenario, 20 seconds | FPS | p95 ms | First frame ms | Draw calls / peak | Static / video MiB | Simulation avg ms |
+|---|---:|---:|---:|---:|---:|---:|
+| Normal, 18 creatures | 14.70 | 93.38 | 7691 | 143 / 172 | 43.3 / 24.8 | 1.55 |
+| 32 decorations, Celestial Night | 13.04 | 105.72 | 6522 | 189 / 217 | 43.5 / 24.9 | 3.10 |
+| 32 decorations, battery saver | 17.05 | 87.05 | 8257 | 150 / 171 | 43.5 / 24.8 | 1.34 |
+| 32 decorations, 70 creatures | 11.42 | 124.70 | 8436 | 244 / 260 | 43.8 / 24.9 | 2.68 |
 
-| Scenario | Average FPS | p95 frame ms | First engine frame ms |
-|---|---:|---:|---:|
-| Windows source, 15 s | 60.09 | 16.88 | 1564 |
-| Android emulator normal, 30 s | 33.87 | 35.11 | 2392 |
-| Android emulator saver, 20 s | 29.97 | 35.07 | 2440 |
-| Android emulator 70 creatures, 20 s | 29.38 | 42.36 | 2340 |
 
-These are emulator/desktop samples, not phone performance or a causal comparison. Phase 0.6 clean-host emulator normal was 58.05 FPS; host/editor load and startup caches materially affect results. No background polling or startup networking was added. A real published snapshot response was 61520 bytes; observed fetch completion was 1014.3 ms in the Android emulator and 80.8 ms in the rendered Windows test. Local API request median/p95 across the integration suite: 24.19/93.79 ms (includes auth/hash requests). Android post-social-session PSS was 188986 KiB, RSS 277460 KiB; this is a different process state than the earlier 0.6 memory sample, not an isolated memory regression measurement. Real battery/thermals remain unmeasured.
+The same host's original 0.7 APK measured 13.76 FPS / 119.31 ms p95 in a matched late control; it was restored to 0.8 after checking all four save/settings files. The initial 0.7 baseline earlier in the session was 31.77 FPS / 36.37 ms p95. This large variation also affects startup and CPU time; it is emulator/host evidence, not phone performance. The pre-batching decorated candidate measured 7.15 FPS and 270 draw calls; the final equivalent decorated scene measured 189 draw calls. Common atlas + batched glints reduce render submissions; FPS comparisons are not isolated laboratory causal measurements. Normal and 30-FPS saver caps remain; stable 60 on phones and stable 30 under this slow emulator host are not established.
+
+Original world atlas stays 1024×1024; the shared cosmetic atlas is 768×512 (24 cells of 128×128), with individual SVG previews retained. At most 32 placed sprites are retained, reused across theme changes; glints/stars use packed line batches. Effects are bounded and lower in saver. Theme changes no longer rebuild terrain or recreate placed sprites, verified in rendered QA. Final decorated cosmetic draw CPU average: 3.329 ms; last appearance sync 2.430 ms. Scene/world generation CPU: 66.60/1.97 ms.
+
+Android instrumented theme/capture-loop post-draw intervals: 101.6, 121.8, 100.9, 97.4 ms. They include render scheduling/readback/cache/host effects, not pure shader cost or touch-to-photon latency; hitches remain. Shop construction CPU 58.60 ms, atomic checkpoint 23.28 ms, checked load/migration 8.77 ms. Desktop theme intervals: 18.3, 3.8, 3.2, 3.4 ms; desktop checkpoint/load 10.18/2.40 ms. Android post-customization session PSS/RSS: 182753 / 274276 KiB (android-customization/memory.txt) and is not interchangeable with Godot's static/video counters. Emulator shader-cache recompile warnings and old Godot shutdown resource/ObjectDB warnings remain. No physical thermals, energy or OEM input measurements.
 
 ## Launch and outputs
 
-- Game: `D:/LittleGod/Launch LittleGod.cmd`, verified runtime `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`.
-- Local API: `D:/LittleGod/Launch Online Server.cmd`; native PostgreSQL loopback 55437, API loopback 5087. Game → Online universe → Connection settings; desktop `http://127.0.0.1:5087`, Android emulator `http://10.0.2.2:5087`. Sign in is optional. Default visibility is private; choose Friends before friend visits.
-- Player APK: `D:/LittleGod/builds/android/LittleGod-0.7-debug.apk` — version 0.7.0/code 7, 59250614 bytes. v2/v3 signature verification and installation/startup pass. SHA256 `875aaad0597de7d2ac7a487ffa07c756cdca99c00effdd909aca47f5996af05c`. Existing package ID retained; ARM64/x86_64, min API24/target36.
-- Source: `D:/LittleGod/builds/LittleGod-0.7-source.zip`, from verified release tag. Backend/migrations/Compose/tests included; local credentials, database, runtimes and generated builds excluded. Existing 0.6 APK/source archive retained.
+- Play: `D:/LittleGod/Launch LittleGod.cmd`, verified runtime `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`.
+- Player Android: `D:/LittleGod/builds/android/LittleGod-0.8-debug.apk`, version 0.8.0/code 8, 59543381 bytes, ARM64/x86_64, min API24/target36. Signature v2/v3 and installation/startup verified. SHA256 `8d15d42f4fac7727557716785fc1668987eab081b94dd87f23c4e8e175e9cf0c`.
+- QA only: `D:/LittleGod/builds/android/LittleGod-0.8-qa-debug.apk`, separate disposable package; never clears the player package.
+- Source: `D:/LittleGod/builds/LittleGod-0.8-source.zip`, generated from the clean local tag after documentation/preflight. Its verified manifest is `D:/LittleGod/builds/phase8/release-manifest.json`. Prior 0.7 APK/archive remain.
+- Local API launcher: `D:/LittleGod/Launch Online Server.cmd`, currently blocked by App Control; do not bypass it. Existing loopback PG55437 and connection configuration are retained.
 
-Read PHASE7_REPORT.md, ONLINE_ARCHITECTURE.md, API_DOCUMENTATION.md, SECURITY_REVIEW.md, ANDROID_TEST_REPORT.md and KNOWN_ISSUES.md. Public-hosting prerequisites remain; Docker execution, OAuth/recovery, physical-phone performance and independent security/human review are not complete. Shutdown ObjectDB/resource warnings remain from earlier milestones. Native Windows Computer Use was unavailable; real Godot rendering/MCP and Android ADB supplied inspection.
+Open ☰ → Atelier & collection → Decorate planet. Choose an owned piece, tap a clear tile and confirm; drag/pinch navigate. Store a piece before exceeding 32. Creature cards open their wardrobe. Shop premium content is unavailable; every shipped theme is earnable. See PHASE8_REPORT.md, ECONOMY_DESIGN.md, COSMETIC_CATALOG.md, MONETIZATION_ARCHITECTURE.md, ANDROID_TEST_REPORT.md and CUSTOMIZATION_FEEDBACK.md.
 
-![Actual Android published-planet visit](screenshots/phase7-visit.png)
-![Actual opt-in discovery gallery](screenshots/phase7-discovery.png)
-![Actual Turkish online menu](screenshots/phase7-home-tr.png)
+Actual Android gameplay, controlled cosmetic QA fixture (not human progress):
 
-Late repeated profiles slowed despite no active editor/test game. A preserved 0.6 APK installed with -r -d then measured 33.14 FPS / 35.32 ms p95; restoring the final 0.7 APK measured 33.87 / 35.11. Both benchmark runs preserve the player save, and the final 0.7 update preserves all four files. An earlier 0.7 candidate measured 57.61 FPS (21.995 ms p95), saver 30.00 and stress 47.09 before the final navigation guard; that earlier APK is not substituted for the release measurements. This matched late control does not show an online-feature FPS regression, and does not isolate the host/emulator slowdown. NVIDIA was observed in P8/210 MHz during the late control; no power/security setting was changed and no causal claim is made from that observation. Stable normal/max-population 60 FPS remains unresolved in this late host state. Battery saver stays near 30.
+![Crystal Paradise](screenshots/phase8-theme-crystal.png)
+![Decoration editor](screenshots/phase8-adb-preview.png)
+![Turkish collection](screenshots/phase8-collection-tr.png)

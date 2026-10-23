@@ -10,7 +10,7 @@ args = parser.parse_args()
 adb = Path.home() / 'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 pkg = 'org.littlegod.livinguniverse.betaqa'
 base = [str(adb), '-s', args.serial]
-out = root / 'builds/phase7/android-social'
+out = root / 'builds/phase8/android-social'
 out.mkdir(parents=True, exist_ok=True)
 
 def run(*cmd, check=True):
@@ -50,14 +50,14 @@ def nodes():
 
 def tap_text(text):
     for n in nodes():
-        if n.get('text')==text:
+        if n.get('text')==text and n.get('resource-id')!='com.google.android.documentsui:id/search_src_text' and n.get('class')!='android.widget.EditText':
             x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')))
             run('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
             return True
     return False
 
 run('shell','am','force-stop',pkg)
-run('install','-r',str(root/'builds/android/LittleGod-0.7-qa-debug.apk'))
+run('install','-r',str(root/'builds/android/LittleGod-0.8-qa-debug.apk'))
 run('shell','run-as',pkg,'rm','-f','files/phase6_qa_import')
 put('phase4_qa.json',json.dumps({'phase':'social_dialogs'}))
 run('shell','am','start','-n',pkg+'/com.godot.game.GodotAppLauncher')
@@ -77,7 +77,15 @@ put('phase6_qa_import','import')
 stage('import_dialog_ready');time.sleep(1)
 if tap_text('Download'): time.sleep(.5)
 capture('native-json-open.png')
-assert tap_text(ready['filename']), 'Exported showcase missing from native Open picker'
+selected=False
+for attempt in range(12):
+    if tap_text(ready['filename']):selected=True;break
+    scrolls=[n for n in nodes() if n.get('scrollable')=='true']
+    if not scrolls:break
+    x1,y1,x2,y2=map(int,re.findall(r'\d+',scrolls[0].get('bounds')))
+    run('shell','input','swipe',str((x1+x2)//2),str(round(y1+(y2-y1)*.75)),str((x1+x2)//2),str(round(y1+(y2-y1)*.25)),'350')
+    time.sleep(.4)
+assert selected, 'Exported showcase missing from native Open picker'
 complete=stage('social_dialogs_complete')
 capture('import-profile.png')
 report={'source':'simulated_android_qa','serial':args.serial,'package':pkg,

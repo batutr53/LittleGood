@@ -120,6 +120,7 @@ static func validate(w: Variant) -> bool:
 		for field in ["rival_cell","trade_until"]:
 			if s.has(field) and (not (s[field] is int or s[field] is float) or not is_finite(float(s[field]))): return false
 		if s.has("rival_cell") and (s.rival_cell < -1 or s.rival_cell >= w.cells.size()): return false
+	if not preload("res://scripts/cosmetics.gd").validate(w):return false
 	return true
 
 static func normalize_integer_fields(w: Dictionary) -> Dictionary:
@@ -158,6 +159,11 @@ static func normalize_integer_fields(w: Dictionary) -> Dictionary:
 		for key in ["cell","tick"]: record[key] = int(record[key])
 	for record in w.living.trades:
 		for key in ["a","b","tick"]: record[key] = int(record[key])
+	preload("res://scripts/cosmetics.gd").ensure(w)
+	for key in ["version","dust","earned","spent","next_id"]:w.wardrobe[key]=int(w.wardrobe[key])
+	for p in w.wardrobe.placements:
+		for key in ["id","cell","rotation"]:p[key]=int(p[key])
+	for c in w.wardrobe.coats:c.id=int(c.id)
 	return w
 
 static func read_checked(path: String) -> Dictionary:
@@ -215,6 +221,7 @@ static func offline_finish(job: Dictionary) -> Dictionary:
 	if w.get("_read_only",false): return {"minutes":0,"ticks":0,"events":[],"memories":[]}
 	w.rng_state = str(job.rng.state)
 	w.saved_at = job.now
+	preload("res://scripts/cosmetics.gd").reconcile(w)
 	var changes: Array = []
 	for e in w.events:
 		if not job.previous.has(e): changes.append(e)

@@ -17,6 +17,7 @@ builder.Services.AddIdentityApiEndpoints<Player>(o=>{
 }).AddEntityFrameworkStores<UniverseDb>();
 builder.Services.Configure<BearerTokenOptions>(IdentityConstants.BearerScheme,o=>{o.BearerTokenExpiration=TimeSpan.FromMinutes(15);o.RefreshTokenExpiration=TimeSpan.FromHours(8);});
 builder.Services.AddAuthorization();builder.Services.AddScoped<SocialService>();builder.Services.AddOpenApi();
+builder.Services.AddScoped<IStoreVerifier,DisabledStoreVerifier>();builder.Services.AddScoped<PurchaseService>();
 var keys=builder.Configuration["DataProtectionDirectory"];
 if(!string.IsNullOrEmpty(keys)) {
     var protection=builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keys)).SetApplicationName("LittleGod.Universe.v1");
@@ -49,5 +50,5 @@ app.Use(async(c,next)=>{
 app.UseRateLimiter();app.UseAuthorization();
 app.MapGet("/health",async(UniverseDb db)=>await db.Database.CanConnectAsync()?Results.Ok(new{status="ok",version=1}):Results.StatusCode(503));
 if(app.Environment.IsDevelopment())app.MapOpenApi();
-app.MapAuth();app.MapSocial();app.Run();
+app.MapAuth();app.MapSocial();app.MapPurchases();app.Run();
 public partial class Program { }

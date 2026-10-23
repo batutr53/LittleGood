@@ -1,0 +1,116 @@
+[
+  {
+    "name": "run",
+    "arguments": {
+      "action": "stop"
+    }
+  },
+  {
+    "name": "editor",
+    "arguments": {
+      "action": "clear_logs"
+    }
+  },
+  {
+    "name": "files",
+    "arguments": {
+      "action": "rescan"
+    }
+  },
+  {
+    "name": "scene",
+    "arguments": {
+      "action": "reload",
+      "path": "res://scenes/main.tscn"
+    }
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "play",
+      "mute": true
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 2
+    }
+  },
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "scene.is_test_session=true; scene.save_path=\"user://phase8-mcp.json\"; scene.new_planet(2026,\"Moonlight garden\",false); scene.paused=true; scene.ui.language=\"en\"; scene.ui.build(); preload(\"res://scripts/cosmetic_qa.gd\").decorate(scene.world); preload(\"res://scripts/cosmetics.gd\").equip(scene.world,\"crystal\"); scene.view.invalidate(); scene.ui.close(); return scene.world.wardrobe.theme"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 1
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/builds/phase8/mcp-crystal.png"
+  },
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "scene.decorator.collection(true); return scene.ui.page"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.7
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/builds/phase8/mcp-shop.png"
+  },
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "scene.decorator.detail(\"royal_pack\"); return scene.ui.page"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.7
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/builds/phase8/mcp-premium.png"
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "errors"
+    }
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "stop"
+    }
+  }
+]

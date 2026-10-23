@@ -71,6 +71,12 @@ public sealed class UniverseDb(DbContextOptions<UniverseDb> options) : IdentityD
     public DbSet<Activity> Activities => Set<Activity>();
     protected override void OnModelCreating(ModelBuilder b) {
         base.OnModelCreating(b);
+        b.Entity<PurchaseReceipt>().HasKey(x=>new{x.Store,x.Transaction});
+        b.Entity<PurchaseReceipt>().Property(x=>x.Transaction).HasMaxLength(256);
+        b.Entity<PurchaseReceipt>().Property(x=>x.State).IsConcurrencyToken();
+        b.Entity<PurchaseReceipt>().HasOne(x=>x.Player).WithMany().HasForeignKey(x=>x.Owner).OnDelete(DeleteBehavior.Cascade);
+        b.Entity<PurchaseReceipt>().HasIndex(x=>new{x.Owner,x.State});
+        b.Entity<PurchaseReceipt>().ToTable(t=>t.HasCheckConstraint("CK_PurchaseState","\"State\" IN ('pending','completed','cancelled','failed','revoked')"));
         b.Entity<Profile>().HasKey(x=>x.PlayerId);
         b.Entity<Profile>().HasIndex(x=>x.Code).IsUnique();
         b.Entity<Profile>().Property(x=>x.Name).HasMaxLength(32);

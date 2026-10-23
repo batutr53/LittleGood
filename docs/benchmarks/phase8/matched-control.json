@@ -1,0 +1,11 @@
+{
+  "source": "same_host_preserved_apk_control",
+  "old_version": "0.7.0",
+  "restored_version": "0.8.0",
+  "files_preserved": {
+    "planet.json": true,
+    "planet.json.bak": true,
+    "planet.json.tmp": true,
+    "settings.cfg": true
+  }
+}

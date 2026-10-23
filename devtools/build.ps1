@@ -23,10 +23,14 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Phase 6 checks failed' }
     & $godotExe --headless --path . --script tests/phase7.gd
     if ($LASTEXITCODE -ne 0) { throw 'Phase 7 checks failed' }
-    dotnet test server/LittleGod.Tests -c Release
+    & $godotExe --headless --path . --script tests/phase8.gd
+    if ($LASTEXITCODE -ne 0) { throw 'Phase 8 checks failed' }
+    dotnet test server/LittleGod.Tests -c Release --logger "trx;LogFileName=backend.trx" --results-directory builds/backend-tests
     if ($LASTEXITCODE -ne 0) { throw 'Backend validation checks failed' }
+    [xml]$backendResult = Get-Content builds/backend-tests/backend.trx
+    if ([int]$backendResult.TestRun.ResultSummary.Counters.passed -lt 42 -or [int]$backendResult.TestRun.ResultSummary.Counters.failed -ne 0) { throw 'Backend tests did not execute successfully' }
     New-Item -ItemType Directory builds/android,builds/windows -Force | Out-Null
-    & $godotExe --headless --path . --export-debug Android builds/android/LittleGod-0.7-debug.apk
+    & $godotExe --headless --path . --export-debug Android builds/android/LittleGod-0.8-debug.apk
     if ($LASTEXITCODE -ne 0) { throw 'Android export failed' }
     & $godotExe --headless --path . --export-debug 'Windows Desktop' builds/windows/LittleGod.exe
     if ($LASTEXITCODE -ne 0) { throw 'Windows export failed' }

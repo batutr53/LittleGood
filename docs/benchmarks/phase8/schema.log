@@ -1,0 +1,93 @@
+CREATE TABLE
+START TRANSACTION
+psql:server/migrate.sql:5: NOTICE:  relation "__EFMigrationsHistory" already exists, skipping
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+COMMIT
+START TRANSACTION
+DO
+DO
+DO
+COMMIT
+START TRANSACTION
+DO
+COMMIT
+CREATE TABLE
+psql:server/migrate.sql:5: NOTICE:  relation "__EFMigrationsHistory" already exists, skipping
+START TRANSACTION
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+DO
+COMMIT
+START TRANSACTION
+DO
+DO
+DO
+COMMIT
+START TRANSACTION
+DO
+COMMIT
+BEGIN
+INSERT 0 1
+INSERT 0 1
+DO
+DELETE 1
+DO
+ROLLBACK
+     ?column?
+------------------
+ PHASE8_SCHEMA_OK
+(1 row)

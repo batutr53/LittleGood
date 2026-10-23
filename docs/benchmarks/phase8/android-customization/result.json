@@ -1,0 +1,47 @@
+{
+  "all_passed": true,
+  "catalog_count": 24,
+  "checks": {
+    "adb_decoration_persisted": true,
+    "adb_decoration_placed": true,
+    "editor_pause_restored": true,
+    "editor_placed": true,
+    "editor_redo": true,
+    "editor_undo": true,
+    "full_catalog_affordable": true,
+    "home_restored": true,
+    "render_ancient": true,
+    "render_celestial": true,
+    "render_crystal": true,
+    "render_enchanted": true,
+    "restored": true,
+    "saved": true,
+    "shop_navigation": true,
+    "showcase_v2": true,
+    "theme_reuses_decor_nodes": true,
+    "theme_reuses_terrain": true,
+    "valid_ledger": true,
+    "visit": true,
+    "visit_appearance": true,
+    "visit_immutable": true
+  },
+  "load_ms": 8.774,
+  "owned": 23,
+  "placements": 17,
+  "save_ms": 23.281,
+  "shop_cpu_ms": 58.598,
+  "source": "real_android_render_and_external_adb_taps",
+  "stage": "customization_complete",
+  "theme_switch_frame_ms": [
+    101.577,
+    121.758,
+    100.886,
+    97.438
+  ],
+  "viewport": [
+    720.0,
+    1600.0
+  ],
+  "serial": "emulator-5554",
+  "wall_seconds": 22.41
+}

@@ -13,6 +13,7 @@ var first_frame_ms = 0
 var world_cpu_total = 0.0
 var foreground_cpu_total = 0.0
 var animation_cpu_total = 0.0
+var cosmetic_cpu_total = 0.0
 
 func _ready() -> void:
 	started = Time.get_ticks_usec()
@@ -26,6 +27,7 @@ func _process(_delta: float) -> void:
 	world_cpu_total += get_parent().view.frame_cpu_ms
 	foreground_cpu_total += get_parent().view.foreground_cpu_ms
 	animation_cpu_total += get_parent().view.inhabitants.animate_ms
+	cosmetic_cpu_total += get_parent().view.cosmetic_layer.draw_ms
 	previous = now
 	peak_process = maxf(peak_process, Performance.get_monitor(Performance.TIME_PROCESS) * 1000)
 	peak_draws = maxf(peak_draws, Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
@@ -49,6 +51,10 @@ func finish() -> void:
 	report["world_cpu_average_ms"] = world_cpu_total/maxi(1,frame_times.size())
 	report["foreground_cpu_average_ms"] = foreground_cpu_total/maxi(1,frame_times.size())
 	report["creature_animation_average_ms"] = animation_cpu_total/maxi(1,frame_times.size())
+	report["cosmetic_draw_average_ms"]=cosmetic_cpu_total/maxi(1,frame_times.size())
+	report["cosmetic_count"]=game.world.get("wardrobe",{}).get("placements",[]).size()
+	report["cosmetic_sync_ms"]=game.view.cosmetic_layer.sync_ms
+	report["cosmetic_theme"]=game.world.get("wardrobe",{}).get("theme","enchanted")
 	f.store_string(JSON.stringify(report, "\t"))
 	f.close()
 	print("PHASE2_PROFILE ", JSON.stringify(report))

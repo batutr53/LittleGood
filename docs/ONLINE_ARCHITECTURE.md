@@ -52,3 +52,7 @@ python devtools/android_online_validate.py
 ```
 
 Python means the verified runtime described in STATUS.md if not available on PATH. These tests create disposable, clearly named QA identities against **real HTTP and PostgreSQL**, then delete them. Allow a fresh one-minute auth rate-limit window between repeated full suites; rejected automation is not a reason to loosen abuse controls. Android QA writes only the disposable betaqa package and QA save slots. Do not clear the player's package.
+
+## 0.8 compatibility
+
+Shared assets/cosmetics/catalog.json is copied to the API output and publish directory. Docker build context is now the repository root so this shared contract is included; Compose remains unexecuted on this host. Snapshot v2 carries inert cosmetics while v1 remains supported. See API_DOCUMENTATION.md and MONETIZATION_ARCHITECTURE.md. Native updated API and final .NET test assembly are blocked by Windows App Control; no bypass was attempted. The previous real 0.7 flow and the 65-check pre-change baseline remain historical verification, not a new v2 end-to-end result. SQL migration/idempotency was separately verified on real PostgreSQL after a local backup.

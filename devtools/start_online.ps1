@@ -41,3 +41,4 @@ $env:ASPNETCORE_URLS='http://127.0.0.1:5087'
 $env:DataProtectionDirectory=Join-Path $local 'keys'
 $env:MigrateOnStart='true'
 dotnet run --project server/LittleGod.Api --no-launch-profile
+if($LASTEXITCODE -ne 0){throw 'Local API could not start. Read the runtime error; do not bypass Windows App Control.'}

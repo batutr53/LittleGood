@@ -191,6 +191,41 @@ namespace LittleGod.Api.Migrations
                     b.ToTable("Profiles");
                 });
 
+            modelBuilder.Entity("LittleGod.Api.PurchaseReceipt", b =>
+                {
+                    b.Property<string>("Store")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Transaction")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Owner")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Product")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("VerifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Store", "Transaction");
+
+                    b.HasIndex("Owner", "State");
+
+                    b.ToTable("PurchaseReceipt", t =>
+                        {
+                            t.HasCheckConstraint("CK_PurchaseState", "\"State\" IN ('pending','completed','cancelled','failed','revoked')");
+                        });
+                });
+
             modelBuilder.Entity("LittleGod.Api.Reaction", b =>
                 {
                     b.Property<string>("Owner")
@@ -449,6 +484,17 @@ namespace LittleGod.Api.Migrations
                     b.HasOne("LittleGod.Api.Player", "Player")
                         .WithOne()
                         .HasForeignKey("LittleGod.Api.Profile", "PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("LittleGod.Api.PurchaseReceipt", b =>
+                {
+                    b.HasOne("LittleGod.Api.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("Owner")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -1,0 +1,21 @@
+  Geri yüklenecek projeler belirleniyor...
+  Geri yükleme için tüm projeler güncel.
+  LittleGod.Api -> D:\LittleGod\server\LittleGod.Api\bin\Release\net10.0\LittleGod.Api.dll
+  LittleGod.Tests -> D:\LittleGod\server\LittleGod.Tests\bin\Release\net10.0\LittleGod.Tests.dll
+D:\LittleGod\server\LittleGod.Tests\bin\Release\net10.0\LittleGod.Tests.dll (.NETCoreApp,Version=v10.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:09.98] LittleGod.Tests: Catastrophic failure: System.IO.FileLoadException: Could not load file or assembly 'D:\LittleGod\server\LittleGod.Tests\bin\Release\net10.0\LittleGod.Tests.dll'. Uygulama Denetimi ilkesi bu dosyayı engelledi. (0x800711C7)
+File name: 'D:\LittleGod\server\LittleGod.Tests\bin\Release\net10.0\LittleGod.Tests.dll'
+   at System.Reflection.RuntimeAssembly.InternalLoad(AssemblyName assemblyName, StackCrawlMark& stackMark, AssemblyLoadContext assemblyLoadContext, RuntimeAssembly requestingAssembly, Boolean throwOnFileNotFound)
+   at System.Reflection.Assembly.Load(AssemblyName assemblyRef)
+   at Xunit.Sdk.ReflectionAssemblyInfo..ctor(String assemblyFileName) in /_/src/xunit.execution/Sdk/Reflection/ReflectionAssemblyInfo.cs:line 31
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Constructor(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+--- End of stack trace from previous location ---
+   at Xunit.AppDomainManager_NoAppDomain.CreateObject[TObject](AssemblyName assemblyName, String typeName, Object[] args)
+   at Xunit.Runner.v2.Xunit2..ctor(IMessageSink diagnosticMessageSink, AppDomainSupport appDomainSupport, ISourceInformationProvider sourceInformationProvider, IAssemblyInfo assemblyInfo, String assemblyFileName, String xunitExecutionAssemblyPath, String configFileName, Boolean shadowCopy, String shadowCopyFolder, Boolean verifyAssembliesOnDisk)
+   at Xunit.Runner.v2.Xunit2.ForDiscoveryAndExecution(XunitProjectAssembly projectAssembly, ISourceInformationProvider sourceInformationProvider, IMessageSink diagnosticMessageSink, Boolean verifyAssembliesOnDisk)
+   at Xunit.XunitFrontController.Create(XunitProjectAssembly projectAssembly, ISourceInformationProvider sourceInformationProvider, IMessageSink diagnosticMessageSink, ITestProcessLauncher testProcessLauncher)
+   at Xunit.Runner.VisualStudio.VsTestRunner.RunTestsInAssembly(IRunContext runContext, IFrameworkHandle frameworkHandle, LoggerHelper logger, TestPlatformContext testPlatformContext, RunSettings runSettings, IMessageSink reporterMessageHandler, AssemblyRunInfo runInfo)
+   at Xunit.Runner.VisualStudio.VsTestRunner.RunTestsInAssembly(IRunContext runContext, IFrameworkHandle frameworkHandle, LoggerHelper logger, TestPlatformContext testPlatformContext, RunSettings runSettings, IMessageSink reporterMessageHandler, AssemblyRunInfo runInfo)
+D:\LittleGod\server\LittleGod.Tests\bin\Release\net10.0\LittleGod.Tests.dll içinde hiç test yok. Test bulucuları ile yürütücülerinin kayıtlı olduğundan ve platform ile çerçeve sürümü ayarlarının uygun olduğundan emin olun ve yeniden deneyin.

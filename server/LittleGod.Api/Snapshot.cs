@@ -16,6 +16,11 @@ public static class Snapshot {
     const string Memories="rain_bloom friendship lantern_grove first_village first_birth companions rivalry explored landmark alliance mountain_spring silver_fox rainbow_choir elder rescue canopy_arch reed_shelter migration trade boundary cooperation";
     public static bool Valid(JsonElement d) {
         try {
+            if(d.ValueKind==JsonValueKind.Object&&d.TryGetProperty("version",out var version)&&Num(version,2,2,true)) {
+                if(!Shape(d,"format version planet cells creatures settlements memories discoveries secrets findings appearance"))return false;
+                var legacy=System.Text.Json.Nodes.JsonNode.Parse(d.GetRawText())!.AsObject();legacy.Remove("appearance");legacy["version"]=1;
+                return Valid(JsonSerializer.SerializeToElement(legacy))&&Appearance(d.GetProperty("appearance"),d.GetProperty("cells").GetArrayLength(),d.GetProperty("creatures").GetArrayLength());
+            }
             if(!Shape(d,"format version planet cells creatures settlements memories discoveries secrets findings")||d.GetProperty("format").GetString()!="littlegod.showcase"||!N(d,"version",1,1,true))return false;
             var p=d.GetProperty("planet");
             if(!Shape(p,"name tick weather theme xp")||!T(p,"name",32,true)||!N(p,"tick",0,1e9,true)||!N(p,"weather",0,3,true)||!N(p,"theme",0,1,true)||!N(p,"xp",0,1e9,true))return false;
@@ -55,4 +60,19 @@ public static class Snapshot {
         } catch(Exception e) when(e is InvalidOperationException or KeyNotFoundException or FormatException or OverflowException) {return false;}
     }
     public static int Score(JsonElement d)=>d.GetProperty("cells").EnumerateArray().Select(x=>(int)x.GetProperty("biome").GetDouble()).Distinct().Count()+d.GetProperty("secrets").GetArrayLength()*3+d.GetProperty("settlements").EnumerateArray().Count(x=>x.GetProperty("landmark").GetBoolean())*2;
+    static readonly Dictionary<string,(string Category,bool Premium)> Cosmetics=JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory,"catalog.json"))).RootElement.EnumerateArray().ToDictionary(x=>x.GetProperty("id").GetString()!,x=>(x.GetProperty("category").GetString()!,x.GetProperty("premium").GetBoolean()));
+    static bool Item(JsonElement e,string category)=>e.ValueKind==JsonValueKind.String&&Cosmetics.TryGetValue(e.GetString()!,out var item)&&!item.Premium&&item.Category==category;
+    static bool Appearance(JsonElement a,int cells,int creatures) {
+        if(!Shape(a,"theme sky frame placements coats")||!Item(a.GetProperty("theme"),"theme"))return false;
+        foreach(var key in new[]{"sky","frame"})if(a.GetProperty(key).ValueKind!=JsonValueKind.String||(a.GetProperty(key).GetString()!=""&&!Item(a.GetProperty(key),key)))return false;
+        var ps=a.GetProperty("placements");var cs=a.GetProperty("coats");if(!Array(ps,0,32)||!Array(cs,0,100))return false;
+        var ids=new HashSet<int>();var positions=new HashSet<int>();
+        foreach(var p in ps.EnumerateArray()) {
+            if(!Shape(p,"id item cell rotation")||!N(p,"id",1,32,true)||!N(p,"cell",0,cells-1,true)||!N(p,"rotation",0,3,true)||(!Item(p.GetProperty("item"),"decor")&&!Item(p.GetProperty("item"),"settlement")))return false;
+            if(!ids.Add((int)p.GetProperty("id").GetDouble())||!positions.Add((int)p.GetProperty("cell").GetDouble()))return false;
+        }
+        ids.Clear();
+        foreach(var c in cs.EnumerateArray())if(!Shape(c,"id item")||!N(c,"id",0,creatures-1,true)||!Item(c.GetProperty("item"),"creature")||!ids.Add((int)c.GetProperty("id").GetDouble()))return false;
+        return true;
+    }
 }

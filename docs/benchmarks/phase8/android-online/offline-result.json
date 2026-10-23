@@ -1,0 +1,18 @@
+{
+  "checks": {
+    "offline_load": true,
+    "offline_power": true,
+    "offline_save": true,
+    "offline_simulation": true,
+    "server_actually_unreachable": true
+  },
+  "source": "real_backend_stopped_android_qa",
+  "stage": "offline_complete",
+  "viewport": [
+    720.0,
+    1600.0
+  ],
+  "device": "Android emulator API35 x86_64",
+  "physical_device": false,
+  "qa_apk_sha256": "5896e6e2a07b96443b9ee2bf142dedaa970cbe8edcb4051c61d5752e305534df"
+}

@@ -1,0 +1,23 @@
+{
+  "game_checks": 356,
+  "preserved_phase7_checks": 295,
+  "phase8_checks": 61,
+  "desktop_render_checks": 20,
+  "android_customization_checks": 22,
+  "android_regression_checks": 26,
+  "native_file_checks": 3,
+  "android_server_unreachable_offline_checks": 5,
+  "economy_scenarios": 30,
+  "balance_scenarios": 40,
+  "baseline_phase7_real_http_checks": 65,
+  "backend_source_compiles": true,
+  "backend_test_cases": 42,
+  "final_backend_test_execution": "blocked_by_windows_app_control",
+  "new_v2_http_and_purchase_endpoint_verification": "not_performed_runtime_blocked",
+  "sql_migration_applied_twice": true,
+  "physical_devices": 0,
+  "human_testers": 0,
+  "live_payments": false,
+  "apk_sha256": "8d15d42f4fac7727557716785fc1668987eab081b94dd87f23c4e8e175e9cf0c",
+  "qa_apk_sha256": "5896e6e2a07b96443b9ee2bf142dedaa970cbe8edcb4051c61d5752e305534df"
+}

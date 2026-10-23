@@ -26,6 +26,8 @@ func point(control: Control) -> Array:
 	var p = control.get_global_rect().get_center()
 	return [p.x, p.y]
 
+func point_at(pos: Vector2) -> Array:return [pos.x,pos.y]
+
 func run() -> void:
 	game = get_parent()
 	game.save_path = "user://beta-qa-world.json"
@@ -35,6 +37,24 @@ func run() -> void:
 	game.ui.build()
 	game.ui.main_menu()
 	await get_tree().process_frame
+	if options.get("phase", "new") == "customization":
+		var custom_qa=preload("res://scripts/cosmetic_qa.gd").new();add_child(custom_qa);custom_qa.game=game;custom_qa.image_dir="user://"
+		var result=await custom_qa.run();checks=result.checks
+		game.decorator.begin("flowers")
+		var tile=-1
+		for i in range(game.world.cells.size()):
+			var pos=game.view.screen_point(game.world.cells[i])
+			if preload("res://scripts/cosmetics.gd").valid_place(game.world,"flowers",i) and pos.x>100 and pos.x<620 and pos.y>420 and pos.y<900:tile=i;break
+		await get_tree().process_frame
+		var before=game.world.wardrobe.placements.size()
+		publish("customization_touch_ready",{"tile":point_at(game.view.screen_point(game.world.cells[tile])),"place":point(find_text(game.decorator.panel,"Place")),"fixture":result})
+		while not FileAccess.file_exists("user://phase8_touch_continue"):await get_tree().process_frame
+		checks.adb_decoration_placed=game.world.wardrobe.placements.size()==before+1
+		game.decorator.finish()
+		checks.adb_decoration_persisted=Persistence.load_world(game.save_path).wardrobe.placements.size()==before+1
+		result.checks=checks;result.all_passed=not checks.values().has(false)
+		publish("customization_complete",result)
+		return
 	if options.get("phase", "new") == "offline_shutdown":
 		game.is_test_session=false
 		game.new_planet(2026,"Offline after shutdown",false)

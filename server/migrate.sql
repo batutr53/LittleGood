@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+﻿CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
     "MigrationId" character varying(150) NOT NULL,
     "ProductVersion" character varying(32) NOT NULL,
     CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
@@ -319,6 +319,52 @@ BEGIN
     IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20261023050815_InitialUniverse') THEN
     INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
     VALUES ('20261023050815_InitialUniverse', '10.0.12');
+    END IF;
+END $EF$;
+COMMIT;
+
+START TRANSACTION;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20261023072048_CosmeticEntitlements') THEN
+    CREATE TABLE "PurchaseReceipt" (
+        "Store" text NOT NULL,
+        "Transaction" character varying(256) NOT NULL,
+        "Owner" text NOT NULL,
+        "Product" text NOT NULL,
+        "State" text NOT NULL,
+        "VerifiedAt" timestamp with time zone NOT NULL,
+        CONSTRAINT "PK_PurchaseReceipt" PRIMARY KEY ("Store", "Transaction"),
+        CONSTRAINT "CK_PurchaseState" CHECK ("State" IN ('pending','completed','cancelled','failed','revoked')),
+        CONSTRAINT "FK_PurchaseReceipt_AspNetUsers_Owner" FOREIGN KEY ("Owner") REFERENCES "AspNetUsers" ("Id") ON DELETE CASCADE
+    );
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20261023072048_CosmeticEntitlements') THEN
+    CREATE INDEX "IX_PurchaseReceipt_Owner_State" ON "PurchaseReceipt" ("Owner", "State");
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20261023072048_CosmeticEntitlements') THEN
+    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+    VALUES ('20261023072048_CosmeticEntitlements', '10.0.12');
+    END IF;
+END $EF$;
+COMMIT;
+
+START TRANSACTION;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20261023072322_ReceiptConcurrency') THEN
+    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+    VALUES ('20261023072322_ReceiptConcurrency', '10.0.12');
     END IF;
 END $EF$;
 COMMIT;

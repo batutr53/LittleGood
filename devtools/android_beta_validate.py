@@ -10,7 +10,7 @@ args = parser.parse_args()
 adb = Path.home() / 'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 pkg = 'org.littlegod.livinguniverse.betaqa'
 base = [str(adb), '-s', args.serial]
-out = root / 'builds/phase7/android-qa'
+out = root / 'builds/phase8/android-qa'
 out.mkdir(parents=True, exist_ok=True)
 
 def run(*cmd, check=True):
@@ -42,7 +42,7 @@ def capture(name):
 
 # This ID is reserved for this QA harness and has no player release data.
 run('uninstall', pkg, check=False)
-run('install', str(root / 'builds/android/LittleGod-0.7-qa-debug.apk'))
+run('install', str(root / 'builds/android/LittleGod-0.8-qa-debug.apk'))
 # Android may restore app data after reinstall. Clear only the disposable QA ID
 # so this scenario is truly blank; never issue pm clear for the player package.
 if b'Success' not in run('shell', 'pm', 'clear', pkg):

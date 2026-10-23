@@ -39,6 +39,7 @@ var visited_id = ""
 var visit_origin: Dictionary = {}
 var input_feedback_ms = -1.0
 var online
+var decorator
 
 func measure_input_feedback(started: int) -> void:
 	await RenderingServer.frame_post_draw
@@ -62,6 +63,7 @@ func _ready() -> void:
 	online = preload("res://scripts/online_client.gd").new()
 	add_child(online)
 	ui.game = self
+	decorator=preload("res://scripts/customization_interface.gd").new(ui,self)
 	view.set_quality(false)
 	var config = ConfigFile.new()
 	if config.load("user://settings.cfg") == OK:
@@ -95,6 +97,10 @@ func _ready() -> void:
 		ui.close()
 		view.set_quality(options.get("economy", "--economy" in OS.get_cmdline_user_args()))
 		world.weather = 1
+		if options.get("cosmetics",false):
+			preload("res://scripts/cosmetic_qa.gd").decorate(world,32)
+			preload("res://scripts/cosmetics.gd").equip(world,options.get("cosmetic_theme","crystal"))
+			view.invalidate()
 		if options.get("stress", false):
 			while world.creatures.size() < 70:
 				var cr = world.creatures[world.creatures.size() % 18].duplicate(true)
@@ -112,7 +118,7 @@ func _ready() -> void:
 			in_menu = true
 		var probe = PerformanceProbe.new()
 		probe.duration = options.get("duration", 15)
-		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase7/desktop-" + ("economy" if view.low_quality else "smooth") + ".json"
+		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase8/desktop-" + ("economy" if view.low_quality else "smooth") + ".json"
 		add_child(probe)
 	set_process_input(true)
 	if OS.is_debug_build() and FileAccess.file_exists("user://phase4_qa.json"):
@@ -135,6 +141,7 @@ func new_planet(seed_value: int, planet_name: String, persist: bool = true) -> v
 	if visiting: return
 	var start = Time.get_ticks_usec()
 	world = WorldGen.generate(seed_value, planet_name)
+	preload("res://scripts/cosmetics.gd").ensure(world)
 	pipeline.world_generation_ms = (Time.get_ticks_usec() - start) / 1000.0
 	has_player_world = persist
 	onboarding_live = persist
@@ -284,6 +291,7 @@ func reset_gesture() -> void:
 
 func navigate_back() -> void:
 	if loading: return
+	if decorator!=null and decorator.active:decorator.finish();return
 	reset_gesture()
 	if visiting:
 		if in_menu and ui.page == "visit_menu": stop_visit()
@@ -293,7 +301,7 @@ func navigate_back() -> void:
 		return
 	if ui.page == "online": ui.menu() if not world.is_empty() else ui.main_menu()
 	elif ui.page == "beta": ui.settings()
-	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse", "detail", "favorites", "postcard", "universe", "profile", "wonders"]: ui.menu() if not world.is_empty() else ui.main_menu()
+	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse", "detail", "favorites", "postcard", "universe", "profile", "wonders","customization"]: ui.menu() if not world.is_empty() else ui.main_menu()
 	elif in_menu and has_player_world: ui.close()
 	elif has_player_world: ui.menu()
 	else: ui.main_menu()
@@ -305,6 +313,7 @@ func advance_tick() -> void:
 	var chapters_before = world.living.findings.size()
 	Ecosystem.tick(world, rng)
 	Civilization.tick(world)
+	preload("res://scripts/cosmetics.gd").reconcile(world)
 	world.rng_state = str(rng.state)
 	if world.discoveries.size() > before:
 		audio.chime(6)
@@ -438,6 +447,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_SPACE: paused = not paused; ui.refresh()
 
 func touch_world(pos: Vector2) -> void:
+	if decorator!=null and decorator.active:decorator.pick(pos);return
 	var input_started = Time.get_ticks_usec()
 	if visiting: power = -1
 	if power < 0:

@@ -1,0 +1,8 @@
+tools
+builds
+.git
+.godot
+server/.local
+server/.env
+**/bin
+**/obj

@@ -140,6 +140,13 @@ func animate(w: Dictionary, delta: float) -> void:
 		var desired_material = GameArt.silver() if cr.get("silver", false) else null
 		if sprite.material != desired_material: sprite.material = desired_material
 		if cr.get("silver", false): sprite.self_modulate = Color.WHITE
+		var coat=view.cosmetic_layer.coats.get(identity,"")
+		if coat=="mint":sprite.self_modulate=Color(.77,1,.88)
+		elif coat=="sunset":sprite.self_modulate=Color(1,.82,.74)
+		elif int(cr.species)!=1 and not cr.get("silver",false):sprite.self_modulate=Color.WHITE
+		if coat=="dreamer":
+			var flourish=maxf(0,sin(time*.6+phase)-.85)
+			sprite.position.y-=flourish*13;sprite.rotation+=flourish*sin(time*8)*.6
 	for i in range(walkers.size()):
 		var settlement = w.settlements[i / 3]
 		var p = view.project(w.cells[int(settlement.cell)])
