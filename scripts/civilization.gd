@@ -2,6 +2,7 @@ class_name Civilization
 extends RefCounted
 
 static func tick(w: Dictionary) -> void:
+	if w.get("_read_only",false): return
 	LivingStories.ensure(w)
 	for s in w.settlements:
 		var c = w.cells[int(s.cell)]

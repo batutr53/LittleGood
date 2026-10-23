@@ -1,0 +1,199 @@
+[
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "return scene.ui.save_postcard(\"res://docs/screenshots/phase6-postcard-export.png\")"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "close"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 5
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.7
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "_process",
+      "args": [
+        0.016
+      ]
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.15
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-world.png"
+  },
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "var guest=WorldGen.generate(42,\"Nacre\")\nvar rng=RandomNumberGenerator.new()\nrng.state=int(guest.rng_state)\nfor i in range(120):\n\tEcosystem.tick(guest,rng)\n\tCivilization.tick(guest)\nvar data=scene.showcases.project(guest)\nvar f=FileAccess.open(\"res://docs/examples/Nacre.lgplanet\",FileAccess.WRITE)\nf.store_string(JSON.stringify(data));f.close()\nscene.showcases.directory=\"user://phase6-mcp-showcases\"\nvar id=scene.ui.import_planet_text(JSON.stringify(data))\nreturn {\"valid\":scene.showcases.validate(data),\"visit\":scene.visit_planet(data,id),\"id\":id}"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.7
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-visit.png"
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "visit_menu"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.7
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-visit-menu.png"
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "planet_profile"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.7
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-visitor-profile.png"
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "set",
+      "path": "Interface",
+      "props": {
+        "language": "tr"
+      }
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "planet_profile"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.7
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-profile-tr.png"
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "set",
+      "path": "Interface",
+      "props": {
+        "language": "en"
+      }
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": ".",
+      "method": "stop_visit"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "local_universe"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.7
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-universe.png"
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "errors"
+    }
+  }
+]

@@ -10,7 +10,7 @@ args = parser.parse_args()
 adb = Path.home() / 'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 pkg = 'org.littlegod.livinguniverse.betaqa'
 base = [str(adb), '-s', args.serial]
-out = root / 'builds/phase5/android-qa'
+out = root / 'builds/phase6/android-qa'
 out.mkdir(parents=True, exist_ok=True)
 
 def run(*cmd, check=True):
@@ -42,7 +42,7 @@ def capture(name):
 
 # This ID is reserved for this QA harness and has no player release data.
 run('uninstall', pkg, check=False)
-run('install', str(root / 'builds/android/LittleGod-0.5-qa-debug.apk'))
+run('install', str(root / 'builds/android/LittleGod-0.6-qa-debug.apk'))
 # Android may restore app data after reinstall. Clear only the disposable QA ID
 # so this scenario is truly blank; never issue pm clear for the player package.
 if b'Success' not in run('shell', 'pm', 'clear', pkg):
@@ -84,7 +84,7 @@ if args.export_dialog:
     capture('native-save-dialog.png')
 checks = first['checks'] | third['checks']
 report = {'source': 'simulated_android_qa', 'serial': args.serial, 'package': pkg,
-          'fresh_install': True, 'checks': checks, 'all_passed': all(checks.values())}
+          'fresh_install': True, 'handler_to_frame_ms': first.get('handler_to_frame_ms'), 'checks': checks, 'all_passed': all(checks.values())}
 (out / 'result.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
 print(json.dumps(report, indent=2))
 if not report['all_passed']:

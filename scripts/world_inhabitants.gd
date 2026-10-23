@@ -12,6 +12,7 @@ var prop_cache: Dictionary = {}
 var capture_key = ""
 var sync_ms = 0.0
 var props_created = 0
+var animate_ms = 0.0
 
 func _ready() -> void:
 	y_sort_enabled = true
@@ -70,7 +71,7 @@ func sync(w: Dictionary) -> void:
 		var key = "s:" + str(s.cell)
 		valid[key] = true
 		var c = w.cells[int(s.cell)]
-		if not begin_props(key, base + ":" + str(s.stage) + ":" + str(c.height) + ":" + str(s.get("landmark", false))): continue
+		if not begin_props(key, base + ":" + str(s.stage) + ":" + str(c.height) + ":" + str(s.get("landmark", false)) + str(s.custom)): continue
 		var p = view.project(c)
 		if s.stage == 0: add_prop(13, p, 50)
 		else:
@@ -80,6 +81,8 @@ func sync(w: Dictionary) -> void:
 		if s.get("landmark", false):
 			var frame = 12 if s.custom == "orchard" else 11 if s.custom == "riverfolk" else 6
 			add_prop(frame, p + Vector2(34, -9), 32).modulate = Color("f6e4b4")
+		var culture_color = {"orchard":Color("e6efd1"),"riverfolk":Color("c9eee8"),"stargazers":Color("e1d9ed")}[s.custom]
+		for building in prop_cache[key].sprites: building.modulate *= culture_color
 	for key in prop_cache.keys():
 		if not valid.has(key):
 			for sprite in prop_cache[key].sprites:
@@ -103,6 +106,7 @@ func sync(w: Dictionary) -> void:
 	sync_ms = (Time.get_ticks_usec() - start) / 1000.0
 
 func animate(w: Dictionary, delta: float) -> void:
+	var started = Time.get_ticks_usec()
 	time += delta
 	var decay = 1 - exp(-delta * 2.3)
 	for i in range(mini(animals.size(), w.creatures.size())):
@@ -125,7 +129,7 @@ func animate(w: Dictionary, delta: float) -> void:
 		var bob = absf(sin(time * (5.0 if cr.species != 5 else 7.0) + phase)) * (1.8 if moving else .35)
 		if cr.species == 5: bob += 2 + sin(time * 2 + phase) * 1.6
 		sprite.position = next - Vector2(0, bob)
-		sprite.frame = int(cr.species)
+		if sprite.frame != int(cr.species): sprite.frame = int(cr.species)
 		if absf(target.x - previous.x) > .05: sprite.flip_h = target.x < previous.x
 		var size = (33.0 if cr.species != 1 else 37.0) / 232.0
 		var breath = sin(time * 2 + phase) * .018
@@ -133,7 +137,8 @@ func animate(w: Dictionary, delta: float) -> void:
 		if int(w.weather) == 1: sprite.scale.y *= .94
 		sprite.rotation = sin(time * 3 + phase) * (.045 if grazing else .012)
 		if int(cr.species) == 1: sprite.self_modulate = Color(1, .96 + sin(time * 2 + phase) * .025, .94)
-		sprite.material = GameArt.silver() if cr.get("silver", false) else null
+		var desired_material = GameArt.silver() if cr.get("silver", false) else null
+		if sprite.material != desired_material: sprite.material = desired_material
 		if cr.get("silver", false): sprite.self_modulate = Color.WHITE
 	for i in range(walkers.size()):
 		var settlement = w.settlements[i / 3]
@@ -143,6 +148,7 @@ func animate(w: Dictionary, delta: float) -> void:
 		walkers[i].position = p + Vector2(sin(angle) * radius, cos(angle) * radius * .42 + 9)
 		walkers[i].flip_h = cos(angle) < 0
 		walkers[i].visible = settlement.food > 1 and (i % 3) < 1 + int(settlement.stage)
+	animate_ms = (Time.get_ticks_usec()-started)/1000.0
 
 func closest_creature(pos: Vector2, radius: float = 32) -> int:
 	var best = radius

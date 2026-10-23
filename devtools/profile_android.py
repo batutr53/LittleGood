@@ -1,6 +1,6 @@
 """Profile only LittleGod on a named ADB device, preserving its existing planet save."""
 from pathlib import Path
-import subprocess, json, time, hashlib, argparse
+import subprocess, json, time, hashlib, argparse, re
 root=Path(__file__).resolve().parent.parent
 parser=argparse.ArgumentParser()
 parser.add_argument('--serial',default='emulator-5554')
@@ -14,8 +14,14 @@ args=parser.parse_args()
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 base=[str(adb),'-s',args.serial]
 pkg=args.package
-def run(*cmd,check=True):return subprocess.run(base+list(cmd),capture_output=True,check=check).stdout
+def run(*cmd,check=True):return subprocess.run(base+list(cmd),capture_output=True,check=check,timeout=60).stdout
+run('wait-for-device')
 run('shell','am','force-stop',pkg)
+package_info=run('shell','dumpsys','package',pkg).decode(errors='replace')
+version_match=re.search(r'versionName=([^\s]+)',package_info)
+installed_version=version_match.group(1) if version_match else 'unavailable'
+apk_path=run('shell','pm','path',pkg).decode().strip().removeprefix('package:')
+installed_hash=run('shell','sha256sum',apk_path).decode().split()[0] if re.fullmatch(r'/data/app/[A-Za-z0-9_=/+.~-]+/base\.apk',apk_path) else 'unavailable'
 before=run('shell','run-as',pkg,'cat','files/planet.json',check=False)
 options={'duration':args.duration,'economy':args.economy,'control':args.control,'stress':args.stress}
 output=root/args.output_dir
@@ -34,6 +40,11 @@ while time.monotonic()-started < args.duration+120:
     except Exception: time.sleep(1);continue
     break
 if report is None:raise RuntimeError('No profile report after 150 seconds')
+if bool(report.get('control_scene'))!=args.control or report.get('quality')!=('economy' if args.economy else 'smooth') or (args.stress and report.get('creatures',0)<60):
+    raise RuntimeError('Profile does not match requested scenario; another run may have interrupted it')
+report['installed_version']=installed_version
+report['installed_apk_sha256']=installed_hash
+report['requested_options']=options
 report['host_launch_to_report_seconds']=round(time.monotonic()-started,3)
 after=run('shell','run-as',pkg,'cat','files/planet.json',check=False)
 report['player_save_unchanged']=before==after

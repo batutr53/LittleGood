@@ -5,10 +5,12 @@ const SPECIES = ["Mossbun", "Lanternfox", "Duneling", "Pebblehorn", "Frostpuff",
 const SPECIES_TR = ["Yosunpon", "Fener tilkisi", "Kumcuk", "Çakılboynuz", "Karpon", "Sazkanat"]
 
 static func event(w: Dictionary, key: String, amount: int = 0) -> void:
+	if w.get("_read_only",false): return
 	w.events.append({"tick": w.tick, "key": key, "amount": amount})
 	if w.events.size() > 160: w.events.pop_front()
 
 static func tick(w: Dictionary, rng: RandomNumberGenerator) -> void:
+	if w.get("_read_only",false): return
 	LivingStories.ensure(w)
 	w.tick = int(w.tick) + 1
 	w.energy = minf(100, w.energy + 0.45)
@@ -62,7 +64,7 @@ static func tick(w: Dictionary, rng: RandomNumberGenerator) -> void:
 	if w.tick % 45 == 0 and w.creatures.size() < 70 and not w.creatures.is_empty():
 		var parent = w.creatures[rng.randi_range(0, w.creatures.size() - 1)]
 		if parent.hunger < 0.6:
-			w.creatures.append({"species": parent.species, "cell": parent.cell, "hunger": 0.2, "phase": rng.randf() * TAU, "born_here": true, "parent_id": int(parent.identity)})
+			w.creatures.append({"species": parent.species, "cell": parent.cell, "hunger": 0.2, "phase": rng.randf() * TAU, "born_here": true, "parent_id": int(parent.identity), "parent_name":parent.given_name, "lineage":int(parent.lineage)})
 			event(w, "birth", int(parent.species))
 	if w.tick % 60 == 0:
 		for i in range(w.creatures.size() - 1, -1, -1):

@@ -8,6 +8,7 @@ const HOMES = ["Willow", "Sunstone", "Moonreed", "Clover", "Amber", "Mist"]
 const FINDINGS = ["rain_bloom", "friendship", "lantern_grove", "first_village"]
 
 static func ensure(w: Dictionary) -> void:
+	if w.get("_read_only",false): return
 	if not w.has("living"):
 		w.living = {"next_id": 0, "observed": [], "findings": [], "gifts": 0, "bloom_after": 0}
 	if not w.living.has("records"): w.living.records = {}
@@ -27,8 +28,10 @@ static func ensure(w: Dictionary) -> void:
 		if not s.has("custom"):
 			s.custom = ["orchard", "riverfolk", "stargazers"][posmod(int(w.seed) + i, 3)]
 	ensure_memories(w)
+	preload("res://scripts/world_connections.gd").ensure(w)
 
 static func discover(w: Dictionary, key: String, cell: int, subject: String = "") -> void:
+	if w.get("_read_only",false): return
 	if w.living.findings.has(key): return
 	w.living.findings.append(key)
 	w.xp += 12
@@ -40,6 +43,7 @@ static func discover(w: Dictionary, key: String, cell: int, subject: String = ""
 	remember(w, key, key, cell, subject)
 
 static func observe(w: Dictionary, cr: Dictionary) -> bool:
+	if w.get("_read_only",false): return false
 	ensure(w)
 	if w.living.observed.has(int(cr.identity)): return false
 	w.living.observed.append(int(cr.identity))
@@ -51,6 +55,7 @@ static func observe(w: Dictionary, cr: Dictionary) -> bool:
 	return true
 
 static func tick(w: Dictionary) -> void:
+	if w.get("_read_only",false): return
 	ensure(w)
 	# A wet, established patch of desert becomes a permanent meadow after rain.
 	if w.weather == 1 and int(w.tick) >= int(w.living.bloom_after):
@@ -93,6 +98,7 @@ static func tick(w: Dictionary) -> void:
 				if w.weather == 0: s.tech += .003
 		if s.stage >= 1: discover(w, "first_village", int(s.cell), s.given_name)
 	living_tick(w)
+	preload("res://scripts/world_connections.gd").tick(w)
 
 static func objective(w: Dictionary) -> String:
 	ensure(w)
@@ -107,9 +113,10 @@ static func objective(w: Dictionary) -> String:
 # Small, bounded extensions of the existing version-one world. Historical dates on
 # migrated creatures mean "first recorded", never an invented birth date.
 const SECRETS = ["mountain_spring", "silver_fox", "rainbow_choir"]
-const MEMORY_KEYS = ["rain_bloom", "friendship", "lantern_grove", "first_village", "first_birth", "companions", "rivalry", "explored", "landmark", "alliance", "mountain_spring", "silver_fox", "rainbow_choir", "elder", "rescue"]
+const MEMORY_KEYS = ["rain_bloom", "friendship", "lantern_grove", "first_village", "first_birth", "companions", "rivalry", "explored", "landmark", "alliance", "mountain_spring", "silver_fox", "rainbow_choir", "elder", "rescue", "canopy_arch", "reed_shelter", "migration", "trade", "boundary", "cooperation"]
 
 static func ensure_memories(w: Dictionary) -> void:
+	if w.get("_read_only",false): return
 	for entry in [["memories", []], ["remembered", []], ["secrets", []], ["favorites", []]]:
 		if not w.living.has(entry[0]): w.living[entry[0]] = entry[1].duplicate(true)
 	for cr in w.creatures:
@@ -138,6 +145,7 @@ static func ensure_memories(w: Dictionary) -> void:
 		w.living.memories.back().tick = int(e.get("tick", w.tick))
 
 static func remember(w: Dictionary, id: String, key: String, cell: int, subject: String = "", identity: int = -1, species: int = -1) -> bool:
+	if w.get("_read_only",false): return false
 	if w.living.remembered.has(id): return false
 	if w.living.remembered.size() >= 128:
 		# Keep permanent firsts; rotate older individual episodes, bounded in size.
@@ -152,7 +160,7 @@ static func remember(w: Dictionary, id: String, key: String, cell: int, subject:
 	if w.living.memories.size() > 64:
 		var oldest_episode = 0
 		for i in range(w.living.memories.size()):
-			if w.living.memories[i].key in ["explored", "elder", "companions", "rivalry"]:
+			if w.living.memories[i].key in ["explored", "elder", "companions", "rivalry", "migration", "trade", "boundary", "cooperation"]:
 				oldest_episode = i
 				break
 		w.living.memories.remove_at(oldest_episode)
@@ -164,11 +172,13 @@ static func remember(w: Dictionary, id: String, key: String, cell: int, subject:
 	return true
 
 static func secret(w: Dictionary, key: String, cell: int, subject: String = "") -> void:
+	if w.get("_read_only",false): return
 	if w.living.secrets.has(key): return
 	w.living.secrets.append(key)
 	remember(w, key, key, cell, subject)
 
 static func living_tick(w: Dictionary) -> void:
+	if w.get("_read_only",false): return
 	var occupants: Dictionary = {}
 	for cr in w.creatures:
 		var c = w.cells[int(cr.cell)]
@@ -257,12 +267,14 @@ static func living_tick(w: Dictionary) -> void:
 		if not s.allies.is_empty(): s.tech = minf(100, s.tech + .002)
 
 static func rename_subject(subject: Dictionary, value: String) -> bool:
+	if subject.get("_read_only",false): return false
 	var clean = value.strip_edges().replace("\n", " ").replace("\r", " ").replace("\t", " ")
 	if clean.is_empty() or clean.length() > 24: return false
 	subject.given_name = clean
 	return true
 
 static func favorite(w: Dictionary, cell: int) -> bool:
+	if w.get("_read_only",false): return false
 	if cell < 0 or cell >= w.cells.size(): return false
 	if w.living.favorites.has(cell): w.living.favorites.erase(cell); return true
 	if w.living.favorites.size() >= 5: return false

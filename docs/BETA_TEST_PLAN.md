@@ -1,6 +1,6 @@
 # Closed beta — 10–20 invited testers
 
-Current candidate: **LittleGod 0.5**, `D:\LittleGod\builds\android\LittleGod-0.5-debug.apk`. Keep 0.4 and its evidence for comparison; test the final 0.5 candidate for new feedback. Split the invited group across newer/mid-range/older phones and sandbox newcomers/experienced players. Record actual hardware separately from emulator automation.
+Current candidate: **LittleGod 0.6**, `D:\LittleGod\builds\android\LittleGod-0.6-debug.apk`. Keep 0.5 and its evidence for comparison; test the final 0.6 candidate for new feedback. Split the invited group across newer/mid-range/older phones and sandbox newcomers/experienced players. Record actual hardware separately from emulator automation.
 
 No external testers have been recruited or measured. Human enjoyment, clarity and next-day/seven-day return rates remain unknown. Invite testers manually; do not upload local diagnostics automatically.
 
@@ -18,8 +18,16 @@ Bug template: version; device/OS; expected and actual result; exact steps; occur
 
 Beta tools show the optional local event export before copying it. Export only if the tester chooses; they can disable/clear diagnostics independently of the world. Fixed codes support tutorial completion, session duration, first power/creature/community and restore counts. Unclean-session markers are hints, not native crash stacks. Return frequency and next-day/seven-day cohorts require consent-based tester records; no retention results have been inferred from automated simulations.
 
-The 0.5 export also includes fixed `power_used`, `memory_found` and relative UTC `return_day` events. The absolute first UTC day stays private and is not exported. Use completed `session_ended` durations, count `session_started` for frequency and `return_day` values 1/7 for this installation's next-day/seven-day visits. The bounded 200-event log is a recent window, not an all-time counter or a cohort retention denominator. A clear/reset starts a new local record. Separate `source=simulated` from actual player exports. Ask for consent before linking a tester's voluntary export to their questionnaire; no persistent user ID or external analytics is present.
+The 0.6 export also includes fixed `power_used`, `memory_found` and relative UTC `return_day` events. The absolute first UTC day stays private and is not exported. Use completed `session_ended` durations, count `session_started` for frequency and `return_day` values 1/7 for this installation's next-day/seven-day visits. The bounded 200-event log is a recent window, not an all-time counter or a cohort retention denominator. A clear/reset starts a new local record. Separate `source=simulated` from actual player exports. Ask for consent before linking a tester's voluntary export to their questionnaire; no persistent user ID or external analytics is present.
 
 Android 10+ native postcard saving was verified on the API 35 emulator. Test native picker cancellation, file overwrite and export on physical OEM devices; older Android versions need special attention. A user may share the exported PNG through their own file/gallery app. No sending action is automated.
 
 Release gate: all regression checks pass, installation/update and save compatibility verified, no critical runtime errors. Recruit real testers and complete physical-device checks before broader distribution. No store publishing is authorized.
+
+## Phase six scenarios
+
+Copy a source-package example .lgplanet from docs/examples to the phone Download folder using your usual file transfer. Use the Local universe from the main menu or planet menu. Export your profile to .lgplanet, cancel and retry the picker, import docs/examples/Lumi.lgplanet or Nacre.lgplanet, compare discoveries and visit. Pan, zoom, inspect communities/creatures and Chronicle; confirm no editing powers appear. Try background/resume during a visit, then Return to my world and verify your own planet and camera. Reactions are explicitly local; ask the tester to explain that limitation. Fill/remove a local copy and reject a malformed or oversized file without touching a save. Review public names before exporting.
+
+Favorite a creature, read its family/origin and personal history, follow a Wonders opportunity and revisit a discovered location. Watch a wetland migration, gardener canopy, bird/grazer shelter or actual food trade when conditions permit; do not promise they occur on a calendar. Note whether uncertainty feels interesting or unclear. Existing rain bloom and community onboarding should remain immediate. Use BETA_FEEDBACK_FORM.md for voluntary feedback.
+
+Current automated evidence: 280 regression checks, 40 seeded longer simulations and separate Android QA. These are functional evidence only. There are still zero recruited human testers and zero physical-device results. The release remains a debug beta candidate.

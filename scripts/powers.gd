@@ -3,6 +3,7 @@ extends RefCounted
 
 const COSTS = [12, 15, 18, 20, 22, 25]
 static func apply(w: Dictionary, power: int, cell: int) -> bool:
+	if w.get("_read_only",false): return false
 	if power < 0 or power >= 6 or cell < 0 or cell >= w.cells.size() or w.energy < COSTS[power]: return false
 	if power == 3 and w.creatures.size() >= 70: return false
 	var c = w.cells[cell]

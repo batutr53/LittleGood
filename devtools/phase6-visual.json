@@ -1,0 +1,141 @@
+[
+  {
+    "name": "run",
+    "arguments": {
+      "action": "stop"
+    }
+  },
+  {
+    "name": "editor",
+    "arguments": {
+      "action": "clear_logs"
+    }
+  },
+  {
+    "name": "files",
+    "arguments": {
+      "action": "rescan"
+    }
+  },
+  {
+    "name": "scene",
+    "arguments": {
+      "action": "reload",
+      "path": "res://scenes/main.tscn"
+    }
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "play",
+      "mute": true
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "set",
+      "path": ".",
+      "props": {
+        "is_test_session": true
+      }
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "set",
+      "path": "Interface",
+      "props": {
+        "language": "en"
+      }
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "build"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": ".",
+      "method": "new_planet",
+      "args": [
+        2026,
+        "Lumi",
+        false
+      ]
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "close"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "close"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "planet_profile"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.5
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-profile.png"
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "neighbors"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.5
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-collection.png"
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "errors"
+    }
+  }
+]

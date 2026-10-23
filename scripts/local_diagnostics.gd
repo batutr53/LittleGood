@@ -2,7 +2,7 @@ class_name LocalDiagnostics
 extends RefCounted
 
 # Private app storage only. Never store planet/creature names, seed, paths or identifiers.
-const ALLOWED = ["session_started", "session_ended", "unclean_previous_session", "planet_created", "first_power", "first_creature", "first_settlement", "onboarding_completed", "save_completed", "world_restored", "handled_error", "power_used", "memory_found", "return_day"]
+const ALLOWED = ["session_started", "session_ended", "unclean_previous_session", "planet_created", "first_power", "first_creature", "first_settlement", "onboarding_completed", "save_completed", "world_restored", "handled_error", "power_used", "memory_found", "return_day", "first_launch"]
 var path = "user://diagnostics.json"
 var enabled = true
 var source = "player"
@@ -18,6 +18,8 @@ func configure(destination: String = "user://diagnostics.json", kind: String = "
 		var parsed = JSON.parse_string(FileAccess.get_file_as_string(path))
 		if parsed is Dictionary and parsed.get("events") is Array and parsed.get("once") is Dictionary:
 			data = parsed
+			if data.has("first_day") and not (data.first_day is int or data.first_day is float): data.erase("first_day")
+			if data.has("visit_days") and not data.visit_days is Array: data.erase("visit_days")
 
 func begin() -> void:
 	if not enabled or running: return
@@ -69,7 +71,7 @@ func feedback() -> Dictionary:
 	for e in data.events:
 		if not e is Dictionary or not ALLOWED.has(e.get("event")): continue
 		events.append({"event": e.event, "seconds": maxi(0, int(e.get("seconds", 0))), "value": maxi(0, int(e.get("value", 0))), "source": "simulated" if e.get("source") == "simulated" else "player"})
-	return {"schema": 1, "game_version": "0.5.0", "platform": OS.get_name(), "scope": "local_optional_feedback", "events": events.slice(maxi(0, events.size() - 200))}
+	return {"schema": 1, "game_version": "0.6.0", "platform": OS.get_name(), "scope": "local_optional_feedback", "events": events.slice(maxi(0, events.size() - 200))}
 
 func export_feedback() -> String:
 	var text = JSON.stringify(feedback(), "\t")

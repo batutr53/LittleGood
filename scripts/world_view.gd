@@ -19,6 +19,9 @@ var inhabitants: WorldInhabitants
 var scenery_signature = ""
 var update_accumulator = 0.0
 var terrain_signature = ""
+var frame_cpu_ms = 0.0
+var foreground_cpu_ms = 0.0
+var decoration_cells: Array = []
 
 func _ready() -> void:
 	origin.y += maxf(0, get_viewport_rect().size.y - 1280) * .5
@@ -58,6 +61,7 @@ func pick(pos: Vector2) -> int:
 func invalidate() -> void:
 	scenery_signature = ""
 	terrain_signature = ""
+	decoration_cells.clear()
 	selected_creature = -1
 	selected_identity = -1
 
@@ -86,6 +90,7 @@ func set_quality(economy: bool) -> void:
 	invalidate()
 
 func _process(delta: float) -> void:
+	var started = Time.get_ticks_usec()
 	time += delta
 	var weight = 1 - exp(-delta * 14)
 	display_pan = display_pan.lerp(pan, weight)
@@ -99,6 +104,11 @@ func _process(delta: float) -> void:
 			var signature = str(world.seed) + ":" + str(world.xp) + ":" + str(world.tick)
 			if signature != scenery_signature:
 				scenery_signature = signature
+				# Most cells have no foreground decoration. Index changed state once,
+				# rather than dispatching five Dictionary lookups per tile per frame.
+				decoration_cells.clear()
+				for c in world.cells:
+					if c.get("canopy_arch",false) or c.get("reed_shelter",false) or c.get("spring",false) or c.get("meadow",false) or int(c.get("grove_until",0))>int(world.tick): decoration_cells.append(c)
 				# Topology gifts update immediately; slow vegetation tint refreshes every 8 ticks.
 				var geometry = str(world.seed) + ":" + str(int(world.tick) / 8)
 				for c in world.cells: geometry += ":%d,%d" % [int(c.biome), int(c.height * 1000)]
@@ -112,6 +122,7 @@ func _process(delta: float) -> void:
 		effects[i].age += delta
 		if effects[i].age > 1.6: effects.remove_at(i)
 	queue_redraw()
+	frame_cpu_ms = (Time.get_ticks_usec()-started)/1000.0
 
 func ellipse(p: Vector2, radius: float, color: Color, ratio: float = .45) -> void:
 	draw_set_transform(p, 0, Vector2(1, ratio))
@@ -134,7 +145,20 @@ func _draw() -> void:
 
 func draw_foreground(canvas: Node2D) -> void:
 	if world.is_empty(): return
-	for c in world.cells:
+	var started = Time.get_ticks_usec()
+	for c in decoration_cells:
+		if c.get("canopy_arch",false):
+			var points = PackedVector2Array()
+			var p = screen_point(c)
+			for j in range(13): points.append(p+Vector2(-26+j*4.3,-20-sin(j*PI/12)*25)*display_zoom)
+			canvas.draw_polyline(points,Color("9fcba4"),2.5*display_zoom,true)
+			for j in [2,5,8,10]: canvas.draw_circle(points[j]+Vector2(sin(time+j),0),3*display_zoom,Color("d2e4a4"))
+		if c.get("reed_shelter",false):
+			var p = screen_point(c)
+			for j in range(4):
+				var reed = p+Vector2(-14+j*8,4)*display_zoom
+				canvas.draw_line(reed,reed+Vector2(sin(time+j)*2,-18)*display_zoom,Color("a4c8a4"),1.4)
+				canvas.draw_circle(reed+Vector2(sin(time+j)*2,-18)*display_zoom,2,Color("efdaa5"))
 		if c.get("spring", false):
 			var p = screen_point(c)
 			for n in range(3):
@@ -156,6 +180,12 @@ func draw_foreground(canvas: Node2D) -> void:
 		canvas.draw_set_transform(Vector2.ZERO)
 	for s in world.settlements:
 		var p = screen_point(world.cells[int(s.cell)])
+		if int(s.get("trade_until",0))>int(world.tick):
+			for other in world.settlements:
+				if int(other.cell)>int(s.cell) and s.allies.has(int(other.cell)):
+					var end = screen_point(world.cells[int(other.cell)])
+					canvas.draw_dashed_line(p+Vector2(0,8),end+Vector2(0,8),Color(.83,.83,.59,.35),1.2,5)
+					canvas.draw_circle(p.lerp(end,fmod(time*.18,1))+Vector2(0,4),3,Color("efda9f"))
 		if s.get("landmark", false):
 			canvas.draw_line(p + Vector2(31, -17) * display_zoom, p + Vector2(31, -39) * display_zoom, Color("eddca3"), 1.5)
 			canvas.draw_colored_polygon(PackedVector2Array([p + Vector2(31, -39) * display_zoom, p + Vector2(47 + sin(time * 3) * 2, -35) * display_zoom, p + Vector2(31, -30) * display_zoom]), Color("b4d9b0"))
@@ -187,9 +217,11 @@ func draw_foreground(canvas: Node2D) -> void:
 		canvas.draw_circle(Vector2(38, 8), 30, Color(.85, .94, .9, .035))
 	canvas.draw_set_transform(Vector2.ZERO)
 	if int(world.weather) == 1:
+		var rain_lines = PackedVector2Array()
 		for i in range(44 if not low_quality else 18):
 			var p = Vector2(fmod(i * 137.8 + time * 35, 720), 260 + fmod(i * 79.3 + time * 310, 680))
-			canvas.draw_line(p, p + Vector2(-3, 11), Color(.7, .91, .94, .26), 1.0, false)
+			rain_lines.append(p);rain_lines.append(p+Vector2(-3,11))
+		canvas.draw_multiline(rain_lines, Color(.7,.91,.94,.26), 1.0, false)
 		for i in range(6):
 			var p = origin + Vector2(sin(i * 9.7) * 210, cos(i * 11.3) * 95)
 			var phase = fmod(time * .7 + i * .17, 1)
@@ -199,12 +231,17 @@ func draw_foreground(canvas: Node2D) -> void:
 	for cell in world.living.get("favorites", []):
 		var p = screen_point(world.cells[int(cell)])
 		canvas.draw_arc(p, 9, 0, TAU, 20, Color(.95, .85, .6, .65), 1.2, true)
+	var favorite_ids: Dictionary = {}
+	for favorite in world.living.get("favorite_creatures",[]): favorite_ids[int(favorite.id)] = true
 	for i in range(mini(world.creatures.size(), inhabitants.animals.size())):
 		var cr = world.creatures[i]
 		if int(cr.get("companion", -1)) >= 0:
 			var p = to_screen(inhabitants.animals[i].position) - Vector2(0, 38 * display_zoom)
 			canvas.draw_circle(p + Vector2(-2, 0), 2.8, Color(.96, .78, .7, .55 + sin(time * 2 + i) * .18))
 			canvas.draw_circle(p + Vector2(2, 0), 2.8, Color(.96, .78, .7, .55 + sin(time * 2 + i) * .18))
+		if favorite_ids.has(int(cr.identity)):
+			var p = to_screen(inhabitants.animals[i].position)
+			canvas.draw_arc(p-Vector2(0,20),18+sin(time*2)*1.5,0,TAU,20,Color(.95,.85,.55,.6),1.2,true)
 	if int(world.living.get("choir_until", 0)) > int(world.tick):
 		for i in range(3):
 			canvas.draw_arc(origin + Vector2(0, 45), 170 + i * 7, PI * 1.15, PI * 1.85, 40, [Color(.95, .7, .6, .25), Color(.85, .9, .6, .22), Color(.6, .92, .86, .2)][i], 5, true)
@@ -220,3 +257,4 @@ func draw_foreground(canvas: Node2D) -> void:
 			var points = PackedVector2Array()
 			for x in range(0, 721, 16): points.append(Vector2(x, 310 + band * 18 + sin(x * .008 + time * .3 + band) * 45))
 			canvas.draw_polyline(points, Color(.48, .9, .71, .12), 12, true)
+	foreground_cpu_ms = (Time.get_ticks_usec()-started)/1000.0

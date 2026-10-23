@@ -1,0 +1,29 @@
+# Player experience — LittleGod 0.6
+
+This is an agent-led functional and visual playtest. No human enjoyment, addiction, attachment or retention is established. The next useful evaluation is the invited beta described in BETA_TEST_PLAN.md.
+
+## What changed and why
+
+The existing opening already makes rain, a meadow, a named creature and wildlife/community friendship observable quickly. Phase six preserves that short guide and the original powers. The weaker longer loop was deciding which individual matters and what to inspect after the four chapter discoveries. The collection now pairs painted portraits with actual personality traits and favorite stars; biographies retain recorded origins, parent names, family groups and migration status. The personal Chronicle still links real moments to places. Up to twelve favorite creatures remain recognizable by stable identity, including a bounded keepsake after departure. Recorded age is not a precise biological age; imported older saves start recording when first upgraded.
+
+The optional Wonders screen offers actions based on the current world: nourish an existing wetland, follow a living gardener, or support a real community. It also focuses discovered canopy/reed locations. These are suggestions, not daily quests. There is no expiry, streak, missed-day penalty, fabricated arrival guarantee or notification service. Migration requires wet/planted wetland and population room, starts checking after tick 90 and has a 480-tick successful-arrival cooldown. A gardener can shelter a lush, moist forest; birds and mossbuns in wetland share shelter. Allied neighboring communities transfer actual surplus food. Scarce neighbors can become rivals; restored resources or alliance allow cooperation. Relationships stay reciprocal when a third community is present.
+
+The new local sharing loop is: inspect profile → review public names → export JSON or a real rendered postcard → manually share a file → import → compare discoveries → visit → return home. Visiting freezes simulation and preserves each planet. The visible read-only header and reduced menus explain the boundary. Local reactions are explicitly labeled device-only. Imports do not grant discoveries or replace the player's progression. Eight replaceable local copies bound storage. The profile compares species actually discovered on the two worlds and shows rare records and community landmarks.
+
+## First fifteen-minute equivalent
+
+Godot MCP drove the existing opening controls in the real rendered scene, then advanced the actual simulation to tick 450 (normal-speed fifteen-minute equivalent), rather than waiting fifteen wall-clock minutes. The seed-2026 Lumi example reached day 16, 30 creatures, two communities and 61 people, all six species discovered, two rare discoveries and two community landmarks. The screenshot and public file capture that automated world, not a human session or guaranteed outcome. Nacre is a separate seed-42 example advanced 120 ticks.
+
+The opening still supplies an immediate environmental consequence, creature observation and friendship. The short-session choice is a gift, individual observation or a Chronicle moment. The longer-session choice is shaping habitat, following a living story, supporting communities, documenting a planet or visiting another snapshot. Absence still uses bounded offline simulation and actual event highlights. Automated offline checks verify that a condition-driven migration can appear in the return memories.
+
+## Visual inspection and corrections
+
+Actual Godot render captures include world, collection, biography, Chronicle, profile, Turkish visitor profile, postcard and read-only visiting. A controlled story fixture sets habitat and settlement starting conditions, then invokes the real connection rules; it renders canopy/reed markers, the favorite halo and active food trade. It is explicitly named Story test world. It is not evidence that every natural planet reaches those events at the same time.
+
+The profile now uses varied creature species portraits, real population/environment/discovery statistics and civilization landmarks. The postcard includes these public statistics over the actual game world. Original 1024-square painted atlas, typography, water, weather, lighting and animations are retained. New artwork is an original vector favorite icon and procedural animated place/trade overlays. No static concept art replaced gameplay and no image-generation service was needed for these code/vector additions.
+
+Testing caught long story buttons widening a scroll area. Wrapped discovery/collection buttons and vertical-only card lists corrected it; visitor navigation now scrolls rather than overflowing. Power icons explicitly repaint after HUD updates; this fixes the stale icon drawing observed after the complete opening. After a successful PNG export, feedback appears in the visible postcard screen. Model guards and UI removal of editing actions prevent a visitor from modifying either world. Final MCP gameplay error lists were empty; known shutdown resource warnings are separately documented.
+
+## What still needs real players
+
+Menus can still feel dense, rare conditions may need clearer clues, and mature worlds remain generous with modest late progression. Recorded histories rotate within fixed limits; families are lineage groups, not a full genealogy browser. Building cultures use existing models with color/prop differences rather than three entirely new architecture sets. Snapshot creatures visually breathe and travel around their recorded positions; their state does not progress while visiting. These choices need feedback, not a claim of proven fun. Physical touch comfort, native OEM pickers, sustained thermals and voluntary next-day returns remain untested on phones.

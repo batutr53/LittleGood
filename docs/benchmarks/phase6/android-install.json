@@ -1,0 +1,13 @@
+{
+  "package": "org.littlegod.livinguniverse",
+  "emulator": "emulator-5554",
+  "install": "Performing Incremental Install\r\nPerforming Streamed Install\r\nSuccess",
+  "preserved": {
+    "planet.json": true,
+    "planet.json.bak": true,
+    "planet.json.tmp": true,
+    "settings.cfg": true
+  },
+  "apk_bytes": 59216991,
+  "apk_sha256": "6a88241d4ac414acc60404d394ab30e916c1a451d5c2729c57883fa10637ad5b"
+}

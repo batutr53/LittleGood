@@ -6,6 +6,7 @@ var header: Label
 var stats: Label
 var hint: Label
 var power_buttons: Array = []
+var power_icons: Array = []
 var modal: PanelContainer
 var language = "en"
 var spirit: Label
@@ -26,6 +27,51 @@ func ui_font() -> Font:
 	return body_font
 
 const TEXT = {
+"local_universe": ["Local universe", "Yerel evren"],
+"universe_body": ["Visit shared snapshots on this device. No accounts or live connection.", "Bu cihazdaki paylaşılan görüntüleri ziyaret et. Hesap veya canlı bağlantı yok."],
+"my_profile": ["Planet profile", "Gezegen profili"],
+"import_planet": ["Import a shared planet", "Paylaşılan gezegeni içe aktar"],
+"export_planet": ["Export planet data", "Gezegen verisini aktar"],
+"share_notice": ["Includes visible planet, creature and community names. Review them before sharing. Saves, seed, device data and private paths are excluded.", "Görünen gezegen, canlı ve topluluk isimlerini içerir. Paylaşmadan önce kontrol et. Kayıt, tohum, cihaz verisi ve özel yollar içermez."],
+"snapshot_notice": ["A read-only snapshot · the original planet is never changed", "Salt okunur bir görüntü · asıl gezegen değişmez"],
+"visit_planet": ["Visit this planet", "Bu gezegeni ziyaret et"],
+"leave_visit": ["Return to my world", "Kendi dünyama dön"],
+"visiting": ["Visiting · read only", "Ziyaret · salt okunur"],
+"readonly_tag": ["Read only", "Salt okunur"],
+"remove_copy": ["Remove local copy", "Yerel kopyayı kaldır"],
+"landmarks_count": ["%d community landmarks", "%d topluluk simgesi"],
+"visit_profile": ["Planet profile & local reaction", "Gezegen profili ve yerel tepki"],
+"visit_menu": ["A little visit", "Küçük bir ziyaret"],
+"profile_stats": ["Day %d · %d creatures · %d people\n%d communities · %d environments", "Gün %d · %d canlı · %d insan\n%d topluluk · %d yaşam alanı"],
+"profile_discoveries": ["%d / 6 species · %d / 3 rare discoveries", "%d / 6 tür · %d / 3 nadir keşif"],
+"local_reaction": ["My reaction (only on this device): %s", "Tepkim (yalnızca bu cihazda): %s"],
+"reactions": ["None · Wonder · Cozy · Inspiring", "Yok · Büyüleyici · Huzurlu · İlham verici"],
+"compare": ["%d species shared with my world · %d new to me", "Dünyamla ortak %d tür · benim için yeni %d tür"],
+"copy_summary": ["Copy this planet summary", "Gezegen özetini kopyala"],
+"import_failed": ["This planet could not be imported. Use a supported LittleGod showcase, up to 512 KB. Your world is unchanged.", "Gezegen içe aktarılamadı. En çok 512 KB olan desteklenen LittleGod paylaşımını kullan. Dünyan değişmedi."],
+"export_ok": ["Showcase saved. Share the file only if you choose.", "Gezegen paylaşımı kaydedildi. Dosyayı yalnızca istersen paylaş."],
+"file_failed": ["The file could not be saved. Choose another location.", "Dosya kaydedilemedi. Başka bir konum seç."],
+"library_full": ["This device keeps up to eight shared planets.", "Bu cihaz en çok sekiz paylaşılan gezegen saklar."],
+"wonders": ["Wonders to look for", "Aranacak harikalar"],
+"wonders_body": ["Whenever you return, look for a living story. There is no deadline or missed-day penalty.", "Her dönüşünde yaşayan bir hikâye ara. Son tarih veya kaçırılan gün cezası yok."],
+"seek_migrant": ["Nourish a wetland · birds may arrive when it thrives", "Sulak alanı besle · geliştiğinde kuşlar gelebilir"],
+"seek_canopy": ["Follow a gardener · lush, wet forest can form a canopy arch", "Bahçıvanı izle · gür ve nemli ormanda yaprak kemeri oluşabilir"],
+"seek_trade": ["Care for communities · allies share food when one needs it", "Toplulukları gözet · dostlar ihtiyaç halinde besin paylaşır"],
+"canopy_arch": ["%s nurtured a canopy arch. Its shelter conserves forest moisture.", "%s yaprak kemerini büyüttü. Gölgesi ormanın nemini koruyor."],
+"reed_shelter": ["%s made reed shelter. Mossbuns forage safely beside wetland birds.", "%s saz sığınağı oluşturdu. Yosunponlar sulak alan kuşlarıyla güvenle besleniyor."],
+"migration": ["%s arrived in a thriving wetland. A new neighbor to meet!", "%s gelişen sulak alana geldi. Tanışılacak yeni bir komşu!"],
+"trade": ["%s shared a harvest. Surplus food reached the community that needed it.", "%s hasat paylaştı. Artan besin ihtiyacı olan topluluğa ulaştı."],
+"boundary": ["%s compete over depleted land. Restoring resources can ease the tension.", "%s tükenen toprak için yarışıyor. Kaynakları yenilemek gerilimi azaltabilir."],
+"cooperation": ["%s found common ground after resources recovered.", "%s kaynaklar yenilenince uzlaştı."],
+"favorite_creature": ["Favorite / unfavorite this creature", "Canlıyı favorilere ekle / çıkar"],
+"collection": ["Creature collection", "Canlı koleksiyonu"],
+"biography": ["First recorded on day %d · family group %d\nOrigin: %s · %s", "İlk kayıt günü %d · aile grubu %d\nKöken: %s · %s"],
+"founder": ["An early resident", "İlk sakinlerden"],
+"child_of": ["Child of %s", "%s adlı canlının yavrusu"],
+"migrant_bio": ["Arrived from beyond your shores", "Kıyılarının ötesinden geldi"],
+"departed": ["Remembered neighbor · %s", "Hatırlanan komşu · %s"],
+"remove_favorite": ["Unfavorite %s", "%s favoriden çıkar"],
+"places_found": ["Places discovered: %d", "Keşfedilen yer: %d"],
 "closer": ["Look closer", "Yakından bak"],
 "chronicle": ["Planet Chronicle", "Gezegen Günlüğü"],
 "memory_body": ["Recorded moments · tap to revisit their place", "Kaydedilen anlar · yerini görmek için dokun"],
@@ -253,6 +299,7 @@ func build() -> void:
 	place(hint, Rect2(44, 930, 632, 78))
 	place(label(t("gift"), 15, Color("a9bda8")), Rect2(40, 1046, 640, 25))
 	power_buttons.clear()
+	power_icons.clear()
 	for i in range(6):
 		var b = button(t(POWER_KEYS[i]), func(): choose_power(i))
 		b.name = "Power" + str(i)
@@ -271,6 +318,7 @@ func build() -> void:
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		# A sibling stays above the button's redraw when selection changes its style.
 		place(icon, Rect2(62 + i * 112, 1106, 35, 35))
+		power_icons.append(icon)
 		var cost = label(str(Powers.COSTS[i]), 12, Color("a6bd9e"))
 		cost.position = Vector2(73, 8)
 		cost.size = Vector2(23, 20)
@@ -299,6 +347,7 @@ func icon_button(key: String, action: Callable) -> Button:
 	return b
 
 func choose_power(i: int) -> void:
+	if game.visiting: game.power = -1; toast(t("snapshot_notice")); return
 	toast_until = 0
 	game.power = -1 if game.power == i or i < 0 else i
 	hint.text = t("hint_short") if game.power == -1 else t("select") % t(POWER_KEYS[i])
@@ -319,6 +368,17 @@ func refresh() -> void:
 	spirit.text = "✧  " + str(int(w.energy)) + "  " + t("spirit")
 	if chapter: chapter.text = t(LivingStories.objective(w))
 	if speed_button: speed_button.text = str(game.speed) + "×"
+	if game.visiting:
+		stats.text = t("visiting") + "\n" + t("population") % [w.creatures.size(), people]
+		spirit.text = "◇ " + t("readonly_tag")
+		chapter.text = t("visit_profile")
+		speed_button.visible = false
+		var extra = maxf(0,get_viewport().get_visible_rect().size.y-1280)
+		for child in root.get_children():
+			if child is Control and child.position.y >= 1046+extra: child.visible = false
+	# Repaint retained SVG commands after power styles and modal visibility change.
+	for icon in power_icons:
+		if icon.visible: icon.queue_redraw()
 
 func popup(title: String) -> VBoxContainer:
 	game.reset_gesture()
@@ -377,7 +437,13 @@ func main_menu() -> void:
 	if Persistence.has_save(game.save_path): v.add_child(button(t("continue"), game.restore, true))
 	v.add_child(button(t("new"), creation, true))
 	v.add_child(button("English / Türkçe", func(): toggle_language(); main_menu()))
-	v.add_child(button(t("beta"), beta_tools))
+	var row = HBoxContainer.new()
+	for entry in [["local_universe", local_universe], ["beta", beta_tools]]:
+		var b = button(t(entry[0]),entry[1])
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_size_override("font_size",18)
+		row.add_child(b)
+	v.add_child(row)
 
 func creation() -> void:
 	page = "creation"
@@ -407,6 +473,7 @@ func creation() -> void:
 	v.add_child(button(t("back"), main_menu))
 
 func menu() -> void:
+	if game.visiting: visit_menu(); return
 	page = "menu"
 	game.checkpoint("menu")
 	game.in_menu = true
@@ -415,8 +482,11 @@ func menu() -> void:
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 12)
 	grid.add_theme_constant_override("v_separation", 12)
-	v.add_child(grid)
-	for entry in [["journal", journal], ["neighbors", neighbors], ["chronicle", history], ["achievements", achievements], ["settings", settings], ["save", game.manual_save], ["load", game.restore], ["favorites", favorite_places], ["showcase", capture_postcard], ["new", creation], ["pause", func(): game.paused = not game.paused; close()]]:
+	var scroll = ScrollContainer.new()
+	scroll.custom_minimum_size.y = 470
+	v.add_child(scroll)
+	scroll.add_child(grid)
+	for entry in [["local_universe", local_universe], ["wonders", wonders], ["journal", journal], ["neighbors", neighbors], ["chronicle", history], ["achievements", achievements], ["settings", settings], ["save", game.manual_save], ["load", game.restore], ["favorites", favorite_places], ["showcase", capture_postcard], ["new", creation], ["pause", func(): game.paused = not game.paused; close()]]:
 		var b = button(t(entry[0]), entry[1])
 		b.custom_minimum_size.x = 294
 		grid.add_child(b)
@@ -435,7 +505,7 @@ func settings() -> void:
 	v.add_child(button(t("quality") % t("economy" if game.view.low_quality else "smooth"), func(): game.view.set_quality(not game.view.low_quality); game.save_settings(); settings()))
 	v.add_child(button(t("vibration") + "  ·  " + t("on" if game.haptics else "off"), func(): game.haptics = not game.haptics; game.save_settings(); settings()))
 	v.add_child(button(t("theme"), func():
-		if not game.world.is_empty() and game.world.xp >= 40:
+		if not game.visiting and not game.world.is_empty() and game.world.xp >= 40:
 			game.world.theme = 1 - int(game.world.theme)
 			game.schedule_save()))
 	v.add_child(button(t("beta"), beta_tools))
@@ -495,7 +565,7 @@ func event_text(e: Dictionary) -> String:
 	if key in ["discovery", "birth"]: text = text % species(clampi(amount, 0, 5))
 	elif key == "settlement": text = text % stages()[clampi(amount, 0, 2)]
 	elif key == "power": text = text % t(POWER_KEYS[clampi(amount, 0, 5)])
-	elif key in ["friendship", "lantern_grove", "first_village", "first_birth", "companions", "rivalry", "explored", "elder", "landmark", "alliance", "rescue", "silver_fox", "rainbow_choir"]: text = text % str(e.get("subject", game.world.name))
+	elif key in ["friendship", "lantern_grove", "first_village", "first_birth", "companions", "rivalry", "explored", "elder", "landmark", "alliance", "rescue", "silver_fox", "rainbow_choir", "canopy_arch", "reed_shelter", "migration", "trade", "boundary", "cooperation"]: text = text % str(e.get("subject", game.world.name))
 	return text
 
 func history() -> void:
@@ -585,7 +655,7 @@ func inspect_settlement(s: Dictionary) -> void:
 
 func neighbors() -> void:
 	page = "neighbors"
-	var v = popup(t("neighbors"))
+	var v = popup(t("collection"))
 	var scroll = ScrollContainer.new()
 	scroll.custom_minimum_size.y = 470
 	v.add_child(scroll)
@@ -605,11 +675,36 @@ func neighbors() -> void:
 			LivingStories.observe(game.world, cr)
 			show_creature(cr)
 			refresh())
+		b.custom_minimum_size.y = 94
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var art = AtlasTexture.new()
+		art.atlas = GameArt.ATLAS
+		art.region = Rect2((int(cr.species)%4)*256,(int(cr.species)/4)*256,256,256)
+		b.icon = art
+		b.expand_icon = true
+		b.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.add_theme_constant_override("icon_max_width",70)
 		list.add_child(b)
 		list.add_child(label(t(cr.trait), 17))
+		if not game.visiting:
+			var star = button("",func(): preload("res://scripts/world_connections.gd").favorite_creature(game.world,cr); game.schedule_save(); neighbors())
+			star.icon = load("res://assets/phase2/icons/favorite.svg")
+			star.expand_icon = true
+			star.add_theme_constant_override("icon_max_width",26)
+			star.custom_minimum_size = Vector2(54,54)
+			star.size = Vector2(54,54)
+			star.modulate = Color("f4dfa3") if preload("res://scripts/world_connections.gd").is_favorite(game.world,int(cr.identity)) else Color("829f96")
+			b.add_child(star)
+			b.resized.connect(func(): star.position = Vector2(b.size.x-60,8))
+	if not game.visiting:
+		for favorite in game.world.living.favorite_creatures:
+			if not game.world.creatures.any(func(cr): return int(cr.identity)==int(favorite.id)):
+				list.add_child(label(t("departed") % favorite.name,20))
+				list.add_child(button(t("remove_favorite") % favorite.name,func(): game.world.living.favorite_creatures.erase(favorite); game.schedule_save(); neighbors()))
 	add_close(v)
 
 func follow_chapter() -> void:
+	if game.visiting: planet_profile(); return
 	var w = game.world
 	var goal = LivingStories.objective(w)
 	if goal == "guide_world":
@@ -655,6 +750,11 @@ func toast(text: String) -> void:
 	toast_until = Time.get_ticks_msec() + 8000
 
 func _process(_delta: float) -> void:
+	# Six small SVG controls need a fresh command after bulk story/style updates.
+	# Keep the HUD current even while the simulation is paused between ticks.
+	if not game.in_menu and not game.visiting and is_instance_valid(root):
+		for icon in power_icons:
+			if icon.visible: icon.queue_redraw()
 	if toast_until > 0 and Time.get_ticks_msec() > toast_until and not game.in_menu:
 		toast_until = 0
 		hint.text = t("hint_short")
@@ -717,6 +817,7 @@ func feedback_preview() -> void:
 	v.add_child(button(t("back"), beta_tools))
 
 func world_pulse() -> void:
+	if game.visiting: planet_profile(); return
 	page = "pulse"
 	var w = game.world
 	var v = popup(t("pulse"))
@@ -766,6 +867,7 @@ func world_pulse() -> void:
 
 func card_list(v: VBoxContainer, height: float) -> VBoxContainer:
 	var scroll = ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.custom_minimum_size.y = height
 	v.add_child(scroll)
 	var list = VBoxContainer.new()
@@ -826,6 +928,9 @@ func inspect_selected() -> void:
 	var v = popup(subject.get("given_name", Biomes.title(game.world.cells[cell].biome, language)))
 	var list = card_list(v, 220 if not subject.is_empty() else 350)
 	if not cr.is_empty():
+		var origin = Biomes.title(int(game.world.cells[int(cr.origin_cell)].biome),language)
+		var family = t("migrant_bio") if cr.get("migrant",false) else t("child_of") % cr.parent_name if not cr.parent_name.is_empty() else t("founder")
+		list.add_child(label(t("biography") % [1+int(cr.recorded_at)/30,1+int(cr.lineage),origin,family],19))
 		list.add_child(label(t("personal_story") % [int(game.world.tick) - int(cr.recorded_at), cr.trail.size(), Biomes.title(cr.preferred, language)], 21))
 		list.add_child(label(t("bonds") % [creature_name(int(cr.companion)), creature_name(int(cr.rival))], 19))
 		list.add_child(label(t(cr.trait), 19))
@@ -834,7 +939,7 @@ func inspect_selected() -> void:
 		list.add_child(label(t("community_story") % [int(game.world.tick) - int(home.recorded_at), home.allies.size()], 19))
 	for e in game.world.living.memories:
 		if (not cr.is_empty() and int(e.identity) == int(cr.identity)) or (not home.is_empty() and int(e.cell) == cell): memory_card(list, e)
-	if not subject.is_empty():
+	if not subject.is_empty() and not game.visiting:
 		var input = LineEdit.new()
 		input.name = "PersonalName"
 		input.text = subject.given_name
@@ -845,7 +950,9 @@ func inspect_selected() -> void:
 		v.add_child(input)
 		v.add_child(button(t("rename"), func():
 			if LivingStories.rename_subject(subject, input.text): game.schedule_save(); inspect_selected()))
-	v.add_child(button(t("favorite"), func(): LivingStories.favorite(game.world, cell); game.schedule_save(); close()))
+	if not game.visiting:
+		if not cr.is_empty(): list.add_child(button(t("favorite_creature"),func(): preload("res://scripts/world_connections.gd").favorite_creature(game.world,cr); game.schedule_save(); inspect_selected()))
+		v.add_child(button(t("favorite"), func(): LivingStories.favorite(game.world, cell); game.schedule_save(); close()))
 	add_close(v)
 
 func creature_name(identity: int) -> String:
@@ -869,19 +976,18 @@ func capture_postcard() -> void:
 	close()
 	world_controls(false)
 	game.in_menu = true
-	var title = label(game.world.name, 44, Color("f0e7cd"))
+	var title = label(game.showcases.public_text(game.world.name,32,"Little planet"), 44, Color("f0e7cd"))
 	title.add_theme_font_override("font", load("res://assets/phase2/lora.ttf"))
 	place(title, Rect2(40, 82, 640, 80))
-	var memory_count = game.world.living.memories.size()
-	var caption = label("L I T T L E G O D\n" + (t("day") % (1 + int(game.world.tick) / 30)) + " · " + (t("one_memory") if memory_count == 1 else t("memories_count") % memory_count), 21)
-	place(caption, Rect2(50, 990, 620, 95))
+	var caption = label("L I T T L E G O D\n" + profile_summary(game.showcases.project(game.world)).split("\n",true,1)[1], 21)
+	place(caption, Rect2(50, 990 + maxf(0,game.get_viewport_rect().size.y-1280), 620, 185))
 	await RenderingServer.frame_post_draw
 	postcard_image = get_viewport().get_texture().get_image()
 	title.queue_free()
 	caption.queue_free()
 	postcard_preview()
 
-func postcard_preview() -> void:
+func postcard_preview(message: String = "") -> void:
 	page = "postcard"
 	var v = popup(t("postcard"))
 	var preview = TextureRect.new()
@@ -890,7 +996,7 @@ func postcard_preview() -> void:
 	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	preview.custom_minimum_size.y = 320
 	v.add_child(preview)
-	v.add_child(label(t("postcard_body"), 19))
+	v.add_child(label(t("postcard_body") if message.is_empty() else message, 19))
 	v.add_child(button(t("export_png"), export_postcard, true))
 	add_close(v)
 
@@ -907,8 +1013,167 @@ func export_postcard() -> void:
 	add_child(dialog)
 	dialog.file_selected.connect(func(path):
 		var ok = save_postcard(path)
-		postcard_preview()
-		toast(t("image_saved" if ok else "image_failed"))
+		postcard_preview(t("image_saved" if ok else "image_failed"))
 		dialog.queue_free())
 	dialog.canceled.connect(func(): dialog.queue_free())
 	dialog.popup_centered_ratio(.8)
+
+func local_universe() -> void:
+	page = "universe"
+	var v = popup(t("local_universe"))
+	v.add_child(label(t("universe_body"),20))
+	var list = card_list(v,330)
+	if not game.world.is_empty(): list.add_child(button(t("my_profile"),planet_profile,true))
+	for id in game.showcases.entries():
+		var data = game.showcases.get_planet(id)
+		list.add_child(button(data.planet.name + " · " + (t("day") % (1+int(data.planet.tick)/30)),func(): planet_profile(data,id)))
+		var remove_copy = button(t("remove_copy"),func(): game.showcases.remove(id); local_universe())
+		remove_copy.add_theme_font_size_override("font_size",17)
+		list.add_child(remove_copy)
+	v.add_child(button(t("import_planet"),import_planet_dialog))
+	v.add_child(label(t("library_full"),17))
+	if game.world.is_empty(): v.add_child(button(t("back"),main_menu))
+	else: add_close(v)
+
+func import_planet_text(text: String) -> String:
+	return game.showcases.import_text(text)
+
+func import_planet_dialog() -> void:
+	var dialog = FileDialog.new()
+	dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	dialog.access = FileDialog.ACCESS_FILESYSTEM
+	dialog.use_native_dialog = true
+	dialog.filters = PackedStringArray(["*.lgplanet ; LittleGod planet", "*.json ; JSON"])
+	add_child(dialog)
+	dialog.file_selected.connect(func(path):
+		var data = game.showcases.read_file(path)
+		var id = "" if data.is_empty() else import_planet_text(JSON.stringify(data))
+		if id.is_empty(): social_message(t("import_failed"))
+		else: planet_profile(game.showcases.get_planet(id),id)
+		dialog.queue_free())
+	dialog.canceled.connect(func(): dialog.queue_free())
+	dialog.popup_centered_ratio(.8)
+
+func social_message(text: String) -> void:
+	page = "universe"
+	var v = popup(t("local_universe"))
+	v.add_child(label(text,22))
+	v.add_child(button(t("back"),func(): planet_profile() if game.visiting else local_universe()))
+
+func profile_summary(data: Dictionary) -> String:
+	var people = 0
+	var biomes: Dictionary = {}
+	for s in data.settlements: people += int(s.population)
+	for c in data.cells: biomes[int(c.biome)] = true
+	var monuments = data.settlements.filter(func(s): return s.landmark).size()
+	return data.planet.name + "\n" + t("profile_stats") % [1+int(data.planet.tick)/30,data.creatures.size(),people,data.settlements.size(),biomes.size()] + "\n" + t("profile_discoveries") % [data.discoveries.size(),data.secrets.size()] + " · " + t("landmarks_count") % monuments
+
+func portrait(frame: int, size_value: Vector2) -> TextureRect:
+	var picture = TextureRect.new()
+	picture.custom_minimum_size = size_value
+	picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var texture = AtlasTexture.new()
+	texture.atlas = GameArt.ATLAS
+	texture.region = Rect2((frame%4)*256,(frame/4)*256,256,256)
+	picture.texture = texture
+	return picture
+
+func planet_profile(data: Dictionary = {}, id: String = "") -> void:
+	if data.is_empty():
+		if game.world.is_empty(): local_universe(); return
+		data = game.showcases.project(game.world)
+		id = game.visited_id if game.visiting else ""
+	if not game.showcases.validate(data): social_message(t("import_failed")); return
+	page = "profile"
+	var v = popup(data.planet.name)
+	var list = card_list(v,380)
+	list.add_child(label(t("snapshot_notice") if not id.is_empty() else t("share_notice"),18))
+	list.add_child(label(profile_summary(data),22,Color("e7d8a9")))
+	var artwork = HBoxContainer.new()
+	artwork.alignment = BoxContainer.ALIGNMENT_CENTER
+	list.add_child(artwork)
+	var featured: Array = []
+	var represented: Array = []
+	for cr in data.creatures:
+		if not represented.has(int(cr.species)) and featured.size()<3:
+			featured.append(cr); represented.append(int(cr.species))
+	for cr in featured:
+		var column = VBoxContainer.new()
+		column.add_child(portrait(int(cr.species),Vector2(140,105)))
+		column.add_child(label(cr.name,17))
+		artwork.add_child(column)
+	if not id.is_empty():
+		var mine = game.visit_origin.get("world",{}) if game.visiting else game.world
+		if not mine.is_empty():
+			var common = data.discoveries.filter(func(s): return mine.discoveries.has(int(s))).size()
+			list.add_child(label(t("compare") % [common,data.discoveries.size()-common],19))
+	for key in data.secrets:
+		list.add_child(label("✧ " + event_text({"key":key,"subject":data.planet.name}),19))
+	for m in data.memories.slice(maxi(0,data.memories.size()-2)):
+		list.add_child(label(event_text(m),18))
+	list.add_child(button(t("copy_summary"),func(): DisplayServer.clipboard_set(profile_summary(data))))
+	var actions = HBoxContainer.new()
+	v.add_child(actions)
+	if not id.is_empty() and not game.visiting:
+		var visit = button(t("visit_planet"),func(): game.visit_planet(data,id),true)
+		visit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		actions.add_child(visit)
+	else:
+		var file = button(t("export_planet"),func(): export_planet_dialog(data))
+		file.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		actions.add_child(file)
+		var card = button(t("showcase"),capture_postcard)
+		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		card.add_theme_font_size_override("font_size",18)
+		actions.add_child(card)
+	if not id.is_empty():
+		var reaction = game.showcases.reaction(id)
+		v.add_child(button(t("local_reaction") % t("reactions").split(" · ")[reaction],func(): game.showcases.react(id,(reaction+1)%4); planet_profile(data,id)))
+	add_close(v)
+
+func export_planet_dialog(data: Dictionary, filename: String = "LittleGod-planet.lgplanet") -> void:
+	if not game.showcases.validate(data): social_message(t("import_failed")); return
+	var dialog = FileDialog.new()
+	dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	dialog.access = FileDialog.ACCESS_FILESYSTEM
+	dialog.use_native_dialog = true
+	dialog.filters = PackedStringArray(["*.lgplanet ; LittleGod planet"])
+	dialog.current_file = filename
+	add_child(dialog)
+	dialog.file_selected.connect(func(path):
+		var f = FileAccess.open(path,FileAccess.WRITE)
+		var ok = f != null
+		if ok: f.store_string(JSON.stringify(data)); f.flush(); ok = f.get_error()==OK; f.close()
+		social_message(t("export_ok" if ok else "file_failed"))
+		dialog.queue_free())
+	dialog.canceled.connect(func(): dialog.queue_free())
+	dialog.popup_centered_ratio(.8)
+
+func visit_menu() -> void:
+	page = "visit_menu"
+	var v = popup(t("visit_menu"))
+	v.add_child(label(t("snapshot_notice"),21))
+	var list = card_list(v,350)
+	for entry in [["my_profile",planet_profile],["collection",neighbors],["chronicle",history],["showcase",capture_postcard],["settings",settings]]:
+		list.add_child(button(t(entry[0]),entry[1]))
+	v.add_child(button(t("leave_visit"),game.stop_visit,true))
+	add_close(v)
+
+func wonders() -> void:
+	page = "wonders"
+	var v = popup(t("wonders"))
+	v.add_child(label(t("wonders_body"),20))
+	var list = card_list(v,380)
+	for opportunity in preload("res://scripts/world_connections.gd").opportunities(game.world):
+		var action = button(t(opportunity.key),func():
+			focus_place(int(opportunity.cell))
+			choose_power(int(opportunity.power)))
+		action.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		list.add_child(action)
+	list.add_child(label(t("places_found") % game.world.living.places.size(),21))
+	for place in game.world.living.places:
+		var action = button(event_text({"key":place.kind,"subject":game.world.name}),func(): focus_place(int(place.cell)))
+		action.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		list.add_child(action)
+	add_close(v)

@@ -1,0 +1,43 @@
+{
+	"atlas_size": [
+		1024,
+		1024
+	],
+	"average_fps": 60.0202829919705,
+	"content_scale_mode": 1,
+	"control_scene": false,
+	"creature_animation_average_ms": 0.119729189789123,
+	"creatures": 18,
+	"draw_calls": 137.0,
+	"effects": 0,
+	"first_frame_ms": 1501,
+	"foreground_cpu_average_ms": 0.166007769145394,
+	"frame_p50_ms": 16.665,
+	"frame_p95_ms": 16.968,
+	"frames": 901,
+	"nodes": 132.0,
+	"peak_draw_calls": 170.0,
+	"peak_process_ms": 31.289,
+	"pipeline": {
+		"scene_ready_ms": 18.599,
+		"world_generation_ms": 0.761
+	},
+	"platform": "Windows",
+	"props_created_total": 122,
+	"props_sync_ms": 0.958,
+	"quality": "smooth",
+	"render_size": [
+		405,
+		720
+	],
+	"renderer": "gl_compatibility",
+	"simulation_average_ms": 0.633428571428571,
+	"simulation_peak_ms": 0.792,
+	"simulation_ticks": 7,
+	"static_memory_mb": 42.7689943313599,
+	"terrain_last_build_ms": 3.735,
+	"terrain_rebuilds": 2,
+	"video_memory_mb": 17.7480936050415,
+	"wall_seconds": 15.011592,
+	"world_cpu_average_ms": 0.154009988901221
+}

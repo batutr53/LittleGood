@@ -9,6 +9,7 @@ static func has_save(path: String = PATH) -> bool:
 	return FileAccess.file_exists(path) or FileAccess.file_exists(path + ".bak") or FileAccess.file_exists(path + ".tmp")
 
 static func save_world(w: Dictionary, path: String = PATH) -> bool:
+	if w.get("_read_only",false): return false
 	var candidate = w.duplicate()
 	candidate.saved_at = Time.get_unix_time_from_system()
 	if not validate(candidate): return false
@@ -74,6 +75,7 @@ static func validate(w: Variant) -> bool:
 			for field in ["tick", "cell", "identity", "species", "biome", "plants"]:
 				if not (memory.get(field) is int or memory.get(field) is float) or not is_finite(float(memory[field])): return false
 			if memory.cell < 0 or memory.cell >= w.cells.size() or memory.tick < 0 or memory.species < -1 or memory.species > 5 or memory.biome < 0 or memory.biome > 6: return false
+		if not preload("res://scripts/world_connections.gd").validate(w): return false
 	for e in w.events:
 		if not e is Dictionary or not e.get("key") is String or not (e.get("tick") is int or e.get("tick") is float): return false
 	for s in w.discoveries:
@@ -99,6 +101,10 @@ static func validate(w: Variant) -> bool:
 			if cr.preferred < 0 or cr.preferred > 5 or not cr.get("trail") is Array or cr.trail.size() > 32: return false
 			for cell in cr.trail:
 				if not (cell is float or cell is int) or not is_finite(float(cell)) or cell < 0 or cell >= w.cells.size(): return false
+		for field in ["lineage","origin_cell"]:
+			if cr.has(field) and (not (cr[field] is int or cr[field] is float) or not is_finite(float(cr[field])) or cr[field]<0): return false
+		if cr.has("origin_cell") and cr.origin_cell >= w.cells.size(): return false
+		if cr.has("parent_name") and (not cr.parent_name is String or cr.parent_name.length()>48): return false
 	for s in w.settlements:
 		if not s is Dictionary: return false
 		for key in ["cell", "population", "food", "stage", "tech", "blessing"]:
@@ -111,6 +117,9 @@ static func validate(w: Variant) -> bool:
 				if not (s.get(field) is int or s.get(field) is float) or not is_finite(float(s[field])): return false
 			for cell in s.allies:
 				if not (cell is int or cell is float) or not is_finite(float(cell)) or cell < 0 or cell >= w.cells.size(): return false
+		for field in ["rival_cell","trade_until"]:
+			if s.has(field) and (not (s[field] is int or s[field] is float) or not is_finite(float(s[field]))): return false
+		if s.has("rival_cell") and (s.rival_cell < -1 or s.rival_cell >= w.cells.size()): return false
 	return true
 
 static func normalize_integer_fields(w: Dictionary) -> Dictionary:
@@ -133,15 +142,22 @@ static func normalize_integer_fields(w: Dictionary) -> Dictionary:
 	for i in range(w.living.observed.size()): w.living.observed[i] = int(w.living.observed[i])
 	for i in range(w.living.favorites.size()): w.living.favorites[i] = int(w.living.favorites[i])
 	for cr in w.creatures:
-		for key in ["recorded_at", "preferred", "habitat_ticks", "companion", "rival", "bond_ticks", "meeting_id", "parent_id"]:
+		for key in ["recorded_at", "preferred", "habitat_ticks", "companion", "rival", "bond_ticks", "meeting_id", "parent_id", "lineage", "origin_cell"]:
 			if cr.has(key): cr[key] = int(cr[key])
 		for i in range(cr.trail.size()): cr.trail[i] = int(cr.trail[i])
 	for s in w.settlements:
-		for key in ["recorded_at", "dry_ticks"]: s[key] = int(s[key])
+		for key in ["recorded_at", "dry_ticks", "rival_cell", "trade_until"]: s[key] = int(s[key])
 		for i in range(s.allies.size()): s.allies[i] = int(s.allies[i])
 	for memory in w.living.memories:
 		for key in ["tick", "cell", "identity", "species", "biome"]: memory[key] = int(memory[key])
 		memory.plants = snappedf(memory.plants, .01)
+	w.living.next_migration = int(w.living.next_migration)
+	for record in w.living.favorite_creatures:
+		for key in ["id","species","recorded_at"]: record[key] = int(record[key])
+	for record in w.living.places:
+		for key in ["cell","tick"]: record[key] = int(record[key])
+	for record in w.living.trades:
+		for key in ["a","b","tick"]: record[key] = int(record[key])
 	return w
 
 static func read_checked(path: String) -> Dictionary:
@@ -196,6 +212,7 @@ static func offline_step(job: Dictionary, budget: int = 12) -> bool:
 static func offline_finish(job: Dictionary) -> Dictionary:
 	assert(job.done == job.count, "Offline replay must finish before committing")
 	var w: Dictionary = job.world
+	if w.get("_read_only",false): return {"minutes":0,"ticks":0,"events":[],"memories":[]}
 	w.rng_state = str(job.rng.state)
 	w.saved_at = job.now
 	var changes: Array = []

@@ -34,3 +34,7 @@ No stock-art marketplace, external music license, account, or paid asset was use
 ## Phase-five additions
 
 `assets/phase2/silver.gdshader` is original shader code recoloring the existing painted fox. Spring flow, community banners, companionship marks and the rainbow choir are procedural animated gameplay graphics. Chronicle illustrations reuse the original species/environment atlas; postcards capture the actual rendered world. No new raster generation service, stock pack or paid asset was used in phase five. Existing artwork, fonts and license files are retained.
+
+## Phase six additions
+
+Original favorite SVG: assets/phase2/icons/favorite.svg. Procedural canopy arches, reed shelters, active trade trails and favorite halos are drawn by world_view.gd; settlement culture tinting extends retained sprites. Collection/profile/postcard screens reuse the original atlas and fonts. No raster asset was replaced, downloaded or generated through a paid service. Real gameplay screenshots and public inert showcase examples are under docs/screenshots/phase6-* and docs/examples.

@@ -10,6 +10,9 @@ var peak_process = 0.0
 var peak_draws = 0.0
 var done = false
 var first_frame_ms = 0
+var world_cpu_total = 0.0
+var foreground_cpu_total = 0.0
+var animation_cpu_total = 0.0
 
 func _ready() -> void:
 	started = Time.get_ticks_usec()
@@ -20,6 +23,9 @@ func _process(_delta: float) -> void:
 	var now = Time.get_ticks_usec()
 	if first_frame_ms == 0: first_frame_ms = Time.get_ticks_msec()
 	frame_times.append((now - previous) / 1000.0)
+	world_cpu_total += get_parent().view.frame_cpu_ms
+	foreground_cpu_total += get_parent().view.foreground_cpu_ms
+	animation_cpu_total += get_parent().view.inhabitants.animate_ms
 	previous = now
 	peak_process = maxf(peak_process, Performance.get_monitor(Performance.TIME_PROCESS) * 1000)
 	peak_draws = maxf(peak_draws, Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
@@ -40,6 +46,9 @@ func finish() -> void:
 	report["props_created_total"] = game.view.inhabitants.props_created
 	report["content_scale_mode"] = game.get_window().content_scale_mode
 	report["render_size"] = [game.get_viewport().get_texture().get_width(), game.get_viewport().get_texture().get_height()]
+	report["world_cpu_average_ms"] = world_cpu_total/maxi(1,frame_times.size())
+	report["foreground_cpu_average_ms"] = foreground_cpu_total/maxi(1,frame_times.size())
+	report["creature_animation_average_ms"] = animation_cpu_total/maxi(1,frame_times.size())
 	f.store_string(JSON.stringify(report, "\t"))
 	f.close()
 	print("PHASE2_PROFILE ", JSON.stringify(report))

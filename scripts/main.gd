@@ -33,6 +33,15 @@ var onboarding_live = false
 var diagnostics = preload("res://scripts/local_diagnostics.gd").new()
 var pipeline: Dictionary = {}
 var save_path = Persistence.PATH
+var showcases = preload("res://scripts/planet_showcase.gd").new()
+var visiting = false
+var visited_id = ""
+var visit_origin: Dictionary = {}
+var input_feedback_ms = -1.0
+
+func measure_input_feedback(started: int) -> void:
+	await RenderingServer.frame_post_draw
+	input_feedback_ms = (Time.get_ticks_usec()-started)/1000.0
 
 func _exit_tree() -> void:
 	GameArt.foliage_material = null
@@ -40,6 +49,8 @@ func _exit_tree() -> void:
 
 func _ready() -> void:
 	var ready_start = Time.get_ticks_usec()
+	# Automated harnesses must not be recorded as human launches or sessions.
+	is_test_session = is_test_session or (OS.is_debug_build() and ("--benchmark" in OS.get_cmdline_user_args() or "--capture" in OS.get_cmdline_user_args() or FileAccess.file_exists("user://phase2_benchmark.json") or FileAccess.file_exists("user://phase4_qa.json")))
 	get_window().min_size = Vector2i(360, 640)
 	get_tree().auto_accept_quit = false
 	get_tree().quit_on_go_back = false
@@ -48,6 +59,7 @@ func _ready() -> void:
 	audio = Soundscape.new()
 	add_child(audio)
 	ui.game = self
+	view.set_quality(false)
 	var config = ConfigFile.new()
 	if config.load("user://settings.cfg") == OK:
 		ui.language = config.get_value("user", "language", "en")
@@ -56,6 +68,9 @@ func _ready() -> void:
 		diagnostics.enabled = config.get_value("user", "diagnostics", true)
 		view.set_quality(config.get_value("user", "economy", false))
 	diagnostics.configure()
+	if not is_test_session:
+		diagnostics.begin()
+		diagnostics.record("first_launch",0,true)
 	show_world(false)
 	ui.build()
 	ui.main_menu()
@@ -94,7 +109,7 @@ func _ready() -> void:
 			in_menu = true
 		var probe = PerformanceProbe.new()
 		probe.duration = options.get("duration", 15)
-		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase5/desktop-" + ("economy" if view.low_quality else "smooth") + ".json"
+		if not OS.has_feature("mobile"): probe.destination = "res://builds/phase6/desktop-" + ("economy" if view.low_quality else "smooth") + ".json"
 		add_child(probe)
 	set_process_input(true)
 	if OS.is_debug_build() and FileAccess.file_exists("user://phase4_qa.json"):
@@ -114,6 +129,7 @@ func save_settings() -> void:
 	config.save("user://settings.cfg")
 
 func new_planet(seed_value: int, planet_name: String, persist: bool = true) -> void:
+	if visiting: return
 	var start = Time.get_ticks_usec()
 	world = WorldGen.generate(seed_value, planet_name)
 	pipeline.world_generation_ms = (Time.get_ticks_usec() - start) / 1000.0
@@ -123,6 +139,8 @@ func new_planet(seed_value: int, planet_name: String, persist: bool = true) -> v
 	rng.state = int(world.rng_state)
 	view.world = world
 	view.selected = -1
+	view.selected_creature = -1
+	view.selected_identity = -1
 	view.creature_positions.clear()
 	view.inhabitants.position_memory.clear()
 	view.invalidate()
@@ -141,7 +159,7 @@ func new_planet(seed_value: int, planet_name: String, persist: bool = true) -> v
 		checkpoint("creation")
 
 func restore() -> void:
-	if loading: return
+	if loading or visiting: return
 	loading = true
 	ui.loading_screen()
 	await get_tree().process_frame
@@ -152,7 +170,7 @@ func restore() -> void:
 		loading = false
 		ui.main_menu()
 		ui.toast(ui.t("load_failed"))
-		note("handled_error", 2)
+		if not is_test_session: diagnostics.record("handled_error", 2)
 		return
 	var recovery = Persistence.last_recovery
 	var report = await replay_offline(restored, Time.get_unix_time_from_system())
@@ -164,6 +182,8 @@ func restore() -> void:
 	rng.state = int(world.rng_state)
 	view.world = world
 	view.selected = -1
+	view.selected_creature = -1
+	view.selected_identity = -1
 	view.creature_positions.clear()
 	view.invalidate()
 	ui.close()
@@ -188,15 +208,15 @@ func show_world(value: bool) -> void:
 	$WorldForeground.set_process(value)
 
 func note(key: String, value: int = 0, once: bool = false) -> void:
-	if is_test_session or not has_player_world: return
+	if is_test_session or not has_player_world or visiting: return
 	diagnostics.begin()
 	diagnostics.record(key, value, once)
 
 func schedule_save() -> void:
-	if has_player_world and not is_test_session: save_pending = 1.0
+	if has_player_world and not is_test_session and not visiting: save_pending = 1.0
 
 func checkpoint(_reason: String = "automatic") -> bool:
-	if world.is_empty() or is_test_session or not has_player_world: return true
+	if world.is_empty() or is_test_session or not has_player_world or visiting: return true
 	world.rng_state = str(rng.state)
 	world.user_paused = paused
 	var start = Time.get_ticks_usec()
@@ -208,6 +228,7 @@ func checkpoint(_reason: String = "automatic") -> bool:
 	return ok
 
 func replay_offline(target: Dictionary, now: float) -> Dictionary:
+	if target.get("_read_only",false): return {}
 	var start = Time.get_ticks_usec()
 	var job = Persistence.offline_begin(target, now)
 	var peak = 0.0
@@ -233,6 +254,7 @@ func resume_session(now: float = -1) -> void:
 	if not suspended: return
 	suspended = false
 	last_clock_ms = Time.get_ticks_msec()
+	if visiting: return
 	if world.is_empty() or loading: return
 	if has_player_world and not is_test_session: diagnostics.begin()
 	var resume_time = Time.get_unix_time_from_system() if now < 0 else now
@@ -260,13 +282,20 @@ func reset_gesture() -> void:
 func navigate_back() -> void:
 	if loading: return
 	reset_gesture()
+	if visiting:
+		if in_menu and ui.page == "visit_menu": stop_visit()
+		elif in_menu and ui.page == "profile": ui.visit_menu()
+		elif in_menu: ui.visit_menu()
+		else: ui.visit_menu()
+		return
 	if ui.page == "beta": ui.settings()
-	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse", "detail", "favorites", "postcard"]: ui.menu()
+	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse", "detail", "favorites", "postcard", "universe", "profile", "wonders"]: ui.menu() if not world.is_empty() else ui.main_menu()
 	elif in_menu and has_player_world: ui.close()
 	elif has_player_world: ui.menu()
 	else: ui.main_menu()
 
 func advance_tick() -> void:
+	if visiting or world.is_empty(): return
 	var start = Time.get_ticks_usec()
 	var before = world.discoveries.size()
 	var chapters_before = world.living.findings.size()
@@ -326,7 +355,7 @@ func _process(delta: float) -> void:
 	if save_pending >= 0:
 		save_pending -= simulation_delta
 		if save_pending <= 0: checkpoint("interaction")
-	if paused or in_menu: return
+	if paused or in_menu or visiting: return
 	accumulator += simulation_delta * speed
 	autosave_time += simulation_delta
 	while accumulator >= 2:
@@ -405,6 +434,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_SPACE: paused = not paused; ui.refresh()
 
 func touch_world(pos: Vector2) -> void:
+	var input_started = Time.get_ticks_usec()
+	if visiting: power = -1
 	if power < 0:
 		for home in world.settlements:
 			if pos.distance_to(view.screen_point(world.cells[int(home.cell)])) < 13 * view.display_zoom:
@@ -438,5 +469,59 @@ func touch_world(pos: Vector2) -> void:
 			power = -1
 			ui.choose_power(-1)
 			ui.refresh()
+			if DisplayServer.get_name() != "headless": measure_input_feedback(input_started)
 		else: ui.toast(ui.t("habitat_full") if power == 3 and world.creatures.size() >= 70 else ui.t("failed"))
 	else: ui.inspect(cell)
+
+func visit_planet(data: Dictionary, id: String = "") -> bool:
+	var imported = showcases.world_from(data)
+	if imported.is_empty() or visiting: return false
+	if not checkpoint("before_visit"): return false
+	visit_origin = {"world":world,"paused":paused,"power":power,"pan":view.pan,"zoom":view.zoom,"owned":has_player_world,"rng":rng.state,"onboarding":onboarding_live}
+	visiting = true
+	visited_id = id
+	world = imported
+	paused = true
+	power = -1
+	save_pending = -1
+	onboarding_live = false
+	show_world(true)
+	reset_visit_camera()
+	ui.close()
+	return true
+
+func reset_visit_camera() -> void:
+	view.world = world
+	view.selected = -1
+	view.selected_creature = -1
+	view.selected_identity = -1
+	view.inhabitants.position_memory.clear()
+	view.pan = Vector2.ZERO
+	view.display_pan = Vector2.ZERO
+	view.zoom = .88
+	view.display_zoom = .88
+	view.invalidate()
+	reset_gesture()
+	accumulator = 0
+	last_clock_ms = Time.get_ticks_msec()
+
+func stop_visit() -> void:
+	if not visiting: return
+	var previous = visit_origin
+	visiting = false
+	visited_id = ""
+	world = previous.world
+	paused = previous.paused
+	power = previous.power
+	has_player_world = previous.owned
+	onboarding_live = previous.onboarding
+	rng.state = previous.rng
+	reset_visit_camera()
+	view.pan = previous.pan
+	view.zoom = previous.zoom
+	visit_origin = {}
+	show_world(not world.is_empty())
+	if world.is_empty(): ui.main_menu()
+	else:
+		ui.close()
+		checkpoint("after_visit")

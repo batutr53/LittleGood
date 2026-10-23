@@ -49,8 +49,8 @@ func _initialize() -> void:
 				if not valid or not saved or not compatible or w.creatures.size() < 6 or w.creatures.size() > 70: failures.append(str(seed_value) + ":" + scenario)
 				rows.append({"seed": seed_value, "scenario": scenario, "interventions": intervene, "ticks": ticks, "creatures": w.creatures.size(), "settlements": w.settlements.size(), "people": snappedf(people,.01), "food": snappedf(food,.01), "stages": stages, "memories": w.living.memories.size(), "secrets": w.living.secrets.duplicate(), "chapters": w.living.findings.size(), "energy": w.energy, "valid": valid, "save_compatible": compatible, "simulation_ms": elapsed, "peak_live_tick_ms": peak})
 	var report = {"source": "seeded_automated_simulation", "live_seconds_per_tick": 2, "offline_seconds_per_tick": 60, "offline_cap_ticks": 480, "rows": rows, "failures": failures, "wall_ms": Time.get_ticks_msec() - start}
-	DirAccess.make_dir_recursive_absolute("res://builds/phase5")
-	var file = FileAccess.open("res://builds/phase5/balance.json", FileAccess.WRITE)
+	DirAccess.make_dir_recursive_absolute("res://builds/phase6")
+	var file = FileAccess.open("res://builds/phase6/balance.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "\t")); file.close()
 	print("BALANCE_RESULT: %d scenarios, %d failures; %d ms" % [rows.size(), failures.size(), report.wall_ms])
 	quit(0 if failures.is_empty() else 1)

@@ -1,0 +1,18 @@
+{
+  "source": "automated_functional_validation",
+  "suites": {
+    "core": 51,
+    "runtime": 1,
+    "phase2": 15,
+    "phase3": 49,
+    "phase4": 40,
+    "phase5": 50,
+    "phase6": 74
+  },
+  "total": 280,
+  "balance_scenarios": 40,
+  "android_qa_checks": 26,
+  "native_file_checks": 3,
+  "physical_devices": 0,
+  "human_beta_testers": 0
+}

@@ -1,6 +1,7 @@
 .godot/
 tools/
-builds/
+builds/*
+!builds/.gdignore
 *.tmp
 .forge/
 .mcp.json

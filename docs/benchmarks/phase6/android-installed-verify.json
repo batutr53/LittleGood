@@ -1,0 +1,7 @@
+{
+  "installed_apk_matches_artifact": true,
+  "sha256": "6a88241d4ac414acc60404d394ab30e916c1a451d5c2729c57883fa10637ad5b",
+  "package": "org.littlegod.livinguniverse",
+  "version": "0.6.0",
+  "device": "emulator-5554"
+}

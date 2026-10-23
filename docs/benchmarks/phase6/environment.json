@@ -1,0 +1,9 @@
+{
+  "source": "observed_development_environment",
+  "utc": "2026-10-22T22:40:23.526581+00:00",
+  "emulator_serial": "emulator-5554",
+  "physical_devices": 0,
+  "final_profiles_godot_editors_closed": true,
+  "final_profiles_desktop_games_closed": true,
+  "qa_package_force_stopped_before_profiles": true
+}

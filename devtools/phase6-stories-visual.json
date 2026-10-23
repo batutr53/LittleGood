@@ -1,0 +1,159 @@
+[
+  {
+    "name": "run",
+    "arguments": {
+      "action": "stop"
+    }
+  },
+  {
+    "name": "editor",
+    "arguments": {
+      "action": "clear_logs"
+    }
+  },
+  {
+    "name": "files",
+    "arguments": {
+      "action": "rescan"
+    }
+  },
+  {
+    "name": "scene",
+    "arguments": {
+      "action": "reload",
+      "path": "res://scenes/main.tscn"
+    }
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "play",
+      "mute": true
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "set",
+      "path": ".",
+      "props": {
+        "is_test_session": true
+      }
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "set",
+      "path": "Interface",
+      "props": {
+        "language": "en"
+      }
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "build"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": ".",
+      "method": "new_planet",
+      "args": [
+        2026,
+        "Lumi",
+        false
+      ]
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "close"
+    }
+  },
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "scene.ui.close()\nvar w=scene.world\nw.name=\"Story test world\"\nw.tick=120\nvar forest=-1\nvar marsh=-1\nfor i in range(w.cells.size()):\n\tif forest<0 and w.cells[i].biome==1: forest=i\n\tif marsh<0 and w.cells[i].biome==5: marsh=i\nvar gardener=w.creatures[0]\ngardener.trait=\"gardener\";gardener.cell=forest\nw.cells[forest].plants=1;w.cells[forest].moisture=.9;w.cells[forest].detail=.95\nvar bird=w.creatures[1]\nbird.species=5;bird.cell=marsh\nvar bun=w.creatures[2]\nbun.species=0;bun.cell=marsh\nw.cells[marsh].moisture=.9;w.cells[marsh].plants=.9\nvar a=w.settlements[0]\nvar b=a.duplicate(true)\nb.cell=int(a.cell)+3;b.given_name=\"Moonreed Dock\";b.custom=\"riverfolk\";b.food=10\nb.allies=[int(a.cell)];a.allies=[int(b.cell)];a.food=90\na.given_name=\"Willow Orchard\";a.custom=\"orchard\"\na.population=20;b.population=20\nw.settlements.append(b)\nCivilization.tick(w)\npreload(\"res://scripts/world_connections.gd\").tick(w)\npreload(\"res://scripts/world_connections.gd\").favorite_creature(w,gardener)\nscene.paused=true\nscene.view.pan=Vector2.ZERO;scene.view.zoom=.98\nscene.view.invalidate();scene.ui.refresh()\nreturn {\"places\":w.living.places,\"trades\":w.living.trades,\"valid\":Persistence.validate(w)}"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 3
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-system-stories.png"
+  },
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "scene.view.selected_creature=0\nscene.view.selected=int(scene.world.creatures[0].cell)\nscene.ui.inspect_selected()\nreturn true"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.5
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-biography.png"
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "call",
+      "path": "Interface",
+      "method": "wonders"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.5
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/docs/screenshots/phase6-places.png"
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "errors"
+    }
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "stop"
+    }
+  }
+]
