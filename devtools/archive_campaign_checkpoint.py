@@ -11,6 +11,7 @@ subprocess.run(['git','archive','--format=zip','--prefix='+prefix,'-o',str(dest)
 with zipfile.ZipFile(dest) as z:
  assert z.testzip() is None
  for name in z.namelist():
+  if name.endswith('/'):continue
   n=name[len(prefix):];assert not n.startswith(('tools/','.godot/','server/.local/')) and not n.endswith('/.env')
   assert '/bin/' not in n and '/obj/' not in n
   assert not n.startswith('builds/') or n=='builds/.gdignore'
