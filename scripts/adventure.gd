@@ -25,11 +25,12 @@ static func enter(w: Dictionary,home_paused: bool=false) -> bool:
 static func exit(w: Dictionary) -> bool:
 	if not H.writable(w) or w.kingdom.adventure.run.is_empty() or not w.kingdom.adventure.run.active:return false
 	var a=w.kingdom.adventure;var r=a.run
+	if int(r.cargo.get("heart",0))>0:H.event(w,"heart_returned")
 	for key in r.cargo:w.kingdom.stock[key]+=int(r.cargo[key])*1000
 	H.event(w,"banked",int(r.picked));r.cargo={};r.picked=0;r.active=false
 	H.event(w,"returned");a.hero.hp=int(H.stats(w).health);a.hero.defeated=false
 	for key in a.hero.cooldowns:a.hero.cooldowns[key]=0
-	r.x=240;r.y=1260;return true
+	r.x=240;r.y=1260;r.invulnerable=0;r.dash=0;r.swing=0;return true
 static func revisit(w: Dictionary) -> bool:
 	if not H.writable(w):return false
 	var r=w.kingdom.adventure.run
@@ -71,7 +72,7 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 			var rng=RandomNumberGenerator.new();rng.state=int(r.rng);var critical=rng.randi_range(0,999)<int(H.stats(w).crit);r.rng=str(rng.state)
 			var hit=maxi(1,roundi(int(H.stats(w).attack)*(1.6 if heavy else 1.0)*(1.5 if critical else 1.0))-int(enemies()[e.kind].defense))
 			e.hp=maxi(0,int(e.hp)-hit);feedback.append({"damage":hit,"x":e.x,"y":e.y})
-			if e.hp==0:defeat_enemy(w,e);feedback.append("kill")
+			if e.hp==0:defeat_enemy(w,e);feedback.append("boss" if e.kind=="thornheart" else "kill")
 	for e in r.enemies:
 		if e.hp<=0:continue
 		var data=enemies()[e.kind];var ep=Vector2(e.x,e.y);var offset=p-ep;var distance=offset.length();e.timer=maxi(0,int(e.timer)-STEP)
@@ -160,6 +161,7 @@ static func interact(w: Dictionary) -> String:
 	var r=w.kingdom.adventure.run;var p=Vector2(r.x,r.y)
 	for l in r.loot:
 		if pickup(w,l):return "loot"
+	if r.loot.any(func(l):return not l.taken and p.distance_to(Vector2(l.x,l.y))<=90):return "full"
 	if p.distance_to(MAP.LANDMARK)<85 and not r.landmark:r.landmark=true;H.event(w,"landmark");return "landmark"
 	if p.distance_to(MAP.HERBS)<85 and not r.harvest:r.harvest=true;drop(r,90001,MAP.HERBS,"herb",3);H.event(w,"harvest");return "herb"
 	if p.distance_to(MAP.CHEST)<85 and not r.chest:r.chest=true;drop(r,90002,MAP.CHEST,"gold",4);drop(r,90003,MAP.CHEST+Vector2(20,0),"",1,"reinforced_shield");H.event(w,"chest");return "chest"
@@ -199,6 +201,7 @@ static func validate(w: Dictionary) -> bool:
 		for key in ["x","y","hp","timer","aimx","aimy","pattern"]:
 			if not C.number(e[key],0,100000,true):return false
 		if e.hp>int(enemies()[e.kind].health) or (e.hp==0)!=(e.state=="dead") or e.x>960 or e.y>1440:return false
+		if int(e.id)!={"wolf":1,"thorn":2,"spider":3,"thornheart":4}[e.kind] or e.pattern>(2 if e.kind=="thornheart" else 0):return false
 	ids=[]
 	for l in r.loot:
 		if not C.shape(l,["id","x","y","resource","amount","recipe","taken"]) or not C.number(l.id,1,100000,true) or ids.has(int(l.id)) or not l.taken is bool:return false

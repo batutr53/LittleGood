@@ -1,0 +1,105 @@
+{
+  "all_passed": true,
+  "checks": {
+    "adb_attack": true,
+    "adb_dodge": true,
+    "adb_heal": true,
+    "adb_interact": true,
+    "adb_joystick": true,
+    "adb_joystick_no_attack": true,
+    "adb_skill": true,
+    "boss": true,
+    "legal14": true,
+    "persisted": true,
+    "phase2": true,
+    "realm15": true,
+    "route": true,
+    "warning": true
+  },
+  "movement_evidence": {
+    "after_x": 582,
+    "before_x": 240,
+    "drag_events": 194,
+    "touch_events": 6
+  },
+  "profiles": [
+    {
+      "combat_step_us": 79,
+      "draw_calls": 53.0,
+      "fps": 57.7569089751115,
+      "p95_ms": 20.108,
+      "quality": "instrumented_guardian_fight",
+      "seconds": 2.562464
+    },
+    {
+      "combat_step_us": 124,
+      "draw_calls": 39.0,
+      "fps": 60.0007800101401,
+      "p95_ms": 18.913,
+      "peak_physics_ms": 77.449,
+      "peak_process_ms": 74.272,
+      "quality": "smooth",
+      "scene_build_ms": 11.115,
+      "seconds": 14.999804,
+      "static_memory_mb": 46.9635467529297,
+      "video_memory_mb": 36.5334453582764
+    },
+    {
+      "combat_step_us": 110,
+      "draw_calls": 39.0,
+      "fps": 29.9979301428201,
+      "p95_ms": 38.296,
+      "peak_physics_ms": 20.036,
+      "peak_process_ms": 5.232,
+      "quality": "battery",
+      "scene_build_ms": 11.115,
+      "seconds": 15.001035,
+      "static_memory_mb": 46.9545707702637,
+      "video_memory_mb": 36.5334453582764
+    },
+    {
+      "combat_step_us": 117,
+      "draw_calls": 1.0,
+      "fps": 60.0052333088051,
+      "p95_ms": 17.933,
+      "peak_physics_ms": 17.912,
+      "peak_process_ms": 3.636,
+      "quality": "same_simulation_hidden_render_control",
+      "scene_build_ms": 11.115,
+      "seconds": 15.015354,
+      "static_memory_mb": 46.9690551757812,
+      "video_memory_mb": 36.5059795379639
+    }
+  ],
+  "source": "real_android_runtime_bot_with_external_adb_controls",
+  "stage": "adventure_complete",
+  "viewport": [
+    720.0,
+    1600.0
+  ],
+  "serial": "emulator-5554",
+  "physical_device": false,
+  "wall_seconds": 73.69,
+  "player_files_preserved": {
+    "planet.json": {
+      "bytes": 40618,
+      "sha256": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "present": true
+    },
+    "planet.json.bak": {
+      "bytes": 41031,
+      "sha256": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "present": true
+    },
+    "planet.json.tmp": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "present": false
+    },
+    "settings.cfg": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "present": false
+    }
+  }
+}

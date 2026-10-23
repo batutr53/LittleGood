@@ -1,0 +1,111 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+PASS Actual tagged milestone-A save remains a playable realm-five chapter
+
+PASS Explicit chapter transition unlocks realm six exactly once
+
+PASS Transition preserves habitat, citizens, claims, XP and wardrobe
+
+PASS Chapter transition preserves balances without awarding imaginary ore or iron
+
+PASS Validated migrated state points to the real quarry quest
+
+PASS New chapter and crafting cannot bypass first-five prerequisites
+
+PASS Gathered stone and ore become smelted iron through legal assigned jobs:
+
+PASS Real mineral production completes realm-six to realm-eight goals
+
+PASS Craft queues reserve exact material costs before work
+
+PASS Queuing an item does not instantly create it
+
+PASS A forge with no smith makes no crafting progress
+
+PASS Assigned smith completes one persisted item instance
+
+PASS Repeated same-clock kingdom and forge ticks cannot duplicate work or items
+
+PASS Equipped axe increases the actual lumber production formula by fifty percent
+
+PASS Moving a tool atomically removes its previous owner rather than duplicating it
+
+PASS Invalid citizens and item instances cannot equip
+
+PASS Unequipping returns an existing item without destroying or copying it
+
+PASS Inventory, recipe events and jobs round-trip exactly
+
+PASS Duplicate item instance IDs reject
+
+PASS Dangling equipment rejects
+
+PASS Negative refined-economy balances reject
+
+PASS Unknown recipes and unallocated IDs reject
+
+PASS All industry mutations honor read-only visits
+
+PASS Public snapshots never expose inventory or private mineral balances
+
+PASS Actual smelting conserves two ore and one timber per refined iron
+
+PASS Furnace consumes stored ingredients rather than inventing bars from its ground tile
+
+PASS Full iron storage stops the furnace without consuming ingredients
+
+PASS A furnace with no ore cannot produce iron
+
+PASS Unfueled furnace cannot display a false productive work animation
+
+PASS Equipped tool yields more real harvested stock in a matched simulation tick
+
+PASS Full crafting queue rejects atomically without charging a fifth recipe
+
+PASS Reserved costs and unfinished forge queue restore exactly
+
+PASS Failed crafting does not allocate phantom item IDs
+
+PASS Reading an old campaign does not silently opt it into a new economy
+
+PASS All four tool recipes create real distinct items through paid smith work
+
+PASS Iron pick increases actually harvested ore in matched world ticks
+
+PASS Sickle increases actual settlement food after equal citizen upkeep
+
+PASS Mason hammer increases actual paid construction labor for its idle citizen
+
+PASS Ten-quest legal progression seed 2026
+
+PASS Eight-hour offline industry replay is consistent and idempotent seed 2026
+
+PASS Ten-quest legal progression seed 1
+
+PASS Eight-hour offline industry replay is consistent and idempotent seed 1
+
+PASS Ten-quest legal progression seed 3
+
+PASS Eight-hour offline industry replay is consistent and idempotent seed 3
+
+PASS Ten-quest legal progression seed 7
+
+PASS Eight-hour offline industry replay is consistent and idempotent seed 7
+
+PASS Ten-quest legal progression seed 42
+
+PASS Eight-hour offline industry replay is consistent and idempotent seed 42
+
+PASS Ten-quest legal progression seed 301
+
+PASS Eight-hour offline industry replay is consistent and idempotent seed 301
+
+PASS Ten-quest legal progression seed 99991
+
+PASS Eight-hour offline industry replay is consistent and idempotent seed 99991
+
+PASS Industry tests preserve the primary player save
+
+INDUSTRY 53 passed, 0 failed

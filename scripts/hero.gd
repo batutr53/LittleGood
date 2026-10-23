@@ -39,6 +39,14 @@ static func equip(w: Dictionary,slot: String,id: int) -> bool:
 		var owned=I.item(w,id)
 		if owned.is_empty() or I.recipes()[owned.recipe].get("category","tool")!=slot:return false
 	a.hero.equipment[slot]=id;a.hero.hp=mini(int(a.hero.hp),int(stats(w).health));return true
+static func preview(w: Dictionary,slot: String,id: int) -> Dictionary:
+	var result=stats(w)
+	for pair in [[int(w.kingdom.adventure.hero.equipment[slot]),-1],[id,1]]:
+		var owned=I.item(w,pair[0])
+		if not owned.is_empty():
+			for key in I.recipes()[owned.recipe].effects:
+				if result.has(key):result[key]+=int(I.recipes()[owned.recipe].effects[key])*pair[1]
+	return result
 static func progress(w: Dictionary,key: String) -> float:
 	if not enabled(w):return 0
 	var a=w.kingdom.adventure
@@ -66,7 +74,7 @@ static func validate(w: Dictionary) -> bool:
 	if not C.shape(a,["version","hero","events","run","boss_rewarded","next_run","tutorial"]) or not C.number(a.version,1,1,true) or not C.number(a.next_run,1,1000000,true) or not a.boss_rewarded is bool or not a.tutorial is bool or not a.run is Dictionary:return false
 	if not a.events is Dictionary or a.events.size()>16:return false
 	for key in a.events:
-		if not key in ["landmark","returned","kills","picked","banked","healed","boss","chest","harvest","dodged"] or not C.number(a.events[key],0,1000000,true):return false
+		if not key in ["landmark","returned","kills","picked","banked","healed","boss","chest","harvest","dodged","heart_returned"] or not C.number(a.events[key],0,1000000,true):return false
 	if not a.hero is Dictionary:return false
 	if a.hero.is_empty():return a.run.is_empty()
 	var h=a.hero

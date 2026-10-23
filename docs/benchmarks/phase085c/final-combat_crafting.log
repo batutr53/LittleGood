@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+C4_LEGAL true
+
+C4_CRAFTING { "legal_14": true, "real_attack": true, "real_defense": true, "loot_consumed": true, "saved": true, &"legal_revisit": true }

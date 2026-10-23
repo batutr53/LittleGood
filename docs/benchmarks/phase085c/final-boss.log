@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+C5_ROUTE 2026 true
+
+C5_ROUTE 77 true
+
+C5_ROUTE 138 true
+
+C5_BOSS { "legal15_2026": true, "heart_2026": true, "save_2026": true, "unique_2026": true, "artifact_2026": true, "effect_2026": true, "legal15_77": true, "heart_77": true, "save_77": true, "unique_77": true, "artifact_77": true, "effect_77": true, "legal15_138": true, "heart_138": true, "save_138": true, "unique_138": true, "artifact_138": true, "effect_138": true, &"reward_route": true, &"must_bring_heart": true, &"real_heart_completes": true }

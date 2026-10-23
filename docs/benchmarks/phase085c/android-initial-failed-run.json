@@ -1,0 +1,75 @@
+{
+  "all_passed": false,
+  "checks": {
+    "adb_attack": true,
+    "adb_dodge": true,
+    "adb_heal": true,
+    "adb_interact": true,
+    "adb_joystick": false,
+    "adb_skill": true,
+    "boss": true,
+    "legal14": true,
+    "persisted": true,
+    "phase2": true,
+    "realm15": true,
+    "route": true,
+    "warning": true
+  },
+  "profiles": [
+    {
+      "combat_step_us": 155,
+      "draw_calls": 46.0,
+      "first_frame_process_ms": 50367,
+      "fps": 5.9586879030879,
+      "p95_ms": 225.845,
+      "quality": "smooth",
+      "scene_build_ms": 23.078,
+      "seconds": 19.467371,
+      "static_memory_mb": 46.8737459182739,
+      "video_memory_mb": 34.524435043335
+    },
+    {
+      "combat_step_us": 147,
+      "draw_calls": 46.0,
+      "first_frame_process_ms": 68850,
+      "fps": 7.68229921438015,
+      "p95_ms": 206.237,
+      "quality": "battery",
+      "scene_build_ms": 23.078,
+      "seconds": 17.182355,
+      "static_memory_mb": 46.8782434463501,
+      "video_memory_mb": 34.524435043335
+    }
+  ],
+  "source": "real_android_runtime_bot_with_external_adb_controls",
+  "stage": "adventure_complete",
+  "viewport": [
+    720.0,
+    1600.0
+  ],
+  "serial": "emulator-5554",
+  "physical_device": false,
+  "wall_seconds": 71.75,
+  "player_files_preserved": {
+    "planet.json": {
+      "bytes": 40618,
+      "sha256": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "present": true
+    },
+    "planet.json.bak": {
+      "bytes": 41031,
+      "sha256": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "present": true
+    },
+    "planet.json.tmp": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "present": false
+    },
+    "settings.cfg": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "present": false
+    }
+  }
+}

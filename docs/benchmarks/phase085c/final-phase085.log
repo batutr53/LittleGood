@@ -1,0 +1,105 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+PASS Existing worlds stay unchanged until opt-in
+
+PASS Founding stores/citizens granted exactly once
+
+PASS Enable preserves real people, food, habitat and RNG
+
+PASS Fresh campaign starts on its first real mission
+
+PASS No reward before objectives/prerequisites
+
+PASS Only an actual settlers camp satisfies observation
+
+PASS Levels gate construction and specialist recruitment
+
+PASS Gathering consumes real forest resources
+
+PASS Gathering conserves harvested units
+
+PASS Gathering cooldown prevents click farming
+
+PASS Unsupported or invalid gathering rejects safely
+
+PASS Fresh world completes all five primary missions through real actions
+
+PASS Exact XP curve and ordered rewards reach realm five
+
+PASS Real assigned work satisfies production objectives
+
+PASS Village tier derives from people, housing, food and actual buildings
+
+PASS Repeated claim cannot duplicate currency or XP
+
+PASS Invalid citizen and workplace references rejected
+
+PASS Worker slots enforce real capacity
+
+PASS Workers can return to building duties
+
+PASS Same simulation tick cannot produce or charge wages twice
+
+PASS Negative resources reject
+
+PASS XP must agree with uniquely claimed quest rewards
+
+PASS Duplicate claimed quest rejects
+
+PASS Dangling worker assignment rejects
+
+PASS Out-of-map building rejects
+
+PASS Kingdom persists with original atomic save envelope
+
+PASS Resources, workers, buildings and quests round-trip
+
+PASS Private campaign and work data never upload as a showcase
+
+PASS All public-visit mutation boundaries remain intact
+
+PASS Cosmetics cannot overlap functional kingdom buildings
+
+PASS Functional structures cannot overlap each other
+
+PASS Core building upgrades charge exact material costs
+
+PASS Housing upgrade retains previous rooms and village status
+
+PASS Completed housing upgrade adds real population capacity
+
+PASS Unassigned production buildings cannot create materials
+
+PASS Full material storage stops gathering
+
+PASS Bounded offline replay advances work without silently claiming quests
+
+PASS Repeated offline report cannot duplicate production
+
+PASS Existing high-population settlements keep their residents when opting in
+
+PASS Actual 0.7 save gains optional kingdom without rebuilding its world
+
+PASS Actual tagged 0.8 save preserves equipped cosmetics and habitat on opt-in
+
+PASS Corrupt campaign primary recovers exact kingdom from healthy backup
+
+PASS Per-kind structure limits reject unbounded duplicate saves
+
+PASS Construction needs an available citizen rather than free automatic work
+
+PASS Low food cannot remove residents while leaving their paid worker records
+
+PASS First-Flame reachability seed 42
+
+PASS First-Flame reachability seed 7
+
+PASS First-Flame reachability seed 301
+
+PASS First-Flame reachability seed 99991
+
+PASS All expansion checks preserve the real player save
+
+PHASE085 50 passed, 0 failed

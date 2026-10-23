@@ -37,6 +37,16 @@ func run() -> void:
 	game.ui.build()
 	game.ui.main_menu()
 	await get_tree().process_frame
+	if options.get("phase", "new")=="adventure_reopen":
+		var expected=Persistence.load_world(game.save_path);await game.restore()
+		checks.real_scene_restored=is_instance_valid(game.adventure_scene) and game.world.kingdom.adventure.run.active
+		if is_instance_valid(game.adventure_scene):game.adventure_scene.frozen=true
+		checks.exact_adventure_restored=game.world.kingdom==expected.kingdom
+		checks.home_preserved=game.world.cells==expected.cells and game.world.tick==expected.tick
+		await get_tree().create_timer(.4).timeout;await RenderingServer.frame_post_draw;get_viewport().get_texture().get_image().save_png("user://android-adventure-resumed.png")
+		publish("adventure_reopened",{"all_passed":not checks.values().has(false),"source":"external_process_restart_real_restore"});return
+	if options.get("phase", "new") in ["adventure","adventure_profile"]:
+		var qa=preload("res://scripts/adventure_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
 	if options.get("phase", "new")=="industry":
 		var qa=preload("res://scripts/industry_qa.gd").new();add_child(qa);qa.game=game;qa.directory="user://"
 		var result=await qa.run();checks=result.checks

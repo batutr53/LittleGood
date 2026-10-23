@@ -1,0 +1,14 @@
+{
+  "boss_dead": true,
+  "combat_step_us": 70,
+  "dodges": 2,
+  "draw_calls": 47.0,
+  "fps": 60.1995424834772,
+  "frame_ms_p95": 16.867,
+  "memory_bytes": 48417277,
+  "phase2": true,
+  "physics_steps": 412,
+  "source": "desktop_real_rendered_adventure",
+  "startup_ms": 8.677,
+  "warning": true
+}

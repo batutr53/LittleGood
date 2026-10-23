@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+HERO_C1 { &"actual_b_fixture": true, &"migrate_once": true, &"conservation": true, &"no_replay": true, &"recruit": true, &"reject_name": true, &"slots": true, &"legal_11": true, &"real_equipment": true, &"exact_save": true, &"dangling": true, &"readonly": true }

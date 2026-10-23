@@ -2,7 +2,7 @@
 from pathlib import Path
 import argparse,hashlib,json,re,subprocess,time
 root=Path(__file__).resolve().parents[1]
-parser=argparse.ArgumentParser();parser.add_argument('--phase',default='industry',choices=['kingdom','industry']);parser.add_argument('--output-dir',default='builds/phase09/android-industry');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--phase',default='industry',choices=['kingdom','industry']);parser.add_argument('--milestone',default='C',choices=['B','C']);parser.add_argument('--output-dir',default='builds/phase085c/android-industry');args=parser.parse_args()
 out=root/args.output_dir;out.mkdir(parents=True,exist_ok=True)
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 player='org.littlegod.livinguniverse';pkg=player+'.betaqa'
@@ -30,10 +30,10 @@ run('wait-for-device')
 run('shell','am','force-stop',player)
 names=['planet.json','planet.json.bak','planet.json.tmp','settings.cfg']
 before={name:read(name,player) for name in names}
-run('install','-r',str(root/'builds/android/LittleGod-0.8.5-milestone-B-debug.apk'))
+run('install','-r',str(root/f'builds/android/LittleGod-0.8.5-milestone-{args.milestone}-debug.apk'))
 assert all(read(name,player)==value for name,value in before.items()),'Player save changed during upgrade'
 run('shell','am','force-stop',pkg)
-run('install','-r',str(root/'builds/android/LittleGod-0.8.5-milestone-B-qa-debug.apk'))
+run('install','-r',str(root/f'builds/android/LittleGod-0.8.5-milestone-{args.milestone}-qa-debug.apk'))
 assert b'Success' in run('shell','pm','clear',pkg) # Explicitly disposable package only.
 run('shell','run-as',pkg,'mkdir','-p','files')
 put('phase4_qa.json',json.dumps({'phase':args.phase}))

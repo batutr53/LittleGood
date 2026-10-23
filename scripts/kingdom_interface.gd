@@ -139,7 +139,7 @@ func inspect_building(id: int) -> void:
 func history() -> void:
 	ui.page="kingdom";var v=ui.popup(say("The First Kingdom's history","İlk Krallığın tarihi"));var list=ui.card_list(v,450)
 	for h in game.world.kingdom.history:
-		var action={"founding":say("Founding","Kuruluş"),"construction":say("Construction started","İnşaat başladı"),"built":say("Completed","Tamamlandı"),"upgrade":say("Upgrade started","Geliştirme başladı"),"recruit":say("Citizen recruited","Sakin işe alındı"),"quest":say("Quest completed","Görev tamamlandı"),"craft":say("Tool completed","Alet tamamlandı")}.get(h.key,"")
+		var action={"founding":say("Founding","Kuruluş"),"construction":say("Construction started","İnşaat başladı"),"built":say("Completed","Tamamlandı"),"upgrade":say("Upgrade started","Geliştirme başladı"),"recruit":say("Citizen recruited","Sakin işe alındı"),"quest":say("Quest completed","Görev tamamlandı"),"craft":say("Equipment completed","Donanım tamamlandı"),"boss":say("Guardian defeated","Muhafız yenildi")}.get(h.key,"")
 		var title=str(h.subject)
 		if K.buildings().has(title):title=localized(K.buildings()[title].name)
 		if I.recipes().has(title):title=localized(I.recipes()[title].name)

@@ -1,0 +1,113 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+PASS: New worlds do not invent historical events
+
+PASS: Creatures receive recorded ages and species habitats
+
+PASS: Six repeated meetings form a symmetric companionship
+
+PASS: Companions have a real foraging benefit
+
+PASS: Companionship creates one persistent memory
+
+PASS: Hungry herbivores recognize actual co-located predators
+
+PASS: Adjacent raised mountain and wet forest awaken a spring
+
+PASS: Spring has a localized moisture consequence
+
+PASS: Terraforming removes a displaced spring
+
+PASS: Thriving forest fox discovers its silver variant during a lantern night
+
+PASS: Rare variants never farm repeated rewards or memories
+
+PASS: A wetland bird after actual clearing rain restores plants
+
+PASS: Choir starts a bounded rendered rainbow presentation
+
+PASS: Exploration and recorded survival produce distinct histories
+
+PASS: Well supplied village builds a cultural landmark
+
+PASS: Orchard tradition improves harvest on festival ticks
+
+PASS: Riverfolk tradition conserves home water
+
+PASS: Prosperous nearby villages form symmetric learning alliances
+
+PASS: Recovery memory requires a recorded dry spell and restored moisture
+
+PASS: Personal names support Turkish and trim edges
+
+PASS: Empty and excessive names are rejected
+
+PASS: Settlements can be personalized
+
+PASS: Favorite places are bounded at five
+
+PASS: Favorite places toggle without duplicates
+
+PASS: Expanded world validates and saves transactionally
+
+PASS: Chronicle survives save and integer normalization
+
+PASS: Names and favorites persist
+
+PASS: Out-of-world memory locations are rejected
+
+PASS: Non-finite exploration locations are rejected
+
+PASS: Legacy world gains optional history fields: planet-v1.json
+
+PASS: Legacy world gains optional history fields: planet-v02.json
+
+PASS: Legacy world gains optional history fields: planet-v03.json
+
+PASS: Legacy world gains optional history fields: planet-v04.json
+
+PASS: Return report includes actual offline milestones
+
+PASS: Return report never fabricates a memory
+
+PASS: Seven-day absence remains gently bounded
+
+PASS: Return report distinguishes actual seven-day absence from capped simulation
+
+PASS: New histories and relationships are deterministic for the same seed
+
+PASS: Individual histories remain bounded
+
+PASS: Long running history rotates old individual episodes
+
+PASS: Collectible first birth survives rotating individual histories
+
+PASS: Android back auto-quit is disabled at the SceneTree boundary
+
+PASS: Illustrated Chronicle opens in the actual scene
+
+PASS: Memory revisit focuses its real recorded place
+
+PASS: Personalization and individual history open for a selected creature
+
+PASS: Window back requests reach menu navigation exactly once
+
+PASS: A full Chronicle still celebrates a newly discovered secret
+
+PASS: PNG export writes a real independently readable image
+
+PASS: Screenshot export rejects an absent image
+
+PASS: Phase five QA leaves the player's world untouched
+
+PHASE5_RESULT: 50 passed, 0 failed
+
+WARNING: 4 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+
+   at: cleanup (core/object/object.cpp:2536)
+
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+
+   at: clear (core/io/resource.cpp:822)

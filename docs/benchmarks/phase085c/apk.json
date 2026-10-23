@@ -1,0 +1,15 @@
+{
+  "path": "D:\\LittleGod\\builds\\android\\LittleGod-0.8.5-milestone-C-debug.apk",
+  "bytes": 60406912,
+  "sha256": "5d35e8dd97f7664c0932bfbda837099b5876f9c5b83c661b75bcbcbdafc8d602",
+  "version": "0.8.5-devC",
+  "code": 87,
+  "abis": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "min_api": 24,
+  "target_api": 36,
+  "installed_and_started": true,
+  "physical_device": false
+}

@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+C6_INVARIANTS { "legal14": true, &"active_save": true, &"offline_safe": true, &"readonly": true, &"cooldown": true, &"defeat": true, &"defeated_no_actions": true, &"defeated_save": true, &"recovery": true, &"no_equipment_loss": true, &"bad_pattern": true, &"duplicate_actor": true, &"potion_crafted": true, &"potion_consumed": true, &"chest_route": true, &"capacity": true, &"retry_pickup": true, &"no_duplicate_pickup": true, &"no_civilian_sword": true }

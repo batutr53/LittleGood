@@ -310,7 +310,7 @@ func reset_gesture() -> void:
 	ui_pointer_blocked = true
 
 func navigate_back() -> void:
-	if is_instance_valid(adventure_scene):adventure_scene.frozen=not adventure_scene.frozen;return
+	if is_instance_valid(adventure_scene):adventure_scene.toggle_pause();return
 	if loading: return
 	if realm_ui!=null and realm_ui.active:realm_ui.finish();return
 	if decorator!=null and decorator.active:decorator.finish();return

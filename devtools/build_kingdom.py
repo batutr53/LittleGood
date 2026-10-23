@@ -7,6 +7,6 @@ preset=root/'export_presets.cfg';original=preset.read_bytes()
 env=os.environ.copy();env['JAVA_HOME']=str(root/'tools/jdk/jdk-17.0.20.1+1')
 try:
     if args.qa:preset.write_bytes(original.replace(b'org.littlegod.livinguniverse"',b'org.littlegod.livinguniverse.betaqa"'))
-    dest=root/('builds/android/LittleGod-0.8.5-milestone-B'+('-qa' if args.qa else '')+'-debug.apk')
+    dest=root/('builds/android/LittleGod-0.8.5-milestone-C'+('-qa' if args.qa else '')+'-debug.apk')
     subprocess.run([str(root/'tools/godot/Godot_v4.7.2-stable_win64_console.exe'),'--headless','--path',str(root),'--export-debug','Android',str(dest)],env=env,check=True)
 finally:preset.write_bytes(original)

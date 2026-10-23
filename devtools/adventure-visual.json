@@ -1,0 +1,116 @@
+[
+  {
+    "name": "run",
+    "arguments": {
+      "action": "stop"
+    }
+  },
+  {
+    "name": "editor",
+    "arguments": {
+      "action": "clear_logs"
+    }
+  },
+  {
+    "name": "files",
+    "arguments": {
+      "action": "rescan"
+    }
+  },
+  {
+    "name": "scene",
+    "arguments": {
+      "action": "reload",
+      "path": "res://scenes/main.tscn"
+    }
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "play",
+      "mute": true
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 2
+    }
+  },
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "scene.is_test_session=true; scene.save_path=\"user://adventure-mcp.json\"; scene.diagnostics.configure(\"user://adventure-mcp-diagnostics.json\",\"simulated\"); var probe=preload(\"res://scripts/adventure_progression_probe.gd\").new(); var ok=probe.equipped_upgrade(); scene.world=probe.world; scene.view.world=scene.world; scene.has_player_world=true; scene.paused=true; scene.ui.language=\"en\"; scene.ui.build(); scene.show_world(true); scene.view.invalidate(); scene.hero_ui.profile(); return {\"legal_fourteen\":ok,\"claimed\":scene.world.kingdom.claimed.size(),\"stats\":preload(\"res://scripts/hero.gd\").stats(scene.world)}"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 1
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/builds/phase085c/mcp-hero.png"
+  },
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "scene.hero_ui.world_map(); return true"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 0.5
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/builds/phase085c/mcp-map.png"
+  },
+  {
+    "name": "exec",
+    "arguments": {
+      "action": "game",
+      "code": "scene.enter_adventure(); return {\"active\":scene.world.kingdom.adventure.run.active,\"bodies\":scene.adventure_scene.bodies.size()}"
+    }
+  },
+  {
+    "name": "game",
+    "arguments": {
+      "action": "wait",
+      "seconds": 1
+    }
+  },
+  {
+    "name": "view",
+    "arguments": {
+      "action": "game"
+    },
+    "output": "D:/LittleGod/builds/phase085c/mcp-wildwood.png"
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "errors"
+    }
+  },
+  {
+    "name": "run",
+    "arguments": {
+      "action": "stop"
+    }
+  }
+]

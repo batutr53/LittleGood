@@ -1,0 +1,166 @@
+{
+  "failed": 0,
+  "scenarios": [
+    {
+      "claims": 15,
+      "combat_steps": 895,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 1
+    },
+    {
+      "claims": 15,
+      "combat_steps": 950,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 2
+    },
+    {
+      "claims": 15,
+      "combat_steps": 950,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 3
+    },
+    {
+      "claims": 15,
+      "combat_steps": 960,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 4
+    },
+    {
+      "claims": 15,
+      "combat_steps": 960,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 5
+    },
+    {
+      "claims": 15,
+      "combat_steps": 941,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 6
+    },
+    {
+      "claims": 15,
+      "combat_steps": 934,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 7
+    },
+    {
+      "claims": 15,
+      "combat_steps": 934,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 8
+    },
+    {
+      "claims": 15,
+      "combat_steps": 950,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 9
+    },
+    {
+      "claims": 15,
+      "combat_steps": 960,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 10
+    },
+    {
+      "claims": 15,
+      "combat_steps": 950,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 11
+    },
+    {
+      "claims": 15,
+      "combat_steps": 960,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 12
+    },
+    {
+      "claims": 15,
+      "combat_steps": 960,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 13
+    },
+    {
+      "claims": 15,
+      "combat_steps": 960,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 14
+    },
+    {
+      "claims": 15,
+      "combat_steps": 950,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 15
+    },
+    {
+      "claims": 15,
+      "combat_steps": 960,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 16
+    },
+    {
+      "claims": 15,
+      "combat_steps": 886,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 17
+    },
+    {
+      "claims": 15,
+      "combat_steps": 950,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 18
+    },
+    {
+      "claims": 15,
+      "combat_steps": 950,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 19
+    },
+    {
+      "claims": 15,
+      "combat_steps": 951,
+      "complete": true,
+      "error": "",
+      "hero_xp": 234,
+      "seed": 20
+    }
+  ],
+  "source": "headless_legal_campaign_real_jobs_crafting_and_combat_inputs"
+}

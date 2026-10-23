@@ -1,0 +1,24 @@
+{
+  "retained_game_checks": 459,
+  "new_game_checks": {
+    "hero": 12,
+    "exploration": 9,
+    "combat": 6,
+    "combat_crafting": 6,
+    "boss": 21,
+    "adventure_invariants": 19,
+    "boss_patterns": 7
+  },
+  "new_total": 80,
+  "total_game_checks": 539,
+  "failed": 0,
+  "runtime_smoke_passed": true,
+  "legal_1_15_seed_scenarios": 20,
+  "retained_first_village_scenarios": 50,
+  "retained_industry_offline_scenarios": 50,
+  "android_adventure_checks": 14,
+  "android_real_reopen_checks": 3,
+  "android_industry_checks": 16,
+  "physical_device": false,
+  "original_test_assertions_unchanged": true
+}

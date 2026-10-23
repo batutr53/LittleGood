@@ -16,10 +16,10 @@ func profile() -> void:
 		var name=LineEdit.new();name.name="HeroName";name.text="Lale";name.max_length=24;name.custom_minimum_size.y=62;v.add_child(name)
 		add(v,say("Recruit Warrior · 5 food + 3 gold","Savaşçı çağır · 5 besin + 3 altın"),func():if H.recruit(game.world,name.text.strip_edges()):game.realm_ui.changed();game.checkpoint("hero");profile(),true)
 	else:
-		var h=a.hero;var s=H.stats(game.world);var list=ui.card_list(v,280)
+		var h=a.hero;var s=H.stats(game.world);var list=ui.card_list(v,350)
 		list.add_child(ui.label(h.name+" · "+say("Hero level ","Kahraman seviyesi ")+str(H.level(h))+" · XP "+str(int(h.xp)),24,Color("ecd99f")))
 		list.add_child(ui.label(say("Health ","Can ")+str(int(h.hp))+" / "+str(s.health)+"\n"+say("Attack ","Saldırı ")+str(s.attack)+" · "+say("Defense ","Savunma ")+str(s.defense)+"\n"+say("Speed ","Hız ")+str(s.speed)+" · "+say("Critical ","Kritik ")+str(s.crit/10)+"%",21))
-		list.add_child(ui.label(say("Sword arc · heavy strike · dodge\nCooldowns: attack 0.5s, strike 4s, dodge 1.2s.\nForge a sword, then choose the weapon slot.","Kılıç yayı · ağır darbe · kaçınma\nBekleme: saldırı 0,5 sn, darbe 4 sn, kaçınma 1,2 sn.\nKılıç döv; sonra silah yuvasından seç."),19))
+		list.add_child(ui.label(say("Compare gear below. In Wildwood, hold Attack; dodge warning zones and strike during recovery.","Aşağıda donanımı karşılaştır. Yabanorman'da Saldır'ı basılı tut; uyarı alanından kaç, dinlenme aralığında vur."),19))
 		for slot in H.SLOTS:
 			var owned=I.item(game.world,int(h.equipment[slot]));var title={"weapon":say("Weapon","Silah"),"shield":say("Shield","Kalkan"),"armor":say("Armor","Zırh"),"artifact":say("Artifact","Eser")}[slot]
 			add(list,title+" · "+(game.realm_ui.localized(I.recipes()[owned.recipe].name) if not owned.is_empty() else say("Empty","Boş")),func():equipment(slot))
@@ -28,8 +28,12 @@ func profile() -> void:
 	add(v,ui.t("back"),game.realm_ui.open)
 func world_map() -> void:
 	ui.page="kingdom";var v=ui.popup(say("Beyond the Border","Sınırın Ötesinde"))
-	v.add_child(ui.label(say("WILDWOOD\nThe northern trail leads to the Sunstone, an ancient landmark. Explore at your own pace; Home always brings you back safely. Kingdom work pauses while you explore.","YABANORMAN\nKuzey patikası eski Güneştaşı anıtına ulaşır. Kendi hızında keşfet; Dön seni güvenle eve getirir. Keşfederken krallık işleri durur."),24))
+	var map=TextureRect.new();map.texture=load("res://assets/adventure/wildwood-ground.svg");map.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;map.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;map.custom_minimum_size=Vector2(300,250);v.add_child(map)
+	v.add_child(ui.label(say("WILDWOOD · North ↑\nCamp → Sunstone → Ruined chest → Guardian\nHome restores health and banks collected loot. Kingdom work pauses while exploring. Northern roots open after quest 14.","YABANORMAN · Kuzey ↑\nKamp → Güneştaşı → Harabe sandığı → Muhafız\nDön canı yeniler, ganimeti depolar. Keşifte krallık işleri durur. Kuzey kökleri 14. görevden sonra açılır."),20))
 	add(v,say("Enter Wildwood","Yabanorman'a gir"),func():game.enter_adventure(),true)
+	var r=game.world.kingdom.adventure.run
+	if not r.is_empty() and not r.active and not r.enemies.any(func(e):return e.hp>0) and not r.loot.any(func(l):return not l.taken):
+		add(v,say("New expedition · refresh cleared trail","Yeni sefer · temizlenen patikayı yenile"),func():if load("res://scripts/adventure.gd").revisit(game.world):game.checkpoint("new-expedition");world_map())
 	add(v,ui.t("back"),profile)
 func equipment(slot: String) -> void:
 	ui.page="kingdom";var v=ui.popup(say("Compare equipment","Donanımı karşılaştır"));var list=ui.card_list(v,430)
@@ -37,6 +41,7 @@ func equipment(slot: String) -> void:
 	for owned in game.world.kingdom.industry.items:
 		var data=I.recipes()[owned.recipe];var id=int(owned.id)
 		if data.get("category","tool")!=slot:continue
-		add(list,game.realm_ui.localized(data.name)+" #"+str(id)+"\n"+game.realm_ui.localized(data.description),func():if H.equip(game.world,slot,id):game.realm_ui.changed();game.checkpoint("hero-gear");profile(),true)
+		var next=H.preview(game.world,slot,id)
+		add(list,game.realm_ui.localized(data.name)+" #"+str(id)+"\n"+game.realm_ui.localized(data.description)+"\n"+say("Attack ","Saldırı ")+str(s.attack)+" → "+str(next.attack)+say(" · Defense "," · Savunma ")+str(s.defense)+" → "+str(next.defense)+say(" · Health "," · Can ")+str(s.health)+" → "+str(next.health),func():if H.equip(game.world,slot,id):game.realm_ui.changed();game.checkpoint("hero-gear");profile(),true)
 	add(list,say("Unequip","Çıkar"),func():if H.equip(game.world,slot,0):game.realm_ui.changed();profile())
 	add(v,ui.t("back"),profile)

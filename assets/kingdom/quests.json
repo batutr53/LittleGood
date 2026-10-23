@@ -668,8 +668,8 @@
       },
       {
         "kind": "adventure",
-        "key": "banked",
-        "target": 4,
+        "key": "heart_returned",
+        "target": 1,
         "text": [
           "Return with the guardian’s reward",
           "Muhafızın ödülüyle dön"

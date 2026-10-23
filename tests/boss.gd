@@ -15,5 +15,10 @@ func run() -> void:
 		A.enter(w);A.defeat_enemy(w,e);checks["unique_"+str(seed)]=w.kingdom.adventure.hero.xp==xp and w.kingdom.adventure.run.loot.size()==loot
 		A.exit(w);checks["artifact_"+str(seed)]=p.craft("heartward")
 		var owned=w.kingdom.industry.items.filter(func(i):return i.recipe=="heartward")
-		checks["effect_"+str(seed)]=not owned.is_empty() and H.equip(w,"artifact",int(owned[0].id)) and H.stats(w).health>=126 and w.kingdom.stock.heart==0
+		var before=H.stats(w)
+		checks["effect_"+str(seed)]=not owned.is_empty() and H.equip(w,"artifact",int(owned[0].id)) and H.stats(w).health==before.health+20 and H.stats(w).attack==before.attack+2 and w.kingdom.stock.heart==0
+	var guard=preload("res://scripts/adventure_progression_probe.gd").new();var ready=guard.equipped_upgrade(111);var w=guard.world;A.enter(w);var e=w.kingdom.adventure.run.enemies[3]
+	checks.reward_route=ready and guard.travel(Vector2(e.x,e.y)) and guard.fight(e)
+	A.exit(w);checks.must_bring_heart=not preload("res://scripts/kingdom.gd").claim(w,"main_15")
+	A.enter(w);guard.pickups();A.exit(w);checks.real_heart_completes=preload("res://scripts/kingdom.gd").claim(w,"main_15")
 	print("C5_BOSS ",checks);quit(1 if checks.values().has(false) else 0)

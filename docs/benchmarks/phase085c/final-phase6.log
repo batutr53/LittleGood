@@ -1,0 +1,153 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+PASS: Actual world exports within the public size budget
+
+PASS: Export never changes the source planet
+
+PASS: Versioned showcase JSON round-trips Unicode names
+
+PASS: Shared format omits private save and diagnostic metadata
+
+PASS: Preview reconstructs real ecosystems and communities
+
+PASS: Showcase preserves recorded milestones
+
+PASS: All simulation entry points leave visits frozen
+
+PASS: Visitors cannot cast powers or change discoveries
+
+PASS: Visitors cannot rename or favorite imported world records
+
+PASS: Discovery helpers cannot bypass read-only visits
+
+PASS: Offline replay and saves cannot write a visiting planet
+
+PASS: Export replaces path-like names rather than revealing private paths
+
+PASS: Godot resources are never loaded as shared data
+
+PASS: Malformed JSON is rejected
+
+PASS: Deep nesting is rejected before JSON allocation
+
+PASS: Oversized text is rejected
+
+PASS: Untrusted field type rejected: version
+
+PASS: Untrusted field type rejected: planet
+
+PASS: Untrusted field type rejected: cells
+
+PASS: Untrusted field type rejected: creatures
+
+PASS: Untrusted field type rejected: settlements
+
+PASS: Untrusted field type rejected: memories
+
+PASS: Unsupported future format versions are rejected
+
+PASS: Imported landmarks cannot exceed systemic per-kind limits
+
+PASS: Embedded script and unknown root fields are rejected
+
+PASS: Unknown nested fields cannot carry resource references
+
+PASS: Non-finite terrain is rejected
+
+PASS: Duplicate map coordinates are rejected
+
+PASS: Out-of-map creature locations are rejected
+
+PASS: Dangling creature relationships are rejected
+
+PASS: Fractional identities are rejected
+
+PASS: Markup-bearing imported names are rejected
+
+PASS: Control characters are rejected
+
+PASS: Dangling community references are rejected
+
+PASS: Unknown event keys cannot call arbitrary UI behavior
+
+PASS: Oversized historical subjects are rejected
+
+PASS: Imported population allocation is bounded
+
+PASS: Validated imports enter the local library
+
+PASS: Repeated imports deduplicate by public content
+
+PASS: Library IDs cannot traverse private paths
+
+PASS: Friendly reactions persist locally without sending
+
+PASS: Invalid reactions are rejected
+
+PASS: Library storage is bounded at eight independent planets
+
+PASS: Players can safely replace a local copy in a full library
+
+PASS: An actual tagged-0.5 save gains optional social fields without losing its planet
+
+PASS: First launch is recorded once in local diagnostic export
+
+PASS: Automated diagnostic evidence stays labeled simulated
+
+PASS: An unfinished session is detectable without claiming a confirmed crash
+
+PASS: Favorite creatures use stable identities
+
+PASS: A creature favorite toggles without duplicates
+
+PASS: Favorite creature records survive save/load
+
+PASS: A dry world does not fabricate a migrant
+
+PASS: Real wetland conditions admit a migratory bird
+
+PASS: Migration has a simulation-based cooldown without calendar punishment
+
+PASS: A gardener in thriving forest creates an actual discoverable canopy
+
+PASS: Co-located wetland birds shelter grazing mossbuns
+
+PASS: Trade redistributes actual surplus while conserving food
+
+PASS: Trade produces a saved route and visible activity window
+
+PASS: Resource competition emerges from actual depleted neighboring land
+
+PASS: A third community cannot overwrite an existing reciprocal rivalry
+
+PASS: Restoring resources resolves community tension
+
+PASS: Returning players receive actionable state-based opportunities
+
+PASS: Actual offline migration appears in return memories
+
+PASS: New encounters retain save consistency after bounded offline replay
+
+PASS: Foreground indexing retains decorations after real world invalidation
+
+PASS: A validated local planet opens in the actual game scene
+
+PASS: Switching worlds clears cached foreground references
+
+PASS: Visiting UI and gameplay do not mutate either planet
+
+PASS: Visiting leaves own save and shared source bytes unchanged
+
+PASS: Android lifecycle cannot replay offline events into a visit
+
+PASS: Back returns from a visit to the original world
+
+PASS: A visitor never replaces the player's save slot
+
+PASS: The illustrated collection remains navigable after a visit
+
+PASS: All phase-six verification preserves the player's real save
+
+PHASE6_RESULT: 74 passed, 0 failed

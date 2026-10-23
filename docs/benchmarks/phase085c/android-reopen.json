@@ -1,0 +1,14 @@
+{
+  "all_passed": true,
+  "checks": {
+    "exact_adventure_restored": true,
+    "home_preserved": true,
+    "real_scene_restored": true
+  },
+  "source": "external_process_restart_real_restore",
+  "stage": "adventure_reopened",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}
