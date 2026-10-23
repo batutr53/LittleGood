@@ -124,5 +124,110 @@
     ],
     "site": "land",
     "limit": 1
+  },
+  {
+    "id": "quarry",
+    "name": [
+      "Sunstone Quarry",
+      "Güneştaşı Ocağı"
+    ],
+    "description": [
+      "Stonecutters gather real rock for your village.",
+      "Taşçılar köyün için gerçek kaya kaynaklarını toplar."
+    ],
+    "level": 6,
+    "cost": {
+      "wood": 12,
+      "stone": 4
+    },
+    "ticks": 6,
+    "slots": 2,
+    "output": "stone",
+    "role": [
+      "Stonecutter",
+      "Taşçı"
+    ],
+    "site": "rock",
+    "limit": 2
+  },
+  {
+    "id": "mine",
+    "name": [
+      "Ironvein Mine",
+      "Demirdamar Madeni"
+    ],
+    "description": [
+      "Miners extract ore. Move a worker here after building.",
+      "Madenciler cevher çıkarır. İnşa bitince bir işçi ata."
+    ],
+    "level": 7,
+    "cost": {
+      "wood": 14,
+      "stone": 8
+    },
+    "ticks": 6,
+    "slots": 2,
+    "output": "ore",
+    "role": [
+      "Miner",
+      "Madenci"
+    ],
+    "site": "rock",
+    "limit": 2
+  },
+  {
+    "id": "furnace",
+    "name": [
+      "Ember Furnace",
+      "Kor Fırını"
+    ],
+    "description": [
+      "Smelters consume two ore and one timber per iron.",
+      "Dökümcüler her demir için iki cevher ve bir odun tüketir."
+    ],
+    "level": 8,
+    "cost": {
+      "wood": 14,
+      "stone": 10
+    },
+    "ticks": 6,
+    "slots": 2,
+    "output": "iron",
+    "role": [
+      "Smelter",
+      "Dökümcü"
+    ],
+    "site": "land",
+    "limit": 2,
+    "inputs": {
+      "ore": 2,
+      "wood": 1
+    }
+  },
+  {
+    "id": "forge",
+    "name": [
+      "Hearthforge",
+      "Ocak Demircisi"
+    ],
+    "description": [
+      "Assign a smith and queue tools in the workshop.",
+      "Bir demirci ata ve atölyede aletleri sıraya koy."
+    ],
+    "level": 9,
+    "cost": {
+      "wood": 18,
+      "stone": 8,
+      "iron": 2
+    },
+    "ticks": 6,
+    "slots": 2,
+    "output": "",
+    "role": [
+      "Smith",
+      "Demirci"
+    ],
+    "site": "land",
+    "limit": 2
   }
 ]

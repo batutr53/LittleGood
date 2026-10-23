@@ -1,0 +1,9 @@
+# First Kingdom — accepted local checks
+
+Verified milestone A,0.8.5-devA. Original356game checks retained and rerun (suite51, runtime1, phase2:15, phase3:49, phase4:40, phase5:50, phase6:74, phase7:15, phase8:61). New campaign checks50, total406; zero failures. Prior report retained in TEST_REPORT_08.md. Exact command logs are under benchmarks/phase085/final-*.log.
+
+Campaign tests cover optional one-time founding, existing food/people/RNG/habitat, objective/prerequisite/level gates, physical cell-resource conservation/cooldown, legal five-quest progression, exact XP/reward uniqueness, workers/slots/jobs, same-tick idempotency, state validation, exact save round-trip, public privacy/read-only boundaries, plot collisions, material costs, capacity during/after upgrades, inactive production, storage caps, bounded offline replay, actual tagged0.7/0.8 save compatibility, corrupt-primary backup recovery, low-food worker/population consistency and player-save byte preservation.
+
+50 legal seeded progression scenarios plus8hour bounded offline replay and repeated report checks passed. 12 actual desktop rendered checks, 15 Android kingdom checks, 26 prior Android interaction/lifecycle checks and 3 native JSON Save/Open checks pass separately. Godot MCP exercised the actual scene, completed the quest chain with legal model actions, selected a real building and reported no runtime errors. Captures were visually inspected. Synthetic progress is explicitly labeled; no human fun/retention/phone result is inferred.
+
+Existing.NET/API executable remains blocked by Windows App Control from0.8. It was not bypassed or counted as newly passing. No new backend source was needed for this offline campaign extension. Old Godot shutdown resource/ObjectDB warnings remain; zero accepted campaign SCRIPT ERROR/parse errors. Future B–H mechanics have no tests or completion claim because they are not implemented.

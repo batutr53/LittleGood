@@ -289,7 +289,7 @@ func build() -> void:
 	chapter.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	place(chapter, Rect2(30, 235 + safe_top, 475, 76))
 	realm_bar=button("",func():game.realm_ui.open());realm_bar.name="Kingdom";realm_bar.add_theme_font_size_override("font_size",17)
-	place(realm_bar,Rect2(30,324+safe_top,660,46))
+	place(realm_bar,Rect2(30,324+safe_top,660,64))
 	place(icon_button("minus", func(): game.view.zoom_at(game.view.origin, .88)), Rect2(30, 838, 58, 58))
 	place(icon_button("plus", func(): game.view.zoom_at(game.view.origin, 1.12)), Rect2(98, 838, 58, 58))
 	place(icon_button("center", func(): game.view.pan = Vector2.ZERO; game.view.zoom = .88), Rect2(166, 838, 58, 58))

@@ -1,40 +1,36 @@
-# LittleGod 0.8.5-devA — First Kingdom, verified milestone A
+# Road to LittleGod 0.9 — verified Iron Age prerequisite
 
-Local checkpoint: `age085-milestone-a`, based on `littlegod-0.8` (`f9420527e58f2fd6a1a70b7b538c8f9f079aaaab`), with safe base tag `age085-base-0.8`. Verified 2026-10-23. **This is the completed first playable vertical slice, not the finished Age of Kingdoms expansion.** The final `littlegod-0.8.5` release tag has deliberately not been created. Milestones B–H remain.
+**Current playable version:0.8.5-devB, Age of Kingdoms milestones A+B. The complete0.8.5 campaign and0.9 are not finished.** The0.9 request explicitly requires repairing critical0.8.5 systems first; audit found only realm1–5 and the first village. This checkpoint adds the next coherent playable slice, not levels31–50 on an unfinished game. Base `phase09-base-first-kingdom` = `fabe135231750ab30aef16233c58819cc178648c`. Verified continuation checkpoint `age085-milestone-b`. No `littlegod-0.9` or final `littlegod-0.8.5` tag was created. Prior tags/builds/source remain.
 
-Implemented: optional bilingual Elder Arin introduction, five data-driven primary quests, realm levels 1–5, verified one-time rewards, real timber/stone gathering, working lumber camps/farms, named paid citizens, job assignment and skill growth, trust/food upkeep, idle-citizen construction, housing/storage/council hall, material costs, level 1–3 building upgrades, relocation, derived village tier 2, bounded history and offline work. Food and population use the original settlement; Stardust/cosmetic ownership remain separate. Existing worlds opt in through the menu and retain their terrain, people and wardrobe.
+Implemented now: optional ChapterII, realm6–10 and five additional EN/TR main quests; stone quarry, iron mine, furnace and forge; ore/iron balances; assigned stonecutters/miners/smelters/smiths; exact two-ore/one-wood→one-iron conversion; paid-material crafting queue; unique owned tool instances; citizen equipment, comparison/unequip/transfer; four usable crafted tools. Axe increases its citizen's actual wood output50%, pick increases ore50%/stone35%, sickle increases food35%, hammer increases stone/builder labor25%. A tool can only belong to one citizen; no item is duplicated by moving it. All recipes consume real inputs and need smith labor. Offline work uses the original bounded simulation clock and cannot mint repeated completions.
 
-New original assets: transparent generated Arin portrait (`assets/kingdom/arin.png`, runtime384²), six procedural SVG building/scaffold images and shared576×384 atlas. Original painted terrain, creatures, plants, cosmetic art, typography, sound and online sources remain. Buildings/scaffolds are depth sorted with existing scenery; actual workers visibly move/sway at their assigned workplace. Building roof selection takes priority over overlapping wildlife. Long planet titles now fit their header.
+The first chapter and its406checks remain unchanged. Old campaign-v1 saves remain realm5 until the player chooses ChapterII; that explicit transition preserves XP600, citizens, buildings, wardrobe, old balances and claims, adds zero ore/iron, and opens realm6 without re-awarding quests. Private campaign-v2/industry-v1 validation extends the original checksum/atomic save envelope. Public visits/export strip private campaign/inventory data. The original online source and disabled purchases remain untouched.
 
-Verification: **356 retained game checks + 50 new campaign checks = 406 passing**, 50 legal progression / eight-hour offline scenarios, 12 desktop rendered checks, 15 Android kingdom checks including external ADB placement/Confirm taps, 26 retained Android interaction/lifecycle checks and 3 native JSON Save/Open checks. Actual tagged0.7/0.8 saves, exact campaign round-trip, corrupt-primary backup recovery, duplicate rewards/offline replay, read-only visits and real player-save preservation pass. Godot MCP rendered the completed village and selected an actual building; its runtime error list was empty. Automated scenarios are not human playtests.
+New original vector art: four isometric production structures plus shared768×192atlas and four tool icons. Original terrain/creature/cosmetic atlases, Arin and font licenses remain. Active forge/furnace warmth and workplace movement follow actual available work. Empty inputs/full storage stop production and active animation. Construction remains citizen labor, not a timer-only menu. Bounds24plots/12citizens/32items/4queued jobs; catalog limits leave room for all mandatory B structures.
 
-| Emulator scenario, 20 seconds | FPS | p50 / p95 ms | First frame ms | Draw / peak | Static / video MiB | Sim avg / peak ms |
+Verification: **406 retained + 53 new = 459 passing game checks**, plus the retained50first-chapter and50new ten-quest/eight-hour offline scenarios. 13 actual desktop rendered industry checks; Android16 industry checks including external ADB unequip/equip/persistence, 15 first-kingdom checks including external house placement, 26 retained interaction/lifecycle/visit checks and 3 native JSON Save/Open checks. Godot MCP rendered the eight-building village, selected the actual forge roof and opened its workshop, with an empty runtime error list. Automation is not human beta evidence.
+
+| 20-second emulator scenario | FPS | p50 / p95 ms | First frame ms | Draw / peak | Static / video MiB | Simulation avg / peak ms |
 |---|---:|---:|---:|---:|---:|---:|
-| Same fixture, kingdom removed | 18.32 | 53.21 / 66.31 | 3566 | 164 / 183 | 44.6 / 26.6 | 1.50 / 2.17 |
-| Five structures / four citizens | 18.09 | 53.95 / 65.95 | 3396 | 177 / 195 | 44.6 / 26.6 | 1.59 / 2.25 |
-| Same kingdom, battery saver | 22.23 | 43.27 / 56.62 | 3570 | 128 / 140 | 44.6 / 26.6 | 1.64 / 2.69 |
+| Same ecosystem, campaign removed | 22.28 | 44.05 / 51.13 | 2619 | 181 / 211 | 44.9 / 26.8 | 0.96 / 1.56 |
+| Eight buildings, four citizens, two equipped tools | 22.07 | 44.37 / 52.66 | 2641 | 195 / 226 | 45.0 / 26.8 | 1.22 / 1.83 |
+| Same industry fixture, battery saver | 26.14 | 37.22 / 45.29 | 2958 | 135 / 162 | 45.0 / 26.7 | 1.37 / 1.80 |
 
 
-Measurements are from emulator-5554, API35/x86_64,1080×2400 portrait with720×1600 internal viewport, Godot4.7.2 GL Compatibility. No physical Android device was available. The hidden comparison removes the entire optional campaign extension in memory, including its work simulation and HUD; it is not an isolated GPU-only experiment. Both runs start from the same saved ecosystem fixture. Host/emulator/shader-cache variance is substantial, so these samples do not establish a causal FPS gain, stable60 or physical-device performance. Battery-saver still caps at30, normal at60. First-frame counters include engine startup; they are not pure world-generation CPU or touch latency. Raw counters and actual APK SHA are in `benchmarks/phase085`.
+Emulator-5554/API35/x86_64,1080×2400 portrait,720×1600 world viewport, Godot4.7.2 GL Compatibility. No physical device. Hidden control removes the optional campaign logic/rendering/HUD in memory from the same starting ecosystem; it is not isolated GPU-only testing. Host/cache variation remains; these samples do not establish stable60/30 or phone performance. Normal/saver caps60/30 remain. Original player save bytes and absent temp/settings slots survived updates; performance uses a separate validated benchmark save and never overwrites the player planet. Raw evidence: `docs/benchmarks/phase09`.
 
-## Play and outputs
+## Launch and files
 
-- Launcher: `D:/LittleGod/Launch LittleGod.cmd`; verified runtime `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`.
-- Player APK: `D:/LittleGod/builds/android/LittleGod-0.8.5-milestone-A-debug.apk`, version0.8.5-devA/code85, 59881873 bytes, ARM64/x86_64, minAPI24/target36, debug signed. SHA256 `0ce5ff344f96cdf81f4073a982ec24078d5f68b21a3082887b418af44de2594a`. Installation/update/startup validated; original planet/backup/temp/settings files preserved.
-- QA APK: `D:/LittleGod/builds/android/LittleGod-0.8.5-milestone-A-qa-debug.apk`, separate disposable package. Only this package was cleared.
-- Source checkpoint archive: `D:/LittleGod/builds/LittleGod-0.8.5-milestone-A-source.zip`; commit/hash/CRC manifest: `D:/LittleGod/builds/phase085/checkpoint-manifest.json`.
-- Prior0.8 APK/archive and tags remain intact. This is not a store release, public server deployment or payment integration.
+- Play: `D:/LittleGod/Launch LittleGod.cmd`, verified runtime `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`.
+- Player APK: `D:/LittleGod/builds/android/LittleGod-0.8.5-milestone-B-debug.apk`, version0.8.5-devB/code86, 59999004bytes, ARM64/x86_64, minAPI24/target36, debug signaturev2/v3. SHA256 `e5cdead6e91ce285b9d262ebdf452860d7985a1bc6407579e9abbd6c48ad92df`. Installed and started with player data retained.
+- Isolated QA APK: `D:/LittleGod/builds/android/LittleGod-0.8.5-milestone-B-qa-debug.apk`. Only this disposable package was cleared.
+- Source: `D:/LittleGod/builds/LittleGod-0.8.5-milestone-B-source.zip`; CRC/commit/hash manifest `D:/LittleGod/builds/phase09/checkpoint-manifest.json`.
+- Exact continuation: `D:/LittleGod/docs/PHASE09_REPORT.md`. Earlier A documents are retained under `docs/archive/first-kingdom-a`;0.8 and A builds/tags are preserved.
 
-Open ☰ → First Kingdom → Awaken the First Kingdom. Tap objectives for location/build guidance. Meet settlers, gather six timber, claim reward, build a lumber camp and assign a citizen. Close menus to let work advance. Then build/assign a farm, add housing/recruit a fourth citizen, and raise the council hall. Keep an idle citizen for construction. Tap a building's roof to inspect/upgrade/move it. The resource bar opens the campaign. Advisor help can be hidden/replayed. After quest5 free building/upgrading continues with an explicit chapter-complete message.
+Play ☰→First Kingdom, finish the first five quests and choose **Begin ChapterII · the Iron Age**. Tap current objectives for build/job guidance. Quarry stone, mine ore, assign a smelter to a furnace, then build a forge. Assign a smith, queue an axe and pick, close menus to let work advance, and equip citizens through Inventory. Keep a free builder; recruit more citizens to run concurrent workplaces. The recipe and inventory screens explain actual effects and reserved costs. After quest10, free construction/crafting continues and the UI explicitly states that adventures/armies/levels11–50 remain unavailable.
 
-## Continuation boundary
+Remaining prerequisites:0.8.5C–H, including an actual playable adventure, hero/combat/loot, levels11–30, army/formations/regions/finale and side content. Then the requested0.9A–G technology/diplomacy/31–50/tactical conquest/siege/dungeons/legendary gear/guild fallback can begin. Existing API/.NET runtime remains blocked by Windows App Control; no bypass/security change. No paid service, live purchase, public deployment or store publication.
 
-Next is **milestone B**, levels6–10: quarry, mine, furnace, forge, inventory, crafting and equipment foundations. None is claimed implemented. Then C must provide a separate playable Wildwood adventure with movement/combat/AI/loot/boss; D armies/formations/raids; E regions/trade; F finale; G30side quests/optional captive policies/expeditions; H final polish. No fake adventure buttons, simulated battles, placeholder30quest list or unverified completion tag were added. See `PHASE085_REPORT.md` for exact code entry points and acceptance steps.
-
-Known limitations include incomplete B–H, bounded early construction, flatter vector buildings beside retained painted scenery, emulator frame/startup variance and lack of physical/human beta evidence. Existing online API/.NET execution remains blocked by Windows App Control; no bypass attempted. Payments remain disabled. Read `KNOWN_ISSUES.md` and historical `STATUS_08.md`.
-
-Actual Android gameplay, progressed by legal automated actions:
-
-![First village](screenshots/phase085-first-village.png)
-![Real touch placement](screenshots/phase085-adb-placement.png)
-![Arin](screenshots/phase085-advisor-intro.png)
+![Actual Android workshop](screenshots/phase09-workshop.png)
+![Actual Android tool comparison](screenshots/phase09-adb-compare.png)
+![Actual living world](screenshots/phase09-equipped-village.png)

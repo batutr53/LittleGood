@@ -1,0 +1,88 @@
+[
+  {
+    "id": "forest_axe",
+    "name": [
+      "Forester’s Axe",
+      "Ormancı Baltası"
+    ],
+    "description": [
+      "Timber output +50% for its equipped citizen.",
+      "Kuşanan sakinin odun üretimi +%50."
+    ],
+    "cost": {
+      "iron": 2,
+      "wood": 2
+    },
+    "effects": {
+      "lumber": 1500
+    },
+    "level": 9,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "iron_pick",
+    "name": [
+      "Iron Pick",
+      "Demir Kazma"
+    ],
+    "description": [
+      "Ore +50%, stone +35% for its equipped citizen.",
+      "Kuşanan sakinin cevheri +%50, taşı +%35."
+    ],
+    "cost": {
+      "iron": 2,
+      "wood": 1
+    },
+    "effects": {
+      "mine": 1500,
+      "quarry": 1350
+    },
+    "level": 9,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "field_sickle",
+    "name": [
+      "Rainseed Sickle",
+      "Yağmur Tohumu Orağı"
+    ],
+    "description": [
+      "Food output +35% for its equipped farmer.",
+      "Kuşanan çiftçinin besin üretimi +%35."
+    ],
+    "cost": {
+      "iron": 1,
+      "wood": 1
+    },
+    "effects": {
+      "farm": 1350
+    },
+    "level": 9,
+    "ticks": 4,
+    "building": "forge"
+  },
+  {
+    "id": "mason_hammer",
+    "name": [
+      "Mason’s Hammer",
+      "Taşçı Çekici"
+    ],
+    "description": [
+      "Stone and idle construction labor +25%.",
+      "Taş üretimi ve boştaki inşaat emeği +%25."
+    ],
+    "cost": {
+      "iron": 1,
+      "wood": 2
+    },
+    "effects": {
+      "quarry": 1250,
+      "builder": 1250
+    },
+    "level": 9,
+    "ticks": 4,
+    "building": "forge"
+  }
+]

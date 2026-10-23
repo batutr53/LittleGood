@@ -10,11 +10,14 @@ parser.add_argument('--economy',action='store_true')
 parser.add_argument('--stress',action='store_true')
 parser.add_argument('--cosmetics',action='store_true')
 parser.add_argument('--kingdom',action='store_true')
+parser.add_argument('--industry',action='store_true')
 parser.add_argument('--hide-kingdom',action='store_true')
 parser.add_argument('--cosmetic-theme',default='celestial',choices=['enchanted','crystal','celestial','ancient'])
 parser.add_argument('--duration',type=float,default=30)
 parser.add_argument('--output-dir',default='builds/phase3')
+parser.add_argument('--fixture',help='Validated campaign save copied only to the private benchmark slot')
 args=parser.parse_args()
+if args.industry:args.kingdom=True
 if args.hide_kingdom and not args.kingdom:parser.error('--hide-kingdom requires --kingdom')
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 base=[str(adb),'-s',args.serial]
@@ -28,6 +31,11 @@ installed_version=version_match.group(1) if version_match else 'unavailable'
 apk_path=run('shell','pm','path',pkg).decode().strip().removeprefix('package:')
 installed_hash=run('shell','sha256sum',apk_path).decode().split()[0] if re.fullmatch(r'/data/app/[A-Za-z0-9_=/+.~-]+/base\.apk',apk_path) else 'unavailable'
 before=run('shell','run-as',pkg,'cat','files/planet.json',check=False)
+if args.fixture:
+    fixture=root/args.fixture
+    assert fixture.is_file(),'Missing local campaign fixture'
+    run('push',str(fixture),'/data/local/tmp/littlegod-profile-fixture.json')
+    run('shell','run-as',pkg,'cp','/data/local/tmp/littlegod-profile-fixture.json','files/phase085_profile_world.json')
 options={'duration':args.duration,'economy':args.economy,'control':args.control,'stress':args.stress,'cosmetics':args.cosmetics,'cosmetic_theme':args.cosmetic_theme,'kingdom_fixture':args.kingdom,'hide_kingdom':args.hide_kingdom}
 output=root/args.output_dir
 output.mkdir(parents=True,exist_ok=True)
@@ -63,6 +71,10 @@ if args.kingdom:
     assert report.get('pipeline',{}).get('kingdom_fixture') and bool(report['pipeline'].get('hide_kingdom'))==args.hide_kingdom,'Wrong kingdom profile fixture'
     assert args.hide_kingdom or report.get('kingdom_buildings',0)>=4,'Missing real kingdom buildings'
     kind+='-kingdom-hidden' if args.hide_kingdom else '-kingdom'
+if args.industry:
+    assert report.get('pipeline',{}).get('industry_fixture'),'Missing real industry fixture'
+    assert args.hide_kingdom or (report.get('inventory_items',0)>=2 and report.get('kingdom_buildings',0)>=8),'Missing actual tools or buildings'
+    kind+='-industry'
 dest=output/f'android-{kind}'
 dest.with_suffix('.json').write_text(json.dumps(report,indent=2))
 for _ in range(10):

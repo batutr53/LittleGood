@@ -36,3 +36,7 @@ The existing Stardust cosmetic economy above is unchanged. The optional capital 
 | Council hall | 5 | 18 / 6 / 2 | 6 | 0 | 1 |
 
 Upgrades reach level3, costing base cost×newlevel and base labor×newlevel. A work tick is2seconds at1× but construction may complete faster with several idle citizens; menus pause time. Relocation is free to suitable nearby vacant plots and preserves progress/assignments. Global bounds16structures/12citizens; per-type limits leave room for mandatory A buildings. At full storage production stops without consuming inputs. See PROGRESSION_BALANCE.md and phase085 balance evidence. No trade/crafting/ore/equipment/military economy is implemented yet.
+
+## Iron Age — implemented prerequisite B
+
+ChapterII explicitly adds zero ore/iron, preserving all common balances. Quarry/mine consume real rocky cell resources; furnace consumes stored2ore1wood periron. Forge reserves recipe costs and requires actual smith work; unique item IDs and one-owner equipment avoid duplication. Exact costs/effects/limits are in BALANCE_PHASE09.md. Storage applies to ore/iron as to wood/stone; at capacity inputs are not consumed. Core housing/upkeep and cosmetic Stardust are retained. Global plot budget24/catalog21leaves room for every mandatory structure. No war/legendary/paid economy is claimed; those remain future systems.

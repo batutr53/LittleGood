@@ -223,6 +223,246 @@
       "stone": 8,
       "gold": 5
     },
+    "next": "main_06"
+  },
+  {
+    "id": "main_06",
+    "level": 6,
+    "chapter": 2,
+    "title": [
+      "Stone for Tomorrow",
+      "Yarın İçin Taş"
+    ],
+    "description": [
+      "Raise a quarry on rocky land and give a citizen a stonecutting job.",
+      "Kayalık arazide ocak kur; bir sakine taşçılık işi ver."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_05"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "quarry",
+        "target": 1,
+        "text": [
+          "Finish a quarry",
+          "Taş ocağını tamamla"
+        ],
+        "navigate": "build_quarry"
+      },
+      {
+        "kind": "event",
+        "key": "produce_stone",
+        "target": 6,
+        "text": [
+          "Produce stone with a stonecutter",
+          "Taşçıyla taş üret"
+        ],
+        "navigate": "workers"
+      }
+    ],
+    "rewards": {
+      "xp": 240,
+      "wood": 12,
+      "stone": 8,
+      "gold": 3
+    },
+    "next": "main_07"
+  },
+  {
+    "id": "main_07",
+    "level": 7,
+    "chapter": 2,
+    "title": [
+      "Beneath the Mountain",
+      "Dağın Altında"
+    ],
+    "description": [
+      "Your miners find iron ore in the mountain. Save it for smelting.",
+      "Madencilerin dağda demir cevheri bulur. Döküm için biriktir."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_06"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "mine",
+        "target": 1,
+        "text": [
+          "Finish an iron mine",
+          "Demir madenini tamamla"
+        ],
+        "navigate": "build_mine"
+      },
+      {
+        "kind": "event",
+        "key": "produce_ore",
+        "target": 12,
+        "text": [
+          "Extract ore",
+          "Cevher çıkar"
+        ],
+        "navigate": "workers"
+      }
+    ],
+    "rewards": {
+      "xp": 280,
+      "wood": 12,
+      "stone": 8,
+      "gold": 3
+    },
+    "next": "main_08"
+  },
+  {
+    "id": "main_08",
+    "level": 8,
+    "chapter": 2,
+    "title": [
+      "The First Ember",
+      "İlk Kor"
+    ],
+    "description": [
+      "Wood fuels the furnace; ore becomes iron. Every bar has real inputs.",
+      "Odun fırını besler; cevher demire dönüşür. Her külçe gerçek malzeme tüketir."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_07"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "furnace",
+        "target": 1,
+        "text": [
+          "Finish a furnace",
+          "Fırını tamamla"
+        ],
+        "navigate": "build_furnace"
+      },
+      {
+        "kind": "event",
+        "key": "produce_iron",
+        "target": 6,
+        "text": [
+          "Smelt iron",
+          "Demir dök"
+        ],
+        "navigate": "workers"
+      }
+    ],
+    "rewards": {
+      "xp": 320,
+      "wood": 12,
+      "stone": 8,
+      "gold": 3
+    },
+    "next": "main_09"
+  },
+  {
+    "id": "main_09",
+    "level": 9,
+    "chapter": 2,
+    "title": [
+      "Hands of the Smith",
+      "Demircinin Elleri"
+    ],
+    "description": [
+      "Build a forge. Give a smith a job, then craft an axe and a pick.",
+      "Demirci kur. Bir demirci ata; sonra balta ve kazma üret."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_08"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "forge",
+        "target": 1,
+        "text": [
+          "Finish a forge",
+          "Demirciyi tamamla"
+        ],
+        "navigate": "build_forge"
+      },
+      {
+        "kind": "event",
+        "key": "craft_forest_axe",
+        "target": 1,
+        "text": [
+          "Craft a Forester’s Axe",
+          "Ormancı Baltası üret"
+        ],
+        "navigate": "workshop"
+      },
+      {
+        "kind": "event",
+        "key": "craft_iron_pick",
+        "target": 1,
+        "text": [
+          "Craft an Iron Pick",
+          "Demir Kazma üret"
+        ],
+        "navigate": "workshop"
+      }
+    ],
+    "rewards": {
+      "xp": 360,
+      "wood": 12,
+      "stone": 8,
+      "gold": 3
+    },
+    "next": "main_10"
+  },
+  {
+    "id": "main_10",
+    "level": 10,
+    "chapter": 2,
+    "title": [
+      "Tools of a New Age",
+      "Yeni Çağın Aletleri"
+    ],
+    "description": [
+      "Equip your citizens. Watch their real work benefit from the tools you made.",
+      "Sakinlerine alet kuşandır. Ürettiklerinin gerçek işleri hızlandırmasını izle."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_09"
+    ],
+    "objectives": [
+      {
+        "kind": "equipment",
+        "key": "tools",
+        "target": 2,
+        "text": [
+          "Equip two citizens",
+          "İki sakine alet kuşandır"
+        ],
+        "navigate": "inventory"
+      },
+      {
+        "kind": "event",
+        "key": "tool_work",
+        "target": 6,
+        "text": [
+          "Work productively with equipped tools",
+          "Kuşanılmış aletlerle verimli çalış"
+        ],
+        "navigate": "workers"
+      }
+    ],
+    "rewards": {
+      "xp": 400,
+      "wood": 12,
+      "stone": 8,
+      "gold": 3
+    },
     "next": ""
   }
 ]

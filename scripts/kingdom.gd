@@ -3,9 +3,10 @@ extends RefCounted
 # Optional private-save extension. The existing civilization remains the food/population authority.
 const PLAYABLE_LEVEL_CAP=5
 const SCALE=1000
-const MAX_BUILDINGS=16
+const MAX_BUILDINGS=24
 const MAX_WORKERS=12
 const RESOURCES=["wood","stone","gold"]
+const INDUSTRY=preload("res://scripts/industry.gd")
 static var building_data: Dictionary={}
 static var quest_data: Array=[]
 static func buildings() -> Dictionary:
@@ -26,6 +27,7 @@ static func normalize(w: Dictionary) -> void:
 	for h in w.kingdom.history:h.tick=int(h.tick)
 	for key in w.kingdom.stock:w.kingdom.stock[key]=int(w.kingdom.stock[key])
 	for key in w.kingdom.events:w.kingdom.events[key]=int(w.kingdom.events[key])
+	INDUSTRY.normalize(w)
 static func home(w: Dictionary) -> Dictionary:return w.settlements[0]
 static func enable(w: Dictionary) -> bool:
 	if w.get("_read_only",false) or w.has("kingdom") or w.settlements.is_empty():return false
@@ -40,7 +42,8 @@ static func add_worker(w: Dictionary) -> void:
 static func level(w: Dictionary) -> int:
 	if not w.has("kingdom"):return 1
 	var n=1
-	while n<PLAYABLE_LEVEL_CAP and int(w.kingdom.xp)>=20*n*(n+1):n+=1
+	var cap=10 if INDUSTRY.enabled(w) else PLAYABLE_LEVEL_CAP
+	while n<cap and int(w.kingdom.xp)>=20*n*(n+1):n+=1
 	return n
 static func ready(b: Dictionary) -> bool:return float(b.progress)>=float(b.required)
 static func count(w: Dictionary,kind: String) -> int:
@@ -82,9 +85,10 @@ static func valid_site(w: Dictionary,kind: String,cell: int,ignore: int=0) -> bo
 	for b in w.kingdom.buildings:
 		if int(b.cell)==cell and int(b.id)!=ignore:return false
 	var c=w.cells[cell];var site=buildings()[kind].site
+	if int(buildings()[kind].level)>5 and not INDUSTRY.enabled(w):return false
 	var capital=w.cells[int(home(w).cell)]
-	if Vector2(c.x-capital.x,c.y-capital.y).length()>5.5:return false
-	return int(c.biome)==1 if site=="forest" else int(c.biome) in [0,1,5] if site=="fertile" else int(c.biome) in [0,1,2,5]
+	if Vector2(c.x-capital.x,c.y-capital.y).length()>(7.0 if INDUSTRY.enabled(w) else 5.5):return false
+	return int(c.biome)==1 if site=="forest" else int(c.biome) in [0,1,5] if site=="fertile" else int(c.biome) in [3,4] if site=="rock" else int(c.biome) in [0,1,2,5]
 static func begin_build(w: Dictionary,kind: String,cell: int) -> int:
 	if not writable(w) or not buildings().has(kind):return -1
 	var data=buildings()[kind]
@@ -140,32 +144,52 @@ static func productivity(w: Dictionary,b: Dictionary) -> float:
 	var c=w.cells[int(b.cell)];var environment=0.0
 	if b.kind=="lumber" and int(c.biome)==1:environment=maxf(.2,c.plants)
 	elif b.kind=="farm" and int(c.biome) in [0,1,5]:environment=c.moisture*(.65 if int(c.biome)==1 else 1.0)
+	elif b.kind in ["quarry","mine"] and int(c.biome) in [3,4]:environment=1.0
+	elif b.kind=="furnace":environment=1.0
 	var skill=0.0
-	for worker in assigned(w,int(b.id)):skill+=float(worker.skill)/SCALE
+	for worker in assigned(w,int(b.id)):skill+=float(worker.skill)/SCALE*INDUSTRY.multiplier(w,int(worker.id),b.kind)/SCALE
 	return .45*int(b.level)*skill*float(w.kingdom.stability)/SCALE*environment
+static func activity_rate(w: Dictionary,b: Dictionary) -> float:
+	return INDUSTRY.work_rate(w,b)/float(SCALE) if b.kind=="forge" else available_output(w,b)
+static func available_output(w: Dictionary,b: Dictionary) -> float:
+	var data=buildings()[b.kind]
+	if data.output.is_empty():return 0
+	var k=w.kingdom;var c=w.cells[int(b.cell)]
+	var space=maxf(0,100-home(w).food) if data.output=="food" else maxf(0,storage(w)-float(k.stock.get(data.output,0))/SCALE)
+	var available=float(c.resources)
+	if data.has("inputs"):
+		available=INF
+		for key in data.inputs:available=minf(available,int(k.stock[key])/float(SCALE)/float(data.inputs[key]))
+	return floori(minf(productivity(w,b),minf(available,space))*SCALE)/float(SCALE)
 static func tick(w: Dictionary) -> void:
 	if not writable(w) or int(w.kingdom.last_tick)>=int(w.tick):return
 	var k=w.kingdom;k.last_tick=int(w.tick)
 	k.stability=clampi(int(k.stability)+(2 if home(w).food>5 else -5),550,1000)
 	home(w).food=maxf(0,home(w).food-k.workers.size()*.025)
-	var labor=assigned(w,0).size()*int(k.stability)
+	var labor=0
+	for worker in assigned(w,0):labor+=roundi(int(k.stability)*INDUSTRY.multiplier(w,int(worker.id),"builder")/float(SCALE))
 	for b in k.buildings:
 		if not ready(b):
 			var used=mini(labor,int(b.required)-int(b.progress));b.progress+=used;labor-=used
 			if ready(b):event(w,"build_"+b.kind);record(w,"built",b.kind)
 			continue
-		var data=buildings()[b.kind];var c=w.cells[int(b.cell)];var amount=productivity(w,b)
-		var space=maxf(0,100-home(w).food) if data.output=="food" else maxf(0,storage(w)-float(k.stock.get(data.output,0))/SCALE)
-		amount=floori(minf(amount,minf(c.resources,space))*SCALE)/float(SCALE)
+		var data=buildings()[b.kind];var c=w.cells[int(b.cell)];var amount=available_output(w,b)
+		if data.output.is_empty():continue
 		if amount<=0:continue
-		c.resources-=amount
+		if data.has("inputs"):
+			for key in data.inputs:k.stock[key]-=roundi(amount*SCALE)*int(data.inputs[key])
+		else:c.resources-=amount
 		if data.output=="food":home(w).food+=amount
 		else:k.stock[data.output]+=roundi(amount*SCALE)
 		event(w,"produce_"+data.output,amount)
-		for worker in assigned(w,int(b.id)):worker.skill=mini(1500,int(worker.skill)+1)
+		for worker in assigned(w,int(b.id)):
+			worker.skill=mini(1500,int(worker.skill)+1)
+			if INDUSTRY.multiplier(w,int(worker.id),b.kind)>SCALE:event(w,"tool_work")
+	INDUSTRY.tick(w)
 static func current(w: Dictionary) -> Dictionary:
 	if not w.has("kingdom"):return {}
 	for q in quests():
+		if int(q.level)>5 and not INDUSTRY.enabled(w):return {}
 		if not w.kingdom.claimed.has(q.id):return q
 	return {}
 static func progress(w: Dictionary,o: Dictionary) -> float:
@@ -173,6 +197,7 @@ static func progress(w: Dictionary,o: Dictionary) -> float:
 		"event":return float(w.kingdom.events.get(o.key,0))/SCALE
 		"building":return count(w,o.key)
 		"tier":return tier(w)
+		"equipment":return w.kingdom.industry.equipped.size() if INDUSTRY.enabled(w) else 0
 	return 0
 static func complete(w: Dictionary,q: Dictionary) -> bool:
 	for prerequisite in q.prerequisites:
@@ -183,26 +208,31 @@ static func claim(w: Dictionary,id: String) -> bool:
 	var q=current(w)
 	if q.is_empty() or q.id!=id or level(w)<int(q.level) or not complete(w,q):return false
 	w.kingdom.claimed.append(id);w.kingdom.xp+=int(q.rewards.xp)
-	for key in RESOURCES:w.kingdom.stock[key]+=roundi(float(q.rewards.get(key,0))*SCALE)
+	for key in w.kingdom.stock:w.kingdom.stock[key]+=roundi(float(q.rewards.get(key,0))*SCALE)
 	record(w,"quest",id)
 	return true
 static func validate(w: Dictionary) -> bool:
 	if not w.has("kingdom"):return true
 	var k=w.kingdom;var fields=["version","xp","stock","workers","buildings","claimed","events","history","next_worker","next_building","last_tick","gather_at","stability","legacy_capacity","advisor"]
 	var C=preload("res://scripts/cosmetics.gd")
-	if not C.shape(k,fields) or not C.number(k.version,1,1,true) or not C.number(k.xp,0,100000,true) or not C.number(k.stability,550,1000,true) or not k.advisor is bool:return false
-	if not C.shape(k.stock,RESOURCES):return false
-	for key in RESOURCES:
+	if not k is Dictionary or not C.number(k.get("version"),1,2,true):return false
+	var resources=RESOURCES.duplicate()
+	if int(k.version)==2:fields.append("industry");resources.append_array(INDUSTRY.EXTRA_RESOURCES)
+	if not C.shape(k,fields) or not C.number(k.xp,0,100000,true) or not C.number(k.stability,550,1000,true) or not k.advisor is bool:return false
+	if not C.shape(k.stock,resources):return false
+	for key in resources:
 		if not C.number(k.stock[key],0,10000000,true):return false
 	for key in ["next_worker","next_building"]:
 		if not C.number(k[key],1,1000000,true):return false
 	if not C.number(k.legacy_capacity,5,80,true) or not C.number(k.last_tick,0,w.tick,true) or not C.number(k.gather_at,-4,w.tick,true):return false
 	if not k.workers is Array or k.workers.size()>MAX_WORKERS or not k.buildings is Array or k.buildings.size()>MAX_BUILDINGS or not k.claimed is Array or k.claimed.size()>quests().size():return false
+	if int(k.version)==2 and k.claimed.size()<5:return false
 	if w.settlements.is_empty() or k.workers.size()>floori(home(w).population):return false
 	var ids: Dictionary={};var cells: Dictionary={}
 	for b in k.buildings:
 		if not C.shape(b,["id","kind","cell","level","progress","required"]) or not C.number(b.id,1,k.next_building-1,true) or ids.has(int(b.id)) or not b.kind is String or not buildings().has(b.kind) or not C.number(b.cell,0,w.cells.size()-1,true) or cells.has(int(b.cell)) or not C.number(b.level,1,3,true):return false
 		if not C.number(b.required,1,100000,true) or not C.number(b.progress,0,b.required,true):return false
+		if int(buildings()[b.kind].level)>5 and int(k.version)!=2:return false
 		ids[int(b.id)]=b;cells[int(b.cell)]=true
 	for kind in buildings():
 		if k.buildings.filter(func(b):return b.kind==kind).size()>int(buildings()[kind].limit):return false
@@ -217,13 +247,17 @@ static func validate(w: Dictionary) -> bool:
 	var xp=0
 	for i in range(k.claimed.size()):
 		if not k.claimed[i] is String or k.claimed[i]!=quests()[i].id:return false
+		if i>=5 and int(k.version)!=2:return false
 		xp+=int(quests()[i].rewards.xp)
-	if k.xp!=xp or not k.events is Dictionary or k.events.size()>24:return false
+	if k.xp!=xp or not k.events is Dictionary or k.events.size()>(40 if int(k.version)==2 else 24):return false
 	var event_keys=["observe_settlement","gather_wood","gather_stone","recruit","produce_wood","produce_food"]
 	for key in buildings():event_keys.append("build_"+key)
+	if int(k.version)==2:
+		event_keys.append_array(["produce_stone","produce_ore","produce_iron","equip_tool","tool_work"])
+		for key in INDUSTRY.recipes():event_keys.append("craft_"+key)
 	for key in k.events:
 		if not event_keys.has(key) or not C.number(k.events[key],0,1000000000,true):return false
 	if not k.history is Array or k.history.size()>30:return false
 	for h in k.history:
-		if not C.shape(h,["tick","key","subject"]) or not C.number(h.tick,0,w.tick,true) or not h.key in ["founding","construction","built","upgrade","recruit","quest"] or not h.subject is String or h.subject.length()>32:return false
-	return true
+		if not C.shape(h,["tick","key","subject"]) or not C.number(h.tick,0,w.tick,true) or not h.key in ["founding","construction","built","upgrade","recruit","quest","craft"] or not h.subject is String or h.subject.length()>32:return false
+	return INDUSTRY.validate(w)

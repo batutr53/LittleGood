@@ -55,6 +55,9 @@ func finish() -> void:
 	report["cosmetic_count"]=game.world.get("wardrobe",{}).get("placements",[]).size()
 	report["kingdom_buildings"]=game.world.get("kingdom",{}).get("buildings",[]).size()
 	report["kingdom_workers"]=game.world.get("kingdom",{}).get("workers",[]).size()
+	report["industry_enabled"]=game.world.get("kingdom",{}).has("industry")
+	report["inventory_items"]=game.world.get("kingdom",{}).get("industry",{}).get("items",[]).size()
+	report["crafting_queue"]=game.world.get("kingdom",{}).get("industry",{}).get("queue",[]).size()
 	report["cosmetic_sync_ms"]=game.view.cosmetic_layer.sync_ms
 	report["cosmetic_theme"]=game.world.get("wardrobe",{}).get("theme","enchanted")
 	f.store_string(JSON.stringify(report, "\t"))

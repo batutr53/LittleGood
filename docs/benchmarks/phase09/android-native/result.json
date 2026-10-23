@@ -1,0 +1,13 @@
+{
+  "source": "simulated_android_qa",
+  "serial": "emulator-5554",
+  "package": "org.littlegod.livinguniverse.betaqa",
+  "checks": {
+    "native_json_export": true,
+    "native_json_import": true,
+    "source_file_unchanged": true
+  },
+  "exported_bytes": 59166,
+  "sha256": "9b0f9839b60eb8c7d111232f956ceb834b74867e1b98b46f25eae5ad6bda63d9",
+  "all_passed": true
+}

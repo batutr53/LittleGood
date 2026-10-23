@@ -1,0 +1,5 @@
+--------- beginning of main
+10-23 11:36:39.331  6489  6517 I godot   : Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+10-23 11:36:40.605  6489  6517 I godot   : OpenGL API OpenGL ES 3.1 (4.5.0 NVIDIA 616.64) - Compatibility - Using Device: Google (NVIDIA Corporation) - Android Emulator OpenGL ES Translator (NVIDIA GeForce RTX 4070 Laptop GPU/PCIe/SSE2)
+10-23 11:36:40.620  6489  6517 I godot   :
+10-23 11:36:52.241  6489  6517 I godot   : LittleGod runtime: tick=64 paused=true menu=false fps=17.0

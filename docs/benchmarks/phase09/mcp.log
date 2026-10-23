@@ -1,0 +1,123 @@
+[godot-forge] v0.1.0 project=D:\LittleGod godot=not found launch=none profile=full
+run {
+ "stopped": false
+}
+editor {
+ "cleared": true,
+ "last_seq": 1
+}
+files {
+ "ok": true
+}
+scene {
+ "reloaded": "res://scenes/main.tscn"
+}
+run {
+ "connected": true,
+ "game": {
+  "fps": 1,
+  "frame": 0,
+  "headless": false,
+  "node_count": 73,
+  "paused": false,
+  "pid": 6008,
+  "renderer": "gl_compatibility",
+  "scene": "res://scenes/main.tscn",
+  "scene_root": "LittleGod",
+  "time_scale": 1,
+  "uptime_s": 1.187,
+  "viewport_size": "Vector2(720, 1280)",
+  "window_size": "Vector2i(540, 960)"
+ },
+ "muted": true,
+ "playing": true,
+ "scene": "main"
+}
+game {
+ "waited_s": 2.016
+}
+exec {
+ "result": {
+  "claimed": [
+   "main_01",
+   "main_02",
+   "main_03",
+   "main_04",
+   "main_05",
+   "main_06",
+   "main_07",
+   "main_08",
+   "main_09",
+   "main_10"
+  ],
+  "items": [
+   {
+    "id": 1,
+    "recipe": "forest_axe"
+   },
+   {
+    "id": 2,
+    "recipe": "iron_pick"
+   }
+  ],
+  "legal_ten_quest_progression": true
+ }
+}
+game {
+ "waited_s": 1.006
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+exec {
+ "result": {
+  "actual_forge_roof_opens_workshop_entry": true,
+  "rendered_buildings": 8
+ }
+}
+game {
+ "waited_s": 0.7
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+exec {
+ "result": {
+  "gold": 34000,
+  "iron": 1448,
+  "ore": 4332,
+  "stone": 39076,
+  "wood": 80318
+ }
+}
+game {
+ "waited_s": 0.715
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+run {
+ "entries": [],
+ "last_seq": 2
+}
+run {
+ "stopped": true
+}

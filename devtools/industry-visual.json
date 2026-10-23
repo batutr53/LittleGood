@@ -1,0 +1,19 @@
+[
+ {"name":"run","arguments":{"action":"stop"}},
+ {"name":"editor","arguments":{"action":"clear_logs"}},
+ {"name":"files","arguments":{"action":"rescan"}},
+ {"name":"scene","arguments":{"action":"reload","path":"res://scenes/main.tscn"}},
+ {"name":"run","arguments":{"action":"play","mute":true}},
+ {"name":"game","arguments":{"action":"wait","seconds":2}},
+ {"name":"exec","arguments":{"action":"game","code":"scene.is_test_session=true; scene.save_path=\"user://industry-mcp.json\"; scene.diagnostics.configure(\"user://industry-mcp-diagnostics.json\",\"simulated\"); var probe=preload(\"res://scripts/industry_progression_probe.gd\").new(); var ok=probe.through_iron_age(); scene.world=probe.world; scene.view.world=scene.world; scene.rng.state=int(scene.world.rng_state); scene.has_player_world=true; scene.paused=true; scene.ui.language=\"en\"; scene.ui.build(); scene.ui.close(); scene.show_world(true); scene.view.invalidate(); return {\"legal_ten_quest_progression\":ok,\"claimed\":scene.world.kingdom.claimed,\"items\":scene.world.kingdom.industry.items}"}},
+ {"name":"game","arguments":{"action":"wait","seconds":1}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase09/mcp-industry-world.png"},
+ {"name":"exec","arguments":{"action":"game","code":"var b=scene.world.kingdom.buildings.filter(func(x):return x.kind==\"forge\")[0]; scene.power=-1; scene.touch_world(scene.view.screen_point(scene.world.cells[int(b.cell)])-Vector2(0,20)*scene.view.display_zoom); return {\"actual_forge_roof_opens_workshop_entry\":scene.ui.modal.find_children(\"*\",\"Button\",true,false).any(func(x):return x.text==\"Open workshop\"),\"rendered_buildings\":scene.view.kingdom_layer.structures.size()}"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.7}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase09/mcp-forge.png"},
+ {"name":"exec","arguments":{"action":"game","code":"scene.realm_ui.workshop(); return scene.world.kingdom.stock"}},
+ {"name":"game","arguments":{"action":"wait","seconds":0.7}},
+ {"name":"view","arguments":{"action":"game"},"output":"D:/LittleGod/builds/phase09/mcp-workshop.png"},
+ {"name":"run","arguments":{"action":"errors"}},
+ {"name":"run","arguments":{"action":"stop"}}
+]

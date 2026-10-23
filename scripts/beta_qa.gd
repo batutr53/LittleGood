@@ -37,6 +37,21 @@ func run() -> void:
 	game.ui.build()
 	game.ui.main_menu()
 	await get_tree().process_frame
+	if options.get("phase", "new")=="industry":
+		var qa=preload("res://scripts/industry_qa.gd").new();add_child(qa);qa.game=game;qa.directory="user://"
+		var result=await qa.run();checks=result.checks
+		var I=preload("res://scripts/industry.gd");var worker=int(game.world.kingdom.workers[0].id)
+		game.realm_ui.choose_tool(worker);await get_tree().create_timer(.4).timeout
+		publish("industry_touch_ready",{"unequip":point(find_text(game.ui.modal,"Unequip · return to inventory"))})
+		while not FileAccess.file_exists("user://industry_unequipped"):await get_tree().process_frame
+		checks.adb_unequipped=I.tool(game.world,worker).is_empty()
+		game.realm_ui.choose_tool(worker);await get_tree().create_timer(.4).timeout
+		publish("industry_equip_ready",{"equip":point(qa.button(game.ui.modal,"Forester’s Axe #"))})
+		while not FileAccess.file_exists("user://industry_equipped"):await get_tree().process_frame
+		checks.adb_equipped=not I.tool(game.world,worker).is_empty();game.checkpoint("industry-qa")
+		checks.adb_equipment_persisted=Persistence.load_world(game.save_path).kingdom.industry.equipped==game.world.kingdom.industry.equipped
+		result.checks=checks;result.all_passed=not checks.values().has(false);publish("industry_complete",result)
+		return
 	if options.get("phase", "new")=="kingdom":
 		var qa=preload("res://scripts/kingdom_qa.gd").new();add_child(qa);qa.game=game;qa.directory="user://"
 		var result=await qa.run();checks=result.checks

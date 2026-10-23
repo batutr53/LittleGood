@@ -102,10 +102,12 @@ func _ready() -> void:
 		if options.get("kingdom_fixture",false):
 			var fixture=Persistence.load_world("user://phase085_profile_world.json")
 			if fixture.is_empty() or not fixture.has("kingdom"):push_error("Missing validated kingdom benchmark fixture");get_tree().quit(1);return
+			pipeline.industry_fixture=fixture.kingdom.has("industry")
 			world=fixture
 			if options.get("hide_kingdom",false):world.erase("kingdom")
 			view.world=world;rng.state=int(world.rng_state);world.weather=1;paused=false;view.invalidate()
 			pipeline.kingdom_fixture=true;pipeline.hide_kingdom=options.get("hide_kingdom",false)
+			has_player_world=true;ui.refresh()
 		if options.get("cosmetics",false):
 			preload("res://scripts/cosmetic_qa.gd").decorate(world,32)
 			preload("res://scripts/cosmetics.gd").equip(world,options.get("cosmetic_theme","crystal"))
