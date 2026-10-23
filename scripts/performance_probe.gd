@@ -53,6 +53,8 @@ func finish() -> void:
 	report["creature_animation_average_ms"] = animation_cpu_total/maxi(1,frame_times.size())
 	report["cosmetic_draw_average_ms"]=cosmetic_cpu_total/maxi(1,frame_times.size())
 	report["cosmetic_count"]=game.world.get("wardrobe",{}).get("placements",[]).size()
+	report["kingdom_buildings"]=game.world.get("kingdom",{}).get("buildings",[]).size()
+	report["kingdom_workers"]=game.world.get("kingdom",{}).get("workers",[]).size()
 	report["cosmetic_sync_ms"]=game.view.cosmetic_layer.sync_ms
 	report["cosmetic_theme"]=game.world.get("wardrobe",{}).get("theme","enchanted")
 	f.store_string(JSON.stringify(report, "\t"))

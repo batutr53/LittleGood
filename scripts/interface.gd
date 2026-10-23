@@ -16,6 +16,7 @@ var chapter: Button
 var speed_button: Button
 var page = "main"
 var loading_bar: ProgressBar
+var realm_bar: Button
 var toast_until = 0
 var modal_base_y = 254.0
 
@@ -285,7 +286,10 @@ func build() -> void:
 	chapter = button("", follow_chapter)
 	chapter.name = "Chapter"
 	chapter.add_theme_font_size_override("font_size", 18)
+	chapter.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	place(chapter, Rect2(30, 235 + safe_top, 475, 76))
+	realm_bar=button("",func():game.realm_ui.open());realm_bar.name="Kingdom";realm_bar.add_theme_font_size_override("font_size",17)
+	place(realm_bar,Rect2(30,324+safe_top,660,46))
 	place(icon_button("minus", func(): game.view.zoom_at(game.view.origin, .88)), Rect2(30, 838, 58, 58))
 	place(icon_button("plus", func(): game.view.zoom_at(game.view.origin, 1.12)), Rect2(98, 838, 58, 58))
 	place(icon_button("center", func(): game.view.pan = Vector2.ZERO; game.view.zoom = .88), Rect2(166, 838, 58, 58))
@@ -361,12 +365,21 @@ func refresh() -> void:
 	if not header or game.world.is_empty(): return
 	var w = game.world
 	header.text = w.name
+	var title_width=header.get_theme_font("font").get_string_size(w.name,HORIZONTAL_ALIGNMENT_LEFT,-1,47).x
+	header.add_theme_font_size_override("font_size",clampi(int(47*minf(1,header.size.x/maxf(1,title_width))),14,47))
 	var people = 0
 	for s in w.settlements: people += int(s.population)
 	stats.text = (t("day") % (1 + int(w.tick) / 30)) + "  ·  " + seasons()[(int(w.tick) / 120) % 4] + "  ·  " + (t("level") % (1 + int(w.xp) / 40)) + "\n" + t("population") % [w.creatures.size(), people]
 	if game.paused: stats.text += "  ·  " + t("paused")
 	spirit.text = "✧  " + str(int(w.energy)) + "  " + t("spirit")
 	if chapter: chapter.text = t(LivingStories.objective(w))
+	if realm_bar:
+		realm_bar.visible=not game.in_menu and not game.visiting and game.has_player_world
+		realm_bar.text=game.realm_ui.resources() if w.has("kingdom") else ("İlk Krallık · Bilge Arin ile tanış" if language=="tr" else "First Kingdom · meet Elder Arin")
+	if w.has("kingdom") and not game.visiting:
+		var K=preload("res://scripts/kingdom.gd");var quest=K.current(w)
+		chapter.text=("Diyar " if language=="tr" else "Realm ")+str(K.level(w))+" · "+(game.realm_ui.localized(quest.title) if not quest.is_empty() else ("İlk Alev tamamlandı" if language=="tr" else "First Flame complete"))
+		stats.text=(t("day")%(1+int(w.tick)/30))+" · "+("Diyar " if language=="tr" else "Realm ")+str(K.level(w))+" · "+t("population")%[w.creatures.size(),people]
 	if speed_button: speed_button.text = str(game.speed) + "×"
 	if game.visiting:
 		stats.text = t("visiting") + "\n" + t("population") % [w.creatures.size(), people]
@@ -475,6 +488,7 @@ func creation() -> void:
 	v.add_child(button(t("back"), main_menu))
 
 func menu() -> void:
+	if game.realm_ui!=null and game.realm_ui.active:game.realm_ui.finish()
 	if game.decorator!=null and game.decorator.active:game.decorator.finish()
 	if game.visiting: visit_menu(); return
 	page = "menu"
@@ -489,6 +503,7 @@ func menu() -> void:
 	scroll.custom_minimum_size.y = 470
 	v.add_child(scroll)
 	scroll.add_child(grid)
+	var realm_button=button("İlk Krallık" if language=="tr" else "First Kingdom",game.realm_ui.open);realm_button.custom_minimum_size.x=294;grid.add_child(realm_button)
 	var wardrobe_button=button("Atölye ve koleksiyon" if language=="tr" else "Atelier & collection",func():game.decorator.collection())
 	wardrobe_button.custom_minimum_size.x=294;grid.add_child(wardrobe_button)
 	var online_button = button("Çevrimiçi evren" if language=="tr" else "Online universe",online_screen)
@@ -656,6 +671,7 @@ func show_creature(cr: Dictionary) -> void:
 	hint.text = cr.given_name + " · " + species(int(cr.species)) + "\n" + t(cr.trait)
 
 func inspect_settlement(s: Dictionary) -> void:
+	preload("res://scripts/kingdom.gd").observe_settlers(game.world,int(s.cell))
 	toast_until = 0
 	game.note("first_settlement", int(s.stage), true)
 	game.schedule_save()
@@ -713,6 +729,7 @@ func neighbors() -> void:
 
 func follow_chapter() -> void:
 	if game.visiting: planet_profile(); return
+	if game.world.has("kingdom"):game.realm_ui.open();return
 	var w = game.world
 	var goal = LivingStories.objective(w)
 	if goal == "guide_world":

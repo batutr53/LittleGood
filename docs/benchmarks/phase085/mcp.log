@@ -1,0 +1,106 @@
+[godot-forge] v0.1.0 project=D:\LittleGod godot=not found launch=none profile=full
+run {
+ "stopped": false
+}
+editor {
+ "cleared": true,
+ "last_seq": 1
+}
+files {
+ "ok": true
+}
+scene {
+ "reloaded": "res://scenes/main.tscn"
+}
+run {
+ "connected": true,
+ "game": {
+  "fps": 1,
+  "frame": 0,
+  "headless": false,
+  "node_count": 73,
+  "paused": false,
+  "pid": 24820,
+  "renderer": "gl_compatibility",
+  "scene": "res://scenes/main.tscn",
+  "scene_root": "LittleGod",
+  "time_scale": 1,
+  "uptime_s": 1.632,
+  "viewport_size": "Vector2(720, 1280)",
+  "window_size": "Vector2i(540, 960)"
+ },
+ "muted": true,
+ "playing": true,
+ "scene": "main"
+}
+game {
+ "waited_s": 2.001
+}
+exec {
+ "result": {
+  "completed_by_real_actions": true,
+  "quests": [
+   "main_01",
+   "main_02",
+   "main_03",
+   "main_04",
+   "main_05"
+  ],
+  "ticks": 64
+ }
+}
+game {
+ "waited_s": 0.995
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+exec {
+ "result": {
+  "real_building_hit_opens_inspector": true
+ }
+}
+game {
+ "waited_s": 0.712
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+exec {
+ "result": {
+  "kingdom_sprites": 4,
+  "page": "kingdom",
+  "portrait_size": "Vector2(384, 384)"
+ }
+}
+game {
+ "waited_s": 0.716
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+run {
+ "entries": [],
+ "last_seq": 2
+}
+run {
+ "stopped": true
+}

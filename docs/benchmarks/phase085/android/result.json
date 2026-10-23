@@ -1,0 +1,55 @@
+{
+  "all_passed": true,
+  "checks": {
+    "actual_gather": true,
+    "adb_construction_started": true,
+    "adb_house_changes_capacity": true,
+    "adb_house_persisted": true,
+    "assignment_button": true,
+    "exact_restore": true,
+    "full_progression": true,
+    "full_village_rendered": true,
+    "intro_enabled": true,
+    "met_settlers": true,
+    "real_construction": true,
+    "real_intro_button": true,
+    "real_save": true,
+    "real_worker_output": true,
+    "realm_two": true
+  },
+  "level": 5,
+  "milestone": "A",
+  "rendered_buildings": 4,
+  "simulation_ticks": 64,
+  "source": "real_android_render_ui_and_external_adb_house_taps",
+  "stage": "kingdom_complete",
+  "viewport": [
+    720.0,
+    1600.0
+  ],
+  "serial": "emulator-5554",
+  "physical_device": false,
+  "wall_seconds": 15.5,
+  "player_upgrade_preserved_files": {
+    "planet.json": {
+      "bytes": 40618,
+      "sha256": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "present_and_nonempty": true
+    },
+    "planet.json.bak": {
+      "bytes": 41031,
+      "sha256": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "present_and_nonempty": true
+    },
+    "planet.json.tmp": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "present_and_nonempty": false
+    },
+    "settings.cfg": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "present_and_nonempty": false
+    }
+  }
+}

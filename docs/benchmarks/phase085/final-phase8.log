@@ -1,0 +1,68 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: 24 defined cosmetics, no random paid rewards
+PASS: Fresh wardrobe has valid welcome balance
+PASS: Two starter decorations require no grind
+PASS: Existing community earns one meaningful reward
+PASS: Repeated reconciliation cannot duplicate reward
+PASS: Future premium cannot be purchased with local currency
+PASS: Species discovery gate applies
+PASS: Two discovered species earn defined Stardust
+PASS: Purchase subtracts exact price
+PASS: Double purchase cannot spend twice
+PASS: Theme equipment persists in model
+PASS: Unowned themes cannot equip
+PASS: Cosmetic favorites toggle on
+PASS: Cosmetic favorites toggle off
+PASS: Decoration places with orientation
+PASS: Overlapping placements rejected
+PASS: Invalid cells rejected
+PASS: Functional settlement protected from large environment props
+PASS: Land flowers cannot go on water
+PASS: Village ornaments use existing community edge
+PASS: Decoration moves without duplicating instance
+PASS: Storing retains ownership
+PASS: Individual creature appearance selected
+PASS: Coat targets actual creature identity
+PASS: Earn/spend ownership ledger stays consistent
+PASS: Decoration count is bounded to 32 reusable instances
+PASS: Full editor preview rejects adding a 33rd decoration
+PASS: Full planet can still move and rotate existing pieces
+PASS: Storing a decoration frees capacity without changing ownership
+PASS: Cosmetics never alter terrain or simulation creatures
+PASS: Customized world saves atomically
+PASS: Economy, equipment, positions and appearance restore
+PASS: Load cannot duplicate milestone claims
+PASS: Corrupted primary recovers currency/equipment from healthy backup
+PASS: Interrupted complete temporary save can recover cosmetics
+PASS: Negative currency rejected
+PASS: Balance inconsistent with ledger rejected
+PASS: Duplicate ownership rejected
+PASS: Local premium ownership flag cannot become valid save
+PASS: Customized snapshot uses strict version two
+PASS: Showcase omits currency ledger and private favorites
+PASS: Visitor sees actual equipped cosmetics
+PASS: Visit cannot earn, spend, equip or place
+PASS: Imported premium theme is not trusted
+PASS: Imported cosmetic placement index bounded
+PASS: Previous public v1 examples remain compatible
+PASS: Legacy actual v0.5 fixture migrates non-destructively
+PASS: Actual tagged v0.7 save migrates without losing its world
+PASS: Offline rewards are reconciled once and remain valid
+PASS: Real purchase/restore provider stays disabled
+PASS: Mock pending grants no entitlement
+PASS: Mock cancelled grants no entitlement
+PASS: Mock failed grants no entitlement
+PASS: Test-only mock completion is idempotent
+PASS: Mock revocation removes test entitlement
+PASS: Shop opens in actual scene
+PASS: Editor confirmation places actual object
+PASS: Editor undo restores prior layout
+PASS: Editor redo restores object
+PASS: Back exits decoration mode
+PASS: All customization testing preserves player save
+PHASE8_RESULT: 61 passed, 0 failed
+WARNING: 4 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

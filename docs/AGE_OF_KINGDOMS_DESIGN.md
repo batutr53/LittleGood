@@ -1,0 +1,9 @@
+# Age of Kingdoms architecture — implemented A, pending B–H
+
+The planet remains the existing ecosystem/civilization game. An explicit menu opt-in adds the First Kingdom campaign to its current capital; no planet recreation or save replacement occurs. Food/population/cell resources retain one authority. Cosmetic Stardust and private kingdom wood/stone/gold have different purposes and cannot be converted. Public showcases strip campaign balances, workers and quests.
+
+Data flow: Ecosystem.tick → Civilization.tick → Kingdom.tick → normal view sync/worker animation. Objective counters derive from actual observation/gather/work/completion/recruitment; stable quest IDs control once-only rewards. Construction uses available named citizens and real material costs. UI menus pause time; closing them returns to observing real work. Offline work uses the original bounded replay. No artificial daily deadline, streak, forced ad, payment gate or absence loss was introduced.
+
+World renderer reuses the original isometric projection and retained scenery nodes. Functional structures avoid settlements/cosmetics; scenery is skipped only on their plots. Jobs visibly animate at actual assigned structures. Bounds:16structures,12citizens,30history entries; catalog-specific limits are3per type except one council hall. No NavigationAgent or per-worker timer is needed for this slice.
+
+Implemented: realm1–5, first five main quests, production, worker skills/upkeep/trust, village tier1–2, placement/upgrades/relocation/history/Arin. Pending serial slices: B6–10economic chains/inventory; C11–15first real adventure; D16–20armies; E21–25trade/regions; F26–30finale; Gside content/policies/expeditions; Hfinish/polish. The planned files COMBAT_DESIGN/MILITARY_SYSTEM/EXPEDITION_SYSTEM describe acceptance boundaries, not shipped features.

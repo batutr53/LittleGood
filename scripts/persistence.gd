@@ -121,6 +121,7 @@ static func validate(w: Variant) -> bool:
 			if s.has(field) and (not (s[field] is int or s[field] is float) or not is_finite(float(s[field]))): return false
 		if s.has("rival_cell") and (s.rival_cell < -1 or s.rival_cell >= w.cells.size()): return false
 	if not preload("res://scripts/cosmetics.gd").validate(w):return false
+	if not preload("res://scripts/kingdom.gd").validate(w):return false
 	return true
 
 static func normalize_integer_fields(w: Dictionary) -> Dictionary:
@@ -164,6 +165,7 @@ static func normalize_integer_fields(w: Dictionary) -> Dictionary:
 	for p in w.wardrobe.placements:
 		for key in ["id","cell","rotation"]:p[key]=int(p[key])
 	for c in w.wardrobe.coats:c.id=int(c.id)
+	preload("res://scripts/kingdom.gd").normalize(w)
 	return w
 
 static func read_checked(path: String) -> Dictionary:

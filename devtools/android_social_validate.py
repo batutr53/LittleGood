@@ -6,11 +6,13 @@ root = Path(__file__).resolve().parent.parent
 parser = argparse.ArgumentParser()
 parser.add_argument('--serial', default='emulator-5554')
 parser.add_argument('--export-dialog', action='store_true')
+parser.add_argument('--apk',default='builds/android/LittleGod-0.8-qa-debug.apk')
+parser.add_argument('--output-dir',default='builds/phase8/android-social')
 args = parser.parse_args()
 adb = Path.home() / 'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 pkg = 'org.littlegod.livinguniverse.betaqa'
 base = [str(adb), '-s', args.serial]
-out = root / 'builds/phase8/android-social'
+out = root / args.output_dir
 out.mkdir(parents=True, exist_ok=True)
 
 def run(*cmd, check=True):
@@ -56,8 +58,9 @@ def tap_text(text):
             return True
     return False
 
+run('wait-for-device')
 run('shell','am','force-stop',pkg)
-run('install','-r',str(root/'builds/android/LittleGod-0.8-qa-debug.apk'))
+run('install','-r',str(root/args.apk))
 run('shell','run-as',pkg,'rm','-f','files/phase6_qa_import')
 put('phase4_qa.json',json.dumps({'phase':'social_dialogs'}))
 run('shell','am','start','-n',pkg+'/com.godot.game.GodotAppLauncher')

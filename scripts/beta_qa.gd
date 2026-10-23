@@ -37,6 +37,21 @@ func run() -> void:
 	game.ui.build()
 	game.ui.main_menu()
 	await get_tree().process_frame
+	if options.get("phase", "new")=="kingdom":
+		var qa=preload("res://scripts/kingdom_qa.gd").new();add_child(qa);qa.game=game;qa.directory="user://"
+		var result=await qa.run();checks=result.checks
+		game.ui.close();game.realm_ui.begin("build","house")
+		await get_tree().create_timer(.7).timeout
+		var before=game.world.kingdom.buildings.size();var room=preload("res://scripts/kingdom.gd").capacity(game.world)
+		publish("kingdom_touch_ready",{"target":point_at(game.view.screen_point(game.world.cells[game.realm_ui.cell])),"confirm":point(find_text(game.realm_ui.panel,"Confirm"))})
+		while not FileAccess.file_exists("user://phase085_touch_continue"):await get_tree().process_frame
+		checks.adb_construction_started=game.world.kingdom.buildings.size()==before+1
+		game.realm_ui.finish()
+		for i in range(5):game.advance_tick()
+		checks.adb_house_changes_capacity=preload("res://scripts/kingdom.gd").capacity(game.world)==room+3
+		game.checkpoint("qa");checks.adb_house_persisted=Persistence.load_world(game.save_path).kingdom.buildings.size()==before+1
+		result.checks=checks;result.all_passed=not checks.values().has(false);publish("kingdom_complete",result)
+		return
 	if options.get("phase", "new") == "customization":
 		var custom_qa=preload("res://scripts/cosmetic_qa.gd").new();add_child(custom_qa);custom_qa.game=game;custom_qa.image_dir="user://"
 		var result=await custom_qa.run();checks=result.checks

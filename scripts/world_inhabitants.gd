@@ -49,6 +49,7 @@ func sync(w: Dictionary) -> void:
 		var b = int(c.biome)
 		var d = c.detail
 		var occupied = false
+		if w.has("kingdom") and w.kingdom.buildings.any(func(b):return int(b.cell)==i):occupied=true
 		for s in w.settlements:
 			var home = w.cells[int(s.cell)]
 			var separation = p - view.project(home)
@@ -155,6 +156,7 @@ func animate(w: Dictionary, delta: float) -> void:
 		walkers[i].position = p + Vector2(sin(angle) * radius, cos(angle) * radius * .42 + 9)
 		walkers[i].flip_h = cos(angle) < 0
 		walkers[i].visible = settlement.food > 1 and (i % 3) < 1 + int(settlement.stage)
+		if w.has("kingdom") and i<3:walkers[i].visible=false
 	animate_ms = (Time.get_ticks_usec()-started)/1000.0
 
 func closest_creature(pos: Vector2, radius: float = 32) -> int:

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "lumber",
+    "name": [
+      "Lumber Camp",
+      "Oduncu Kampı"
+    ],
+    "description": [
+      "Turn forest growth into wood. Assign lumberjacks after construction.",
+      "Orman kaynaklarını oduna dönüştürür. İnşa bitince oduncu ata."
+    ],
+    "level": 2,
+    "cost": {
+      "wood": 8,
+      "stone": 2
+    },
+    "ticks": 4,
+    "slots": 2,
+    "output": "wood",
+    "role": [
+      "Lumberjack",
+      "Oduncu"
+    ],
+    "site": "forest",
+    "limit": 3
+  },
+  {
+    "id": "farm",
+    "name": [
+      "Rainseed Farm",
+      "Yağmur Tohumu Çiftliği"
+    ],
+    "description": [
+      "Moist fertile land feeds the same settlement your villagers live in.",
+      "Nemli verimli toprak, köylülerinin yaşadığı yerleşimi besler."
+    ],
+    "level": 3,
+    "cost": {
+      "wood": 10,
+      "stone": 2
+    },
+    "ticks": 5,
+    "slots": 2,
+    "output": "food",
+    "role": [
+      "Farmer",
+      "Çiftçi"
+    ],
+    "site": "fertile",
+    "limit": 3
+  },
+  {
+    "id": "house",
+    "name": [
+      "Hearth House",
+      "Ocak Evi"
+    ],
+    "description": [
+      "Three more residents can settle here. Upgrades add more rooms.",
+      "Üç yeni sakine yer açar. Geliştirmeler yeni odalar ekler."
+    ],
+    "level": 3,
+    "cost": {
+      "wood": 8,
+      "stone": 2
+    },
+    "ticks": 4,
+    "slots": 0,
+    "output": "",
+    "role": [
+      "Resident",
+      "Sakin"
+    ],
+    "site": "land",
+    "limit": 3
+  },
+  {
+    "id": "storage",
+    "name": [
+      "Storehouse",
+      "Ambar"
+    ],
+    "description": [
+      "Adds 80 wood and stone storage per building level.",
+      "Bina seviyesi başına odun ve taş kapasitesini 80 artırır."
+    ],
+    "level": 4,
+    "cost": {
+      "wood": 12,
+      "stone": 4
+    },
+    "ticks": 5,
+    "slots": 0,
+    "output": "",
+    "role": [
+      "Keeper",
+      "Ambarcı"
+    ],
+    "site": "land",
+    "limit": 3
+  },
+  {
+    "id": "townhall",
+    "name": [
+      "First Council Hall",
+      "İlk Meclis Konağı"
+    ],
+    "description": [
+      "A working farm, camp, homes and six residents make a true village.",
+      "Çalışan çiftlik, kamp, evler ve altı sakin gerçek bir köy oluşturur."
+    ],
+    "level": 5,
+    "cost": {
+      "wood": 18,
+      "stone": 6,
+      "gold": 2
+    },
+    "ticks": 6,
+    "slots": 0,
+    "output": "",
+    "role": [
+      "Advisor",
+      "Danışman"
+    ],
+    "site": "land",
+    "limit": 1
+  }
+]

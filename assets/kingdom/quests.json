@@ -1,0 +1,228 @@
+[
+  {
+    "id": "main_01",
+    "level": 1,
+    "chapter": 1,
+    "title": [
+      "Awakening",
+      "Uyanış"
+    ],
+    "description": [
+      "Meet your first settlers, then gather six wood from a living forest.",
+      "İlk yerleşimcilerle tanış; ardından yaşayan ormandan altı odun topla."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [],
+    "objectives": [
+      {
+        "kind": "event",
+        "key": "observe_settlement",
+        "target": 1,
+        "text": [
+          "Meet the settlers",
+          "Yerleşimcilerle tanış"
+        ],
+        "navigate": "settlers"
+      },
+      {
+        "kind": "event",
+        "key": "gather_wood",
+        "target": 6,
+        "text": [
+          "Gather wood",
+          "Odun topla"
+        ],
+        "navigate": "gather_wood"
+      }
+    ],
+    "rewards": {
+      "xp": 40,
+      "wood": 12,
+      "gold": 3
+    },
+    "next": "main_02"
+  },
+  {
+    "id": "main_02",
+    "level": 2,
+    "chapter": 1,
+    "title": [
+      "A Place to Live",
+      "Yaşanacak Bir Yer"
+    ],
+    "description": [
+      "Build a camp and give a citizen a real job. Leave someone free to build.",
+      "Bir kamp kur ve bir sakine gerçek bir iş ver. İnşaat için birini boşta bırak."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_01"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "lumber",
+        "target": 1,
+        "text": [
+          "Finish a Lumber Camp",
+          "Oduncu Kampını tamamla"
+        ],
+        "navigate": "build_lumber"
+      },
+      {
+        "kind": "event",
+        "key": "produce_wood",
+        "target": 4,
+        "text": [
+          "Produce wood with a lumberjack",
+          "Oduncuyla odun üret"
+        ],
+        "navigate": "workers"
+      }
+    ],
+    "rewards": {
+      "xp": 80,
+      "wood": 10,
+      "stone": 4
+    },
+    "next": "main_03"
+  },
+  {
+    "id": "main_03",
+    "level": 3,
+    "chapter": 1,
+    "title": [
+      "Seeds of Civilization",
+      "Uygarlığın Tohumları"
+    ],
+    "description": [
+      "A farmer turns wet soil and local growth into food for your people.",
+      "Çiftçi, nemli toprağı ve yerel bereketi halkın için besine dönüştürür."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_02"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "farm",
+        "target": 1,
+        "text": [
+          "Finish a farm",
+          "Bir çiftlik tamamla"
+        ],
+        "navigate": "build_farm"
+      },
+      {
+        "kind": "event",
+        "key": "produce_food",
+        "target": 6,
+        "text": [
+          "Harvest food with a farmer",
+          "Çiftçiyle besin hasat et"
+        ],
+        "navigate": "workers"
+      }
+    ],
+    "rewards": {
+      "xp": 120,
+      "wood": 12,
+      "stone": 4,
+      "gold": 3
+    },
+    "next": "main_04"
+  },
+  {
+    "id": "main_04",
+    "level": 4,
+    "chapter": 1,
+    "title": [
+      "The First Workers",
+      "İlk İşçiler"
+    ],
+    "description": [
+      "Welcome another paid citizen and give your growing settlement room.",
+      "Ücretli bir sakini işe al ve büyüyen yerleşimine yer aç."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_03"
+    ],
+    "objectives": [
+      {
+        "kind": "event",
+        "key": "recruit",
+        "target": 1,
+        "text": [
+          "Recruit a paid citizen",
+          "Ücretli bir sakin işe al"
+        ],
+        "navigate": "workers"
+      },
+      {
+        "kind": "building",
+        "key": "house",
+        "target": 1,
+        "text": [
+          "Build a Hearth House",
+          "Bir Ocak Evi kur"
+        ],
+        "navigate": "build_house"
+      }
+    ],
+    "rewards": {
+      "xp": 160,
+      "wood": 12,
+      "stone": 4,
+      "gold": 3
+    },
+    "next": "main_05"
+  },
+  {
+    "id": "main_05",
+    "level": 5,
+    "chapter": 1,
+    "title": [
+      "Birth of a Village",
+      "Bir Köyün Doğuşu"
+    ],
+    "description": [
+      "Raise a council hall. Six people, homes, working food and timber make a village.",
+      "Meclis konağını kur. Altı sakin, evler, çalışan çiftlik ve kamp bir köy oluşturur."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_04"
+    ],
+    "objectives": [
+      {
+        "kind": "building",
+        "key": "townhall",
+        "target": 1,
+        "text": [
+          "Finish the Council Hall",
+          "Meclis Konağını tamamla"
+        ],
+        "navigate": "build_townhall"
+      },
+      {
+        "kind": "tier",
+        "key": "village",
+        "target": 2,
+        "text": [
+          "Reach development tier 2",
+          "Gelişim aşaması 2 ol"
+        ],
+        "navigate": "kingdom"
+      }
+    ],
+    "rewards": {
+      "xp": 200,
+      "wood": 20,
+      "stone": 8,
+      "gold": 5
+    },
+    "next": ""
+  }
+]

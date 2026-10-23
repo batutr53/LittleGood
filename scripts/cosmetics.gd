@@ -75,6 +75,7 @@ static func unequip(w: Dictionary,kind: String,identity: int=-1) -> bool:
 static func valid_place(w: Dictionary,id: String,cell: int,ignore: int=-1) -> bool:
 	if not items().has(id) or not items()[id].category in ["decor","settlement"] or cell<0 or cell>=w.cells.size():return false
 	if ignore<0 and w.get("wardrobe",{}).get("placements",[]).size()>=MAX_PLACEMENTS:return false
+	if w.has("kingdom") and w.kingdom.buildings.any(func(b):return int(b.cell)==cell):return false
 	for p in w.get("wardrobe",{}).get("placements",[]):
 		if int(p.cell)==cell and int(p.id)!=ignore:return false
 	var home=w.settlements.any(func(s):return int(s.cell)==cell)

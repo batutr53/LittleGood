@@ -46,3 +46,7 @@ Original favorite SVG: assets/phase2/icons/favorite.svg. Procedural canopy arche
 ## Phase eight additions
 
 24 original 128×128 SVG assets, their shared 768×512 rendering atlas and the bilingual cosmetic catalog are in assets/cosmetics, reproducible with devtools/create_cosmetic_art.py. Four presentation palettes, stars/prisms/motes, sky ribbons and glints extend the existing shaders/procedural renderer. Original painted atlas, font licenses, simulation art and synthesized sound remain. No paid API, stock pack, copied commercial art or new raster service was used. Captures in docs/screenshots/phase8-* show actual rendered gameplay with a controlled QA collection, not player progression or concept art.
+
+## Age of Kingdoms milestone A assets
+
+Elder Arin: assets/kingdom/arin.png, new transparent illustration made with the built-in image_gen tool; exact prompt recorded in docs/art/arin-prompt.md. The original generated raster is retained; runtime import is384×384, verified through Godot MCP. No paid external API/stock pack was used. Original six192×192SVG building/scaffold assets plus shared576×384atlas are reproducible with devtools/create_kingdom_art.py. Existing painted worker frame14 is reused with role tint and procedural work/walk sway. Old terrain/creature/ornament art/fonts/licenses remain. Screenshots phase085-* are actual desktop/Android rendered gameplay, legally advanced by automated actions, not concept art or human progress.

@@ -1,0 +1,56 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: Creature identities and traits reproduce from seed
+PASS: Every starting creature has a unique name
+PASS: All four behavioral traits occur
+PASS: Settlement identity is deterministic
+PASS: Opening offers an actionable first gift
+PASS: Observation rewards meeting a real individual
+PASS: Repeated observation does not farm rewards
+PASS: Gardener trait restores real vegetation
+PASS: Patient trait reduces real hunger
+PASS: Friendly visitors share food with a settlement
+PASS: Repeated visits create a persistent friendship
+PASS: Journal records the actual creature involved
+PASS: Desert bloom requires rain
+PASS: Rain alone cannot bloom an arid patch
+PASS: Wet desert becomes permanent flowering grazing land
+PASS: Actual biome transformation unlocks discovery
+PASS: Discovery rewards are awarded once
+PASS: Hungry fox cannot trigger a lantern grove
+PASS: Content forest fox creates visible resource-rich lantern grove
+PASS: Civilization milestone follows actual settlement stage
+PASS: All four living chapters are reachable by rules
+PASS: Extended version-one save writes successfully
+PASS: Names, traits, friendships and discoveries survive save/load
+PASS: World history keeps its named subjects after loading
+PASS: Terraforming removes obsolete meadow and grove visuals
+PASS: Legacy save receives optional identities without invented discoveries
+PASS: Offline simulation can cause an actual biome discovery
+PASS: Return report includes actual living chapter event
+PASS: Return summary reports measured world changes
+PASS: Offline transformed world remains consistent
+PASS: Village discovery is included even on the final offline tick
+PASS: Newly founded communities immediately receive usable identities
+PASS: Explorer crosses habitat boundaries while a content resident stays home
+PASS: Orchard custom cultivates the settlement's actual land
+PASS: Riverfolk custom gathers food during actual rain
+PASS: Stargazer custom advances technology in clear weather
+PASS: New wildlife receives a fresh identity without renaming existing creatures
+PASS: Full wildlife habitat rejects gifts without charging spirit or changing traits
+PASS: Malformed optional story data is rejected safely
+PASS: Unknown saved behavioral trait is rejected
+PASS: Onboarding focuses a real rain target
+PASS: Guided gift affects weather and safely returns to inspection
+PASS: Guided observation reveals a named visible creature
+PASS: Wildlife welcomed at camp can form a friendship
+PASS: Opening friendship occurs through ordinary simulation
+PASS: Care loop reaches a real village within a short session
+PASS: Full onboarding leaves a valid saveable world
+PASS: Neighbor album returns to the actual named creature
+PASS: Selection follows identity when another creature leaves the population
+PHASE3_RESULT: 49 passed, 0 failed
+WARNING: 11 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

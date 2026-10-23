@@ -9,10 +9,13 @@ parser.add_argument('--control',action='store_true')
 parser.add_argument('--economy',action='store_true')
 parser.add_argument('--stress',action='store_true')
 parser.add_argument('--cosmetics',action='store_true')
+parser.add_argument('--kingdom',action='store_true')
+parser.add_argument('--hide-kingdom',action='store_true')
 parser.add_argument('--cosmetic-theme',default='celestial',choices=['enchanted','crystal','celestial','ancient'])
 parser.add_argument('--duration',type=float,default=30)
 parser.add_argument('--output-dir',default='builds/phase3')
 args=parser.parse_args()
+if args.hide_kingdom and not args.kingdom:parser.error('--hide-kingdom requires --kingdom')
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 base=[str(adb),'-s',args.serial]
 pkg=args.package
@@ -25,7 +28,7 @@ installed_version=version_match.group(1) if version_match else 'unavailable'
 apk_path=run('shell','pm','path',pkg).decode().strip().removeprefix('package:')
 installed_hash=run('shell','sha256sum',apk_path).decode().split()[0] if re.fullmatch(r'/data/app/[A-Za-z0-9_=/+.~-]+/base\.apk',apk_path) else 'unavailable'
 before=run('shell','run-as',pkg,'cat','files/planet.json',check=False)
-options={'duration':args.duration,'economy':args.economy,'control':args.control,'stress':args.stress,'cosmetics':args.cosmetics,'cosmetic_theme':args.cosmetic_theme}
+options={'duration':args.duration,'economy':args.economy,'control':args.control,'stress':args.stress,'cosmetics':args.cosmetics,'cosmetic_theme':args.cosmetic_theme,'kingdom_fixture':args.kingdom,'hide_kingdom':args.hide_kingdom}
 output=root/args.output_dir
 output.mkdir(parents=True,exist_ok=True)
 marker=output/'benchmark-options.json'
@@ -56,6 +59,10 @@ kind='control' if args.control else 'economy' if args.economy else 'stress' if a
 if args.cosmetics:
     assert report.get('cosmetic_count')==32 and report.get('cosmetic_theme')==args.cosmetic_theme, 'Wrong cosmetic profile fixture'
     kind+='-decor-'+args.cosmetic_theme
+if args.kingdom:
+    assert report.get('pipeline',{}).get('kingdom_fixture') and bool(report['pipeline'].get('hide_kingdom'))==args.hide_kingdom,'Wrong kingdom profile fixture'
+    assert args.hide_kingdom or report.get('kingdom_buildings',0)>=4,'Missing real kingdom buildings'
+    kind+='-kingdom-hidden' if args.hide_kingdom else '-kingdom'
 dest=output/f'android-{kind}'
 dest.with_suffix('.json').write_text(json.dumps(report,indent=2))
 for _ in range(10):

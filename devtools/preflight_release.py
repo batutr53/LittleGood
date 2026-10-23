@@ -1,6 +1,7 @@
 """Check staged source and exported APK for local secret/packaging mistakes without printing secrets."""
-import json,pathlib,subprocess,zipfile
+import argparse,json,pathlib,subprocess,zipfile
 root=pathlib.Path(__file__).resolve().parents[1]
+parser=argparse.ArgumentParser();parser.add_argument('--apk',default='builds/android/LittleGod-0.8-debug.apk');args=parser.parse_args()
 files=subprocess.check_output(['git','diff','--cached','--name-only','-z'],cwd=root).decode().split('\0')
 secret=next(x.split('=',1)[1] for x in (root/'server/.env').read_text().splitlines() if x.startswith('POSTGRES_PASSWORD='))
 for name in filter(None,files):
@@ -10,7 +11,7 @@ for name in filter(None,files):
     if pathlib.Path(name).suffix in ['.gd','.py','.cs','.ps1','.md','.json','.sql','.cfg','.cmd','.txt','.yaml']:
         assert all(c>=32 or c in [9,10,13] for c in data),'Control character in '+name
     if name.endswith('.json'):json.loads(data.decode('utf-8-sig'))
-apk=root/'builds/android/LittleGod-0.8-debug.apk'
+apk=root/args.apk
 with zipfile.ZipFile(apk) as z:
     assert z.testzip() is None
     for name in z.namelist():

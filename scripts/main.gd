@@ -40,6 +40,7 @@ var visit_origin: Dictionary = {}
 var input_feedback_ms = -1.0
 var online
 var decorator
+var realm_ui
 
 func measure_input_feedback(started: int) -> void:
 	await RenderingServer.frame_post_draw
@@ -64,6 +65,7 @@ func _ready() -> void:
 	add_child(online)
 	ui.game = self
 	decorator=preload("res://scripts/customization_interface.gd").new(ui,self)
+	realm_ui=preload("res://scripts/kingdom_interface.gd").new(self,ui)
 	view.set_quality(false)
 	var config = ConfigFile.new()
 	if config.load("user://settings.cfg") == OK:
@@ -97,6 +99,13 @@ func _ready() -> void:
 		ui.close()
 		view.set_quality(options.get("economy", "--economy" in OS.get_cmdline_user_args()))
 		world.weather = 1
+		if options.get("kingdom_fixture",false):
+			var fixture=Persistence.load_world("user://phase085_profile_world.json")
+			if fixture.is_empty() or not fixture.has("kingdom"):push_error("Missing validated kingdom benchmark fixture");get_tree().quit(1);return
+			world=fixture
+			if options.get("hide_kingdom",false):world.erase("kingdom")
+			view.world=world;rng.state=int(world.rng_state);world.weather=1;paused=false;view.invalidate()
+			pipeline.kingdom_fixture=true;pipeline.hide_kingdom=options.get("hide_kingdom",false)
 		if options.get("cosmetics",false):
 			preload("res://scripts/cosmetic_qa.gd").decorate(world,32)
 			preload("res://scripts/cosmetics.gd").equip(world,options.get("cosmetic_theme","crystal"))
@@ -291,6 +300,7 @@ func reset_gesture() -> void:
 
 func navigate_back() -> void:
 	if loading: return
+	if realm_ui!=null and realm_ui.active:realm_ui.finish();return
 	if decorator!=null and decorator.active:decorator.finish();return
 	reset_gesture()
 	if visiting:
@@ -301,7 +311,7 @@ func navigate_back() -> void:
 		return
 	if ui.page == "online": ui.menu() if not world.is_empty() else ui.main_menu()
 	elif ui.page == "beta": ui.settings()
-	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse", "detail", "favorites", "postcard", "universe", "profile", "wonders","customization"]: ui.menu() if not world.is_empty() else ui.main_menu()
+	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse", "detail", "favorites", "postcard", "universe", "profile", "wonders","customization","kingdom"]: ui.menu() if not world.is_empty() else ui.main_menu()
 	elif in_menu and has_player_world: ui.close()
 	elif has_player_world: ui.menu()
 	else: ui.main_menu()
@@ -447,6 +457,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_SPACE: paused = not paused; ui.refresh()
 
 func touch_world(pos: Vector2) -> void:
+	if realm_ui!=null and realm_ui.active:realm_ui.pick(pos);return
 	if decorator!=null and decorator.active:decorator.pick(pos);return
 	var input_started = Time.get_ticks_usec()
 	if visiting: power = -1
@@ -459,6 +470,10 @@ func touch_world(pos: Vector2) -> void:
 				ui.inspect_settlement(home)
 				return
 		var creature = view.inhabitants.closest_creature(pos)
+		if world.has("kingdom") and not visiting:
+			for b in world.kingdom.buildings:
+				var center=view.screen_point(world.cells[int(b.cell)])-Vector2(0,20)*view.display_zoom
+				if center.distance_to(pos)<25*view.display_zoom:realm_ui.inspect_building(int(b.id));return
 		if creature >= 0:
 			view.focus_creature(creature)
 			var cr = world.creatures[creature]
@@ -485,7 +500,11 @@ func touch_world(pos: Vector2) -> void:
 			ui.refresh()
 			if DisplayServer.get_name() != "headless": measure_input_feedback(input_started)
 		else: ui.toast(ui.t("habitat_full") if power == 3 and world.creatures.size() >= 70 else ui.t("failed"))
-	else: ui.inspect(cell)
+	else:
+		ui.inspect(cell)
+		if world.has("kingdom") and not visiting:
+			for b in world.kingdom.buildings:
+				if int(b.cell)==cell:realm_ui.inspect_building(int(b.id));break
 
 func visit_planet(data: Dictionary, id: String = "") -> bool:
 	var imported = showcases.world_from(data)

@@ -5,11 +5,17 @@ static func tick(w: Dictionary) -> void:
 	if w.get("_read_only",false): return
 	LivingStories.ensure(w)
 	for s in w.settlements:
+		var previous_population=float(s.population)
 		var c = w.cells[int(s.cell)]
 		var harvest = minf(c.resources, 0.35 + c.plants * 0.6)
 		c.resources -= harvest
 		s.food = clampf(s.food + harvest - s.population * 0.009, 0, 100)
 		s.population = clampf(s.population + (0.08 if s.food > 5 else -0.025) + (0.05 if s.blessing > 0 else 0.0), 3, 80)
+		if w.has("kingdom") and s==w.settlements[0]:
+			var K=preload("res://scripts/kingdom.gd")
+			s.population=minf(s.population,K.capacity(w))
+			if s.food<2:s.population=maxf(w.kingdom.workers.size(),minf(previous_population,s.population))
+			s.population=maxf(w.kingdom.workers.size(),s.population)
 		s.blessing = maxi(0, int(s.blessing) - 1)
 		s.tech += 0.015 * c.plants
 		var stage = 2 if s.population >= 28 else 1 if s.population >= 12 else 0
@@ -28,6 +34,7 @@ static func tick(w: Dictionary) -> void:
 		for i in range(w.cells.size()):
 			var c = w.cells[i]
 			if c.biome != 0 or c.plants < 0.6: continue
+			if w.has("kingdom") and w.kingdom.buildings.any(func(b):return int(b.cell)==i):continue
 			var suitable = true
 			for s in w.settlements:
 				var sc = w.cells[int(s.cell)]
@@ -37,3 +44,4 @@ static func tick(w: Dictionary) -> void:
 				Ecosystem.event(w, "founded")
 				LivingStories.ensure(w)
 				break
+	preload("res://scripts/kingdom.gd").tick(w)

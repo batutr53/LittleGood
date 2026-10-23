@@ -1,0 +1,174 @@
+extends RefCounted
+const K=preload("res://scripts/kingdom.gd")
+var game
+var ui
+var active=false
+var mode=""
+var kind=""
+var cell=-1
+var moving=0
+var previous_pause=false
+var panel
+var notice
+func _init(owner_game,interface) -> void:game=owner_game;ui=interface
+func say(en: String,tr: String) -> String:return tr if ui.language=="tr" else en
+func localized(pair: Array) -> String:return pair[1 if ui.language=="tr" else 0]
+func add(parent,text: String,callback: Callable,primary: bool=false):
+	var b=ui.button(text,callback,primary);b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;parent.add_child(b);return b
+func available() -> bool:return not game.visiting and not game.world.is_empty()
+func changed() -> void:
+	game.view.invalidate_cosmetics();game.schedule_save();ui.refresh();game.audio.chime(6)
+func resources() -> String:
+	var w=game.world;var s=w.kingdom.stock
+	return say("Food","Besin")+" "+str(int(K.home(w).food))+"  ·  "+say("Wood","Odun")+" "+str(int(s.wood/K.SCALE))+"  ·  "+say("Stone","Taş")+" "+str(int(s.stone/K.SCALE))+"  ·  "+say("Gold","Altın")+" "+str(int(s.gold/K.SCALE))
+func open() -> void:
+	if not available():return
+	if active:finish()
+	if not game.world.has("kingdom"):intro();return
+	ui.page="kingdom"
+	var w=game.world;var q=K.current(w)
+	var v=ui.popup(say("The First Kingdom","İlk Krallık"));var list=ui.card_list(v,405)
+	list.add_child(ui.label(say("Realm ","Diyar ")+str(K.level(w))+" · "+say("Development tier ","Gelişim aşaması ")+str(K.tier(w))+" · "+str(w.kingdom.claimed.size())+" / 5",22,Color("ecd99f")))
+	list.add_child(ui.label(resources(),18))
+	if w.kingdom.advisor:
+		var row=HBoxContainer.new();list.add_child(row)
+		var portrait=TextureRect.new();portrait.texture=load("res://assets/kingdom/arin.png");portrait.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;portrait.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;portrait.custom_minimum_size=Vector2(102,110);row.add_child(portrait)
+		var words=ui.label(say("Elder Arin\n","Bilge Arin\n")+(localized(q.description) if not q.is_empty() else say("Our first village stands. Care for it while the next chapter is prepared.","İlk köyümüz kuruldu. Yeni bölüm hazırlanırken onu gözet.")),19);words.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(words)
+	if not q.is_empty():
+		list.add_child(ui.label(localized(q.title),25,Color("ecd99f")))
+		for o in q.objectives:
+			var value=minf(float(o.target),K.progress(w,o))
+			add(list,("✓ " if value>=float(o.target) else "◇ ")+localized(o.text)+" · "+str(int(value))+" / "+str(int(o.target)),func():navigate(o.navigate))
+		list.add_child(ui.label(say("Reward: ","Ödül: ")+cost(q.rewards),18))
+		var claim=add(list,say("Claim verified reward","Doğrulanan ödülü al"),func():claim_reward(q.id),true);claim.disabled=not K.complete(w,q)
+	else:list.add_child(ui.label(say("Chapter I complete · free kingdom building continues. Levels 6–30 and adventures are not in this milestone yet.","Bölüm I tamamlandı · özgür krallık inşası sürüyor. 6–30. seviyeler ve maceralar bu dilimde henüz yok."),20))
+	add(list,say("Gather timber / stone","Odun / taş topla"),gather_menu)
+	add(list,say("Kingdom history","Krallık tarihi"),history)
+	add(list,say("Hide advisor" if w.kingdom.advisor else "Replay advisor help","Danışmanı gizle" if w.kingdom.advisor else "Danışman yardımını göster"),func():w.kingdom.advisor=not w.kingdom.advisor;game.schedule_save();open())
+	var row=HBoxContainer.new();v.add_child(row)
+	for entry in [[say("Buildings","Binalar"),construction],[say("Workers","İşçiler"),workers]]:
+		var button=add(row,entry[0],entry[1]);button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	add(v,say("Watch the village","Köyü izle"),ui.close,true)
+func intro() -> void:
+	ui.page="kingdom";var v=ui.popup(say("Elder Arin awaits","Bilge Arin seni bekliyor"))
+	var portrait=TextureRect.new();portrait.texture=load("res://assets/kingdom/arin.png");portrait.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;portrait.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;portrait.custom_minimum_size=Vector2(160,180);v.add_child(portrait)
+	v.add_child(ui.label(say("Your settlers can build a home together. Begin the First Flame: five quests, real work and a growing village.","Yerleşimcilerin birlikte bir yuva kurabilir. İlk Alev'e başla: beş görev, gerçek işler ve büyüyen bir köy."),23))
+	v.add_child(ui.label(say("One-time founding stores: 12 stone, 8 gold. Food and people remain your existing settlement's. Stardust stays cosmetic.","Bir defalık kuruluş erzağı: 12 taş, 8 altın. Besin ve insanlar mevcut yerleşiminden gelir. Yıldıztozu kozmetik içindir."),19))
+	add(v,say("Awaken the First Kingdom","İlk Krallığı uyandır"),func():if K.enable(game.world):changed();open(),true)
+	add(v,say("Keep exploring for now","Şimdilik keşfetmeye devam et"),ui.close)
+func cost(data: Dictionary) -> String:
+	var terms: Array[String]=[]
+	for key in data:
+		var title={"wood":say("wood","odun"),"stone":say("stone","taş"),"gold":say("gold","altın"),"xp":say("Realm XP","Diyar XP")}.get(key,key)
+		terms.append(str(int(data[key]))+" "+title)
+	return " · ".join(terms)
+func claim_reward(id: String) -> void:
+	if not K.claim(game.world,id):ui.toast(say("Complete every objective first.","Önce tüm hedefleri tamamla."));return
+	changed();ui.close()
+	game.view.effects.append({"cell":int(K.home(game.world).cell),"age":0.0,"power":5})
+	var message=ui.label(say("Realm ","Diyar ")+str(K.level(game.world))+" · "+say("A new beginning","Yeni bir başlangıç"),33,Color("f3dda8"))
+	message.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.place(message,Rect2(40,390,640,70));message.modulate.a=0
+	var tween=ui.create_tween();tween.tween_property(message,"modulate:a",1.0,.2);tween.tween_interval(1.0);tween.tween_property(message,"modulate:a",0.0,.4);tween.tween_callback(message.queue_free)
+	ui.toast(say("Reward delivered once. Tap the quest for your next step.","Ödül bir kez verildi. Sonraki adım için göreve dokun."))
+func construction() -> void:
+	if not available() or not game.world.has("kingdom"):return
+	ui.page="kingdom";var v=ui.popup(say("Build a living village","Yaşayan bir köy kur"));var list=ui.card_list(v,440)
+	for id in K.buildings():
+		var data=K.buildings()[id]
+		var row=HBoxContainer.new();list.add_child(row)
+		var image=TextureRect.new();image.texture=load("res://assets/kingdom/"+id+".svg");image.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;image.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;image.custom_minimum_size=Vector2(90,90);row.add_child(image)
+		var button=add(row,localized(data.name)+" · "+say("Realm ","Diyar ")+str(int(data.level))+" · "+str(game.world.kingdom.buildings.filter(func(b):return b.kind==id).size())+"/"+str(int(data.limit))+"\n"+cost(data.cost),func():begin("build",id));button.size_flags_horizontal=Control.SIZE_EXPAND_FILL;button.disabled=K.level(game.world)<int(data.level) or not K.afford(game.world,data.cost) or game.world.kingdom.buildings.size()>=K.MAX_BUILDINGS or game.world.kingdom.buildings.filter(func(b):return b.kind==id).size()>=int(data.limit)
+	for b in game.world.kingdom.buildings:
+		var id=int(b.id)
+		add(list,localized(K.buildings()[b.kind].name)+" "+str(int(b.level))+" · "+(say("Inspect","İncele") if K.ready(b) else str(int(float(b.progress)/float(b.required)*100))+"%"),func():inspect_building(id))
+	add(v,ui.t("back"),open)
+func workers() -> void:
+	if not available() or not game.world.has("kingdom"):return
+	ui.page="kingdom";var w=game.world;var v=ui.popup(say("People & work","İnsanlar ve işler"));var list=ui.card_list(v,410)
+	list.add_child(ui.label(say("Residents / housing: ","Sakin / konut: ")+str(int(K.home(w).population))+" / "+str(K.capacity(w))+"\n"+say("Idle builders: ","Boştaki inşaatçılar: ")+str(K.assigned(w,0).size())+" · "+say("Trust: ","Güven: ")+str(int(w.kingdom.stability/10))+"%",21))
+	list.add_child(ui.label(say("Idle citizens build. Assigned workers produce only on suitable land with local resources. Panels pause time; return to watch work.","Boştakiler inşa eder. Atanan işçiler uygun arazi ve yerel kaynaklarla üretir. Paneller zamanı durdurur; çalışmayı izlemek için dön."),18))
+	for c in w.kingdom.workers:
+		var id=int(c.id);var job=say("Builder / free citizen","İnşaatçı / boşta")
+		for b in w.kingdom.buildings:
+			if int(b.id)==int(c.building):job=localized(K.buildings()[b.kind].role)
+		add(list,c.name+" · "+job+" · "+str(snappedf(c.skill/float(K.SCALE),.01))+"×",func():assignments(id))
+	var recruit=add(v,say("Recruit citizen · 2 food + 1 gold","Sakin işe al · 2 besin + 1 altın"),func():
+		if K.recruit(w):changed();workers()
+		else:ui.toast(say("Realm 4, food, gold, trust and a resident or housing space are required.","Diyar 4, besin, altın, güven ve bir sakin veya boş konut gerekli.")),true)
+	recruit.disabled=K.level(w)<4 or w.kingdom.workers.size()>=K.MAX_WORKERS
+	add(v,ui.t("back"),open)
+func assignments(worker: int) -> void:
+	ui.page="kingdom";var v=ui.popup(say("Choose a profession","Bir meslek seç"));var list=ui.card_list(v,400)
+	add(list,say("Builder / unassign","İnşaatçı / atamayı kaldır"),func():if K.assign(game.world,worker,0):changed();ui.close())
+	for b in game.world.kingdom.buildings:
+		var data=K.buildings()[b.kind];var id=int(b.id)
+		if not K.ready(b) or int(data.slots)==0:continue
+		var button=add(list,localized(data.name)+" · "+str(K.assigned(game.world,id).size())+" / "+str(int(data.slots)),func():if K.assign(game.world,worker,id):changed();ui.close();ui.toast(say("Assigned · watch your worker at the building","Atandı · işçini binada izle")),true)
+		button.disabled=K.assigned(game.world,id).size()>=int(data.slots)
+	add(v,ui.t("back"),workers)
+func inspect_building(id: int) -> void:
+	for b in game.world.kingdom.buildings:
+		if int(b.id)!=id:continue
+		var data=K.buildings()[b.kind];ui.page="kingdom";var v=ui.popup(localized(data.name))
+		v.add_child(ui.label(localized(data.description),22));v.add_child(ui.label(say("Level ","Seviye ")+str(int(b.level))+" · "+str(int(float(b.progress)/float(b.required)*100))+"%\n"+say("Actual output / tick: ","Gerçek üretim / tur: ")+str(snappedf(K.productivity(game.world,b),.01))+"\n"+say("Storage per material: ","Malzeme başına depo: ")+str(int(K.storage(game.world))),21))
+		v.add_child(ui.label(say("Requires assigned workers, moisture/forest and available local resources. Full storage stops production. Unassign one worker if construction is stalled.","Atanmış işçi, nem/orman ve yerel kaynak gerekir. Dolu depo üretimi durdurur. İnşaat durmuşsa bir işçiyi boşa çıkar."),19))
+		var upgrade=add(v,say("Upgrade · ","Geliştir · ")+cost(K.upgrade_cost(b)),func():if K.upgrade(game.world,id):changed();ui.close(),true);upgrade.disabled=not K.ready(b) or int(b.level)>=3 or not K.afford(game.world,K.upgrade_cost(b))
+		add(v,say("Relocate","Yerini değiştir"),func():begin("build",b.kind,id));add(v,say("Assign workers","İşçi ata"),workers);add(v,say("Watch work","Çalışmayı izle"),func():focus(int(b.cell)))
+		return
+func history() -> void:
+	ui.page="kingdom";var v=ui.popup(say("The First Kingdom's history","İlk Krallığın tarihi"));var list=ui.card_list(v,450)
+	for h in game.world.kingdom.history:
+		var action={"founding":say("Founding","Kuruluş"),"construction":say("Construction started","İnşaat başladı"),"built":say("Completed","Tamamlandı"),"upgrade":say("Upgrade started","Geliştirme başladı"),"recruit":say("Citizen recruited","Sakin işe alındı"),"quest":say("Quest completed","Görev tamamlandı")}.get(h.key,"")
+		var title=str(h.subject)
+		if K.buildings().has(title):title=localized(K.buildings()[title].name)
+		for q in K.quests():
+			if q.id==title:title=localized(q.title)
+		list.add_child(ui.label(say("Day ","Gün ")+str(1+int(h.tick)/30)+" · "+action+" · "+title,20))
+	add(v,ui.t("back"),open)
+func gather_menu() -> void:
+	ui.page="kingdom";var v=ui.popup(say("Gather from your land","Arazinden kaynak topla"))
+	v.add_child(ui.label(say("Gather up to three from an actual forest or mountain every four simulation ticks. Camps automate gathering; nothing is created by clicking.","Dört simülasyon turunda bir gerçek orman veya dağdan en çok üç kaynak topla. Kamplar toplama işini otomatikleştirir; tıklama kaynak yaratmaz."),22))
+	add(v,say("Wood · forest","Odun · orman"),func():begin("gather","wood"),true);add(v,say("Stone · mountain","Taş · dağ"),func():begin("gather","stone"));add(v,ui.t("back"),open)
+func navigate(action: String) -> void:
+	if action=="settlers":focus(int(K.home(game.world).cell));ui.toast(say("Touch the settlers' camp to meet them.","Tanışmak için yerleşimcilerin kampına dokun."))
+	elif action=="workers":workers()
+	elif action.begins_with("build_"):begin("build",action.trim_prefix("build_"))
+	elif action.begins_with("gather_"):begin("gather",action.trim_prefix("gather_"))
+	else:open()
+func focus(index: int) -> void:
+	ui.close();game.power=-1;game.view.pan=-game.view.project(game.world.cells[index])*game.view.zoom;game.view.selected=index
+func begin(new_mode: String,id: String,move_id: int=0) -> void:
+	if not available() or not game.world.has("kingdom"):return
+	if game.decorator.active:game.decorator.finish()
+	if active:finish()
+	mode=new_mode;kind=id;moving=move_id;cell=-1;previous_pause=game.paused;game.paused=true;game.power=-1;active=true;ui.close()
+	panel=VBoxContainer.new();panel.name="KingdomPlacement";ui.place(panel,Rect2(28,1040,664,178))
+	for child in ui.root.get_children():
+		if child!=panel and child is Control and child.position.y>=1020+maxf(0,game.get_viewport_rect().size.y-1280):child.hide()
+	notice=ui.label(say("Touch a suitable tile · drag / pinch to navigate","Uygun hücreye dokun · sürükle / sıkıştır"),18);panel.add_child(notice)
+	var row=HBoxContainer.new();panel.add_child(row)
+	for entry in [[say("Confirm","Onayla"),commit],[say("Cancel","İptal"),finish]]:
+		var b=add(row,entry[0],entry[1],true);b.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	for i in range(game.world.cells.size()):
+		if valid(i):cell=i;game.view.pan=-game.view.project(game.world.cells[i])*game.view.zoom;break
+func valid(index: int) -> bool:
+	if index<0 or index>=game.world.cells.size():return false
+	if mode=="build":return K.valid_site(game.world,kind,index,moving)
+	return int(game.world.cells[index].biome)==1 if kind=="wood" else int(game.world.cells[index].biome) in [3,4]
+func pick(pos: Vector2) -> void:
+	cell=game.view.pick(pos)
+	if cell<0:return
+	notice.text=say("Ready · confirm when you like the place","Uygun · konumu beğendiğinde onayla") if valid(cell) else say("Needs clear suitable land; avoid buildings, water and decor.","Uygun boş arazi seç; bina, su ve dekordan uzak dur.")
+func commit() -> void:
+	if not valid(cell):return
+	var success=false
+	if mode=="build":success=K.move(game.world,moving,cell) if moving>0 else K.begin_build(game.world,kind,cell)>0
+	else:success=K.gather(game.world,kind,cell)>0
+	if not success:ui.toast(say("Check level, costs, plot limits, storage or gather cooldown. Return to the planet to let time pass.","Seviye, maliyet, bina sınırı, depo veya toplama süresini kontrol et. Zamanın geçmesi için gezegene dön."));return
+	var target=cell;changed();finish();game.view.effects.append({"cell":target,"age":0.0,"power":5})
+	ui.toast(say("The village is at work. Keep a free citizen for construction.","Köy iş başında. İnşaat için bir sakini boşta bırak."))
+func finish() -> void:
+	if not active:return
+	active=false;game.paused=previous_pause
+	if is_instance_valid(panel):panel.queue_free()
+	ui.world_controls(true);changed();game.checkpoint("kingdom")

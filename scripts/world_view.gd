@@ -23,6 +23,7 @@ var frame_cpu_ms = 0.0
 var foreground_cpu_ms = 0.0
 var decoration_cells: Array = []
 var cosmetic_layer
+var kingdom_layer
 
 func _ready() -> void:
 	origin.y += maxf(0, get_viewport_rect().size.y - 1280) * .5
@@ -37,6 +38,7 @@ func _ready() -> void:
 	cosmetic_layer=preload("res://scripts/cosmetic_renderer.gd").new()
 	cosmetic_layer.view=self
 	world_root.add_child(cosmetic_layer)
+	kingdom_layer=preload("res://scripts/kingdom_renderer.gd").new();kingdom_layer.view=self;world_root.add_child(kingdom_layer)
 
 func project(c: Dictionary) -> Vector2:
 	return Vector2((c.x - c.y) * 30, (c.x + c.y - 16) * 15 - c.height * 42)
@@ -128,9 +130,11 @@ func _process(delta: float) -> void:
 					terrain.rebuild(world)
 				inhabitants.sync(world)
 				cosmetic_layer.sync(world)
+				kingdom_layer.sync(world)
 				reconcile_selection()
 		inhabitants.animate(world, delta)
 		cosmetic_layer.animate(delta)
+		kingdom_layer.animate(delta)
 	for i in range(effects.size() - 1, -1, -1):
 		effects[i].age += delta
 		if effects[i].age > 1.6: effects.remove_at(i)
@@ -190,6 +194,11 @@ func _draw() -> void:
 func draw_foreground(canvas: Node2D) -> void:
 	if world.is_empty(): return
 	var started = Time.get_ticks_usec()
+	var realm=get_parent().realm_ui
+	if realm!=null and realm.active and realm.cell>=0:
+		var point=screen_point(world.cells[realm.cell]);var tint=Color(.7,1,.7,.65) if realm.valid(realm.cell) else Color(1,.4,.3,.6)
+		canvas.draw_arc(point,24*display_zoom,0,TAU,24,tint,2,true)
+		if realm.mode=="build":canvas.draw_texture_rect(load("res://assets/kingdom/"+realm.kind+".svg"),Rect2(point-Vector2(35,53)*display_zoom,Vector2(70,70)*display_zoom),false,tint)
 	var editor=get_parent().decorator
 	if editor!=null and editor.active and editor.cell>=0:
 		var point=screen_point(world.cells[editor.cell])

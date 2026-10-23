@@ -6,11 +6,13 @@ root = Path(__file__).resolve().parent.parent
 parser = argparse.ArgumentParser()
 parser.add_argument('--serial', default='emulator-5554')
 parser.add_argument('--export-dialog', action='store_true')
+parser.add_argument('--apk',default='builds/android/LittleGod-0.8-qa-debug.apk')
+parser.add_argument('--output-dir',default='builds/phase8/android-qa')
 args = parser.parse_args()
 adb = Path.home() / 'AppData/Local/Android/Sdk/platform-tools/adb.exe'
 pkg = 'org.littlegod.livinguniverse.betaqa'
 base = [str(adb), '-s', args.serial]
-out = root / 'builds/phase8/android-qa'
+out = root / args.output_dir
 out.mkdir(parents=True, exist_ok=True)
 
 def run(*cmd, check=True):
@@ -41,8 +43,8 @@ def capture(name):
     (out / name).write_bytes(run('exec-out', 'screencap', '-p'))
 
 # This ID is reserved for this QA harness and has no player release data.
-run('uninstall', pkg, check=False)
-run('install', str(root / 'builds/android/LittleGod-0.8-qa-debug.apk'))
+run('wait-for-device')
+run('install', '-r',str(root / args.apk))
 # Android may restore app data after reinstall. Clear only the disposable QA ID
 # so this scenario is truly blank; never issue pm clear for the player package.
 if b'Success' not in run('shell', 'pm', 'clear', pkg):
@@ -50,6 +52,7 @@ if b'Success' not in run('shell', 'pm', 'clear', pkg):
 run('shell', 'am', 'start', '-n', pkg + '/com.godot.game.GodotAppLauncher')
 time.sleep(2)
 run('shell', 'am', 'force-stop', pkg)
+run('shell','run-as',pkg,'mkdir','-p','files')
 put('phase4_qa.json', json.dumps({'phase': 'new'}))
 run('shell', 'am', 'start', '-n', pkg + '/com.godot.game.GodotAppLauncher')
 ready = stage('touch_ready')

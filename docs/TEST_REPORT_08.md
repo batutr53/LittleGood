@@ -1,0 +1,9 @@
+# Verification — LittleGod 0.8
+
+356 game checks pass (295 retained +61 new). 30 deterministic economy scenarios and 40 extended simulation scenarios pass. Desktop real-render QA20, Android cosmetic QA22 (including two external ADB placement/persistence checks), existing Android26, native Save/Open3, actual unreachable-service offline5 all pass. Save migration uses actual old 0.5 and tagged0.7 fixtures; corrupted-primary and complete interrupted-write recovery preserve economy/equipment. Local v2 public export/read-only import/home return passes; the future-version assertion now targets99.
+
+.NET source compiles without warnings/errors and contains42 cases. Final execution of the Release test DLL and native API is blocked by Windows App Control and is **not a pass**. 65 real HTTP checks passed on the unchanged0.7 baseline before backend edits. New v2/purchase HTTP paths, EF concurrency and real store verification remain unverified. Real PostgreSQL migration was backed up, applied twice, and transaction/state/owner/cascade constraints passed with rolled-back fixtures.
+
+Actual rendered screenshots were inspected, including the atlas-batched final render. Godot MCP found no runtime errors. Generic old shutdown ObjectDB/resource warnings remain in logs; emulator shader-cache recompilation warnings remain. Earlier desktop cosmetic QA inherited default diagnostics; final harness isolates a simulated slot, keeps ambiguous existing history and makes no human-metrics claim. No physical phone, human beta, paid service, store purchase or public deployment occurred.
+
+Raw accepted evidence is in benchmarks/phase8. Baseline/matched-control/pre-batching profiles are explicitly separate from the final APK hash. No aggregate claim combines mocks with real API checks. Review STATUS.md, PERFORMANCE_PHASE8.md and MONETIZATION_ARCHITECTURE.md before expanding testing.
