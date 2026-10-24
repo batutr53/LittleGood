@@ -1,0 +1,9 @@
+v4_attack
+v4_dodge
+v4_pause
+v4_resume
+Traceback (most recent call last):
+  File "D:\LittleGod\devtools\android_v4_validate.py", line 34, in <module>
+    run('shell','am','force-stop',pkg);put('phase4_qa.json',json.dumps({'phase':'warrior_v4_reopen','fps':a.fps}));run('shell','am','start','-W','-n',pkg+'/com.godot.game.GodotAppLauncher');restored=stage('v4_reopened');assert restored['all_passed'],restored
+                                                                                                                                                                                                                                   ~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: {'all_passed': False, 'checks': {'entry': True, 'exact_state': False, 'preview': True, 'restored': True, 'weapon_restored': True}, 'source': 'simulated_android_qa', 'stage': 'v4_reopened', 'viewport': [720.0, 1600.0]}

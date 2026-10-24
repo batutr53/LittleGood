@@ -1,0 +1,32 @@
+{
+  "all_passed": true,
+  "checks": {
+    "all_atlas_frames": true,
+    "attack_contact_not_late_windup": true,
+    "attack_end": true,
+    "blocked_motion_is_idle": true,
+    "compatible_save": true,
+    "death_overrides_input": true,
+    "direction_0": true,
+    "direction_1": true,
+    "direction_2": true,
+    "direction_3": true,
+    "dodge_priority": true,
+    "empty_shield_hidden": true,
+    "entry": true,
+    "exit": true,
+    "final_defeat_frame": true,
+    "hit_ends": true,
+    "hit_reaction": true,
+    "legal_world": true,
+    "model_dodge_blocks_damage": true,
+    "model_still_valid": true,
+    "reaction_does_not_extend_invulnerability": true,
+    "readonly_rendering": true,
+    "resources_cached": true,
+    "same_clock_is_stable": true,
+    "visual_never_changes_model": true,
+    "walk": true,
+    "weapon_ownership": true
+  }
+}

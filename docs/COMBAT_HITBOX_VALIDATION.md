@@ -1,0 +1,9 @@
+# Combat hitbox validation — V4B audit and limited diagnostics
+
+The authoritative model is unchanged. Normal attacks test a target center within78 units and facing dot-product≥.15; heavy attacks test a105-unit circle. Sanctuary additionally checks line-of-sight. Damage is immediate when a legal attack begins, with cooldown preventing repeated input from granting extra attacks. There is no new active-window hitbox in V4B.
+
+The optional debug view shows the14-unit CharacterBody2D collision circle, the authored sword hand and blade segment, and damage-event positions. Actor scale is compensated for the collision circle and world event markers; event points stay fixed in world space as the hero moves. The blade itself follows pose sockets. These points indicate the existing model's target position, not a computed sword/skin intersection.
+
+`tests/v4_presentation.gd` verifies state ordering, wall-blocked displacement, direction, identical-clock stability, existing damage/invulnerability behavior, compatible saves and no visual model mutation. `tests/v4_warrior_playtest.gd` renders real hits and misses with deterministic model stepping and real CharacterBody2D collision. It also runs the actual scene scheduler and checks pause/cancel/focus/suspend input release. `rendered.json` records screenshot clock/frame/direction/socket metadata. Contact fixtures are labelled and do not claim native campaign playthrough.
+
+Observed mismatch still requiring V4C: the old slash effect shows a smaller sector than the real normal-attack test; the blade is a generic socketed sword while range remains a coarse model rule. Real anticipation, a persisted attack timeline, a full target/direction/active-region debugger and frame-accurate blade-contact collision remain unfinished. Current damage starts with the contact frame rather than a misleading anticipation pose. No full V4 combat-accuracy claim is made.

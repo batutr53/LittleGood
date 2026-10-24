@@ -37,6 +37,8 @@ func run() -> void:
 	game.ui.build()
 	game.ui.main_menu()
 	await get_tree().process_frame
+	if options.get("phase", "new") in ["warrior_v4","warrior_v4_reopen","warrior_v4_profile"]:
+		var qa=preload("res://scripts/warrior_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
 	if options.get("phase", "new") in ["sanctuary","sanctuary_reopen"]:
 		var qa=preload("res://scripts/sanctuary_qa.gd").new();qa.game=game;qa.host=self;add_child(qa)
 		game.view.set_quality(int(options.get("fps",60))==30);await qa.run();return

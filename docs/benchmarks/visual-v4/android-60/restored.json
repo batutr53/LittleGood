@@ -1,0 +1,16 @@
+{
+  "all_passed": true,
+  "checks": {
+    "entry": true,
+    "exact_state": true,
+    "preview": true,
+    "restored": true,
+    "weapon_restored": true
+  },
+  "source": "simulated_android_qa",
+  "stage": "v4_reopened",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

@@ -1,0 +1,9 @@
+v4_attack
+v4_dodge
+v4_pause
+v4_resume
+Traceback (most recent call last):
+  File "D:\LittleGod\devtools\android_v4_validate.py", line 32, in <module>
+    d=stage('v4_saved');(out/'result.json').write_text(json.dumps(d,indent=2),encoding='utf-8');assert d['all_passed'],d
+                                                                                                       ~^^^^^^^^^^^^^^
+AssertionError: {'all_passed': False, 'checks': {'entry': True, 'legal_armed': True, 'native_attack': True, 'native_dodge': True, 'native_move': False, 'no_touchthrough': True, 'pause_clears': True, 'preview': True, 'resumed': True, 'saved': True, 'walk_cycle': False}, 'metrics': {'draw_calls': 42.0, 'fps': 5.72392671484909, 'p95_ms': 566.474, 'static_memory_bytes': 51557148, 'texture_memory_bytes': 53896536.0}, 'scope': 'V4B warrior; native ADB input; fixture positioning for contact; idle/walk metrics', 'source': 'simulated_android_qa', 'stage': 'v4_saved', 'viewport': [720.0, 1600.0]}

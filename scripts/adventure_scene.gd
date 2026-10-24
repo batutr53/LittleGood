@@ -45,6 +45,8 @@ var effects_were_dynamic=true
 var guide_point=Vector2.ZERO
 var pack_panel
 var pack_was_frozen=false
+var warrior_visual
+var presentation_feedback: Array=[]
 func say(en: String,tr: String) -> String:return tr if game.ui.language=="tr" else en
 func _ready() -> void:
 	var started=Time.get_ticks_usec();game.show_world(false);game.ui.root.hide()
@@ -76,6 +78,8 @@ func _ready() -> void:
 		regional_prop("mine-cart",Vector2(560,370),100,.5)
 		for key in region_map.NODES:regional_prop("ore-vein" if key=="ore" else "mountain-rock",region_map.NODES[key].point,110,.42,.4 if game.world.kingdom.adventure.run.nodes[key] else 1.0)
 	make_body(0,Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y),load("res://assets/adventure/warrior.png"),110)
+	if game.v4_preview:
+		bodies[0].get_node("Art").hide();warrior_visual=preload("res://scripts/warrior_visual.gd").new();bodies[0].add_child(warrior_visual);warrior_visual.sample(game.world)
 	for e in game.world.kingdom.adventure.run.enemies:make_body(int(e.id),Vector2(e.x,e.y),load("res://assets/adventure/"+e.kind+".svg"),180 if e.kind=="thornheart" else 100)
 	props=preload("res://scripts/adventure_props.gd").new();add_child(props)
 	effects=preload("res://scripts/adventure_effects.gd").new();add_child(effects)
@@ -137,29 +141,38 @@ func refresh_hud() -> void:
 	if h.defeated:message.text=say("Your champion fell. Home restores health and keeps your collected loot.","Şampiyonun düştü. Dön canı yeniler; toplanmış ganimetin korunur.")
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
+		if event.canceled:clear_combat_input();return
 		action_counts.touch=int(action_counts.get("touch",0))+1
 		if event.pressed and event.position.distance_to(stick.position)<115 and stick_index<0:stick_index=event.index
-		elif not event.pressed and event.index==stick_index:stick_index=-1;movement=Vector2.ZERO
+		elif not event.pressed and event.index==stick_index:stick_index=-1;movement=Vector2.ZERO;stick.vector=Vector2.ZERO;stick.queue_redraw()
 	if event is InputEventScreenDrag and event.index==stick_index:
 		movement=((event.position-stick.position)/65).limit_length(1);action_counts.drag=int(action_counts.get("drag",0))+1
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode==KEY_F8 and OS.is_debug_build() and is_instance_valid(warrior_visual):warrior_visual.debug_enabled=not warrior_visual.debug_enabled;warrior_visual.queue_redraw()
 		if event.keycode==KEY_E:interact()
 		if event.keycode==KEY_SPACE:actions.attack=true
 		if event.keycode==KEY_Q:actions.skill=true
 		if event.keycode==KEY_SHIFT:actions.dodge=true
 		if event.keycode==KEY_F:actions.heal=true
 		if event.keycode==KEY_ESCAPE:toggle_pause()
+func clear_combat_input() -> void:
+	attack_held=false;actions.clear();movement=Vector2.ZERO;mouse_aim=Vector2.ZERO;stick_index=-1
+	if is_instance_valid(stick):stick.vector=Vector2.ZERO;stick.queue_redraw()
+func _notification(what: int) -> void:
+	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT,NOTIFICATION_WM_WINDOW_FOCUS_OUT]:clear_combat_input()
 func toggle_pause() -> void:
 	if is_instance_valid(pack_panel):toggle_pack()
-	frozen=not frozen;attack_held=false;actions.clear();movement=Vector2.ZERO
+	frozen=not frozen;clear_combat_input()
 	buttons.pause.text=say("Resume","Sürdür") if frozen else button_titles.pause
 	message.text=say("Paused · Resume to continue; Home keeps collected loot.","Duraklatıldı · Sürdür ile devam et; Dön ganimeti korur.") if frozen else say("Watch the warning, then dodge. Attack during recovery.","Uyarıyı izle, sonra kaçın. Dinlenme aralığında saldır.")
 func _unhandled_input(event: InputEvent) -> void:
 	if not OS.has_feature("mobile") and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed:
 		mouse_aim=get_global_mouse_position()-bodies[0].position;actions.attack=true
 func _physics_process(delta: float) -> void:
-	if frozen or game.suspended:return
+	if game.suspended:clear_combat_input();return
+	if frozen:return
 	var frame_started=Time.get_ticks_usec()
+	presentation_feedback.clear()
 	var direction=movement
 	if not controlled:
 		direction+=Vector2(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT))-float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))-float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)))
@@ -171,7 +184,7 @@ func _physics_process(delta: float) -> void:
 		for key in ["attack","skill","dodge","heal"]:
 			if command.get(key,false):action_counts[key]=int(action_counts.get(key,0))+1
 		var before_position=Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y)
-		var feedback=A.step(game.world,command,move_body);actions.clear();combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
+		var feedback=A.step(game.world,command,move_body);presentation_feedback.append_array(feedback);actions.clear();combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
 		if region=="sanctuary":
 			stone_distance+=before_position.distance_to(Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y))
 			if stone_distance>=65:stone_distance=fmod(stone_distance,65);game.audio.sanctuary("step")
@@ -185,6 +198,7 @@ func _physics_process(delta: float) -> void:
 				elif cue in ["plate","mechanism"]:game.audio.sanctuary("switch")
 			if cue is String and cue=="boss":message.text=say("Thornheart falls! Inspect the living heart, then return to Arin.","Dikenyürek düştü! Yaşayan kalbi İncele ile al; Arin'e dön.")
 	var r=game.world.kingdom.adventure.run;bodies[0].position=Vector2(r.x,r.y)
+	if is_instance_valid(warrior_visual):warrior_visual.sample(game.world,presentation_feedback)
 	bodies[0].get_node("Art").rotation=sin(r.clock*.012)*.025*direction.length()
 	bodies[0].get_node("Art").position.y=-46.2-absf(sin(r.clock*.015))*3*direction.length()
 	if r.swing>0:bodies[0].get_node("Art").rotation+=sin(r.swing/200.0*PI)*.2
@@ -306,8 +320,8 @@ func sanctuary_hint() -> String:
 	if preload("res://scripts/sanctuary.gd").progress(game.world,"warden")==1:return say("The relic chamber is open · Inspect its pedestal.","Yadigâr odası açıldı · Kaideyi incele.")
 	return say("Sun Relic Chamber · Defeat the Warden.\nRecover the relic, return and inspect it at home.","Güneş Yadigârı Odası · Muhafız'ı yen.\nYadigârı al, dön ve evde incele.")
 func toggle_pack() -> void:
-	if is_instance_valid(pack_panel):pack_panel.queue_free();pack_panel=null;frozen=pack_was_frozen;actions.clear();attack_held=false;movement=Vector2.ZERO;return
-	pack_was_frozen=frozen;frozen=true;movement=Vector2.ZERO;actions.clear();attack_held=false
+	if is_instance_valid(pack_panel):pack_panel.queue_free();pack_panel=null;frozen=pack_was_frozen;clear_combat_input();return
+	pack_was_frozen=frozen;frozen=true;clear_combat_input()
 	pack_panel=PanelContainer.new();pack_panel.add_theme_stylebox_override("panel",ruin_style());place(pack_panel,Rect2(100,250,520,410));var list=VBoxContainer.new();pack_panel.add_child(list)
 	var stats=H.stats(game.world);var r=game.world.kingdom.adventure.run
 	list.add_child(game.ui.label(say("Expedition pack · paused","Sefer çantası · duraklatıldı"),24))
@@ -316,4 +330,5 @@ func toggle_pack() -> void:
 func go_home() -> void:
 	var paused=game.world.kingdom.adventure.run.home_paused
 	if not A.exit(game.world):return
+	clear_combat_input()
 	game.adventure_scene=null;game.paused=paused;game.show_world(true);game.ui.root.show();game.ui.close();game.ui.refresh();game.checkpoint("return-home");queue_free()

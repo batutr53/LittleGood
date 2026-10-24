@@ -1,0 +1,302 @@
+{
+  "all_passed": true,
+  "checks": {
+    "actual_scheduler": true,
+    "all_144_frames": true,
+    "attack_recovers": true,
+    "blocked_idle": true,
+    "cancel_releases_input": true,
+    "clean_exit": true,
+    "contact_pose_at_model_contact": true,
+    "defeat_priority": true,
+    "defeat_stable": true,
+    "dodge": true,
+    "entry": true,
+    "equipment_restore": true,
+    "exact_save": true,
+    "focus_loss_releases_input": true,
+    "foot_cycle": true,
+    "hit_reaction": true,
+    "hit_recovers": true,
+    "idle": true,
+    "idle_after_release": true,
+    "legal_armed_world": true,
+    "miss": true,
+    "no_authority": true,
+    "pause_releases_visual_stick": true,
+    "preview_only": true,
+    "real_equipment": true,
+    "real_hit": true,
+    "same_clock_stable": true,
+    "shield_crafted": true,
+    "shield_equipped": true,
+    "shield_materials": true,
+    "suspend_releases_input": true,
+    "valid_world": true,
+    "walk-north": true,
+    "walk-south": true,
+    "walk-west": true
+  },
+  "desktop": {
+    "draw_calls": 50.0,
+    "fps": 60.0234391529892,
+    "p95_ms": 16.921,
+    "static_memory_bytes": 51221095,
+    "texture_memory_bytes": 47997619.0
+  },
+  "frame_evidence": [
+    {
+      "clock_ms": 100,
+      "direction": 0,
+      "frame": 0,
+      "hero_hp": 100,
+      "image": "after-idle.png",
+      "state": "idle",
+      "sword_socket": [
+        21.0,
+        -36.0
+      ]
+    },
+    {
+      "clock_ms": 150,
+      "direction": 1,
+      "frame": 2,
+      "hero_hp": 100,
+      "image": "walk-cycle-0.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -41.0
+      ]
+    },
+    {
+      "clock_ms": 200,
+      "direction": 1,
+      "frame": 3,
+      "hero_hp": 100,
+      "image": "walk-cycle-1.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -39.5355339050293
+      ]
+    },
+    {
+      "clock_ms": 250,
+      "direction": 1,
+      "frame": 4,
+      "hero_hp": 100,
+      "image": "walk-cycle-2.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -36.0
+      ]
+    },
+    {
+      "clock_ms": 300,
+      "direction": 1,
+      "frame": 5,
+      "hero_hp": 100,
+      "image": "walk-cycle-3.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -32.4644660949707
+      ]
+    },
+    {
+      "clock_ms": 300,
+      "direction": 1,
+      "frame": 5,
+      "hero_hp": 100,
+      "image": "walk-east.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -32.4644660949707
+      ]
+    },
+    {
+      "clock_ms": 350,
+      "direction": 1,
+      "frame": 6,
+      "hero_hp": 100,
+      "image": "walk-cycle-4.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -31.0
+      ]
+    },
+    {
+      "clock_ms": 400,
+      "direction": 1,
+      "frame": 7,
+      "hero_hp": 100,
+      "image": "walk-cycle-5.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -32.4644660949707
+      ]
+    },
+    {
+      "clock_ms": 450,
+      "direction": 1,
+      "frame": 0,
+      "hero_hp": 100,
+      "image": "walk-cycle-6.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -36.0
+      ]
+    },
+    {
+      "clock_ms": 500,
+      "direction": 1,
+      "frame": 1,
+      "hero_hp": 100,
+      "image": "walk-cycle-7.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -39.5355339050293
+      ]
+    },
+    {
+      "clock_ms": 550,
+      "direction": 3,
+      "frame": 2,
+      "hero_hp": 100,
+      "image": "walk-west.png",
+      "state": "walk",
+      "sword_socket": [
+        -21.0,
+        -41.0
+      ]
+    },
+    {
+      "clock_ms": 600,
+      "direction": 2,
+      "frame": 3,
+      "hero_hp": 100,
+      "image": "walk-north.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -39.5355339050293
+      ]
+    },
+    {
+      "clock_ms": 650,
+      "direction": 0,
+      "frame": 4,
+      "hero_hp": 100,
+      "image": "walk-south.png",
+      "state": "walk",
+      "sword_socket": [
+        21.0,
+        -36.0
+      ]
+    },
+    {
+      "clock_ms": 900,
+      "direction": 1,
+      "frame": 2,
+      "hero_hp": 100,
+      "image": "attack-contact-debug.png",
+      "state": "attack",
+      "sword_socket": [
+        33.0,
+        -33.0
+      ]
+    },
+    {
+      "clock_ms": 950,
+      "direction": 1,
+      "frame": 3,
+      "hero_hp": 100,
+      "image": "attack-follow-0.png",
+      "state": "attack",
+      "sword_socket": [
+        31.0,
+        -27.0
+      ]
+    },
+    {
+      "clock_ms": 1000,
+      "direction": 1,
+      "frame": 4,
+      "hero_hp": 100,
+      "image": "attack-follow-1.png",
+      "state": "attack",
+      "sword_socket": [
+        22.0,
+        -36.0
+      ]
+    },
+    {
+      "clock_ms": 1050,
+      "direction": 1,
+      "frame": 4,
+      "hero_hp": 100,
+      "image": "attack-follow-2.png",
+      "state": "attack",
+      "sword_socket": [
+        22.0,
+        -36.0
+      ]
+    },
+    {
+      "clock_ms": 1450,
+      "direction": 1,
+      "frame": 2,
+      "hero_hp": 100,
+      "image": "actual-hit-debug.png",
+      "state": "attack",
+      "sword_socket": [
+        33.0,
+        -33.0
+      ]
+    },
+    {
+      "clock_ms": 2100,
+      "direction": 3,
+      "frame": 0,
+      "hero_hp": 96,
+      "image": "dodge.png",
+      "state": "dodge",
+      "sword_socket": [
+        -18.0,
+        -33.0
+      ]
+    },
+    {
+      "clock_ms": 2550,
+      "direction": 3,
+      "frame": 0,
+      "hero_hp": 81,
+      "image": "hit-reaction.png",
+      "state": "hit",
+      "sword_socket": [
+        -14.0,
+        -33.0
+      ]
+    },
+    {
+      "clock_ms": 6450,
+      "direction": 2,
+      "frame": 5,
+      "hero_hp": 0,
+      "image": "defeat.png",
+      "state": "defeat",
+      "sword_socket": [
+        6.0,
+        -6.0
+      ]
+    }
+  ],
+  "scope": "V4B opt-in warrior; deterministic helper shots plus actual scene scheduler; no Android verification"
+}

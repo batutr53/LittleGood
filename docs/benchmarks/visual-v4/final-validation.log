@@ -1,0 +1,8 @@
+PASS import.log
+PASS regression.log
+PASS presentation.log
+PASS rendered.log
+PASS export.log
+PASS android-60.log
+PASS android-30.log
+FIXED SNAPSHOT VERIFIED

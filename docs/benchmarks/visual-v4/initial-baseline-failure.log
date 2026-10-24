@@ -1,0 +1,55 @@
+suite True
+runtime True
+phase2 True
+phase3 True
+phase4 True
+phase5 True
+phase6 False
+phase7 True
+phase8 True
+phase085 True
+industry True
+hero True
+exploration True
+combat True
+combat_crafting True
+boss True
+adventure_invariants True
+boss_patterns True
+Traceback (most recent call last):
+  File "D:\LittleGod\devtools\verify_adventure.py", line 17, in <module>
+    assert all(x['passed'] for x in results),results
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [{'suite': 'suite', 'passed': True, 'exit': 0, 'seconds': 1.85}, {'suite': 'runtime', 'passed': True, 'exit': 0, 'seconds': 3.78}, {'suite': 'phase2', 'passed': True, 'exit': 0, 'seconds': 9.26}, {'suite': 'phase3', 'passed': True, 'exit': 0, 'seconds': 0.92}, {'suite': 'phase4', 'passed': True, 'exit': 0, 'seconds': 1.56}, {'suite': 'phase5', 'passed': True, 'exit': 0, 'seconds': 1.75}, {'suite': 'phase6', 'passed': False, 'exit': 1, 'seconds': 3.69}, {'suite': 'phase7', 'passed': True, 'exit': 0, 'seconds': 0.45}, {'suite': 'phase8', 'passed': True, 'exit': 0, 'seconds': 1.2}, {'suite': 'phase085', 'passed': True, 'exit': 0, 'seconds': 0.72}, {'suite': 'industry', 'passed': True, 'exit': 0, 'seconds': 3.13}, {'suite': 'hero', 'passed': True, 'exit': 0, 'seconds': 0.64}, {'suite': 'exploration', 'passed': True, 'exit': 0, 'seconds': 0.63}, {'suite': 'combat', 'passed': True, 'exit': 0, 'seconds': 1.28}, {'suite': 'combat_crafting', 'passed': True, 'exit': 0, 'seconds': 1.28}, {'suite': 'boss', 'passed': True, 'exit': 0, 'seconds': 4.43}, {'suite': 'adventure_invariants', 'passed': True, 'exit': 0, 'seconds': 1.37}, {'suite': 'boss_patterns', 'passed': True, 'exit': 0, 'seconds': 1.37}]
+Traceback (most recent call last):
+  File "D:\LittleGod\devtools\verify_trade.py", line 5, in <module>
+    subprocess.run([__import__('sys').executable,'-X','utf8',str(r/'devtools/verify_adventure.py')],cwd=r,check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\batua\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['C:\\Users\\batua\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe', '-X', 'utf8', 'D:\\LittleGod\\devtools\\verify_adventure.py']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "D:\LittleGod\devtools\verify_regions.py", line 5, in <module>
+    subprocess.run([sys.executable,'-X','utf8',str(r/'devtools/verify_trade.py')],cwd=r,check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\batua\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['C:\\Users\\batua\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe', '-X', 'utf8', 'D:\\LittleGod\\devtools\\verify_trade.py']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "D:\LittleGod\devtools\verify_desert.py", line 5, in <module>
+    subprocess.run([sys.executable,'-X','utf8',str(r/'devtools/verify_regions.py')],cwd=r,check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\batua\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['C:\\Users\\batua\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe', '-X', 'utf8', 'D:\\LittleGod\\devtools\\verify_regions.py']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "D:\LittleGod\devtools\verify_sanctuary.py", line 5, in <module>
+    subprocess.run([sys.executable,'-X','utf8','devtools/verify_desert.py'],cwd=r,check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\batua\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['C:\\Users\\batua\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe', '-X', 'utf8', 'devtools/verify_desert.py']' returned non-zero exit status 1.

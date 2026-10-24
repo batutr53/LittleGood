@@ -1,0 +1,57 @@
+[godot-forge] v0.1.0 project=D:\LittleGod godot=not found launch=none profile=full
+files {
+ "ok": true
+}
+scene {
+ "reloaded": "res://scenes/main.tscn"
+}
+run {
+ "connected": true,
+ "game": {
+  "fps": 1,
+  "frame": 0,
+  "headless": false,
+  "node_count": 73,
+  "paused": false,
+  "pid": 24616,
+  "renderer": "gl_compatibility",
+  "scene": "res://scenes/main.tscn",
+  "scene_root": "LittleGod",
+  "time_scale": 1,
+  "uptime_s": 1.335,
+  "viewport_size": "Vector2(720, 1280)",
+  "window_size": "Vector2i(540, 960)"
+ },
+ "muted": true,
+ "playing": true,
+ "scene": "main"
+}
+game {
+ "waited_s": 2.017
+}
+exec {
+ "result": {
+  "entered": true,
+  "valid": true,
+  "warrior_preview": true
+ }
+}
+game {
+ "waited_s": 1.016
+}
+view {
+ "image": "attached #1",
+ "coord_scale": 1.33333333333333,
+ "height": 960,
+ "original_height": 960,
+ "original_width": 540,
+ "viewport_size": "Vector2(720, 1280)",
+ "width": 540
+}
+run {
+ "entries": [],
+ "last_seq": 2
+}
+run {
+ "stopped": true
+}

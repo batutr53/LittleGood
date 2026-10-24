@@ -1,0 +1,37 @@
+{
+  "all_passed": true,
+  "physical_device": false,
+  "serial": "emulator-5554",
+  "fps_cap": 30,
+  "apk_sha256": "da59e8634fd48d361d29f44bd0ccedaeb4bc1397dfeb8f409fcca9f2b9f7d54e",
+  "native_checks": 12,
+  "restart_checks": 5,
+  "player_files_unchanged": true,
+  "metrics": {
+    "combat_cpu_us_per_tick": 462,
+    "draw_calls": 42.0,
+    "fps": 29.2228404747056,
+    "p95_ms": 58.846,
+    "presentation_cpu_us_per_frame": 458,
+    "static_memory_bytes": 51550077,
+    "texture_memory_bytes": 53896536.0
+  },
+  "player_before": {
+    "planet.json": {
+      "bytes": 40618,
+      "sha256": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b"
+    },
+    "planet.json.bak": {
+      "bytes": 41031,
+      "sha256": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877"
+    },
+    "planet.json.tmp": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "settings.cfg": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

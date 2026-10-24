@@ -46,6 +46,8 @@ var military_ui
 var trade_ui
 var army_scene
 var adventure_scene
+# Explicitly opt in to the unapproved V4 character style. Production remains E3.
+var v4_preview = OS.has_feature("v4_preview") or "--v4-preview" in OS.get_cmdline_user_args()
 
 func enter_adventure(region: String="") -> bool:
 	if is_instance_valid(adventure_scene) or visiting:return false

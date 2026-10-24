@@ -1,4 +1,22 @@
-# LittleGod — E3: Secrets of the Ancients
+# LittleGod — V4B isolated animation preview / E3 gameplay baseline
+
+**Full Visual Rebirth V4 is incomplete.** A reversible V4A/V4B Warrior style and movement prototype is implemented and rendered in Godot; the default game still uses E3 art. Expansion development is frozen. Unverified E4 work is preserved on `work/e5-sovereign` at8b83003, outside this preview branch. E5/E6/throne and V2/V3 approval are not claimed.
+
+The preview has144 original vector pose cells, four cardinal views, distance-driven walking, stable equipment sockets, idle/dodge/hurt/kneeling poses and contact/follow-through compatible with the existing instantaneous damage model. Pause, touch cancellation, focus loss and suspension now clear movement/held attack/joystick state. It does not yet implement real attack anticipation, three enemy remakes, boss animation, combat sound/VFX overhaul or final V4 art approval.
+
+Retained checks: **822 passed again**. New presentation checks: **27**; rendered checks: **35**. Android60/30 native input and exact force-stop restore pass in the isolated preview package; no physical-device testing. Actual metrics, initial failures and limits are in `ANDROID_ANIMATION_PERFORMANCE.md` and `docs/benchmarks/visual-v4/`.
+
+- Preview launcher: `D:/LittleGod/Launch V4 Warrior Preview.cmd`.
+- Normal launcher: `D:/LittleGod/Launch LittleGod.cmd`.
+- Preview QA APK: `D:/LittleGod/builds/android/LittleGod-V4B-preview-qa-debug.apk`.
+- Preview source archive: `D:/LittleGod/builds/LittleGod-V4B-preview-source.zip`.
+- Slice tag: `littlegod-visual-rebirth-v4b-preview`; full V4 completion tag is deliberately absent.
+- Report: `docs/VISUAL_REBIRTH_V4_REPORT.md`; source/pivots: `SPRITE_ANIMATION_PIPELINE.md`.
+
+![Actual animated preview in the emulator](screenshots/visual-v4/android-60-walk.png)
+
+## Preserved E3 release
+
 
 Current verified development build: **0.8.5-devE3 / Android code92**, realm campaign1–23. Playable Sunken Sanctuary includes five connected spaces, two persistent puzzles, two avoidable real traps, three distinct elites, optional treasury/two lore discoveries, unique Sun Relic, four useful forge/equipment recipes and quest23. Existing E2 regions, quests, saves, workers, trade/caravans, military, online source and artwork are preserved.
 
@@ -13,7 +31,7 @@ Current verified development build: **0.8.5-devE3 / Android code92**, realm camp
 | Emulator 30 · Relic chamber | 30.17 | 38.18 |
 
 
-E4/E5/E6/throne and Visual Rebirth V4 remain unimplemented. E3 is a core gameplay delivery, not a claim of completed premium character animation. See AGE085_E3_REPORT.md, KNOWN_ISSUES.md and docs/benchmarks/phase085e3 for evidence and performance limits.
+The full E4/E5/E6/throne and Visual Rebirth V4 milestones remain incomplete; see the isolated V4B prototype above. E3 is a core gameplay delivery, not a claim of completed premium character animation. See AGE085_E3_REPORT.md, KNOWN_ISSUES.md and docs/benchmarks/phase085e3 for evidence and performance limits.
 
 - Launch: `D:/LittleGod/Launch LittleGod.cmd`.
 - Runtime: `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`.

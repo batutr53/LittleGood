@@ -1,0 +1,50 @@
+[
+  {
+    "checks": {
+      "entry": true,
+      "legal_armed": true,
+      "preview": false
+    },
+    "metrics": {
+      "combat_cpu_us_per_tick": 142,
+      "draw_calls": 36.0,
+      "fps": 60.0280330914537,
+      "frames": 180,
+      "p95_ms": 18.737,
+      "presentation_cpu_us_per_frame": 137,
+      "static_memory_bytes": 51008191,
+      "texture_memory_bytes": 36988240.0
+    },
+    "preview": false,
+    "source": "simulated_android_qa",
+    "stage": "v4_profile",
+    "viewport": [
+      720.0,
+      1600.0
+    ]
+  },
+  {
+    "checks": {
+      "entry": true,
+      "legal_armed": true,
+      "preview": true
+    },
+    "metrics": {
+      "combat_cpu_us_per_tick": 147,
+      "draw_calls": 40.0,
+      "fps": 60.0556114962455,
+      "frames": 180,
+      "p95_ms": 18.757,
+      "presentation_cpu_us_per_frame": 151,
+      "static_memory_bytes": 51418015,
+      "texture_memory_bytes": 53765464.0
+    },
+    "preview": true,
+    "source": "simulated_android_qa",
+    "stage": "v4_profile",
+    "viewport": [
+      720.0,
+      1600.0
+    ]
+  }
+]

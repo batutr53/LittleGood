@@ -1,0 +1,32 @@
+{
+  "all_passed": true,
+  "checks": {
+    "entry": true,
+    "legal_armed": true,
+    "native_attack": true,
+    "native_dodge": true,
+    "native_move": true,
+    "no_touchthrough": true,
+    "pause_clears": true,
+    "preview": true,
+    "resumed": true,
+    "saved": true,
+    "walk_cycle": true
+  },
+  "metrics": {
+    "combat_cpu_us_per_tick": 162,
+    "draw_calls": 40.0,
+    "fps": 60.0239495558728,
+    "p95_ms": 18.526,
+    "presentation_cpu_us_per_frame": 183,
+    "static_memory_bytes": 51555525,
+    "texture_memory_bytes": 53896536.0
+  },
+  "scope": "V4B warrior; native ADB input; fixture positioning for contact; idle/walk metrics",
+  "source": "simulated_android_qa",
+  "stage": "v4_saved",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

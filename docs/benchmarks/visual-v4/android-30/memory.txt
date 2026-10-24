@@ -1,0 +1,49 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 869601 Realtime: 869601
+
+** MEMINFO in pid 9178 [org.littlegod.livinguniverse.v4preview] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap    85120    85048       44       88    86000   133668    94311    34870
+  Dalvik Heap     9806     9708       12      296    10428     5221     2611     2610
+ Dalvik Other     6569     3024        0        7    10448
+        Stack      752      752        0        0      764
+       Ashmem       29        0        0        0      592
+    Other dev       32       12       16        0      328
+     .so mmap    67757     1944    61960       32    95628
+    .jar mmap     4544        0     1156        0    42020
+    .apk mmap      259        0      116        0     1740
+    .ttf mmap       41        0        0        0      192
+    .dex mmap       19        0        0        0      820
+    .oat mmap       46        0        0        0     1668
+    .art mmap    10615     7932     1884      195    22612
+   Other mmap     1560        4        0        0     3928
+      Unknown     8608     8588       12        3     9004
+        TOTAL   196378   117012    65200      621   286172   138889    96922    37480
+
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    19524                          33040
+         Native Heap:    85048                          86000
+                Code:    66472                         150436
+               Stack:      752                            764
+            Graphics:        0                              0
+       Private Other:    10416
+              System:    14166
+             Unknown:                                   15932
+
+           TOTAL PSS:   196378            TOTAL RSS:   286172       TOTAL SWAP PSS:      621
+
+ Objects
+               Views:        8         ViewRootImpl:        1
+         AppContexts:        6           Activities:        1
+              Assets:       24        AssetManagers:        0
+       Local Binders:       14        Proxy Binders:       64
+       Parcel memory:        5         Parcel count:       21
+    Death Recipients:        0             WebViews:        0
+
+ SQL
+         MEMORY_USED:        0
+  PAGECACHE_OVERFLOW:        0          MALLOC_SIZE:        0
