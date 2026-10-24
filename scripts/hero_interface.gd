@@ -7,6 +7,10 @@ func _init(g,u):game=g;ui=u
 func say(en: String,tr: String) -> String:return tr if ui.language=="tr" else en
 func add(v,text: String,cb: Callable,primary: bool=false):return game.realm_ui.add(v,text,cb,primary)
 func profile() -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.route("hero");return
+	legacy_profile()
+
+func legacy_profile() -> void:
 	if not H.writable(game.world):return
 	ui.page="kingdom";var a=game.world.kingdom.adventure;var v=ui.popup(say("Champion of the Wild Lands","Yaban Toprakların Şampiyonu"))
 	var row=HBoxContainer.new();v.add_child(row)
@@ -36,6 +40,10 @@ func legacy_world_map() -> void:
 		add(v,say("New expedition · refresh cleared trail","Yeni sefer · temizlenen patikayı yenile"),func():if load("res://scripts/adventure.gd").revisit(game.world):game.checkpoint("new-expedition");world_map())
 	add(v,ui.t("back"),profile)
 func world_map() -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.route("map");return
+	production_legacy_map()
+
+func production_legacy_map() -> void:
 	ui.page="kingdom";var v=ui.popup(say("Beyond the Kingdom","Krallığın Ötesinde"));var list=ui.card_list(v,480)
 	list.add_child(ui.label(say("ADVENTURE · Walk, fight and gather with your hero.\nHome work and caravan travel pause during expeditions.","MACERA · Kahramanınla yürü, savaş ve topla.\nSeferde ev işleri ve kervan yolculuğu durur."),19))
 	var R=preload("res://scripts/regions.gd")

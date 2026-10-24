@@ -9,6 +9,10 @@ func say(en: String,tr: String) -> String:return game.realm_ui.say(en,tr)
 func add(p,t: String,cb: Callable,primary: bool=false):return game.realm_ui.add(p,t,cb,primary)
 func changed() -> void:game.realm_ui.changed();game.checkpoint("company")
 func open() -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.route("army");return
+	legacy_open()
+
+func legacy_open() -> void:
 	if game.visiting or not M.enabled(game.world):return
 	var w=game.world;var m=w.kingdom.military;ui.page="kingdom"
 	var v=ui.popup(say("The Border Company","Sınır Birliği"));var list=ui.card_list(v,470)

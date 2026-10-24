@@ -28,6 +28,13 @@ func resources() -> String:
 	if I.enabled(w):text+="\n"+say("Ore","Cevher")+" "+str(snappedf(s.ore/float(K.SCALE),.1))+"  ·  "+say("Iron","Demir")+" "+str(snappedf(s.iron/float(K.SCALE),.1))
 	return text
 func open() -> void:
+	if ui.premium==null or not ui.rebirth_enabled:legacy_open();return
+	if not available():return
+	if active:finish()
+	if not game.world.has("kingdom"):intro();return
+	ui.premium.route("quest")
+
+func legacy_open() -> void:
 	if not available():return
 	if active:finish()
 	if not game.world.has("kingdom"):intro();return
@@ -120,6 +127,10 @@ func claim_reward(id: String) -> void:
 	var tween=ui.create_tween();tween.tween_property(message,"modulate:a",1.0,.2);tween.tween_interval(1.0);tween.tween_property(message,"modulate:a",0.0,.4);tween.tween_callback(message.queue_free)
 	ui.toast(say("Reward delivered once. Tap the quest for your next step.","Ödül bir kez verildi. Sonraki adım için göreve dokun."))
 func construction() -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.route("construction");return
+	legacy_construction()
+
+func legacy_construction() -> void:
 	if not available() or not game.world.has("kingdom"):return
 	ui.page="kingdom";var v=ui.popup(say("Build a living village","Yaşayan bir köy kur"));var list=ui.card_list(v,440)
 	for id in K.buildings():
@@ -135,6 +146,10 @@ func construction() -> void:
 		add(list,localized(K.buildings()[b.kind].name)+" "+str(int(b.level))+" · "+(say("Inspect","İncele") if K.ready(b) else str(int(float(b.progress)/float(b.required)*100))+"%"),func():inspect_building(id))
 	add(v,ui.t("back"),open)
 func workers() -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.route("workers");return
+	legacy_workers()
+
+func legacy_workers() -> void:
 	if not available() or not game.world.has("kingdom"):return
 	ui.page="kingdom";var w=game.world;var v=ui.popup(say("People & work","İnsanlar ve işler"));var list=ui.card_list(v,410)
 	list.add_child(ui.label(say("Residents / housing: ","Sakin / konut: ")+str(int(K.home(w).population))+" / "+str(K.capacity(w))+"\n"+say("Idle builders: ","Boştaki inşaatçılar: ")+str(K.assigned(w,0).size())+" · "+say("Trust: ","Güven: ")+str(int(w.kingdom.stability/10))+"%",21))
@@ -165,6 +180,10 @@ func assignments(worker: int) -> void:
 		button.disabled=K.occupied(game.world,id)>=int(data.slots)
 	add(v,ui.t("back"),workers)
 func inspect_building(id: int) -> void:
+	if ui.premium==null or not ui.rebirth_enabled:legacy_inspect_building(id);return
+	ui.premium.route("building",id)
+
+func legacy_inspect_building(id: int) -> void:
 	for b in game.world.kingdom.buildings:
 		if int(b.id)!=id:continue
 		var data=K.buildings()[b.kind];ui.page="kingdom";var v=ui.popup(localized(data.name))
@@ -215,6 +234,10 @@ func navigate(action: String) -> void:
 func focus(index: int) -> void:
 	ui.close();game.power=-1;game.view.pan=-game.view.project(game.world.cells[index])*game.view.zoom;game.view.selected=index
 func workshop(forge_id: int=0) -> void:
+	if ui.premium==null or not ui.rebirth_enabled:legacy_workshop(forge_id);return
+	ui.premium.route("forge",forge_id)
+
+func legacy_workshop(forge_id: int=0) -> void:
 	if not available() or not I.enabled(game.world):return
 	ui.page="kingdom";var w=game.world;var v=ui.popup(say("The Hearthforge","Ocak Demircisi"));var list=ui.card_list(v,470)
 	list.add_child(ui.label(resources(),18))
@@ -242,6 +265,10 @@ func workshop(forge_id: int=0) -> void:
 	if selected>0:list.add_child(ui.label(say("Assigned smiths: ","Atanmış demirciler: ")+str(K.assigned(w,selected).size()),19))
 	add(v,say("Assign workers","İşçi ata"),workers);add(v,say("Watch the village","Köyü izle"),ui.close,true);add(v,ui.t("back"),open)
 func inventory() -> void:
+	if ui.premium==null or not ui.rebirth_enabled:legacy_inventory();return
+	ui.premium.route("inventory")
+
+func legacy_inventory() -> void:
 	if not available() or not I.enabled(game.world):return
 	ui.page="kingdom";var w=game.world;var v=ui.popup(say("Tools & citizens","Aletler ve sakinler"));var list=ui.card_list(v,450)
 	list.add_child(ui.label(say("One tool per citizen. Compare its effect with the current tool; moving it frees its previous owner. Bonuses apply only to the listed jobs.","Sakin başına bir alet. Etkisini mevcut aletle karşılaştır; taşırsan önceki sahibinden çıkar. Bonuslar yalnızca belirtilen işlerde geçerlidir."),20))
@@ -274,6 +301,11 @@ func begin(new_mode: String,id: String,move_id: int=0) -> void:
 	if active:finish()
 	mode=new_mode;kind=id;moving=move_id;cell=-1;previous_pause=game.paused;game.paused=true;game.power=-1;active=true;ui.close()
 	panel=VBoxContainer.new();panel.name="KingdomPlacement";ui.place(panel,Rect2(28,1040,664,178))
+	if ui.premium!=null and ui.rebirth_enabled:
+		var p=ui.premium;var viewport=game.get_viewport_rect().size
+		panel.position=Vector2(p.px(24),viewport.y-p.px(218));panel.size=Vector2(viewport.x-p.px(48),p.px(194))
+		for child in ui.root.get_children():
+			if child!=panel and child is Control and child.position.y>viewport.y*.5:child.hide()
 	for child in ui.root.get_children():
 		if child!=panel and child is Control and child.position.y>=1020+maxf(0,game.get_viewport_rect().size.y-1280):child.hide()
 	notice=ui.label(say("Touch a suitable tile · drag / pinch to navigate","Uygun hücreye dokun · sürükle / sıkıştır"),18);panel.add_child(notice)
@@ -291,7 +323,7 @@ func pick(pos: Vector2) -> void:
 	if cell<0:return
 	notice.text=say("Ready · confirm when you like the place","Uygun · konumu beğendiğinde onayla") if valid(cell) else say("Needs clear suitable land; avoid buildings, water and decor.","Uygun boş arazi seç; bina, su ve dekordan uzak dur.")
 func commit() -> void:
-	if not valid(cell):return
+	if not active or not valid(cell):return
 	var success=false
 	if mode=="build":success=K.move(game.world,moving,cell) if moving>0 else K.begin_build(game.world,kind,cell)>0
 	else:success=K.gather(game.world,kind,cell)>0
@@ -301,5 +333,5 @@ func commit() -> void:
 func finish() -> void:
 	if not active:return
 	active=false;game.paused=previous_pause
-	if is_instance_valid(panel):panel.queue_free()
+	if is_instance_valid(panel):ui.root.remove_child(panel);panel.queue_free()
 	ui.world_controls(true);changed();game.checkpoint("kingdom")

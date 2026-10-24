@@ -329,6 +329,7 @@ func navigate_back() -> void:
 	if is_instance_valid(army_scene):army_scene.toggle_pause();return
 	if is_instance_valid(adventure_scene):adventure_scene.toggle_pause();return
 	if loading: return
+	if in_menu and ui.premium!=null and ui.rebirth_enabled:ui.premium.back();return
 	if realm_ui!=null and realm_ui.active:realm_ui.finish();return
 	if decorator!=null and decorator.active:decorator.finish();return
 	reset_gesture()

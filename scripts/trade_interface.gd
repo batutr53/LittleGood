@@ -16,6 +16,10 @@ func add(p,t: String,cb: Callable,primary: bool=false):return game.realm_ui.add(
 func gold(value: int) -> String:return str(snappedf(value/1000.0,.01))+say(" gold"," altın")
 func changed() -> void:game.realm_ui.changed();game.checkpoint("trade")
 func open() -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.route("trade");return
+	legacy_open()
+
+func legacy_open() -> void:
 	if game.visiting or not T.enabled(game.world):return
 	var w=game.world;ui.page="kingdom";var v=ui.popup(say("The First Trade Road","İlk Ticaret Yolu"));var list=ui.card_list(v,470)
 	list.add_child(ui.label(game.realm_ui.resources(),19))

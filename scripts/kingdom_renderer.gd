@@ -41,6 +41,7 @@ func sync(w: Dictionary) -> void:
 	while workers.size()>w.kingdom.workers.size():workers.pop_back().queue_free()
 func animate(delta: float) -> void:
 	clock+=delta
+	queue_redraw()
 	var w=view.world
 	if not w.has("kingdom"):return
 	for b in w.kingdom.buildings:
@@ -60,3 +61,12 @@ func animate(delta: float) -> void:
 		workers[i].rotation=sin(clock*(7 if working else 1)+phase)*(.13 if working else .02)
 		workers[i].self_modulate=Color("e0d3a4") if int(worker.building)==0 else Color("abd6b8")
 		workers[i].flip_h=sin(clock*.8+phase)<0
+
+func _draw() -> void:
+	if view==null or not view.world.has("kingdom"):return
+	for b in view.world.kingdom.buildings:
+		if int(b.cell)!=int(view.selected):continue
+		var p=view.project(view.world.cells[int(b.cell)])
+		var color=Color(.95,.79,.43,.65+.12*sin(clock*3))
+		var ring=PackedVector2Array([p+Vector2(-28,0),p+Vector2(0,-14),p+Vector2(28,0),p+Vector2(0,14),p+Vector2(-28,0)])
+		draw_polyline(ring,color,2,true);break

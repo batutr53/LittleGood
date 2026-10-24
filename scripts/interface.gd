@@ -1,6 +1,8 @@
 extends CanvasLayer
 
 var game: Node
+var premium
+var rebirth_enabled = not "--legacy-ui" in OS.get_cmdline_user_args()
 var root: Control
 var header: Label
 var stats: Label
@@ -207,6 +209,7 @@ func seasons() -> Array:
 	return ["İlkbahar", "Yaz", "Sonbahar", "Kış"] if language == "tr" else ["Spring", "Summer", "Autumn", "Winter"]
 
 func style(color: Color, radius: int = 20) -> StyleBoxFlat:
+	if premium!=null and rebirth_enabled:return preload("res://scripts/premium_theme.gd").box(color)
 	var s = StyleBoxFlat.new()
 	s.bg_color = color
 	s.corner_radius_top_left = radius
@@ -230,10 +233,10 @@ func style(color: Color, radius: int = 20) -> StyleBoxFlat:
 func label(text: String, size: int = 22, color: Color = Color("e5efdc")) -> Label:
 	var l = Label.new()
 	l.text = text
-	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_font_size_override("font_size",int(premium.px(maxf(size*1.08,24 if size>=18 else 16))) if premium!=null and rebirth_enabled else size)
 	l.add_theme_font_override("font", ui_font())
 	l.add_theme_color_override("font_color", color)
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if premium!=null and rebirth_enabled else HORIZONTAL_ALIGNMENT_CENTER
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return l
@@ -248,7 +251,20 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 	b.add_theme_stylebox_override("normal", style(Color("bbd8aa") if primary else Color("203d46")))
 	b.add_theme_stylebox_override("hover", style(Color("d3e5bd") if primary else Color("325653")))
 	b.add_theme_stylebox_override("pressed", style(Color("e5c88d")))
-	b.pressed.connect(func(): game.audio.button_sound(); action.call())
+	if premium!=null and rebirth_enabled:
+		b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+		b.custom_minimum_size.y=premium.px(88);b.add_theme_font_size_override("font_size",int(premium.px(26)))
+		b.add_theme_color_override("font_color",Color("192a2e") if primary else Color("eee4ca"))
+		b.add_theme_color_override("font_disabled_color",Color("84908a"))
+		var theme=preload("res://scripts/premium_theme.gd")
+		b.add_theme_stylebox_override("normal",theme.box(Color("c5ad7a") if primary else Color("1c3440"),primary))
+		b.add_theme_stylebox_override("hover",theme.box(Color("dcc593") if primary else Color("2a4751"),true))
+		b.add_theme_stylebox_override("pressed",theme.box(Color("a68b58"),true))
+		b.add_theme_stylebox_override("disabled",theme.box(Color("1a2b33")))
+		b.add_theme_stylebox_override("focus",theme.box(Color(0,0,0,0),true))
+	b.pressed.connect(func():
+		if not b.is_inside_tree() or b.disabled:return
+		game.audio.button_sound();action.call())
 	return b
 
 func place(control: Control, rect: Rect2) -> void:
@@ -259,6 +275,11 @@ func place(control: Control, rect: Rect2) -> void:
 	control.size = rect.size
 
 func build() -> void:
+	if not rebirth_enabled:legacy_build();return
+	if premium==null:premium=preload("res://scripts/premium_ui.gd").new(self,game)
+	premium.build_hud()
+
+func legacy_build() -> void:
 	if root:
 		remove_child(root)
 		root.queue_free()
@@ -391,11 +412,16 @@ func refresh() -> void:
 		var extra = maxf(0,get_viewport().get_visible_rect().size.y-1280)
 		for child in root.get_children():
 			if child is Control and child.position.y >= 1046+extra: child.visible = false
+	if premium!=null and rebirth_enabled:premium.refresh_hud()
 	# Repaint retained SVG commands after power styles and modal visibility change.
 	for icon in power_icons:
 		if icon.visible: icon.queue_redraw()
 
 func popup(title: String) -> VBoxContainer:
+	if premium!=null and rebirth_enabled:return premium.surface(title)
+	return legacy_popup(title)
+
+func legacy_popup(title: String) -> VBoxContainer:
 	end_live_route()
 	game.reset_gesture()
 	game.in_menu = true
@@ -426,9 +452,10 @@ func end_live_route() -> void:
 
 func close() -> void:
 	end_live_route()
-	if modal: modal.queue_free(); modal = null
-	if is_instance_valid(veil): veil.queue_free(); veil = null
+	if modal: root.remove_child(modal);modal.queue_free(); modal = null
+	if is_instance_valid(veil): root.remove_child(veil);veil.queue_free(); veil = null
 	game.in_menu = false
+	if premium!=null:premium.current="";premium.history.clear();premium.nested=false
 	world_controls(true)
 	refresh()
 
@@ -436,6 +463,10 @@ func add_close(v: VBoxContainer) -> void:
 	v.add_child(button(t("close"), close, true))
 
 func main_menu() -> void:
+	if premium!=null and rebirth_enabled:premium.main_menu();return
+	legacy_main_menu()
+
+func legacy_main_menu() -> void:
 	page = "main"
 	world_controls(false)
 	game.in_menu = true
@@ -496,6 +527,13 @@ func creation() -> void:
 	v.add_child(button(t("back"), main_menu))
 
 func menu() -> void:
+	if premium!=null and rebirth_enabled and not game.visiting:
+		if game.realm_ui.active:game.realm_ui.finish()
+		if game.decorator.active:game.decorator.finish()
+		premium.route("menu");return
+	legacy_menu()
+
+func legacy_menu() -> void:
 	if game.realm_ui!=null and game.realm_ui.active:game.realm_ui.finish()
 	if game.decorator!=null and game.decorator.active:game.decorator.finish()
 	if game.visiting: visit_menu(); return
@@ -511,15 +549,15 @@ func menu() -> void:
 	scroll.custom_minimum_size.y = 470
 	v.add_child(scroll)
 	scroll.add_child(grid)
-	var realm_button=button("İlk Krallık" if language=="tr" else "First Kingdom",game.realm_ui.open);realm_button.custom_minimum_size.x=294;grid.add_child(realm_button)
+	var realm_button=button("İlk Krallık" if language=="tr" else "First Kingdom",game.realm_ui.open);realm_button.custom_minimum_size.x=minf(294,(get_viewport().get_visible_rect().size.x-120)*.5);grid.add_child(realm_button)
 	var wardrobe_button=button("Atölye ve koleksiyon" if language=="tr" else "Atelier & collection",func():game.decorator.collection())
-	wardrobe_button.custom_minimum_size.x=294;grid.add_child(wardrobe_button)
+	wardrobe_button.custom_minimum_size.x=minf(294,(get_viewport().get_visible_rect().size.x-120)*.5);grid.add_child(wardrobe_button)
 	var online_button = button("Çevrimiçi evren" if language=="tr" else "Online universe",online_screen)
-	online_button.custom_minimum_size.x=294
+	online_button.custom_minimum_size.x=minf(294,(get_viewport().get_visible_rect().size.x-120)*.5)
 	grid.add_child(online_button)
 	for entry in [["local_universe", local_universe], ["wonders", wonders], ["journal", journal], ["neighbors", neighbors], ["chronicle", history], ["achievements", achievements], ["settings", settings], ["save", game.manual_save], ["load", game.restore], ["favorites", favorite_places], ["showcase", capture_postcard], ["new", creation], ["pause", func(): game.paused = not game.paused; close()]]:
 		var b = button(t(entry[0]), entry[1])
-		b.custom_minimum_size.x = 294
+		b.custom_minimum_size.x = minf(294,(get_viewport().get_visible_rect().size.x-120)*.5)
 		grid.add_child(b)
 	add_close(v)
 
@@ -529,6 +567,10 @@ func toggle_language() -> void:
 	build()
 
 func settings() -> void:
+	if premium!=null and rebirth_enabled:premium.route("settings");return
+	legacy_settings()
+
+func legacy_settings() -> void:
 	page = "settings"
 	var v = popup(t("settings"))
 	v.add_child(button("English / Türkçe", func(): toggle_language(); settings()))
@@ -796,9 +838,15 @@ func _process(_delta: float) -> void:
 		var scale_factor = get_viewport().get_visible_rect().size.x / maxf(1, DisplayServer.window_get_size().x)
 		modal.position.y = minf(modal_base_y, maxf(24, get_viewport().get_visible_rect().size.y - keyboard * scale_factor - modal.size.y - 24)) if keyboard > 0 else modal_base_y
 
+func visible_ui_hit(node: Node,pos: Vector2) -> bool:
+	if node is Control and not node.is_visible_in_tree():return false
+	for child in node.get_children():
+		if visible_ui_hit(child,pos):return true
+	return node is Control and node!=root and node.mouse_filter!=Control.MOUSE_FILTER_IGNORE and node.get_global_rect().has_point(pos)
 func blocks_world(pos: Vector2) -> bool:
 	if game.in_menu or game.loading: return true
 	if not is_instance_valid(root): return false
+	if premium!=null and rebirth_enabled:return visible_ui_hit(root,pos)
 	for control in root.get_children():
 		if control is Control and control.visible and control.mouse_filter != Control.MOUSE_FILTER_IGNORE and control.get_global_rect().has_point(pos): return true
 	return false
@@ -899,6 +947,8 @@ func world_pulse() -> void:
 	add_close(v)
 
 func card_list(v: VBoxContainer, height: float) -> VBoxContainer:
+	if premium!=null and rebirth_enabled:
+		var body=VBoxContainer.new();body.size_flags_horizontal=Control.SIZE_EXPAND_FILL;body.add_theme_constant_override("separation",int(premium.px(18)));v.add_child(body);return body
 	var scroll = ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.custom_minimum_size.y = height
