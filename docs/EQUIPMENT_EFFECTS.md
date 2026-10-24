@@ -1,0 +1,5 @@
+# Ancient equipment
+
+Recipes and all costs live in assets/kingdom/recipes.json. Industry reserves real materials, waits for assigned forge work and mints canonical item IDs. Research is mandatory. Blade costs3alloy/2iron/2gold for6 work units (+20attack). Shield costs1core/1alloy/1iron/1gold for5 (+7defense). Armor costs2alloy/1iron/1leather for5 (+18health/+4defense/+4trap resistance). Talisman costs2sunstone/2gold for4 (+2trap resistance). These are work units consumed by original skill/stability rules, not wall-clock waits. hero.stats and adventure.hurt consume actual gear; sanctuary.tick additionally consumes hazard_resist. Minimum damage1. No invented defense-on-dodge proc is claimed.
+
+32 owned+queued items, four forge jobs, equipped-item/civilian/military/caravan reservations and salvage protections remain. Unique artifacts are not salvageable. Relic cannot be queued. Full capacity never deletes the pending relic. Legal three-seed campaigns craft/equip all four and conserve7alloy→1,1core→0,4sunstone→2. These finite materials do not regenerate.

@@ -1,0 +1,3 @@
+# Realm23 — Relics of the Ancients
+
+Claimed main22 plus armed Warrior unlock actual Sanctuary entry; only entry opts into the additional regional schema and exposes23. Opening a map does not mutate progression. Objectives read saved inscription, both mechanisms, actual dead Warden, canonical unique relic, alive return, home research and crafted/equipped new gear. Reward920 realmXP/4gold/4wood/4stone uses the original exactly-once claim API. Other quests, rewards and their old saves are preserved. Contextual Guide points at the next actionable location; Pack pauses and shows real cargo/stats. Equip remains a home action.

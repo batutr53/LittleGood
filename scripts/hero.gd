@@ -24,7 +24,7 @@ static func recruit(w: Dictionary,name: String) -> bool:
 static func level(h: Dictionary) -> int:return mini(15,1+floori(sqrt(float(h.xp)/40.0)))
 static func stats(w: Dictionary) -> Dictionary:
 	var h=w.kingdom.adventure.hero;var n=level(h)-1
-	var result={"health":100+6*n,"attack":10+2*n,"defense":2+n,"speed":180,"crit":100}
+	var result={"health":100+6*n,"attack":10+2*n,"defense":2+n,"speed":180,"crit":100,"hazard_resist":0}
 	for slot in SLOTS:
 		var owned=I.item(w,int(h.equipment[slot]))
 		if not owned.is_empty():

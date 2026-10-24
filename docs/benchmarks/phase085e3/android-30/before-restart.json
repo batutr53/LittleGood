@@ -1,0 +1,27 @@
+{
+  "all_passed": true,
+  "checks": {
+    "checkpoint": true,
+    "inscription_path": true,
+    "legal22": true,
+    "native_entry": true,
+    "native_inscription": true,
+    "native_move": true,
+    "native_pack": true,
+    "native_pack_pause": true,
+    "native_pack_resume": true,
+    "native_switches": true,
+    "plate_path_0": true,
+    "plate_path_1": true,
+    "plates": true,
+    "switch_path_0": true,
+    "switch_path_1": true,
+    "switch_path_2": true
+  },
+  "source": "simulated_android_qa",
+  "stage": "sanctuary_saved",
+  "viewport": [
+    720.0,
+    1600.0
+  ]
+}

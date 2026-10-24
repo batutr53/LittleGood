@@ -3,7 +3,7 @@ const MAP=preload("res://scripts/ashen_desert_map.gd")
 const MATERIALS=["desert_crystal"]
 const FLAGS=["entered","oasis","kill","picked","banked","returned","registered"]
 const KINDS=["sand_stalker","dune_scorpion","ruin_sentinel"]
-static func enabled(w: Dictionary) -> bool:return int(w.get("kingdom",{}).get("adventure",{}).get("regions",{}).get("version",1))==2
+static func enabled(w: Dictionary) -> bool:return int(w.get("kingdom",{}).get("adventure",{}).get("regions",{}).get("version",1)) in [2,3]
 static func mine_found(w: Dictionary) -> bool:
 	var a=w.kingdom.adventure;var r=a.run if a.run.get("region","")=="iron_hills" else a.get("regions",{}).get("stored",{}).get("iron_hills",{})
 	return r.get("landmark",false)

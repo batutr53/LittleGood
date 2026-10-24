@@ -53,6 +53,8 @@ static func event(w: Dictionary,key: String,amount: int=1) -> void:
 static func queue(w: Dictionary,recipe: String,building: int) -> bool:
 	if not writable(w) or not recipes().has(recipe):return false
 	var data=recipes()[recipe];var state=w.kingdom.industry
+	if recipe=="sun_relic":return false
+	if recipe in load("res://scripts/sanctuary.gd").GEAR and (not load("res://scripts/sanctuary.gd").enabled(w) or not w.kingdom.adventure.regions.ancients.researched):return false
 	if recipe=="crystal_tonic" and not load("res://scripts/ashen_desert.gd").can_spend(w,2000):return false
 	if data.get("category","tool")!="tool" and int(w.kingdom.version)!=3:return false
 	if data.get("category")=="military" and not load("res://scripts/military.gd").enabled(w):return false
@@ -95,11 +97,14 @@ static func validate(w: Dictionary) -> bool:
 		if not entry is Dictionary or not C.number(entry.get("id"),1,state.next_item-1,true) or ids.has(int(entry.id)) or not entry.get("recipe") is String or not recipes().has(entry.recipe):return false
 		if recipes()[entry.recipe].get("category")=="military" and (not load("res://scripts/military.gd").enabled(w) or w.kingdom.claimed.size()<16):return false
 		if entry.recipe=="crystal_tonic" and not load("res://scripts/ashen_desert.gd").enabled(w):return false
+		if (entry.recipe=="sun_relic" or entry.recipe in load("res://scripts/sanctuary.gd").GEAR) and not load("res://scripts/sanctuary.gd").enabled(w):return false
+		if entry.recipe in load("res://scripts/sanctuary.gd").GEAR and not w.kingdom.adventure.regions.ancients.researched:return false
 		ids[int(entry.id)]=true
 	for entry in state.items:
 		if not C.shape(entry,["id","recipe"]):return false
 		owned[int(entry.id)]=true
 	for job in state.queue:
+		if job.recipe=="sun_relic":return false
 		if not C.shape(job,["id","recipe","building","progress"]) or not C.number(job.building,1,w.kingdom.next_building-1,true) or not C.number(job.progress,0,int(recipes()[job.recipe].ticks)*SCALE-1,true):return false
 		if not w.kingdom.buildings.any(func(b):return int(b.id)==int(job.building) and b.kind=="forge"):return false
 	for slot in state.equipped:

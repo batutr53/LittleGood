@@ -249,5 +249,82 @@
         1
       ]
     ]
+  },
+  {
+    "id": "ancient_sentinel",
+    "name": [
+      "Ancient Sentinel",
+      "Kadim Nöbetçi"
+    ],
+    "health": 110,
+    "attack": 24,
+    "defense": 7,
+    "speed": 65,
+    "range": 90,
+    "warning": 950,
+    "cooldown": 1500,
+    "xp": 50,
+    "material": "ancient_alloy",
+    "quantity": 1,
+    "weights": [
+      [
+        "herb",
+        4
+      ],
+      [
+        "iron",
+        1
+      ]
+    ]
+  },
+  {
+    "id": "sun_shade",
+    "name": [
+      "Sun Priest’s Shade",
+      "Güneş Rahibinin Gölgesi"
+    ],
+    "health": 76,
+    "attack": 22,
+    "defense": 2,
+    "speed": 115,
+    "range": 220,
+    "warning": 850,
+    "cooldown": 1800,
+    "xp": 50,
+    "material": "ancient_alloy",
+    "quantity": 1,
+    "weights": [
+      [
+        "herb",
+        4
+      ],
+      [
+        "gold",
+        1
+      ]
+    ]
+  },
+  {
+    "id": "sunward_warden",
+    "name": [
+      "Sunward Warden",
+      "Güneş Muhafızı"
+    ],
+    "health": 180,
+    "attack": 29,
+    "defense": 18,
+    "speed": 68,
+    "range": 100,
+    "warning": 1050,
+    "cooldown": 1800,
+    "xp": 90,
+    "material": "ancient_alloy",
+    "quantity": 3,
+    "weights": [
+      [
+        "gold",
+        1
+      ]
+    ]
   }
 ]

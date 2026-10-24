@@ -1,0 +1,21 @@
+# Continue E3 from verified E2
+
+Current release:0.8.5-devE2/code91, age085-e2-regions, real1–22. The E3 audit began at45cc684 / age085-e2b-iron-hills and protected it as age085-e3-base-e2b. Missing E2 desert/poison/material consumer/quest22 were implemented and verified first. E3 itself is not started: no dungeon, puzzles, hazards, elites, Sun Relic, advanced equipment or23. Do not create age085-e3-ancients until complete E3 acceptance; do not begin E4–E6/0.9/1.0.
+
+Read MILESTONE_E3_BRIEF.md, STATUS.md, AGE085_E2_REPORT.md and the explicitly partial AGE085_E3_REPORT.md. Run devtools/verify_desert.py (745 game checks), then real desert/mountain rendered tests. All fixtures/rendered tests must use private paths; no player reset. Preserve C/D/E1/E2B/E2 history, online source, artwork and APKs. Never fabricate historical fixtures from newer code.
+
+E3A next: extend the trusted regional architecture with Sunken Sanctuary and an actual entrance tied to desert/claimed22. Use the original shared controller/combat/collision/HUD/save model. Build five meaningful connected spaces with readable paths, camera bounds, inscription and safe Home exit. Do not enable23 from opening a map or insert fake room text instead of navigation. Preserve existing clock policy and parked-run ownership. Current state permits two parked regions for three total regions; adding a fourth requires explicit bounded schema/validation changes, not truncation of old regions.
+
+E3B: persistent pressure plates plus ordered switches, sealed doors with real collision/open animation, two fair hazards with warning/damage/dodge/recovery, contextual hints and interrupted-save/anti-softlock tests. Solutions must be deterministic and always recoverable. Home remains available.
+
+E3C: Ancient Sentinel guard/frontal/counter pattern, Sun Priest Shade ranged/relocation/area-denial pattern and compact Sunward Warden melee/directional-energy/shield-opening encounter. Reuse hit/gear/loot infrastructure, not unchanged recolors. Do not add Azrakh. Verify actual fights, damage/counterplay and distinct original sprites in rendered scenes.
+
+E3D: discoverable optional passage/treasury, two lore findings and unique chamber, exact-once real Sun Relic interaction after Warden. Keep committed unique claims on defeat/re-entry/load and record concise Sunforged Dynasty lore. No fabricated offline discoveries.
+
+E3E: concise useful dungeon materials, real existing staffed-forge recipes, distinct deterministic combat effects and UI descriptions, canonical inventory/kit/tool/relic protections. Quest23 requires claimed22, real dungeon inscription/mechanism/elite/relic, actual home return/research, legitimate materials/forge work and equipping a meaningful upgrade. No injected XP, free materials or arbitrary flags. Test legal1–23 seeds and exactly-once rewards.
+
+E3F: actual five-room/puzzle/hazard/combat/secret/relic/forge/23 screenshots, complete migrations/retained745 checks, independent dungeon performance/memory, isolated Android native controls and genuine process restart at60/30. Bot navigation is not external touch. Player APK signing/update/startup must preserve byte-identical primary/backup/temp/settings; phone was unauthorized during the E2 run, so recheck rather than assume phone verification. No security/App Control bypass.
+
+Current invariants: regional version2 is opt-in at actual desert entry after21/mine. Stock has one new desert_crystal key only then; current and parked runs retain unique owners. Finite mountain/desert deposits never refresh. Desert totals10 crystals;22 registration consumes1 and tonic consumes2 crystal+1herb+1gold via four real forge ticks. Last quest crystal is protected. Poison is four2HP ticks over4 seconds on simulation clock, saved/idempotent, cleared by tonic/once-only oasis/defeat/home. Any active adventure freezes home/industry/caravan/offline time; E1 Live Route Watch separately advances home then restores pause. Preserve all of it while adding dungeon behavior.
+
+After all E3 acceptance passes, export a new correctly versioned E3 player/QA APK and source archive, update truthful reports and tag age085-e3-ancients. No complete overall E tag until E1–E6 actually exist.

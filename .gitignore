@@ -9,3 +9,4 @@ builds/*
 **/obj/
 server/.env
 server/.local/
+devtools/__pycache__/

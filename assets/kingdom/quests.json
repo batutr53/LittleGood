@@ -1066,5 +1066,101 @@
       "stone": 4
     },
     "next": ""
+  },
+  {
+    "id": "main_23",
+    "level": 23,
+    "chapter": 5,
+    "title": [
+      "Relics of the Ancients",
+      "Kadimlerin Yadigârları"
+    ],
+    "description": [
+      "Beneath the desert, sun and stone remember. Follow the symbols, face the Warden and bring its knowledge home.",
+      "Çölün altında güneş ve taş hatırlıyor. Simgeleri izle, Muhafızla yüzleş ve bilgisini eve getir."
+    ],
+    "tracking": "realm_lifetime",
+    "prerequisites": [
+      "main_22"
+    ],
+    "objectives": [
+      {
+        "kind": "sanctuary",
+        "key": "inscription",
+        "target": 1,
+        "text": [
+          "Read the Sunforged inscription",
+          "Güneşdövme yazıtını oku"
+        ],
+        "navigate": "sanctuary"
+      },
+      {
+        "kind": "sanctuary",
+        "key": "mechanism",
+        "target": 1,
+        "text": [
+          "Open both ancient mechanisms",
+          "İki kadim mekanizmayı aç"
+        ],
+        "navigate": "sanctuary"
+      },
+      {
+        "kind": "sanctuary",
+        "key": "warden",
+        "target": 1,
+        "text": [
+          "Defeat the Sunward Warden",
+          "Güneş Muhafızı’nı yen"
+        ],
+        "navigate": "sanctuary"
+      },
+      {
+        "kind": "sanctuary",
+        "key": "relic",
+        "target": 1,
+        "text": [
+          "Recover the unique Sun Relic",
+          "Eşsiz Güneş Yadigârı’nı al"
+        ],
+        "navigate": "sanctuary"
+      },
+      {
+        "kind": "sanctuary",
+        "key": "returned",
+        "target": 1,
+        "text": [
+          "Return safely with the relic",
+          "Yadigârla güvenle dön"
+        ],
+        "navigate": "ancients"
+      },
+      {
+        "kind": "sanctuary",
+        "key": "researched",
+        "target": 1,
+        "text": [
+          "Inspect the relic at home",
+          "Yadigârı evde incele"
+        ],
+        "navigate": "ancients"
+      },
+      {
+        "kind": "sanctuary",
+        "key": "equipped",
+        "target": 1,
+        "text": [
+          "Forge and equip an ancient upgrade",
+          "Kadim donanım üret ve kuşan"
+        ],
+        "navigate": "workshop"
+      }
+    ],
+    "rewards": {
+      "xp": 920,
+      "gold": 4,
+      "wood": 4,
+      "stone": 4
+    },
+    "next": ""
   }
 ]

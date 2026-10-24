@@ -22,6 +22,10 @@ static func enter(w: Dictionary,home_paused: bool=false,region: String="") -> bo
 	if not a.run.is_empty() and a.run.active:
 		return R.current(w)==region
 	if not R.prepare(w,region):return false
+	if region=="sanctuary":
+		if a.run.is_empty():a.run=load("res://scripts/sanctuary.gd").create(int(a.next_run),home_paused,int(w.seed));a.next_run+=1
+		else:a.run.active=true;a.run.home_paused=home_paused
+		return true
 	if region=="ashen_desert":
 		if a.run.is_empty():a.run=load("res://scripts/ashen_desert.gd").create(int(a.next_run),home_paused,int(w.seed));a.next_run+=1
 		else:a.run.active=true;a.run.home_paused=home_paused
@@ -40,6 +44,7 @@ static func exit(w: Dictionary) -> bool:
 	if not H.writable(w) or w.kingdom.adventure.run.is_empty() or not w.kingdom.adventure.run.active:return false
 	var a=w.kingdom.adventure;var r=a.run
 	if r.get("region","")=="ashen_desert":load("res://scripts/ashen_desert.gd").returning(w)
+	if r.get("region","")=="sanctuary":load("res://scripts/sanctuary.gd").returning(w)
 	if int(r.cargo.get("heart",0))>0:H.event(w,"heart_returned")
 	for key in r.cargo:w.kingdom.stock[key]+=int(r.cargo[key])*1000
 	H.event(w,"banked",int(r.picked));r.cargo={};r.picked=0;r.active=false
@@ -53,6 +58,7 @@ static func revisit(w: Dictionary) -> bool:
 	if r.is_empty() or r.active or r.enemies.any(func(e):return e.hp>0) or r.loot.any(func(l):return not l.taken):return false
 	w.kingdom.adventure.run={};return true
 static func move_actor(w: Dictionary,id: int,p: Vector2,delta: Vector2,mover: Callable) -> Vector2:
+	if not mover.is_valid() and w.kingdom.adventure.run.get("region","")=="sanctuary":return load("res://scripts/sanctuary_map.gd").move(p,delta,w.kingdom.adventure.run)
 	return mover.call(id,p,delta) if mover.is_valid() else load("res://scripts/regions.gd").map(load("res://scripts/regions.gd").current(w)).move(p,delta,w.kingdom.claimed.size()<14)
 static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> Array:
 	if not H.writable(w) or w.kingdom.adventure.run.is_empty() or not w.kingdom.adventure.run.active:return []
@@ -70,6 +76,8 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 	if direction.length()>.1:r.facing=[roundi(direction.x*1000),roundi(direction.y*1000)]
 	if r.dash>0 and direction.length()<.1:direction=Vector2(r.facing[0],r.facing[1]).normalized()
 	var p=move_actor(w,0,Vector2(r.x,r.y),direction*(450 if r.dash>0 else int(H.stats(w).speed))*.05,mover);r.x=roundi(p.x);r.y=roundi(p.y)
+	if r.get("region","")=="sanctuary":feedback.append_array(load("res://scripts/sanctuary.gd").tick(w))
+	if h.defeated:return feedback
 	if input.get("heal",false) and heal(w):feedback.append("heal")
 	if (input.get("attack",false) and h.cooldowns.attack==0) or (input.get("skill",false) and h.cooldowns.skill==0):
 		var heavy=input.get("skill",false) and h.cooldowns.skill==0
@@ -86,14 +94,17 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 		for e in r.enemies:
 			var offset=Vector2(e.x,e.y)-p
 			if e.hp<=0 or offset.length()>(105 if heavy else 78):continue
+			if r.get("region","")=="sanctuary" and not load("res://scripts/sanctuary.gd").line_clear(p,Vector2(e.x,e.y),r):continue
 			if not heavy and offset.length()>1 and offset.normalized().dot(Vector2(r.facing[0],r.facing[1]).normalized())<.15:continue
 			var rng=RandomNumberGenerator.new();rng.state=int(r.rng);var critical=rng.randi_range(0,999)<int(H.stats(w).crit);r.rng=str(rng.state)
 			var armor=0 if e.kind=="dune_scorpion" and e.state=="recover" else int(enemies()[e.kind].defense)
+			if e.kind in load("res://scripts/sanctuary.gd").KINDS:armor=load("res://scripts/sanctuary.gd").armor(e,armor);load("res://scripts/sanctuary.gd").struck(w,e)
 			var hit=maxi(1,roundi(int(H.stats(w).attack)*(1.6 if heavy else 1.0)*(1.5 if critical else 1.0))-armor)
 			e.hp=maxi(0,int(e.hp)-hit);feedback.append({"damage":hit,"x":e.x,"y":e.y})
 			if e.hp==0:defeat_enemy(w,e);feedback.append("boss" if e.kind=="thornheart" else "kill")
 	for e in r.enemies:
 		if e.hp<=0:continue
+		if e.kind in load("res://scripts/sanctuary.gd").KINDS:feedback.append_array(load("res://scripts/sanctuary.gd").enemy_step(w,e,mover));continue
 		if e.kind in load("res://scripts/ashen_desert.gd").KINDS:
 			feedback.append_array(load("res://scripts/ashen_desert.gd").enemy_step(w,e,mover));continue
 		var data=enemies()[e.kind];var ep=Vector2(e.x,e.y);var offset=p-ep;var distance=offset.length();e.timer=maxi(0,int(e.timer)-STEP)
@@ -160,6 +171,7 @@ static func defeat_enemy(w: Dictionary,e: Dictionary) -> void:
 	e=candidates[0]
 	if e.state=="dead" or e.hp>0:return
 	e.state="dead";var a=w.kingdom.adventure;var r=a.run;var data=enemies()[e.kind];var before=int(H.stats(w).health);a.hero.xp+=int(data.xp);a.hero.hp+=int(H.stats(w).health)-before;H.event(w,"kills")
+	if r.get("region","")=="sanctuary":load("res://scripts/sanctuary.gd").defeated(w,e)
 	if r.get("region","")=="ashen_desert":a.regions.quest.kill=true
 	if e.kind=="thornheart":
 		if not a.boss_rewarded:
@@ -192,6 +204,7 @@ static func pickup(w: Dictionary,l: Dictionary) -> bool:
 		r.cargo[l.resource]=int(r.cargo.get(l.resource,0))+int(l.amount)
 	l.taken=true;r.picked+=1;H.event(w,"picked")
 	if r.get("region","")=="ashen_desert" and l.resource=="desert_crystal":w.kingdom.adventure.regions.quest.picked=true
+	if r.get("region","")=="sanctuary":load("res://scripts/sanctuary.gd").picked(w,l)
 	return true
 static func interact(w: Dictionary) -> String:
 	if not H.writable(w) or w.kingdom.adventure.run.is_empty() or not w.kingdom.adventure.run.active:return ""
@@ -200,6 +213,7 @@ static func interact(w: Dictionary) -> String:
 	for l in r.loot:
 		if pickup(w,l):return "loot"
 	if r.loot.any(func(l):return not l.taken and p.distance_to(Vector2(l.x,l.y))<=90):return "full"
+	if r.get("region","")=="sanctuary":return load("res://scripts/sanctuary.gd").interact(w)
 	if r.get("region","")=="ashen_desert":return load("res://scripts/ashen_desert.gd").interact(w)
 	if r.get("region","wildwood")=="iron_hills":return load("res://scripts/regions.gd").interact(w)
 	if p.distance_to(MAP.LANDMARK)<85 and not r.landmark:r.landmark=true;H.event(w,"landmark");return "landmark"
@@ -215,6 +229,9 @@ static func normalize_run(r: Dictionary) -> void:
 	r.dash=int(r.get("dash",0))
 	if r.get("region","")=="ashen_desert":
 		for key in ["poison_until","poison_next"]:r[key]=int(r[key])
+	if r.get("region","")=="sanctuary":
+		for key in ["plates","last_plate","switches"]:r.mechanisms[key]=int(r.mechanisms[key])
+		for key in r.traps:r.traps[key]=int(r.traps[key])
 	for i in range(2):r.facing[i]=int(r.facing[i])
 	for key in r.cargo:r.cargo[key]=int(r.cargo[key])
 	for e in r.enemies:
@@ -229,11 +246,13 @@ static func validate_run(w: Dictionary,r: Dictionary) -> bool:
 	var keys=["id","active","home_paused","clock","x","y","facing","invulnerable","swing","enemies","loot","cargo","picked","chest","harvest","landmark","rng"]
 	var hills=r.get("region","wildwood")=="iron_hills"
 	var desert=r.get("region","")=="ashen_desert"
+	var sanctuary=r.get("region","")=="sanctuary"
 	if r.has("region"):
-		if not (hills or desert) or not w.kingdom.adventure.has("regions") or w.kingdom.claimed.size()<21:return false
+		if not (hills or desert or sanctuary) or not w.kingdom.adventure.has("regions") or w.kingdom.claimed.size()<21:return false
 		keys.append_array(["region","nodes"])
 		if hills and (not C.shape(r.get("nodes"),["ore","stone"]) or not r.nodes.ore is bool or not r.nodes.stone is bool or r.harvest or r.chest):return false
 		if desert:keys.append_array(["poison_until","poison_next","recovered","road"])
+		if sanctuary:keys.append_array(["mechanisms","traps"])
 	if r.has("dash"):keys.append("dash")
 	if not C.shape(r,keys) or (r.has("dash") and not C.number(r.dash,0,300,true)):return false
 	for key in ["active","home_paused","chest","harvest","landmark"]:
@@ -253,8 +272,8 @@ static func validate_run(w: Dictionary,r: Dictionary) -> bool:
 		for key in ["x","y","hp","timer","aimx","aimy","pattern"]:
 			if not C.number(e[key],0,100000,true):return false
 		if e.hp>int(enemies()[e.kind].health) or (e.hp==0)!=(e.state=="dead") or e.x>960 or e.y>1440:return false
-		var expected={"sand_stalker":1,"dune_scorpion":2,"ruin_sentinel":3} if desert else {"stone_crawler":1,"cave_stalker":2} if hills else {"wolf":1,"thorn":2,"spider":3,"thornheart":4}
-		if not expected.has(e.kind) or int(e.id)!=expected[e.kind] or e.pattern>(2 if e.kind=="thornheart" else 0):return false
+		var expected={"ancient_sentinel":1,"sun_shade":2,"sunward_warden":3} if sanctuary else {"sand_stalker":1,"dune_scorpion":2,"ruin_sentinel":3} if desert else {"stone_crawler":1,"cave_stalker":2} if hills else {"wolf":1,"thorn":2,"spider":3,"thornheart":4}
+		if not expected.has(e.kind) or int(e.id)!=expected[e.kind] or e.pattern>(2 if e.kind=="thornheart" else 1 if sanctuary else 0):return false
 	ids=[]
 	for l in r.loot:
 		if not C.shape(l,["id","x","y","resource","amount","recipe","taken"]) or not C.number(l.id,1,100000,true) or ids.has(int(l.id)) or not l.taken is bool:return false
@@ -263,4 +282,4 @@ static func validate_run(w: Dictionary,r: Dictionary) -> bool:
 		if l.recipe.is_empty():
 			if not w.kingdom.stock.has(l.resource):return false
 		elif not I.recipes().has(l.recipe) or not l.resource.is_empty() or l.amount!=1:return false
-	return load("res://scripts/ashen_desert.gd").validate_run(w,r) if desert else not hills or load("res://scripts/regions.gd").validate_nodes(r)
+	return load("res://scripts/sanctuary.gd").validate_run(w,r) if sanctuary else load("res://scripts/ashen_desert.gd").validate_run(w,r) if desert else not hills or load("res://scripts/regions.gd").validate_nodes(r)

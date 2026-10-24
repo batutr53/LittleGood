@@ -29,6 +29,12 @@ var startup_ms=0.0
 var effects
 var props
 var floats: Array=[]
+var stone_distance=0.0
+var last_effects_clock=-1
+var presentation_cpu_us=0
+var presentation_steps=0
+var effect_draw_cpu_us=0
+var effect_draws=0
 var effect_textures: Dictionary={}
 var attack_held=false
 var mouse_aim=Vector2.ZERO
@@ -37,12 +43,14 @@ var action_counts: Dictionary={}
 var death_ages: Dictionary={}
 var effects_were_dynamic=true
 var guide_point=Vector2.ZERO
+var pack_panel
+var pack_was_frozen=false
 func say(en: String,tr: String) -> String:return tr if game.ui.language=="tr" else en
 func _ready() -> void:
 	var started=Time.get_ticks_usec();game.show_world(false);game.ui.root.hide()
 	region=preload("res://scripts/regions.gd").current(game.world);region_map=preload("res://scripts/regions.gd").map(region)
 	for key in ["chest","herb"]:effect_textures[key]=load("res://assets/adventure/"+key+".svg")
-	var ground=load("res://scripts/ashen_desert_ground.gd").new() if region=="ashen_desert" else load("res://scripts/iron_hills_ground.gd").new() if region=="iron_hills" else preload("res://scripts/wildwood_ground.gd").new();add_child(ground)
+	var ground=load("res://scripts/sanctuary_ground.gd").new() if region=="sanctuary" else load("res://scripts/ashen_desert_ground.gd").new() if region=="ashen_desert" else load("res://scripts/iron_hills_ground.gd").new() if region=="iron_hills" else preload("res://scripts/wildwood_ground.gd").new();add_child(ground)
 	actors=Node2D.new();actors.y_sort_enabled=true;add_child(actors)
 	for p in region_map.trees():
 		var tree=Sprite2D.new() if region!="wildwood" else GameArt.sprite(7 if int(p.x)%2==0 else 12,100);tree.position=p
@@ -53,7 +61,11 @@ func _ready() -> void:
 		var wall=StaticBody2D.new();wall.position=rect.get_center();var shape=CollisionShape2D.new();var box=RectangleShape2D.new();box.size=rect.size;shape.shape=box;wall.add_child(shape);add_child(wall)
 		if region!="wildwood" and rect.size.x>60 and rect.size.y>60:
 			# Art follows the physical obstacle footprint, rather than blocking invisible ground.
-			var art=Sprite2D.new();art.texture=load("res://assets/adventure/desert-rock.svg" if region=="ashen_desert" else "res://assets/adventure/mountain-rock.svg");art.position=rect.get_center();art.scale=rect.size/Vector2(180,160);art.position.y-=rect.size.y*.15;actors.add_child(art)
+			var art=Sprite2D.new();art.texture=load("res://assets/adventure/sanctuary-wall.svg" if region=="sanctuary" else "res://assets/adventure/desert-rock.svg" if region=="ashen_desert" else "res://assets/adventure/mountain-rock.svg");art.position=rect.get_center();art.scale=rect.size/Vector2(180,160);art.position.y-=rect.size.y*.15;actors.add_child(art)
+	if region=="sanctuary":
+		for key in ["sun-relic-pedestal","sunforged-tablet","chest"]:regional_textures[key]=load("res://assets/adventure/"+key+".svg")
+		regional_prop("sun-relic-pedestal",region_map.RELIC,130,.42);regional_prop("sunforged-tablet",region_map.INSCRIPTION,100,.42);regional_prop("sunforged-tablet",region_map.LORE,90,.42);regional_prop("chest",region_map.TREASURE,90,.42)
+		var doors=preload("res://scripts/sanctuary_view.gd").new();add_child(doors)
 	if region=="ashen_desert":
 		for key in ["desert_crystal","ancient-road"]:regional_textures[key]=load("res://assets/adventure/"+key+".svg")
 		regional_prop("desert_crystal",region_map.CRYSTAL,110,.42)
@@ -73,6 +85,7 @@ func regional_prop(key: String,point: Vector2,size: float,anchor: float,alpha: f
 	var base=Node2D.new();base.position=point;actors.add_child(base)
 	var sprite=Sprite2D.new();sprite.texture=regional_textures[key];sprite.position.y=-size*anchor;sprite.scale=Vector2.ONE*size/sprite.texture.get_width();sprite.modulate.a=alpha;base.add_child(sprite)
 	if key in ["ore-vein","mountain-rock","desert_crystal"]:base.name="deposit_crystal" if key=="desert_crystal" else "deposit_ore" if key=="ore-vein" else "deposit_stone"
+	if key=="chest":base.name="sanctuary_chest"
 func camera_target() -> Vector2:
 	var half=get_viewport_rect().size/(camera.zoom*2);var p=bodies[0].position
 	return Vector2(clampf(p.x,half.x,region_map.SIZE.x-half.x),clampf(p.y+100/camera.zoom.y,half.y-165/camera.zoom.y,region_map.SIZE.y-half.y+350/camera.zoom.y))
@@ -104,7 +117,8 @@ func build_hud() -> void:
 			buttons[key].button_down.connect(func():attack_held=true;actions.attack=true)
 			buttons[key].button_up.connect(func():attack_held=false)
 	add_button("pause",say("Pause","Dur"),Rect2(582,103,116,78),toggle_pause)
-	if region=="ashen_desert":add_button("guide",say("Guide","İz"),Rect2(25,145,110,42),guide)
+	if region in ["ashen_desert","sanctuary"]:add_button("guide",say("Guide","İz"),Rect2(25,145,110,42),guide)
+	if region=="sanctuary":add_button("pack",say("Pack","Çanta"),Rect2(150,145,110,42),toggle_pack)
 	stick=preload("res://scripts/adventure_stick.gd").new();stick.position=Vector2(125,height-145);layer.add_child(stick)
 	refresh_hud()
 func refresh_hud() -> void:
@@ -117,6 +131,7 @@ func refresh_hud() -> void:
 	objective.text=say("IRON HILLS · Find the mine to the north.\nInspect ore veins; take materials home.","DEMİR TEPELER · Kuzeydeki madeni bul.\nCevheri incele; malzemeyi eve taşı.") if region=="iron_hills" else say("WILDWOOD · ","YABANORMAN · ")+(game.realm_ui.localized(q.title) if not q.is_empty() else say("Explore and return safely","Keşfet ve güvenle dön"))
 	if region=="iron_hills" and r.landmark:objective.text=say("IRON HILLS · Forgotten Mine discovered\nOre and stone are finite · Home banks cargo.","DEMİR TEPELER · Unutulmuş Maden keşfedildi\nCevher ve taş sınırlı · Dön ganimeti depolar.")
 	if region=="ashen_desert":objective.text=say("ASHEN DESERT · Find the oasis.\nDodge stings and glowing impact circles.","KÜL ÇÖLÜ · Vahayı bul.\nİğneden ve parlayan hedeflerden kaçın.") if not r.landmark else say("Oasis discovered · Hunt, collect a crystal, return.\nHeal at the oasis once · Home clears poison.","Vaha keşfedildi · Avla, kristal topla, dön.\nVahada bir kez iyileş · Dön zehri temizler.")
+	if region=="sanctuary":objective.text=sanctuary_hint();actors.get_node("sanctuary_chest").visible=r.mechanisms.secret
 	for e in r.enemies:
 		if e.kind=="thornheart" and e.hp>0 and Vector2(r.x,r.y).distance_to(Vector2(e.x,e.y))<320:objective.text+="\nThornheart · "+str(int(e.hp))+" / 220 · "+say("Phase ","Evre ")+("II" if e.hp<=110 else "I")
 	if h.defeated:message.text=say("Your champion fell. Home restores health and keeps your collected loot.","Şampiyonun düştü. Dön canı yeniler; toplanmış ganimetin korunur.")
@@ -135,6 +150,7 @@ func _input(event: InputEvent) -> void:
 		if event.keycode==KEY_F:actions.heal=true
 		if event.keycode==KEY_ESCAPE:toggle_pause()
 func toggle_pause() -> void:
+	if is_instance_valid(pack_panel):toggle_pack()
 	frozen=not frozen;attack_held=false;actions.clear();movement=Vector2.ZERO
 	buttons.pause.text=say("Resume","Sürdür") if frozen else button_titles.pause
 	message.text=say("Paused · Resume to continue; Home keeps collected loot.","Duraklatıldı · Sürdür ile devam et; Dön ganimeti korur.") if frozen else say("Watch the warning, then dodge. Attack during recovery.","Uyarıyı izle, sonra kaçın. Dinlenme aralığında saldır.")
@@ -143,6 +159,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		mouse_aim=get_global_mouse_position()-bodies[0].position;actions.attack=true
 func _physics_process(delta: float) -> void:
 	if frozen or game.suspended:return
+	var frame_started=Time.get_ticks_usec()
 	var direction=movement
 	if not controlled:
 		direction+=Vector2(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT))-float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))-float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)))
@@ -153,11 +170,19 @@ func _physics_process(delta: float) -> void:
 		if mouse_aim.length()>.1:command.aim=mouse_aim;mouse_aim=Vector2.ZERO
 		for key in ["attack","skill","dodge","heal"]:
 			if command.get(key,false):action_counts[key]=int(action_counts.get(key,0))+1
+		var before_position=Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y)
 		var feedback=A.step(game.world,command,move_body);actions.clear();combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
+		if region=="sanctuary":
+			stone_distance+=before_position.distance_to(Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y))
+			if stone_distance>=65:stone_distance=fmod(stone_distance,65);game.audio.sanctuary("step")
 		for cue in feedback:
 			if cue is Dictionary:floats.append({"point":Vector2(cue.x,cue.y),"text":str(cue.damage),"age":0.0})
-			elif cue in ["swing","kill","boss","heal"]:game.audio.chime(6 if cue in ["kill","boss"] else 0 if cue=="swing" else 5)
+			elif cue in ["swing","kill","boss","heal","plate","mechanism"]:game.audio.chime(6 if cue in ["kill","boss","plate","mechanism"] else 0 if cue=="swing" else 5)
 			elif cue=="hurt":game.audio.chime(2)
+			if region=="sanctuary":
+				if cue is Dictionary or cue=="hurt":game.audio.sanctuary("impact")
+				elif cue=="swing":game.audio.sanctuary("swing")
+				elif cue in ["plate","mechanism"]:game.audio.sanctuary("switch")
 			if cue is String and cue=="boss":message.text=say("Thornheart falls! Inspect the living heart, then return to Arin.","Dikenyürek düştü! Yaşayan kalbi İncele ile al; Arin'e dön.")
 	var r=game.world.kingdom.adventure.run;bodies[0].position=Vector2(r.x,r.y)
 	bodies[0].get_node("Art").rotation=sin(r.clock*.012)*.025*direction.length()
@@ -177,10 +202,12 @@ func _physics_process(delta: float) -> void:
 	if save_clock>5:save_clock=0;game.checkpoint("adventure")
 	var visible_world=Rect2(camera.position-get_viewport_rect().size/camera.zoom/2,get_viewport_rect().size/camera.zoom).grow(180)
 	var dynamic=region=="ashen_desert" or r.enemies.any(func(e):return e.hp>0 and visible_world.has_point(Vector2(e.x,e.y))) or r.swing>0 or r.dash>0 or not floats.is_empty() or death_ages.values().any(func(age):return age<1)
-	if dynamic or effects_were_dynamic:effects.queue_redraw()
+	if (dynamic or effects_were_dynamic) and (region!="sanctuary" or last_effects_clock!=r.clock):effects.queue_redraw();last_effects_clock=int(r.clock)
 	effects_were_dynamic=dynamic
+	presentation_cpu_us+=Time.get_ticks_usec()-frame_started;presentation_steps+=1
 func draw_effects(canvas: Node2D) -> void:
 	if not game:return
+	var draw_started=Time.get_ticks_usec()
 	var r=game.world.kingdom.adventure.run
 	if region=="ashen_desert":
 		for i in range(6):
@@ -194,12 +221,15 @@ func draw_effects(canvas: Node2D) -> void:
 		var p=Vector2(e.x,e.y);var data=A.enemies()[e.kind]
 		canvas.draw_rect(Rect2(p-Vector2(30,95),Vector2(60,6)),Color("203e3e"));canvas.draw_rect(Rect2(p-Vector2(30,95),Vector2(60*e.hp/float(data.health),6)),Color("d3d09c"))
 		if e.state=="windup":
+			if region=="sanctuary" and (e.kind=="sunward_warden" and e.pattern==1 or e.kind=="sun_shade" and e.pattern==0):
+				var axis=(Vector2(e.aimx,e.aimy)-p).normalized();var width=36 if e.kind=="sunward_warden" else 24;var end=p+axis*(260 if e.kind=="sunward_warden" else 250)
+				canvas.draw_line(p,end,Color(.95,.4,.25,.3),width*2,true);canvas.draw_line(p,end,Color("ead79b"),3,true);continue
 			if e.kind=="thornheart" and e.pattern==0:
 				var angle=(Vector2(e.aimx,e.aimy)-p).angle();var points=PackedVector2Array([p])
 				for i in range(25):points.append(p+Vector2.from_angle(angle-1.21+i*2.42/24)*140)
 				canvas.draw_colored_polygon(points,Color(.95,.38,.24,.3));canvas.draw_arc(p,140,angle-1.21,angle+1.21,32,Color("f3bb7b"),3,true);continue
 			var root=e.kind=="thornheart" and e.pattern==1
-			var warning=Vector2(e.aimx,e.aimy) if e.kind in ["spider","cave_stalker","ruin_sentinel"] or root else p;var radius=65 if e.kind=="ruin_sentinel" else 55 if e.kind=="cave_stalker" else 60 if e.kind=="spider" else 85 if root else 145 if e.kind=="thornheart" else int(data.range)+12
+			var warning=Vector2(e.aimx,e.aimy) if e.kind in ["spider","cave_stalker","ruin_sentinel","sun_shade"] or root else p;var radius=70 if e.kind=="sun_shade" else 65 if e.kind=="ruin_sentinel" else 55 if e.kind=="cave_stalker" else 60 if e.kind=="spider" else 85 if root else 145 if e.kind=="thornheart" else int(data.range)+12
 			canvas.draw_circle(warning,radius,Color(.95,.38,.24,.25));canvas.draw_arc(warning,radius,0,TAU,40,Color("f3bb7b"),3,true)
 	if r.swing>0:
 		var p=Vector2(r.x,r.y);var angle=Vector2(r.facing[0],r.facing[1]).angle();canvas.draw_arc(p,65,angle-.9,angle+.9,20,Color("f8e3a7"),9,true)
@@ -212,8 +242,10 @@ func draw_effects(canvas: Node2D) -> void:
 			if l.resource=="heart":
 				for i in range(6):canvas.draw_line(p+Vector2.from_angle(i*TAU/6)*23,p+Vector2.from_angle(i*TAU/6)*30,color,3,true)
 	for f in floats:canvas.draw_string(ThemeDB.fallback_font,f.point,f.text,HORIZONTAL_ALIGNMENT_CENTER,-1,24,Color("ffe4a7"))
+	effect_draw_cpu_us+=Time.get_ticks_usec()-draw_started;effect_draws+=1
 func draw_props(canvas: Node2D) -> void:
 	var r=game.world.kingdom.adventure.run
+	if region=="sanctuary":return
 	if region=="ashen_desert":
 		actors.get_node("deposit_crystal").get_child(0).modulate.a=.35 if r.nodes.crystal else 1.0
 		for row in [[region_map.LANDMARK,say("Oasis · Inspect","Vaha · İncele")],[region_map.CRYSTAL,say("Crystal · Inspect","Kristal · İncele")],[region_map.ROAD,say("Ancient road","Kadim yol")]]:
@@ -239,6 +271,9 @@ func interact() -> void:
 	var before=game.world.kingdom.adventure.run.loot.filter(func(l):return l.taken).map(func(l):return l.id)
 	var result=A.interact(game.world)
 	props.queue_redraw();effects.queue_redraw()
+	if region=="sanctuary" and not result.is_empty() and result!="loot" and result!="full":
+		var words={"inscription":say("Sunforged Dynasty: walk Sun then Moon. Inspect Sun → Moon → Star. The doors remember.","Güneşdövme Hanedanı: Güneş sonra Ay üzerine yürü. Güneş → Ay → Yıldız'ı incele. Kapılar hatırlar."),"lore":say("A broken forge: light once tempered metal. The dynasty vanished, its guardians stayed.","Kırık bir demirci: ışık bir zamanlar metali tavlardı. Hanedan kayboldu, muhafızları kaldı."),"secret":say("A hidden passage opens! The treasury is optional; your main route stays safe.","Gizli geçit açıldı! Hazine isteğe bağlı; ana yolun güvende."),"treasury":say("Ancient alloy revealed. Inspect the real loot to carry it home.","Kadim alaşım açığa çıktı. Eve taşımak için gerçek ganimeti İncele."),"switch":say("The symbol glows. Follow Sun → Moon → Star.","Simge parlıyor. Güneş → Ay → Yıldız sırasını izle."),"wrong_switch":say("The sequence resets safely. Sun → Moon → Star; try again.","Sıra güvenle sıfırlandı. Güneş → Ay → Yıldız; yeniden dene."),"runes_open":say("The rune door opens permanently. Beyond waits the Warden.","Rün kapısı kalıcı olarak açıldı. Ötede Muhafız bekliyor."),"relic":say("Ancient Sun Relic recovered! Return home, inspect it and unlock ancient forging.","Kadim Güneş Yadigârı alındı! Eve dön, incele ve kadim dövümü aç.")}
+		message.text=words.get(result,result);game.audio.sanctuary("relic" if result in ["relic","treasury","secret"] else "switch");game.checkpoint("sanctuary");refresh_hud();return
 	if result=="landmark":message.text=say("The Sunstone remembers your kingdom. Arin will want to hear this.","Güneştaşı krallığını hatırlıyor. Arin bunu duymak isteyecek.");game.audio.chime(6);game.checkpoint("landmark")
 	elif result in ["oasis","oasis_heal","road","crystal"]:
 		message.text={"oasis":say("Oasis found! Inspect again when hurt: one recovery, saved permanently.","Vaha bulundu! Yaralıyken yeniden İncele: kayıtlı, tek iyileşme."),"oasis_heal":say("The oasis restores 35 health and clears poison. Its blessing is spent.","Vaha 35 can yeniler ve zehri temizler. Kutsaması tükendi."),"road":say("The ancient road once carried glass and metal. Recorded in the chronicle.","Kadim yol bir zamanlar cam ve metal taşıyordu. Tarihçeye kaydedildi."),"crystal":say("+6 Desert Crystal. Return home and register one with Arin; the rest can make purifying tonics.","+6 Çöl Kristali. Eve dön, birini Arin'e kaydet; kalanıyla arındırıcı iksir üret.")}[result];game.audio.chime(6);game.checkpoint("desert-discovery")
@@ -252,6 +287,9 @@ func interact() -> void:
 	refresh_hud()
 func guide() -> void:
 	var r=game.world.kingdom.adventure.run
+	if region=="sanctuary":
+		guide_point=region_map.INSCRIPTION if not r.landmark else region_map.PLATES[mini(1,int(r.mechanisms.plates))] if r.mechanisms.plates<2 else region_map.SWITCHES[mini(2,int(r.mechanisms.switches))] if r.mechanisms.switches<3 else Vector2(570,270) if preload("res://scripts/sanctuary.gd").progress(game.world,"warden")==0 else region_map.RELIC if preload("res://scripts/sanctuary.gd").progress(game.world,"relic")==0 else region_map.START
+		message.text=sanctuary_hint();return
 	if not r.landmark:guide_point=region_map.LANDMARK;message.text=say("Follow the gold arrow to the oasis.","Altın oku izleyerek vahaya ulaş.")
 	elif not game.world.kingdom.adventure.regions.quest.kill:
 		for e in r.enemies:
@@ -259,6 +297,22 @@ func guide() -> void:
 		message.text=say("Read the warning and dodge. Strike while the enemy recovers.","Uyarıyı izle ve kaçın. Düşman dinlenirken vur.")
 	elif not game.world.kingdom.adventure.regions.quest.picked:guide_point=region_map.CRYSTAL;message.text=say("Inspect the crystal vein; keep space in your warehouse.","Kristal damarını incele; depoda yer bırak.")
 	else:guide_point=region_map.START;message.text=say("Use Home to bank loot, then register one crystal with Arin.","Dön ile ganimeti depola; sonra Arin'e bir kristal kaydet.")
+func sanctuary_hint() -> String:
+	var r=game.world.kingdom.adventure.run
+	if not r.landmark:return say("SUNKEN SANCTUARY · Inspect the inscription.\nWarnings mean danger; Home is always safe.","BATIK TAPINAK · Yazıtı incele.\nUyarı tehlikedir; Dön her zaman güvenli.")
+	if r.mechanisms.plates<2:return say("Trial of Stone · Walk on Sun, then Moon.\nRead the floor's trap warnings before crossing.","Taş Sınavı · Güneş, sonra Ay üzerine yürü.\nGeçmeden önce zemindeki tuzak uyarısını izle.")
+	if r.mechanisms.switches<3:return say("Guardians' Hall · Inspect Sun → Moon → Star.\nDodge attacks, strike in recovery windows.","Muhafızlar Salonu · Güneş → Ay → Yıldız'ı incele.\nSaldırıdan kaç, dinlenme aralığında vur.")
+	if preload("res://scripts/sanctuary.gd").progress(game.world,"relic")==1:return say("Sun Relic recovered · Return home.\nInspect the relic to unlock ancient forging.","Güneş Yadigârı alındı · Eve dön.\nKadim dövümü açmak için yadigârı incele.")
+	if preload("res://scripts/sanctuary.gd").progress(game.world,"warden")==1:return say("The relic chamber is open · Inspect its pedestal.","Yadigâr odası açıldı · Kaideyi incele.")
+	return say("Sun Relic Chamber · Defeat the Warden.\nRecover the relic, return and inspect it at home.","Güneş Yadigârı Odası · Muhafız'ı yen.\nYadigârı al, dön ve evde incele.")
+func toggle_pack() -> void:
+	if is_instance_valid(pack_panel):pack_panel.queue_free();pack_panel=null;frozen=pack_was_frozen;actions.clear();attack_held=false;movement=Vector2.ZERO;return
+	pack_was_frozen=frozen;frozen=true;movement=Vector2.ZERO;actions.clear();attack_held=false
+	pack_panel=PanelContainer.new();pack_panel.add_theme_stylebox_override("panel",ruin_style());place(pack_panel,Rect2(100,250,520,410));var list=VBoxContainer.new();pack_panel.add_child(list)
+	var stats=H.stats(game.world);var r=game.world.kingdom.adventure.run
+	list.add_child(game.ui.label(say("Expedition pack · paused","Sefer çantası · duraklatıldı"),24))
+	list.add_child(game.ui.label(game.realm_ui.cost(r.cargo)+"\n"+say("Attack / defense / trap resistance: ","Saldırı / savunma / tuzak direnci: ")+str(stats.attack)+" / "+str(stats.defense)+" / "+str(stats.hazard_resist)+"\n"+str(game.world.kingdom.industry.items.size())+" / 32",20))
+	var close=game.ui.button(say("Close pack","Çantayı kapat"),toggle_pack,true);list.add_child(close)
 func go_home() -> void:
 	var paused=game.world.kingdom.adventure.run.home_paused
 	if not A.exit(game.world):return

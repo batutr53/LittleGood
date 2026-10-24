@@ -1,0 +1,59 @@
+{
+  "all_passed": true,
+  "checks": {
+    "clocks_paused": true,
+    "enemy_path_1": true,
+    "enemy_path_2": true,
+    "enemy_path_3": true,
+    "equip_ancient_blade": true,
+    "equip_ruinwalker_armor": true,
+    "equip_sunguard_shield": true,
+    "equip_sunstone_talisman": true,
+    "exact_restore": true,
+    "forge_ancient_blade": true,
+    "forge_ruinwalker_armor": true,
+    "forge_sunguard_shield": true,
+    "forge_sunstone_talisman": true,
+    "home": true,
+    "kills": true,
+    "native_attack": true,
+    "native_dodge": true,
+    "native_quest23": true,
+    "native_relic": true,
+    "native_research": true,
+    "puzzles_restored": true,
+    "relic_path": true,
+    "saved_home": true,
+    "secret_path": true,
+    "treasure": true,
+    "treasure_path": true
+  },
+  "profile": {
+    "cap": 30,
+    "draw_calls": 126.0,
+    "effect_draw_us": 3847,
+    "fps": 30.5581545864492,
+    "frames": 139,
+    "p95_ms": 41.855,
+    "physics_callback_us": 216,
+    "scene": "sanctuary_sustained_combat_excluding_test_bot_path_construction",
+    "setup_ms": 11.859,
+    "static_bytes": 52676702,
+    "step_us": 186,
+    "video_bytes": 44781380.0
+  },
+  "source": "rendered_bot_routes_and_forge_with_external_adb_controls_and_restart",
+  "stage": "sanctuary_complete",
+  "steady_profile": {
+    "cap": 30,
+    "fps": 30.1747808446985,
+    "frames": 241,
+    "p95_ms": 38.184,
+    "scene": "sanctuary_relic_chamber"
+  },
+  "viewport": [
+    720.0,
+    1600.0
+  ],
+  "apk_sha256": "16e4f93b370520aade5bf9be5ebab911b614a7512305fb3b63ce1d4c488ef02e"
+}

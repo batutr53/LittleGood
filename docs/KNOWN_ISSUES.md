@@ -1,10 +1,8 @@
-# Known issues —0.8.5-devE2
+# Known issues —0.8.5-devE3
 
-- E2 core regions and quest22 are verified. E3 dungeon/puzzles/hazards/elites/relic/equipment/quest23 are not implemented. No E3 completion tag, E4 work or complete overall E claim exists.
-- Mountain/desert node and enemy rewards are finite, persisted and not refreshed on re-entry. Desert provides10 total crystals (node6 + scorpion2 + sentinel2); registration consumes1, tonic crafting consumes2. There is no repeatable outpost production. Clear warehouse space before gathering; uncollected loot remains.
-- The compact C Warrior controls/camera remain, with shared20Hz combat and modest vector animations. Sentinel is a telegraphed ranged impact-area attack, not a new projectile engine. Desert has no boss. The oasis has one saved35HP recovery, not unlimited regeneration.
-- Defeat retains collected loot and restores health at home under existing policy. Safe-return proof for22 requires a subsequent alive return if defeated. Last required crystal is protected from tonic crafting; artifacts/military/gear ownership remains unchanged.
-- Phone was unauthorized during E2 verification. Emulator short60/30 results do not establish phone thermals, battery, simultaneous multitouch, haptics or OEM cutouts. Long-lived emulator sessions can degrade; historical degraded samples remain.
-- Existing shader-cache recompilation and Godot headless/editor/export cleanup warnings remain. New script errors and failed tests are not accepted. Native Computer Use was unavailable; actual Godot/MCP/ADB rendering supplies evidence.
-- Existing32-item/four-job inventory, salvage protections and bounded strategic caravan model remain. Adventure/offline/home/caravan time freezes in any active region; E1 Live Route Watch separately advances home ticks then restores prior pause.
-- Online/.NET App Control blockage remains untouched. No paid infrastructure, security bypass, public publishing or store release occurred. Historical reports/builds are preserved.
+- E3 core is implemented; E4/E5/E6/throne/Visual Rebirth V4 are not. Existing Warrior art/compact controls and modest procedural enemy motion remain; this is not a premium frame-animation remake. Shade uses an aimed hitscan spell rather than a travelling projectile engine.
+- Finite dungeon enemies/materials/chest/relic never refill. Clear storage before gathering; uncollected loot remains.32-item/four-job limits and artifact/equipment reservations remain. Advanced material recycling is intentionally not introduced.
+- Traps share ordinary defense and extra equipped trap resistance; minimum damage1. Powerful combined gear can reach this floor. Safe return banks collected cargo under the existing forgiving defeat policy; relic return proof needs an alive return.
+- Android evidence is emulator-only. Final performance tables distinguish sustained combat from developer AStar route construction. Historical poor inclusive bot samples are retained. No physical-device thermals, battery, haptics, simultaneous-multitouch or OEM safe-area certification.
+- Known Godot editor/headless/export ObjectDB/resource cleanup warnings remain. Script/runtime errors are rejected. Native Computer Use unavailable; real Godot rendering/MCP/ADB supplies supported evidence.
+- Active adventure freezes home/offline/caravans/forge clocks; E1 Live Route Watch separately advances home then restores pause. No security changes, App Control bypass, paid infrastructure or publishing. Older build artifacts are preserved.

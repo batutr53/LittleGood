@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 616.64 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4070 Laptop GPU
+
+SANCTUARY_RENDERED { "checks": { &"entry": true, &"pack_pauses": true, &"pack_clears_input": true, &"pause_closes_pack": true, &"resume": true, &"inscription_route": true, &"inscription": true, "plate_route_0": true, "plate_route_1": true, &"plates": true, "switch_route_0": true, "switch_route_1": true, "switch_route_2": true, &"runes": true, "enemy_route_1": true, "enemy_route_2": true, "enemy_route_3": true, &"kills": true, &"relic_route": true, &"relic": true, &"secret_route": true, &"lore_route": true, &"treasure_route": true, &"treasury": true, &"active_save": true, &"returned": true, &"research": true, "forge_ancient_blade": true, "equip_ancient_blade": true, "forge_ruinwalker_armor": true, "equip_ruinwalker_armor": true, "forge_sunguard_shield": true, "equip_sunguard_shield": true, "forge_sunstone_talisman": true, "equip_sunstone_talisman": true, &"quest23": true, &"final_save": true, &"home_valid": true }, "all_passed": true, "profile": { "fps": 60.8070719976001, "p95_ms": 17.121, "simulation_step_us": 122, "setup_ms": 11.652, "draw_calls": 99.0, "static_bytes": 53324538 } }
+WARNING: 2 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

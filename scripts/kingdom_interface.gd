@@ -34,7 +34,7 @@ func open() -> void:
 	ui.page="kingdom"
 	var w=game.world;var q=K.current(w)
 	var v=ui.popup(say("The First Kingdom","İlk Krallık"));var list=ui.card_list(v,405)
-	list.add_child(ui.label(say("Realm ","Diyar ")+str(K.level(w))+" · "+say("Development tier ","Gelişim aşaması ")+str(K.tier(w))+" · "+str(w.kingdom.claimed.size())+(" / 22" if preload("res://scripts/ashen_desert.gd").enabled(w) else " / 21" if T.enabled(w) else " / 20" if M.enabled(w) else " / 15" if H.enabled(w) else " / 10" if I.enabled(w) else " / 5"),22,Color("ecd99f")))
+	list.add_child(ui.label(say("Realm ","Diyar ")+str(K.level(w))+" · "+say("Development tier ","Gelişim aşaması ")+str(K.tier(w))+" · "+str(w.kingdom.claimed.size())+(" / 23" if preload("res://scripts/sanctuary.gd").enabled(w) else " / 22" if preload("res://scripts/ashen_desert.gd").enabled(w) else " / 21" if T.enabled(w) else " / 20" if M.enabled(w) else " / 15" if H.enabled(w) else " / 10" if I.enabled(w) else " / 5"),22,Color("ecd99f")))
 	list.add_child(ui.label(resources(),18))
 	if w.kingdom.advisor:
 		var row=HBoxContainer.new();list.add_child(row)
@@ -59,9 +59,10 @@ func open() -> void:
 	elif not T.enabled(w):
 		add(list,say("Begin Chapter V · The First Trade Road","Bölüm V'e başla · İlk Ticaret Yolu"),func():if T.enable(w):changed();game.checkpoint("chapter5-trade");open(),true)
 	else:
-		list.add_child(ui.label(say("The desert crystal bears signs of an ancient civilization. The scholars are preparing the next expedition.","Çöl kristali kadim bir uygarlığın izlerini taşıyor. Bilginler sonraki seferi hazırlıyor.") if w.kingdom.claimed.size()>=22 else say("The Forgotten Mine points beyond the hills. Discover it, then follow the desert road to the oasis.","Unutulmuş Maden tepelerin ötesini gösteriyor. Onu keşfet, sonra çöl yolundan vahaya ulaş."),20))
+		list.add_child(ui.label(say("The Sun Relic's knowledge lives in your forge. The Sanctuary keeps your discoveries; its unique treasures never replenish.","Güneş Yadigârı'nın bilgisi demircinde yaşıyor. Tapınak keşiflerini korur; eşsiz hazineleri yenilenmez.") if w.kingdom.claimed.size()>=23 else say("The desert crystal points beneath the sand. Enter Sunken Sanctuary from the world map and read its inscription.","Çöl kristali kumların altını gösteriyor. Dünya haritasından Batık Tapınak'a gir ve yazıtını oku.") if w.kingdom.claimed.size()>=22 else say("The Forgotten Mine points beyond the hills. Discover it, then follow the desert road to the oasis.","Unutulmuş Maden tepelerin ötesini gösteriyor. Onu keşfet, sonra çöl yolundan vahaya ulaş."),20))
 		add(list,say("Beyond the kingdom · world map","Krallığın ötesinde · dünya haritası"),game.hero_ui.world_map,true)
 	if T.enabled(w):add(list,say("Market & caravans","Pazar ve kervanlar"),game.trade_ui.open,true)
+	if preload("res://scripts/sanctuary.gd").enabled(w):add(list,say("Sun Relic · ancient forging","Güneş Yadigârı · kadim dövüm"),ancients,true)
 	if preload("res://scripts/ashen_desert.gd").enabled(w):add(list,say("Desert expedition · register crystal","Çöl seferi · kristali kaydet"),desert_report,true)
 	if M.enabled(w):add(list,say("The Border Company","Sınır Birliği"),game.military_ui.open,true)
 	if H.enabled(w):add(list,say("Hero Hall","Kahraman Salonu"),game.hero_ui.profile)
@@ -94,10 +95,20 @@ func desert_report() -> void:
 		else:ui.toast(say("Needs a proven expedition, safe return and one crystal. Each crystal registers once.","Kanıtlı sefer, güvenli dönüş ve bir kristal gerekli. Kayıt bir kez yapılır.")),true).disabled=q.registered or not q.returned or game.world.kingdom.stock.desert_crystal<1000
 	add(v,say("Forge a purification tonic","Arındırma iksiri üret"),workshop)
 	add(v,ui.t("back"),open)
+func ancients() -> void:
+	var S=preload("res://scripts/sanctuary.gd")
+	if not S.enabled(game.world):game.hero_ui.destination("sanctuary");return
+	ui.page="kingdom";var v=ui.popup(say("Secrets of the Ancients","Kadimlerin Sırları"));var list=ui.card_list(v,390);var state=game.world.kingdom.adventure.regions.ancients
+	list.add_child(ui.label(say("The Sunforged Dynasty tempered metal with light. Recover its unique relic, bring it home and inspect it. Its knowledge unlocks four real forge recipes.","Güneşdövme Hanedanı metali ışıkla tavlardı. Eşsiz yadigârını al, eve getir ve incele. Bilgisi dört gerçek demirci tarifini açar."),22))
+	list.add_child(ui.label(cost({"ancient_alloy":game.world.kingdom.stock.ancient_alloy/1000}),21))
+	add(v,say("Inspect recovered Sun Relic","Getirilen Güneş Yadigârı'nı incele"),func():if S.research(game.world):changed();game.checkpoint("ancient-research");ancients(),true).disabled=not state.returned or state.researched
+	add(v,say("Forge an ancient upgrade","Kadim donanım üret"),workshop).disabled=not state.researched
+	add(v,say("Equip / compare gear","Donanım kuşan / karşılaştır"),game.hero_ui.profile)
+	add(v,ui.t("back"),open)
 func cost(data: Dictionary) -> String:
 	var terms: Array[String]=[]
 	for key in data:
-		var title={"wood":say("wood","odun"),"stone":say("stone","taş"),"gold":say("gold","altın"),"ore":say("ore","cevher"),"iron":say("iron","demir"),"leather":say("leather","deri"),"thornhide":say("thornhide","dikenderi"),"herb":say("herb","şifalı bitki"),"heart":say("living heart","yaşayan kalp"),"desert_crystal":say("desert crystal","çöl kristali"),"xp":say("Realm XP","Diyar XP")}.get(key,key)
+		var title={"wood":say("wood","odun"),"stone":say("stone","taş"),"gold":say("gold","altın"),"ore":say("ore","cevher"),"iron":say("iron","demir"),"leather":say("leather","deri"),"thornhide":say("thornhide","dikenderi"),"herb":say("herb","şifalı bitki"),"heart":say("living heart","yaşayan kalp"),"desert_crystal":say("desert crystal","çöl kristali"),"ancient_alloy":say("ancient alloy","kadim alaşım"),"sentinel_core":say("sentinel core","muhafız çekirdeği"),"sunstone_fragment":say("sunstone fragment","güneştaşı parçası"),"xp":say("Realm XP","Diyar XP")}.get(key,key)
 		terms.append(str(int(data[key]))+" "+title)
 	return " · ".join(terms)
 func claim_reward(id: String) -> void:
@@ -174,6 +185,7 @@ func history() -> void:
 		var title=str(h.subject)
 		if title=="forgotten_mine":title=say("The Forgotten Mine","Unutulmuş Maden")
 		if title in ["desert_oasis","ancient_road","desert_registered"]:title={"desert_oasis":say("Oasis · water remembers the old road","Vaha · su eski yolu hatırlıyor"),"ancient_road":say("Ancient road · glass and metal once crossed here","Kadim yol · buradan cam ve metal taşınırdı"),"desert_registered":say("Desert Crystal · Arin begins the study","Çöl Kristali · Arin araştırmaya başlıyor")}[title]
+		if title in ["sunforged_inscription","sunforged_forge","hidden_treasury","sunforged_treasure","sun_relic_chamber","sun_relic_research"]:title={"sunforged_inscription":say("Sunforged inscription · light tempers iron","Güneşdövme yazıtı · ışık demiri tavlar"),"sunforged_forge":say("Abandoned solar forge","Terk edilmiş güneş ocağı"),"hidden_treasury":say("A passage behind cracked stone","Çatlak taşın ardındaki geçit"),"sunforged_treasure":say("The hidden treasury","Gizli hazine"),"sun_relic_chamber":say("The Sun Relic recovered","Güneş Yadigârı alındı"),"sun_relic_research":say("Ancient forging rediscovered","Kadim dövüm yeniden keşfedildi")}[title]
 		if K.buildings().has(title):title=localized(K.buildings()[title].name)
 		if I.recipes().has(title):title=localized(I.recipes()[title].name)
 		for q in K.quests():
@@ -195,6 +207,8 @@ func navigate(action: String) -> void:
 	elif action=="wildwood":game.hero_ui.world_map()
 	elif action=="desert":game.hero_ui.destination("ashen_desert")
 	elif action=="desert_register":desert_report()
+	elif action=="sanctuary":game.hero_ui.destination("sanctuary")
+	elif action=="ancients":ancients()
 	elif action.begins_with("build_"):begin("build",action.trim_prefix("build_"))
 	elif action.begins_with("gather_"):begin("gather",action.trim_prefix("gather_"))
 	else:open()
@@ -213,6 +227,7 @@ func workshop(forge_id: int=0) -> void:
 			var id=int(building.id);add(list,say("Forge #","Demirci #")+str(id)+(" ✓" if id==selected else ""),func():workshop(id))
 	for id in I.recipes():
 		var data=I.recipes()[id];var row=HBoxContainer.new();list.add_child(row)
+		if id=="sun_relic" or (id in preload("res://scripts/sanctuary.gd").GEAR and not preload("res://scripts/sanctuary.gd").enabled(w)):row.queue_free();continue
 		if id=="crystal_tonic" and not preload("res://scripts/ashen_desert.gd").enabled(w):row.queue_free();continue
 		if data.get("category","tool")!="tool" and (not H.enabled(w) or (int(data.level)>H.REALM_CAP and not M.enabled(w))):row.queue_free();continue
 		var preview=TextureRect.new();preview.texture=load("res://assets/kingdom/"+id+".svg");preview.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;preview.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;preview.custom_minimum_size=Vector2(82,88);row.add_child(preview)
@@ -221,6 +236,7 @@ func workshop(forge_id: int=0) -> void:
 			else:ui.toast(say("Needs realm 9, a finished forge, materials and inventory space.","Diyar 9, tamamlanmış demirci, malzeme ve envanter alanı gerekli.")))
 		button.size_flags_horizontal=Control.SIZE_EXPAND_FILL;button.disabled=forges.is_empty() or K.level(w)<int(data.level) or not K.afford(w,data.cost) or w.kingdom.industry.items.size()+w.kingdom.industry.queue.size()>=I.MAX_ITEMS or w.kingdom.industry.queue.size()>=I.MAX_QUEUE
 		if id=="crystal_tonic" and not preload("res://scripts/ashen_desert.gd").can_spend(w,2000):button.disabled=true
+		if id in preload("res://scripts/sanctuary.gd").GEAR and not w.kingdom.adventure.regions.ancients.researched:button.disabled=true
 	for job in w.kingdom.industry.queue:
 		var data=I.recipes()[job.recipe];list.add_child(ui.label(localized(data.name)+" · #"+str(int(job.building))+" · "+str(int(float(job.progress)/(int(data.ticks)*K.SCALE)*100))+"%",19))
 	if selected>0:list.add_child(ui.label(say("Assigned smiths: ","Atanmış demirciler: ")+str(K.assigned(w,selected).size()),19))

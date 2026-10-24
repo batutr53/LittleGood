@@ -26,6 +26,12 @@ func _ready() -> void:
 	rainfall.stream = rain
 	for key in ["water", "forest", "mountain", "wildlife", "rain", "bless", "discovery", "button"]:
 		effects[key] = load("res://assets/" + key + ".wav")
+	for key in ["step","switch","door","trap_warning","trap_active","swing","impact","relic"]:
+		effects["sanctuary_"+key]=load("res://assets/adventure/audio/"+key+".wav")
+
+func sanctuary(key: String) -> void:
+	if not enabled or not effects.has("sanctuary_"+key):return
+	player.stream=effects["sanctuary_"+key];player.play()
 
 func make_tone(freq: float, seconds: float, volume: float, wind: bool = false) -> AudioStreamWAV:
 	var data = PackedByteArray()

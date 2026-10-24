@@ -316,5 +316,116 @@
     "level": 22,
     "ticks": 4,
     "building": "forge"
+  },
+  {
+    "id": "sun_relic",
+    "name": [
+      "Ancient Sun Relic",
+      "Kadim Güneş Yadigârı"
+    ],
+    "description": [
+      "Unique Sunforged relic. Bring home and inspect to unlock ancient forging. Cannot be crafted or salvaged.",
+      "Eşsiz Güneşdövme yadigârı. Eve getirip inceleyerek kadim dövümü aç. Üretilemez ve sökülemez."
+    ],
+    "cost": {},
+    "effects": {},
+    "category": "artifact",
+    "level": 23,
+    "ticks": 1,
+    "building": "forge"
+  },
+  {
+    "id": "ancient_blade",
+    "name": [
+      "Ancient Iron Blade",
+      "Kadim Demir Kılıç"
+    ],
+    "description": [
+      "+20 attack. Requires researched Sun Relic and real ancient alloy.",
+      "+20 saldırı. Araştırılmış Güneş Yadigârı ve gerçek kadim alaşım gerekir."
+    ],
+    "cost": {
+      "ancient_alloy": 3,
+      "iron": 2,
+      "gold": 2
+    },
+    "effects": {
+      "attack": 20
+    },
+    "category": "weapon",
+    "level": 23,
+    "ticks": 6,
+    "building": "forge"
+  },
+  {
+    "id": "ruinwalker_armor",
+    "name": [
+      "Ruinwalker Armor",
+      "Harabe Gezgini Zırhı"
+    ],
+    "description": [
+      "+18 health, +4 defense, reduces dungeon trap damage by 4 (minimum 1).",
+      "+18 can, +4 savunma; zindan tuzağı hasarını 4 azaltır (en az 1)."
+    ],
+    "cost": {
+      "ancient_alloy": 2,
+      "iron": 1,
+      "leather": 1
+    },
+    "effects": {
+      "health": 18,
+      "defense": 4,
+      "hazard_resist": 4
+    },
+    "category": "armor",
+    "level": 23,
+    "ticks": 5,
+    "building": "forge"
+  },
+  {
+    "id": "sunguard_shield",
+    "name": [
+      "Sunguard Shield",
+      "Güneş Muhafızı Kalkanı"
+    ],
+    "category": "shield",
+    "effects": {
+      "defense": 7
+    },
+    "cost": {
+      "sentinel_core": 1,
+      "ancient_alloy": 1,
+      "iron": 1,
+      "gold": 1
+    },
+    "level": 23,
+    "ticks": 5,
+    "description": [
+      "+7 defense. Forged from a real Sentinel Core and ancient alloy.",
+      "+7 savunma. Gerçek Muhafız Çekirdeği ve kadim alaşımdan dövülür."
+    ],
+    "building": "forge"
+  },
+  {
+    "id": "sunstone_talisman",
+    "name": [
+      "Sunstone Talisman",
+      "Güneştaşı Tılsımı"
+    ],
+    "category": "artifact",
+    "effects": {
+      "hazard_resist": 2
+    },
+    "cost": {
+      "sunstone_fragment": 2,
+      "gold": 2
+    },
+    "level": 23,
+    "ticks": 4,
+    "description": [
+      "Reduces dungeon trap damage by 2. Stacks with Ruinwalker Armor; minimum damage 1.",
+      "Zindan tuzağı hasarını 2 azaltır. Harabe Gezgini Zırhı ile birleşir; en az hasar 1."
+    ],
+    "building": "forge"
   }
 ]

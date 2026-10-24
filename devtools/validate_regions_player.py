@@ -1,8 +1,8 @@
 """Validate the player APK signature/update/startup without writing the player's world."""
 from pathlib import Path
 import subprocess,json,os,time,hashlib,argparse
-p=argparse.ArgumentParser();p.add_argument('--milestone',choices=['E2B','E2'],default='E2B');a=p.parse_args()
-r=Path(__file__).resolve().parents[1];out=r/('builds/phase085e2full/player-install' if a.milestone=='E2' else 'builds/phase085e2/player-install');out.mkdir(parents=True,exist_ok=True)
+p=argparse.ArgumentParser();p.add_argument('--milestone',choices=['E2B','E2','E3'],default='E2B');a=p.parse_args()
+r=Path(__file__).resolve().parents[1];out=r/('builds/phase085e3/player-install' if a.milestone=='E3' else 'builds/phase085e2full/player-install' if a.milestone=='E2' else 'builds/phase085e2/player-install');out.mkdir(parents=True,exist_ok=True)
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe';pkg='org.littlegod.livinguniverse'
 def run(*args,check=True):return subprocess.run([str(adb),'-s','emulator-5554',*args],capture_output=True,check=check,timeout=120).stdout
 def read(name):
@@ -30,5 +30,5 @@ finally:
  if marker:put('phase2_benchmark.json',marker)
  else:run('shell','run-as',pkg,'rm','-f','files/phase2_benchmark.json')
 assert all(read(n)==b for n,b in before.items())
-report={'serial':'emulator-5554','physical_device':False,'signature_verified':True,'installed':True,'started_private_benchmark':True,'version':version,'player_files_preserved':{n:{'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()} for n,b in before.items()}}
+report={'serial':'emulator-5554','physical_device':False,'signature_verified':True,'installed':True,'started_private_benchmark':True,'version':version,'apk_sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'player_files_preserved':{n:{'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()} for n,b in before.items()}}
 (out/'result.json').write_text(json.dumps(report,indent=2));print('PLAYER_UPDATE_STARTUP_PRESERVED',json.dumps(report))
