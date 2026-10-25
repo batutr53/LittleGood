@@ -24,10 +24,11 @@ var current_title=""
 func _init(u,g):ui=u;game=g
 func say(en: String,tr: String) -> String:return tr if ui.language=="tr" else en
 func size() -> Vector2:return ui.get_viewport().get_visible_rect().size
-func scale_ui() -> float:return clampf(size().x/720.0,.68,1.1)
+func scale_ui() -> float:return clampf(minf(size().x/1280.0,size().y/720.0),.68,1.15)
 func px(n: float) -> float:return roundf(n*scale_ui())
 func text(value: String,n: int=26,color: Color=T.CREAM) -> Label:
- var l=Label.new();l.text=value;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_override("font",ui.ui_font());l.add_theme_font_size_override("font_size",int(px(n)));l.add_theme_color_override("font_color",color);l.mouse_filter=Control.MOUSE_FILTER_IGNORE;l.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ var visible_color=Color.WHITE if ui.high_contrast and color==T.CREAM else Color("ffe6a5") if ui.high_contrast and color==T.GOLD else color
+ var l=Label.new();l.text=value;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_override("font",ui.ui_font());l.add_theme_font_size_override("font_size",int(px(n*ui.accessibility_scale)));l.add_theme_color_override("font_color",visible_color);l.mouse_filter=Control.MOUSE_FILTER_IGNORE;l.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  return l
 func heading(value: String,n: int=38) -> Label:
  var l=text(value,n);l.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));return l
@@ -98,26 +99,53 @@ func banner(parent: Node,height=180):
 func build_hud():
  if is_instance_valid(ui.root):ui.remove_child(ui.root);ui.root.queue_free()
  ui.modal=null;ui.veil=null;ui.root=Control.new();ui.root.name="WorldHUD";ui.root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);ui.root.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.add_child(ui.root)
- var vw=size().x;var h=size().y;var m=px(24);var unit=px(76)
- ui.header=heading("",30);put(ui.header,Rect2(m+unit+px(12),m,vw-unit-px(132),px(44)))
+ var vw=size().x;var h=size().y;var m=px(16);var unit=px(62);var rail=unit+px(18);var side=px(320)
+ # Landscape layout: the planet stays open in the middle while all frequent actions live on the two edges.
+ var rail_bg=Panel.new();rail_bg.add_theme_stylebox_override("panel",T.box(Color("112631"),true));put(rail_bg,Rect2(m,m,unit,h-m*2))
+ var emblem=quick_icon(rail_bg,"crown",func():route("quest"),ui.t("chronicle"),0)
+ var nav_y=unit+px(22)
+ quick_icon(rail_bg,"hammer",func():route("construction"),say("Build","Kur"),nav_y);nav_y+=unit+px(10)
+ quick_icon(rail_bg,"workers",func():route("workers"),say("People","İnsanlar"),nav_y);nav_y+=unit+px(10)
+ if game.world.has("kingdom") and I.enabled(game.world):quick_icon(rail_bg,"bag",func():route("inventory"),say("Inventory","Çanta"),nav_y);nav_y+=unit+px(10)
+ if game.world.has("kingdom") and H.enabled(game.world):quick_icon(rail_bg,"hero",func():route("hero"),say("Champion","Şampiyon"),nav_y);nav_y+=unit+px(10)
+ quick_icon(rail_bg,"map",func():route("map") if game.world.has("kingdom") else ui.journal(),say("World map","Dünya haritası"),nav_y)
+ quick_icon(rail_bg,"menu",func():route("menu"),say("More","Diğer"),h-m*2-unit)
+ ui.header=heading("",28);put(ui.header,Rect2(rail+px(12),m,vw-rail-side-px(28),px(38)))
  ui.header.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS;ui.header.autowrap_mode=TextServer.AUTOWRAP_OFF
- ui.stats=text("",18,T.MUTED);put(ui.stats,Rect2(m+unit+px(12),m+px(44),vw-unit-px(132),px(32)))
- var emblem=ui.button("",func():route("quest"));emblem.icon=T.icon("crown");emblem.expand_icon=true;put(emblem,Rect2(m,m,unit,unit))
- var menu_button=ui.button("",func():route("menu"));menu_button.icon=T.icon("menu");menu_button.expand_icon=true;menu_button.name="WorldMenu";put(menu_button,Rect2(vw-m-unit,m,unit,unit))
- var row=HBoxContainer.new();row.add_theme_constant_override("separation",int(px(18)));row.mouse_filter=Control.MOUSE_FILTER_IGNORE;put(row,Rect2(m,m+unit+px(16),vw-2*m,px(43)));resource_labels.clear()
+ ui.stats=text("",17,T.MUTED);put(ui.stats,Rect2(rail+px(12),m+px(39),vw-rail-side-px(28),px(28)))
+ var row=HBoxContainer.new();row.add_theme_constant_override("separation",int(px(18)));row.mouse_filter=Control.MOUSE_FILTER_IGNORE;put(row,Rect2(rail+px(12),m+px(75),vw-rail-side-px(28),px(38)));resource_labels.clear()
  for key in ["wood","stone","gold","food"]:
   var cell=HBoxContainer.new();cell.mouse_filter=Control.MOUSE_FILTER_IGNORE;cell.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(cell)
   var key_icon=key;cell.add_child(image(T.icon(key_icon),Vector2.ONE*px(34)));var l=text("0",22);cell.add_child(l);resource_labels[key]=l
- ui.spirit=text("",18,T.GOLD);put(ui.spirit,Rect2(vw-px(210),h-px(270),px(180),px(38)))
+ var side_bg=Panel.new();side_bg.add_theme_stylebox_override("panel",T.box(Color("112631"),true));put(side_bg,Rect2(vw-side-m,m,side,h-m*2))
+ ui.spirit=text("",18,T.GOLD);put(ui.spirit,Rect2(vw-side+px(20),m+px(18),side-px(40),px(32)))
  ui.realm_bar=ui.button("",func():route("menu"));ui.realm_bar.hide();ui.root.add_child(ui.realm_bar)
- ui.chapter=ui.button("",func():route("quest") if game.world.has("kingdom") else ui.follow_chapter());ui.chapter.name="CurrentObjective";ui.chapter.icon=T.icon("quest");ui.chapter.expand_icon=true;ui.chapter.add_theme_constant_override("icon_max_width",int(px(54)));ui.chapter.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;ui.chapter.alignment=HORIZONTAL_ALIGNMENT_LEFT;put(ui.chapter,Rect2(m,h-px(140),vw-2*m,px(112)))
- ui.hint=text("",20,T.CREAM);ui.hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;put(ui.hint,Rect2(m+px(90),h-px(205),vw-2*m-px(90),px(58)))
- var gifts=ui.button("",func():gifts_open=not gifts_open;tray.visible=gifts_open);gifts.icon=T.icon("gift");gifts.expand_icon=true;gifts.tooltip_text=ui.t("gift");gifts.name="Gifts";put(gifts,Rect2(m,h-px(242),unit,unit))
- ui.speed_button=ui.button("1×",func():game.speed=3 if game.speed==1 else 1;ui.refresh());put(ui.speed_button,Rect2(vw-px(110),h-px(235),px(84),px(72)))
- tray=HBoxContainer.new();tray.name="GiftPalette";tray.visible=false;tray.add_theme_constant_override("separation",int(px(6)));put(tray,Rect2(m,h-px(350),vw-2*m,px(92)));ui.power_buttons.clear();ui.power_icons.clear()
+ ui.chapter=ui.button("",func():route("quest") if game.world.has("kingdom") else ui.follow_chapter());ui.chapter.name="CurrentObjective";ui.chapter.icon=T.icon("quest");ui.chapter.expand_icon=true;ui.chapter.add_theme_constant_override("icon_max_width",int(px(48)));ui.chapter.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;ui.chapter.alignment=HORIZONTAL_ALIGNMENT_LEFT;put(ui.chapter,Rect2(vw-side+px(16),m+px(64),side-px(32),px(154)))
+ ui.hint=text("",18,T.CREAM);put(ui.hint,Rect2(vw-side+px(20),m+px(232),side-px(40),px(72)))
+ var side_height=h-m*2;var world_controls_y=side_height-unit*5-px(32)
+ quick_icon(side_bg,"minus",func():game.view.zoom_at(game.view.origin,.88),say("Zoom out","Uzaklaş"),world_controls_y)
+ quick_icon(side_bg,"plus",func():game.view.zoom_at(game.view.origin,1.12),say("Zoom in","Yakınlaş"),world_controls_y+unit+px(10))
+ quick_icon(side_bg,"center",func():game.view.pan=Vector2.ZERO, say("Center world","Dünyayı ortala"),world_controls_y+(unit+px(10))*2)
+ ui.speed_button=ui.button("1×",func():game.speed=3 if game.speed==1 else 1;ui.refresh());put(ui.speed_button,Rect2(vw-side+px(18),h-m-px(82),side-px(36),px(64)))
+ var gifts=quick_icon(side_bg,"gift",func():gifts_open=not gifts_open;tray.visible=gifts_open,ui.t("gift"),h-m-unit*2-px(14));gifts.name="Gifts"
+ tray=HBoxContainer.new();tray.name="GiftPalette";tray.visible=false;tray.add_theme_constant_override("separation",int(px(8)));put(tray,Rect2(rail+px(14),h-m-px(146),vw-rail-side-px(30),px(72)));ui.power_buttons.clear();ui.power_icons.clear()
  for i in range(6):
   var b=ui.button(ui.t(ui.POWER_KEYS[i]),func():ui.choose_power(i));b.custom_minimum_size=Vector2.ZERO;b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;b.add_theme_font_size_override("font_size",int(px(18)));tray.add_child(b);ui.power_buttons.append(b)
+ var access=HBoxContainer.new();access.name="AccessibilityQuickAccess";access.add_theme_constant_override("separation",int(px(6)));put(access,Rect2(rail+px(12),h-m-px(62),vw-rail-side-px(30),px(50)))
+ quick_access(access,"A","text",say("Text size","Metin boyutu"))
+ quick_access(access,"C","contrast",say("High contrast","Yüksek kontrast"))
+ quick_access(access,"S","sound",say("Sound","Ses"))
+ quick_access(access,"V","haptics",say("Haptics","Titreşim"))
+ quick_access(access,"30","quality",say("Battery saver","Pil tasarrufu"))
+ quick_access(access,"TR" if ui.language=="en" else "EN","language",say("Language","Dil"))
  ui.refresh()
+func quick_icon(parent: Control,key: String,cb: Callable,tip: String,y: float) -> Button:
+ var b=ui.button("",cb);b.tooltip_text=tip;b.icon=T.icon(key) if ResourceLoader.exists("res://assets/ui_rebirth/"+key+".svg") else load("res://assets/phase2/icons/"+key+".svg");b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(px(34)));b.custom_minimum_size=Vector2(px(62),px(62));parent.add_child(b);b.position=Vector2(px(0),y);b.size=Vector2(px(62),px(62));return b
+func quick_access(parent: Control,glyph: String,kind: String,tip: String):
+ var b=ui.button(glyph,func():ui.accessibility_toggle(kind));b.name="Access"+kind.capitalize();b.tooltip_text=tip;b.custom_minimum_size=Vector2(px(52),px(50));b.add_theme_font_size_override("font_size",int(px(20)));b.alignment=HORIZONTAL_ALIGNMENT_CENTER
+ for state in ["normal","hover","pressed","disabled","focus"]:
+  var skin=T.box(Color("1c3440"),state=="focus");skin.content_margin_left=px(4);skin.content_margin_right=px(4);skin.content_margin_top=px(2);skin.content_margin_bottom=px(2);b.add_theme_stylebox_override(state,skin)
+ parent.add_child(b)
 func put(control: Control,rect: Rect2):ui.root.add_child(control);control.position=rect.position;control.size=rect.size
 func refresh_hud():
  if not is_instance_valid(ui.header) or game.world.is_empty():return
@@ -128,6 +156,7 @@ func refresh_hud():
   var q=K.current(w);ui.chapter.text=(game.realm_ui.localized(q.title)+"\n"+game.realm_ui.localized(q.objectives[0].text)) if not q.is_empty() else say("Beyond your kingdom\nOpen your journal and choose a new journey","Krallığının ötesinde\nGünlüğünü aç ve yeni yolculuğunu seç")
  else:
   for l in resource_labels.values():l.text="—"
+ ui.chapter.text=ui.t(LivingStories.objective(w))
  if ui.toast_until==0:ui.hint.text=""
 func quest():
  if not game.world.has("kingdom"):game.realm_ui.intro();return

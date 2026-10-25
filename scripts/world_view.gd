@@ -1,6 +1,6 @@
 extends Node2D
 
-var origin = Vector2(360, 585)
+var origin = Vector2(520, 420)
 var world: Dictionary = {}
 var pan = Vector2.ZERO
 var zoom = 0.88
@@ -24,9 +24,10 @@ var foreground_cpu_ms = 0.0
 var decoration_cells: Array = []
 var cosmetic_layer
 var kingdom_layer
+var layout_size = Vector2.ZERO
 
 func _ready() -> void:
-	origin.y += maxf(0, get_viewport_rect().size.y - 1280) * .5
+	update_landscape_layout()
 	world_root = Node2D.new()
 	add_child(world_root)
 	terrain = TerrainSurface.new()
@@ -39,6 +40,16 @@ func _ready() -> void:
 	cosmetic_layer.view=self
 	world_root.add_child(cosmetic_layer)
 	kingdom_layer=preload("res://scripts/kingdom_renderer.gd").new();kingdom_layer.view=self;world_root.add_child(kingdom_layer)
+
+func update_landscape_layout() -> void:
+	var viewport=get_viewport_rect().size
+	if viewport==layout_size:return
+	layout_size=viewport
+	# The HUD reserves narrow action rails. Keep the whole miniature planet in the open centre,
+	# rather than preserving the former portrait bottom-weighted camera.
+	var left=clampf(viewport.y*.115,58.0,92.0)
+	var right=clampf(viewport.y*.47,235.0,340.0)
+	origin=Vector2(left+(viewport.x-left-right)*.5,viewport.y*.58)
 
 func project(c: Dictionary) -> Vector2:
 	return Vector2((c.x - c.y) * 30, (c.x + c.y - 16) * 15 - c.height * 42)
@@ -104,6 +115,7 @@ func set_quality(economy: bool) -> void:
 
 func _process(delta: float) -> void:
 	var started = Time.get_ticks_usec()
+	update_landscape_layout()
 	time += delta
 	var weight = 1 - exp(-delta * 14)
 	display_pan = display_pan.lerp(pan, weight)

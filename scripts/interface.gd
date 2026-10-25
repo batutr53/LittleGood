@@ -14,6 +14,9 @@ var language = "en"
 var spirit: Label
 var veil: ColorRect
 var body_font: FontVariation
+var accessibility_scale = 1.0
+var high_contrast = false
+var reduce_motion = false
 var chapter: Button
 var speed_button: Button
 var page = "main"
@@ -28,6 +31,17 @@ func ui_font() -> Font:
 		body_font.base_font = load("res://assets/phase2/nunito.ttf")
 		body_font.variation_opentype = {"wght": 550.0}
 	return body_font
+
+func accessibility_toggle(kind: String) -> void:
+	match kind:
+		"text": accessibility_scale = 1.15 if accessibility_scale < 1.1 else 1.0
+		"contrast": high_contrast = not high_contrast
+		"sound": game.audio.set_enabled(not game.audio.enabled)
+		"haptics": game.haptics = not game.haptics
+		"quality": game.view.set_quality(not game.view.low_quality)
+		"language": language = "tr" if language == "en" else "en"
+	game.save_settings()
+	build()
 
 const TEXT = {
 "guardian_victory": ["Thornheart's roots release the Wildwood. Your champion brought its living heart home.", "Thornheart'ın kökleri Yabanorman'ı serbest bıraktı. Şampiyonun onun yaşayan kalbini eve getirdi."],
@@ -577,6 +591,8 @@ func legacy_settings() -> void:
 	v.add_child(button(t("audio") + "  ·  " + t("on" if game.audio.enabled else "off"), func(): game.audio.set_enabled(not game.audio.enabled); game.save_settings(); settings()))
 	v.add_child(button(t("quality") % t("economy" if game.view.low_quality else "smooth"), func(): game.view.set_quality(not game.view.low_quality); game.save_settings(); settings()))
 	v.add_child(button(t("vibration") + "  ·  " + t("on" if game.haptics else "off"), func(): game.haptics = not game.haptics; game.save_settings(); settings()))
+	v.add_child(button(("High contrast" if language=="en" else "Yüksek kontrast") + "  ·  " + t("on" if high_contrast else "off"), func(): high_contrast=not high_contrast; game.save_settings(); settings()))
+	v.add_child(button(("Larger text" if language=="en" else "Büyük metin") + "  ·  " + ("115%" if accessibility_scale>1.1 else "100%"), func(): accessibility_scale=1.15 if accessibility_scale<1.1 else 1.0; game.save_settings(); settings()))
 	v.add_child(button(t("theme"), func():
 		if not game.visiting and not game.world.is_empty() and game.world.xp >= 40:
 			game.world.theme = 1 - int(game.world.theme)

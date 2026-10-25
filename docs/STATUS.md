@@ -1,5 +1,15 @@
 # LittleGod — V4B isolated animation preview / E3 gameplay baseline
 
+## Landscape UI continuity update — 25 October 2026
+
+The production UI Rebirth now targets **landscape** as the sole gameplay orientation: the Godot viewport is 1280×720, the Android orientation setting is landscape, and the world camera recalculates its centre around the usable space between the HUD rails. The planet is no longer composed against the lower edge inherited from the old portrait layout.
+
+The live HUD was rebuilt around the landscape world view: an icon rail on the left opens Chronicle, construction, people, inventory, champion, map and menu; a right rail contains the current objective, spirit balance, zoom controls, centring, gifts and speed. The bottom strip exposes all god powers only when opened, keeping the planet readable. A persistent accessibility strip gives one-tap access to text size, high contrast, sound, haptics, battery saver and language. These settings are stored in `user://settings.cfg`; the complete Settings panel remains available for detail controls.
+
+Evidence is from the real Godot runtime and generated screenshots under `docs/screenshots/ui-rebirth/` for 960×540, 1024×576, 1280×720, 1366×768, 1600×900 and 1920×1080, in Turkish and English. The landscape UI suite now reports **186 passing checks** (route safety, true model actions, world selection, save compatibility, landscape fitting and accessibility controls). It is a desktop-rendered verification; no physical Android device was used for this update.
+
+Launch: `D:/LittleGod/Launch LittleGod.cmd` · runtime: `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`.
+
 **Full Visual Rebirth V4 is incomplete.** A reversible V4A/V4B Warrior style and movement prototype is implemented and rendered in Godot; the default game still uses E3 art. Expansion development is frozen. Unverified E4 work is preserved on `work/e5-sovereign` at8b83003, outside this preview branch. E5/E6/throne and V2/V3 approval are not claimed.
 
 The preview has144 original vector pose cells, four cardinal views, distance-driven walking, stable equipment sockets, idle/dodge/hurt/kneeling poses and contact/follow-through compatible with the existing instantaneous damage model. Pause, touch cancellation, focus loss and suspension now clear movement/held attack/joystick state. It does not yet implement real attack anticipation, three enemy remakes, boss animation, combat sound/VFX overhaul or final V4 art approval.

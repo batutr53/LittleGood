@@ -74,7 +74,7 @@ func _ready() -> void:
 	var ready_start = Time.get_ticks_usec()
 	# Automated harnesses must not be recorded as human launches or sessions.
 	is_test_session = is_test_session or (OS.is_debug_build() and ("--benchmark" in OS.get_cmdline_user_args() or "--capture" in OS.get_cmdline_user_args() or FileAccess.file_exists("user://phase2_benchmark.json") or FileAccess.file_exists("user://phase4_qa.json")))
-	get_window().min_size = Vector2i(360, 640)
+	get_window().min_size = Vector2i(640, 360)
 	get_tree().auto_accept_quit = false
 	get_tree().quit_on_go_back = false
 	get_window().go_back_requested.connect(navigate_back)
@@ -95,6 +95,9 @@ func _ready() -> void:
 		ui.language = config.get_value("user", "language", "en")
 		audio.set_enabled(config.get_value("user", "sound", true))
 		haptics = config.get_value("user", "haptics", true)
+		ui.accessibility_scale = config.get_value("user", "accessibility_scale", 1.0)
+		ui.high_contrast = config.get_value("user", "high_contrast", false)
+		ui.reduce_motion = config.get_value("user", "reduce_motion", false)
 		diagnostics.enabled = config.get_value("user", "diagnostics", true)
 		view.set_quality(config.get_value("user", "economy", false))
 	diagnostics.configure()
@@ -167,6 +170,9 @@ func save_settings() -> void:
 	config.set_value("user", "language", ui.language)
 	config.set_value("user", "sound", audio.enabled)
 	config.set_value("user", "haptics", haptics)
+	config.set_value("user", "accessibility_scale", ui.accessibility_scale)
+	config.set_value("user", "high_contrast", ui.high_contrast)
+	config.set_value("user", "reduce_motion", ui.reduce_motion)
 	config.set_value("user", "economy", view.low_quality)
 	config.set_value("user", "diagnostics", diagnostics.enabled)
 	config.save("user://settings.cfg")

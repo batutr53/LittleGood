@@ -26,6 +26,11 @@ func run():
  var w=Persistence.load_world("res://tests/fixtures/planet-v085e2.json");checks.authentic_fixture=not w.is_empty();checks.enable_actual_chapter23=preload("res://scripts/sanctuary.gd").enable(w)
  game.world=w;game.view.world=w;game.has_player_world=true;game.paused=true;game.show_world(true);game.ui.language="tr";game.ui.build();game.ui.close();await settle()
  var ui=game.ui;var p=ui.premium;checks.production_default=ui.rebirth_enabled and p!=null;checks.calm_hud=not p.tray.visible
+ checks.landscape_default=game.get_viewport_rect().size.x>game.get_viewport_rect().size.y
+ checks.world_camera_centred_for_landscape=game.view.origin.x>400 and game.view.origin.y<500
+ checks.quick_access_icons=["AccessText","AccessContrast","AccessSound","AccessHaptics","AccessQuality","AccessLanguage"].all(func(node_name):return ui.root.find_child(node_name,true,false)!=null)
+ var default_scale=ui.accessibility_scale;ui.accessibility_toggle("text");await settle();checks.quick_text_size_toggle=ui.accessibility_scale!=default_scale;ui.accessibility_toggle("text");await settle();checks.quick_text_size_restores=ui.accessibility_scale==default_scale
+ var default_contrast=ui.high_contrast;ui.accessibility_toggle("contrast");await settle();checks.quick_contrast_toggle=ui.high_contrast!=default_contrast;ui.accessibility_toggle("contrast");await settle();checks.quick_contrast_restores=ui.high_contrast==default_contrast
  var blocked=0
  for x in range(10):
   for y in range(20):
@@ -62,8 +67,8 @@ func run():
  # Real placement UI remains accessible and cancellation cannot spend.
  ui.close();game.realm_ui.begin("build","house");await settle();checks.placement_responsive=fits(game.realm_ui.panel)
  var build_before=w.kingdom.duplicate(true);game.navigate_back();checks.placement_cancel_preserves_state=not game.realm_ui.active and w.kingdom==build_before
- # Layout/scroll evidence at the requested portrait sizes and one tablet.
- for viewport in [Vector2i(320,568),Vector2i(360,800),Vector2i(393,852),Vector2i(412,915),Vector2i(720,1280),Vector2i(720,1600),Vector2i(768,1024)]:
+ # Landscape phones, tablets and desktop aspect ratios. Portrait is deliberately no longer a product target.
+ for viewport in [Vector2i(960,540),Vector2i(1024,576),Vector2i(1280,720),Vector2i(1366,768),Vector2i(1600,900),Vector2i(1920,1080)]:
   root.min_size=Vector2i(1,1);root.size=viewport;root.content_scale_size=viewport;await settle();game.view.origin=Vector2(viewport.x*.5,viewport.y*.47);game.view.zoom=.88*viewport.x/720.0;game.view.display_zoom=game.view.zoom
   for locale in ["tr","en"]:
    ui.language=locale;ui.build();ui.close();await settle();await capture("home-"+str(viewport.x)+"-"+locale)
@@ -76,7 +81,7 @@ func run():
      if claim:p.scroll.ensure_control_visible(claim);await settle()
      checks[key+"-reward-reachable"]=claim!=null and visible_in_surface(claim)
      p.scroll.scroll_vertical=0;await settle()
-    if viewport.x in [320,393,720] or destination=="quest":await capture(key)
+    if viewport.x in [960,1280,1920] or destination=="quest":await capture(key)
     screens.append({"screen":destination,"viewport":[viewport.x,viewport.y],"locale":locale,"bounds_passed":checks[key+"-bounds"]})
    p.route("building",int(farm.id));await settle();checks["building-"+str(viewport.x)+"-"+locale]=fits(ui.modal);await capture("building-"+str(viewport.x)+"-"+locale)
    ui.close();game.realm_ui.begin("build","house");await settle();checks["placement-"+str(viewport.x)+"-"+locale]=fits(game.realm_ui.panel);game.realm_ui.finish()
