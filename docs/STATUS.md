@@ -8,6 +8,8 @@ The live HUD was rebuilt around the landscape world view: an icon rail on the le
 
 Evidence is from the real Godot runtime and generated screenshots under `docs/screenshots/ui-rebirth/` for 960×540, 1024×576, 1280×720, 1366×768, 1600×900 and 1920×1080, in Turkish and English. The landscape UI suite now reports **186 passing checks** (route safety, true model actions, world selection, save compatibility, landscape fitting and accessibility controls). It is a desktop-rendered verification; no physical Android device was used for this update.
 
+The retained phase-three through phase-six regressions were also reconciled with the new, intentionally non-portrait control tree: 50, 41, 50 and 74 checks pass respectively. They continue to cover the original model, save, visit, Android-back and offline rules; only obsolete fixed UI-tree selectors were replaced by checks for the real visible controls.
+
 Launch: `D:/LittleGod/Launch LittleGod.cmd` · runtime: `D:/LittleGod/tools/godot/Godot_v4.7.2-stable_win64.exe`.
 
 **Full Visual Rebirth V4 is incomplete.** A reversible V4A/V4B Warrior style and movement prototype is implemented and rendered in Godot; the default game still uses E3 art. Expansion development is frozen. Unverified E4 work is preserved on `work/e5-sovereign` at8b83003, outside this preview branch. E5/E6/throne and V2/V3 approval are not claimed.

@@ -335,7 +335,6 @@ func navigate_back() -> void:
 	if is_instance_valid(army_scene):army_scene.toggle_pause();return
 	if is_instance_valid(adventure_scene):adventure_scene.toggle_pause();return
 	if loading: return
-	if in_menu and ui.premium!=null and ui.rebirth_enabled:ui.premium.back();return
 	if realm_ui!=null and realm_ui.active:realm_ui.finish();return
 	if decorator!=null and decorator.active:decorator.finish();return
 	reset_gesture()
@@ -345,6 +344,7 @@ func navigate_back() -> void:
 		elif in_menu: ui.visit_menu()
 		else: ui.visit_menu()
 		return
+	if in_menu and ui.premium!=null and ui.rebirth_enabled and not ui.premium.current.is_empty():ui.premium.back();return
 	if ui.page == "online": ui.menu() if not world.is_empty() else ui.main_menu()
 	elif ui.page == "beta": ui.settings()
 	elif in_menu and ui.page in ["settings", "journal", "history", "neighbors", "achievements", "pulse", "detail", "favorites", "postcard", "universe", "profile", "wonders","customization","kingdom"]: ui.menu() if not world.is_empty() else ui.main_menu()

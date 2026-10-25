@@ -60,10 +60,11 @@ func route(destination: String,arg: int=0,remember=true):
   "settings":ui.legacy_settings()
  routing=false
 func back():
- if not game.has_player_world:ui.main_menu();return
+ if game.world.is_empty():ui.main_menu();return
  if nested:nested=false;route(current,argument,false);return
  if not history.is_empty():
   var previous=history.pop_back();route(previous.key,int(previous.arg),false)
+ elif current=="main" and not game.world.is_empty():ui.menu()
  else:ui.close()
 func surface(title: String,compact=false) -> VBoxContainer:
  ui.end_live_route();game.reset_gesture();game.in_menu=true;ui.world_controls(false)
@@ -109,7 +110,7 @@ func build_hud():
  if game.world.has("kingdom") and I.enabled(game.world):quick_icon(rail_bg,"bag",func():route("inventory"),say("Inventory","Çanta"),nav_y);nav_y+=unit+px(10)
  if game.world.has("kingdom") and H.enabled(game.world):quick_icon(rail_bg,"hero",func():route("hero"),say("Champion","Şampiyon"),nav_y);nav_y+=unit+px(10)
  quick_icon(rail_bg,"map",func():route("map") if game.world.has("kingdom") else ui.journal(),say("World map","Dünya haritası"),nav_y)
- quick_icon(rail_bg,"menu",func():route("menu"),say("More","Diğer"),h-m*2-unit)
+ var menu_button=quick_icon(rail_bg,"menu",func():route("menu"),say("More","Diğer"),h-m*2-unit);menu_button.name="WorldMenu"
  ui.header=heading("",28);put(ui.header,Rect2(rail+px(12),m,vw-rail-side-px(28),px(38)))
  ui.header.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS;ui.header.autowrap_mode=TextServer.AUTOWRAP_OFF
  ui.stats=text("",17,T.MUTED);put(ui.stats,Rect2(rail+px(12),m+px(39),vw-rail-side-px(28),px(28)))

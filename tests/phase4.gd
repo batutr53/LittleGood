@@ -101,7 +101,9 @@ func run() -> void:
 	game.world.tick += 1
 	game.view.inhabitants.sync(game.world)
 	verify(game.view.inhabitants.props_created == count_before and game.view.inhabitants.props.get_children() == props, "Unchanged habitats retain existing scene objects")
-	var menu_point = game.ui.root.get_node("Menu").get_global_rect().get_center()
+	var menu_shortcut=game.ui.root.find_child("WorldMenu",true,false)
+	verify(menu_shortcut!=null,"Landscape HUD exposes a visible menu shortcut")
+	var menu_point = menu_shortcut.get_global_rect().get_center() if menu_shortcut!=null else Vector2(0,0)
 	var start_pan = game.view.pan
 	var touch = InputEventScreenTouch.new()
 	touch.index = 0

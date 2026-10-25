@@ -7,6 +7,13 @@ func verify(value: bool, message: String) -> void:
 	if value: passed += 1; print("PASS: ", message)
 	else: failed += 1; printerr("FAIL: ", message)
 
+func named_button(node: Node, fragment: String) -> Button:
+	if node is Button and node.text.contains(fragment): return node
+	for child in node.get_children():
+		var found=named_button(child,fragment)
+		if found!=null:return found
+	return null
+
 func _initialize() -> void:
 	run.call_deferred()
 
@@ -194,7 +201,9 @@ func run() -> void:
 	game.in_menu = true
 	game.ui.neighbors()
 	await process_frame
-	game.ui.modal.get_child(0).get_child(1).get_child(0).get_child(0).pressed.emit()
+	var neighbor=named_button(game.ui.modal,game.world.creatures[0].given_name)
+	verify(neighbor!=null,"Neighbor album exposes the actual named creature")
+	if neighbor!=null:neighbor.pressed.emit()
 	verify(not game.in_menu and game.view.selected_identity == int(game.world.creatures[0].identity), "Neighbor album returns to the actual named creature")
 	game.view.focus_creature(2)
 	var selected_id = game.view.selected_identity
