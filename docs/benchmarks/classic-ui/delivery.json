@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-25",
+  "scope": "compact mobile RPG UI; not full prior RPG milestone",
+  "retained": {
+    "retained_checks": 745,
+    "sanctuary_checks": 77,
+    "game_checks": 822,
+    "all_passed": true,
+    "suite_seconds": 9.74,
+    "legal_1_23_seeds": [
+      7,
+      42,
+      2026
+    ]
+  },
+  "layout_check_count": 98,
+  "landscape_check_count": 270,
+  "interactions": {
+    "adventure": true,
+    "chat_minimizes": true,
+    "chat_reopens": true,
+    "chat_state_survives_modal": true,
+    "class_button_switches": true,
+    "class_refresh_back_closes": true,
+    "class_switch": true,
+    "combat_blocks_travel": true,
+    "open_chat_survives_modal": true,
+    "portrait_matches_active": true,
+    "safe_travel_banks_cargo": true,
+    "safe_travel_opens_map": true,
+    "travel_allowed_at_safe_spawn": true,
+    "travel_save_valid": true
+  },
+  "android": {
+    "all_passed": true,
+    "checks": {
+      "adventure_entry": true,
+      "class_switch": true,
+      "fixture": true,
+      "inventory_visible": true,
+      "landscape": true,
+      "restore": true,
+      "save": true
+    },
+    "pid": 3973,
+    "profiles": [
+      {
+        "draw_calls": 250.0,
+        "fps": 12.7744115565581,
+        "memory_mb": 41.4582242965698,
+        "p95_ms": 92.079,
+        "process_cpu_p95_ms": 92.08,
+        "scene": "paused_home_with_ambient_animation",
+        "target": 60,
+        "texture_memory_mb": 29.6246070861816,
+        "world_update_cpu_p95_ms": 1.487
+      },
+      {
+        "draw_calls": 201.0,
+        "fps": 16.8727357036814,
+        "memory_mb": 41.4474668502808,
+        "p95_ms": 66.807,
+        "process_cpu_p95_ms": 68.957,
+        "scene": "paused_home_with_ambient_animation",
+        "target": 30,
+        "texture_memory_mb": 29.6246070861816,
+        "world_update_cpu_p95_ms": 1.551
+      }
+    ],
+    "run_id": "a722e11a84364a2f9277ea197a2f47cb",
+    "source": "actual_android_emulator_render_with_programmatic_model_actions_no_native_input_claim",
+    "stage": "rpg_complete",
+    "viewport": [
+      1600.0,
+      720.0
+    ],
+    "physical_device": false,
+    "player_files_preserved": true,
+    "player_file_hashes": {
+      "planet.json": {
+        "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+        "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+        "before_bytes": 40618,
+        "after_bytes": 40618
+      },
+      "planet.json.bak": {
+        "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+        "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+        "before_bytes": 41031,
+        "after_bytes": 41031
+      },
+      "settings.cfg": {
+        "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "before_bytes": 0,
+        "after_bytes": 0
+      }
+    }
+  },
+  "apk": {
+    "apk": "D:\\LittleGod\\builds\\android\\LittleGod-Classic-Mobile-debug.apk",
+    "bytes": 69424770,
+    "sha256": "91dd23940c1173792517816dcf0fce7c9237ae4a184ffd4d1a67b3809db4b48e",
+    "package": "org.littlegod.livinguniverse.rpgqa",
+    "production_preset_preserved": true
+  },
+  "startup": "Starting: Intent { cmp=org.littlegod.livinguniverse.rpgqa/com.godot.game.GodotAppLauncher }\n\nStatus: ok\n\nLaunchState: COLD\n\nActivity: org.littlegod.livinguniverse.rpgqa/com.godot.game.GodotApp\n\nTotalTime: 2572\n\nWaitTime: 2579\n\nComplete\n\n",
+  "physical_device": false,
+  "performance_target_verified": false,
+  "source": "Actual Godot and emulator renders; native touch results are separate."
+}

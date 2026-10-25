@@ -25,14 +25,14 @@ var rpg
 func _init(u,g):ui=u;game=g
 func say(en: String,tr: String) -> String:return tr if ui.language=="tr" else en
 func size() -> Vector2:return ui.get_viewport().get_visible_rect().size
-func scale_ui() -> float:return clampf(minf(size().x/1280.0,size().y/720.0),.68,1.15)
+func scale_ui() -> float:return clampf(minf(size().x/1280.0,size().y/720.0),.65,2.5)
 func px(n: float) -> float:return roundf(n*scale_ui())
 func text(value: String,n: int=26,color: Color=T.CREAM) -> Label:
  var visible_color=Color.WHITE if ui.high_contrast and color==T.CREAM else Color("ffe6a5") if ui.high_contrast and color==T.GOLD else color
- var l=Label.new();l.text=value;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_override("font",ui.ui_font());l.add_theme_font_size_override("font_size",int(px(n*ui.accessibility_scale)));l.add_theme_color_override("font_color",visible_color);l.mouse_filter=Control.MOUSE_FILTER_IGNORE;l.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ var l=Label.new();l.text=value;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_override("font",ui.ui_font());l.add_theme_font_size_override("font_size",int(maxf(10,px(n*.62*ui.accessibility_scale))));l.add_theme_color_override("font_color",visible_color);l.mouse_filter=Control.MOUSE_FILTER_IGNORE;l.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  return l
 func heading(value: String,n: int=38) -> Label:
- var l=text(value,n);l.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));return l
+ var l=text(value,n);l.add_theme_font_override("font",ui.ui_font());return l
 func image(texture: Texture2D,extent: Vector2) -> TextureRect:
  var p=TextureRect.new();p.texture=texture;p.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;p.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;p.custom_minimum_size=extent;p.mouse_filter=Control.MOUSE_FILTER_IGNORE;return p
 func action(parent: Node,title: String,cb: Callable,primary=false,key="") -> Button:
@@ -71,39 +71,32 @@ func back():
  elif current=="main" and not game.world.is_empty():ui.menu()
  else:ui.close()
 func surface(title: String,compact=false) -> VBoxContainer:
- ui.end_live_route();game.reset_gesture();game.in_menu=true;ui.world_controls(false)
+ ui.end_live_route();game.reset_gesture();game.in_menu=true
+ if is_instance_valid(game.adventure_scene):ui.world_controls(false)
  if not routing and not current.is_empty():nested=true
  if is_instance_valid(ui.modal):ui.root.remove_child(ui.modal);ui.modal.queue_free()
  if is_instance_valid(ui.veil):ui.root.remove_child(ui.veil);ui.veil.queue_free()
- var inventory_layout=current in ["inventory","hero"];var viewport=size();var margin=px(12 if inventory_layout else 22);var top=px(12 if inventory_layout else 26);var bottom=top
- if OS.has_feature("mobile"):
-  var safe=DisplayServer.get_display_safe_area();var physical=DisplayServer.screen_get_size()
-  if physical.x>0:
-   top=maxf(top,safe.position.y*viewport.x/physical.x+px(12));bottom=maxf(bottom,(physical.y-safe.end.y)*viewport.x/physical.x+px(12))
- ui.veil=ColorRect.new();ui.veil.color=Color(.015,.035,.055,.48 if not compact else .08);ui.veil.position=Vector2.ZERO;ui.veil.size=viewport;ui.root.add_child(ui.veil)
- ui.modal=PanelContainer.new();ui.modal.name="GameSurface";var box=T.box(T.INK);box.content_margin_left=px(28);box.content_margin_right=px(28);box.content_margin_top=px(24);box.content_margin_bottom=px(24);ui.modal.add_theme_stylebox_override("panel",box)
- if inventory_layout:box.content_margin_top=px(10);box.content_margin_bottom=px(10);box.content_margin_left=px(16);box.content_margin_right=px(16)
- var height=minf(viewport.y-top-bottom,px(580)) if compact else viewport.y-top-bottom
- ui.modal.position=Vector2(margin,viewport.y-bottom-height if compact else top);ui.modal.size=Vector2(viewport.x-margin*2,height);ui.modal_base_y=ui.modal.position.y;ui.root.add_child(ui.modal)
- var paint=preload("res://scripts/premium_surface.gd").new();paint.book=current=="quest";paint.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.modal.add_child(paint)
- var stack=VBoxContainer.new();stack.add_theme_constant_override("separation",int(px(8 if inventory_layout else 20)));ui.modal.add_child(stack)
- var title_row=HBoxContainer.new();title_row.add_theme_constant_override("separation",int(px(12)));stack.add_child(title_row)
- title_row.add_child(image(T.icon("quest" if current=="quest" else "crown"),Vector2.ONE*px(36 if inventory_layout else 56)))
- var title_label=heading(title,25 if inventory_layout else 34);title_label.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title_label)
- var close=ui.button("×",back);close.name="SurfaceBack";close.tooltip_text=ui.t("back");close.custom_minimum_size=Vector2.ONE*px(72);title_row.add_child(close)
- if inventory_layout:
-  close.custom_minimum_size=Vector2.ONE*px(48);var skin=T.box(T.SURFACE);skin.set_content_margin_all(px(4));close.add_theme_stylebox_override("normal",skin)
- var rule=HSeparator.new();rule.modulate=T.GOLD;stack.add_child(rule)
+ var viewport=size();var margin=px(10);var width=px({"inventory":384,"hero":384,"attributes":380,"skills":470,"quest":440,"map":480,"forge":500,"construction":510,"trade":500,"workers":470,"army":480,"chat":480,"menu":430,"settings":480}.get(current,460))
+ var height=minf(viewport.y-px(122),px(560));var top=px(70)
+ if game.world.is_empty():width=minf(viewport.x-px(40),px(680));height=minf(viewport.y-px(60),px(630));top=(viewport.y-height)*.5
+ var x=viewport.x-width-margin
+ if current in ["attributes","quest","menu","workers"]:x=margin
+ if current=="map" or game.world.is_empty():x=(viewport.x-width)*.5
+ ui.veil=ColorRect.new();ui.veil.color=Color(0,0,0,0);ui.veil.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.veil.position=Vector2.ZERO;ui.veil.size=viewport;ui.root.add_child(ui.veil)
+ ui.modal=PanelContainer.new();ui.modal.name="GameSurface";var box=T.box(T.INK,true);box.content_margin_left=px(10);box.content_margin_right=px(10);box.content_margin_top=px(6);box.content_margin_bottom=px(8);ui.modal.add_theme_stylebox_override("panel",box)
+ ui.modal.position=Vector2(x,top);ui.modal.size=Vector2(width,height);ui.modal_base_y=top;ui.root.add_child(ui.modal)
+ var paint=preload("res://scripts/premium_surface.gd").new();paint.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.modal.add_child(paint)
+ var stack=VBoxContainer.new();stack.add_theme_constant_override("separation",int(px(5)));ui.modal.add_child(stack)
+ var title_row=HBoxContainer.new();title_row.add_theme_constant_override("separation",int(px(4)));stack.add_child(title_row)
+ var title_label=heading(title,23);title_label.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title_label)
+ var close=ui.button("×",back);close.name="SurfaceBack";close.tooltip_text=ui.t("back");close.custom_minimum_size=Vector2.ONE*px(24);close.add_theme_font_size_override("font_size",int(px(15)));rpg.compact_button(close);title_row.add_child(close)
  scroll=ScrollContainer.new();scroll.name="SurfaceScroll";scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;stack.add_child(scroll)
- var v=VBoxContainer.new();v.name="SurfaceContent";v.size_flags_horizontal=Control.SIZE_EXPAND_FILL;v.add_theme_constant_override("separation",int(px(22)));scroll.add_child(v);current_title=title
- if compact:
-  ui.veil.gui_input.connect(func(event):
-   if event is InputEventMouseButton and not event.pressed and event.button_index==MOUSE_BUTTON_LEFT and not ui.modal.get_global_rect().has_point(event.position):ui.close())
+ var v=VBoxContainer.new();v.name="SurfaceContent";v.size_flags_horizontal=Control.SIZE_EXPAND_FILL;v.add_theme_constant_override("separation",int(px(8)));scroll.add_child(v);current_title=title
  ui.modal.modulate.a=1;return v
 func banner(parent: Node,height=180):
  var path="res://assets/ui_rebirth/chapter-flame.png"
  if ResourceLoader.exists(path):
-  var art=image(load(path),Vector2(0,px(height)));art.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED;art.clip_contents=true;parent.add_child(art)
+  var art=image(load(path),Vector2(0,px(mini(height,145 if game.world.is_empty() else 64))));art.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED;art.clip_contents=true;parent.add_child(art)
 func build_hud():
  if rpg==null:rpg=preload("res://scripts/rpg_interface.gd").new(self)
  rpg.hud();return
@@ -172,6 +165,7 @@ func refresh_hud():
   for l in resource_labels.values():l.text="—"
  if not w.has("kingdom"):ui.chapter.text=ui.t(LivingStories.objective(w))
  if ui.toast_until==0:ui.hint.text=""
+ if rpg!=null and rpg.classic!=null:rpg.classic.refresh()
 func quest():
  if not game.world.has("kingdom"):game.realm_ui.intro();return
  ui.page="kingdom";var w=game.world;var q=K.current(w);var v=surface(say("The Kingdom Chronicle","Krallık Günlüğü"));banner(v,190)
@@ -223,7 +217,7 @@ func previous_inventory():
  var cap=HBoxContainer.new();v.add_child(cap);cap.add_child(image(T.icon("bag"),Vector2.ONE*px(80)));var words=VBoxContainer.new();words.size_flags_horizontal=Control.SIZE_EXPAND_FILL;cap.add_child(words);words.add_child(heading(say("Your collected treasures","Topladığın hazineler"),30));words.add_child(text(str(w.kingdom.industry.items.size())+" / "+str(I.MAX_ITEMS)+say(" items · reserved gear stays protected"," eşya · ayrılmış donanımlar korunur"),21,T.MUTED))
  var tabs=HBoxContainer.new();tabs.add_theme_constant_override("separation",int(px(7)));v.add_child(tabs)
  for tab in [["all",say("All","Tümü")],["weapon",say("Gear","Donanım")],["tool",say("Tools","Alet")],["artifact",say("Relics","Yadigâr")]]:
-  var key=tab[0];var b=action(tabs,tab[1],func():filter=key;route("inventory",0,false),filter==key);b.add_theme_font_size_override("font_size",int(px(22)))
+  var key=tab[0];var b=action(tabs,tab[1],func():filter=key;route("inventory",0,false),filter==key);b.add_theme_font_size_override("font_size",int(px(13)))
  var grid=GridContainer.new();grid.columns=3 if size().x>=600 else 2;grid.add_theme_constant_override("h_separation",int(px(12)));grid.add_theme_constant_override("v_separation",int(px(12)));v.add_child(grid)
  var items=w.kingdom.industry.items.duplicate();items.sort_custom(func(a,b):return str(a.recipe)<str(b.recipe) if a.recipe!=b.recipe else int(a.id)<int(b.id))
  for owned in items:
@@ -285,7 +279,7 @@ func menu():
  if preload("res://scripts/trade.gd").enabled(game.world):entries.append(["trade",say("Trade routes","Ticaret yolları"),"caravan"])
  var grid=GridContainer.new();grid.columns=2;grid.add_theme_constant_override("h_separation",int(px(12)));grid.add_theme_constant_override("v_separation",int(px(12)));v.add_child(grid)
  for entry in entries:
-  var key=entry[0];var b=action(grid,entry[1],func():route(key),false,entry[2]);b.custom_minimum_size.y=px(105);b.add_theme_font_size_override("font_size",int(px(24)))
+  var key=entry[0];var b=action(grid,entry[1],func():route(key),false,entry[2]);b.custom_minimum_size.y=px(38);b.add_theme_font_size_override("font_size",int(px(13)))
  action(v,ui.t("chronicle"),ui.history,false,"quest");action(v,ui.t("journal"),ui.journal,false,"map");action(v,ui.t("neighbors"),ui.neighbors,false,"hero");action(v,ui.t("settings"),func():route("settings"),false,"menu")
  action(v,say("World gifts, collections & more","Dünya armağanları, koleksiyonlar ve diğerleri"),ui.legacy_menu)
  action(v,say("Return to your world","Dünyana dön"),ui.close,true)
@@ -314,7 +308,7 @@ func forge(forge_id: int=0):
    var d=I.recipes()[job.recipe];v.add_child(text(game.realm_ui.localized(d.name),24));var bar=ProgressBar.new();bar.max_value=int(d.ticks)*K.SCALE;bar.value=job.progress;bar.custom_minimum_size.y=px(23);v.add_child(bar)
  var tabs=HBoxContainer.new();v.add_child(tabs)
  for tab in [["all",say("All","Tümü")],["tool",say("Tools","Aletler")],["gear",say("Equipment","Donanım")]]:
-  var key=tab[0];var button=action(tabs,tab[1],func():craft_filter=key;route("forge",forge_selected,false),craft_filter==key);button.add_theme_font_size_override("font_size",int(px(22)))
+  var key=tab[0];var button=action(tabs,tab[1],func():craft_filter=key;route("forge",forge_selected,false),craft_filter==key);button.add_theme_font_size_override("font_size",int(px(13)))
  var grid=GridContainer.new();grid.columns=2;grid.add_theme_constant_override("h_separation",int(px(14)));grid.add_theme_constant_override("v_separation",int(px(20)));v.add_child(grid)
  for id in I.recipes():
   var d=I.recipes()[id];var category=d.get("category","tool")
@@ -358,7 +352,7 @@ func army():
  v.add_child(text(say("FORMATION","DÜZEN"),20,T.GOLD));var formations=HBoxContainer.new();v.add_child(formations)
  for pair in [["balanced",say("Balanced","Dengeli")],["defensive",say("Defensive","Savunma")],["assault",say("Assault","Hücum")]]:
   var key=pair[0];var b=action(formations,pair[1],func():
-   if M.formation(w,key):game.military_ui.changed();route("army",0,false),w.kingdom.military.formation==key);b.add_theme_font_size_override("font_size",int(px(21)))
+   if M.formation(w,key):game.military_ui.changed();route("army",0,false),w.kingdom.military.formation==key);b.add_theme_font_size_override("font_size",int(px(13)))
  action(v,say("Train a free citizen","Boştaki sakini eğit"),game.military_ui.candidates,true,"workers")
  for key in ["raid","camp"]:
   var mission=key;var title_text=say("Defend the village","Köyü savun") if key=="raid" else say("March on the border camp","Sınır kampına yürü")
@@ -416,7 +410,7 @@ func construction():
   if int(d.level)>20 and not preload("res://scripts/trade.gd").enabled(w):continue
   var tile=VBoxContainer.new();tile.size_flags_horizontal=Control.SIZE_EXPAND_FILL;grid.add_child(tile);tile.add_child(image(game.view.kingdom_layer.texture(id),Vector2(0,px(145))));tile.add_child(heading(game.realm_ui.localized(d.name),26));tile.add_child(text(game.realm_ui.cost(d.cost),21,T.MUTED));var count=w.kingdom.buildings.filter(func(b):return b.kind==key).size();var locked=K.level(w)<int(d.level) or count>=int(d.limit) or w.kingdom.buildings.size()>=K.MAX_BUILDINGS or not K.afford(w,d.cost)
   var hint=say("Realm ","Diyar ")+str(int(d.level)) if K.level(w)<int(d.level) else say("Building limit reached","Bina sınırına ulaşıldı") if count>=int(d.limit) else say("Materials missing","Malzeme eksik") if not K.afford(w,d.cost) else say("Choose a site","Yer seç")
-  var b=action(tile,hint,func():game.realm_ui.begin("build",key),not locked,"hammer");b.disabled=locked;b.add_theme_font_size_override("font_size",int(px(22)))
+  var b=action(tile,hint,func():game.realm_ui.begin("build",key),not locked,"hammer");b.disabled=locked;b.add_theme_font_size_override("font_size",int(px(13)))
  v.add_child(text(say("ALREADY PART OF YOUR KINGDOM","KRALLIĞININ BİR PARÇASI"),19,T.GOLD))
  for b in w.kingdom.buildings:
   var id=int(b.id);action(v,game.realm_ui.localized(K.buildings()[b.kind].name)+" · "+say("Level ","Seviye ")+str(int(b.level)),func():route("building",id))

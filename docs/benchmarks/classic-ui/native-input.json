@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-25",
+  "device": "emulator-5554",
+  "physical_device": false,
+  "apk_sha256": "91dd23940c1173792517816dcf0fce7c9237ae4a184ffd4d1a67b3809db4b48e",
+  "qa_run_id": "a722e11a84364a2f9277ea197a2f47cb",
+  "actual_input": "ADB input tap",
+  "captures": {
+    "native-home": "f7ad28d31025fc26d72758077507f30a1cdc16ad1456eac871be24a351025a82",
+    "native-inventory": "18f0e74ac6c60c62871ef5c047bcac2a8f9a93166afefeda07f2cb42a75e3fa7",
+    "native-item-details": "90cece112bf30bd00381f34a1bc9176c1f60e59d856a63bfa2f6c3713ec1c344",
+    "native-warrior": "2c12bee4160459293b2cfafe17576f23e317124683d8f7764dc915536212c712",
+    "native-close": "1de08f888a0aabc8dbba41ce4b144512eebae2b9ab770ecca244de567409a0e3",
+    "native-skills": "b61c11da604f13a8810c1d4e856ee26b8cfe0fbd7c89d2bcd2623695e5271250",
+    "native-chat-collapsed": "53e5e7068d82bd9cb9f1b5adb6e5c1ac73c426a964cf28a0174f5aa7470a0f6d",
+    "native-chat-restored": "083b27184e0b26789976991bfca3cbe3203108ba203038c01484f1268af12a74"
+  },
+  "visually_inspected": true,
+  "limitations": "This is not physical-device, multitouch, keyboard or OEM safe-area certification.",
+  "observations": [
+    "Bottom Bag icon opens narrow right-side inventory.",
+    "Third inventory item opens comparison beside bag; Mage cannot equip Warrior sword.",
+    "Warrior selector changes character and HUD portrait.",
+    "Close returns to unobstructed home HUD.",
+    "Bottom Skills icon opens compact skill window.",
+    "Chat minimizes to a small launcher and restores correctly."
+  ]
+}

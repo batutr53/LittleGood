@@ -270,7 +270,7 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 	b.add_theme_stylebox_override("pressed", style(Color("e5c88d")))
 	if premium!=null and rebirth_enabled:
 		b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-		b.custom_minimum_size.y=premium.px(88);b.add_theme_font_size_override("font_size",int(premium.px(26)))
+		b.custom_minimum_size.y=premium.px(32);b.add_theme_font_size_override("font_size",int(premium.px(14)))
 		b.add_theme_color_override("font_color",Color("192a2e") if primary else Color("eee4ca"))
 		b.add_theme_color_override("font_disabled_color",Color("84908a"))
 		var theme=preload("res://scripts/premium_theme.gd")

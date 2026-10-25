@@ -1,5 +1,11 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Compact mobile RPG layout — 25 October 2026
+
+The full-screen dashboard structure has been replaced with the proportions of the user's Knight-style mobile references: 384×560 right-side inventory at 1280×720, a 40-pixel bottom strip, 235×61 status frame, 448×185 chat, floating stat/skill/quest/forge windows and circular combat controls. Twenty original vector icons and a seven-column bag with adjacent item comparison are implemented. Reference browsing, dimensions, screenshots and verification are documented in [CLASSIC_MOBILE_UI.md](CLASSIC_MOBILE_UI.md). This is a UI pass; earlier incomplete animation/online milestones remain incomplete.
+
+Validated build: `D:/LittleGod/builds/android/LittleGod-Classic-Mobile-debug.apk`. Checks: **98/98** new layout/render/input, **270/270** landscape UI, **14/14** RPG interactions and **822/822** retained campaign checks pass. Seven Android emulator checks and separately inspected native taps pass; production save/backup hashes are preserved. Physical-device and stable 60/30 FPS verification are not claimed. Earlier checkpoint evidence below is historical.
+
 ## RPG implementation checkpoint — 25 October 2026
 
 The requested RPG transformation is **in progress**. The new bottom-navigation HUD, combined character/inventory screen, four-hero roster, fourteen equipment positions, attribute/skill allocation, class combat behavior, 28 original equipment definitions and original generated class illustrations are connected to actual game state. Chat client/server source is added and compiles, but Windows App Control blocks running the API; live chat is not verified. Complete directional/layered character animation and full adaptation of the 877-item research catalogue are still outstanding.

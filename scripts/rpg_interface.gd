@@ -15,6 +15,8 @@ var chat_collapsed=false
 var hud_portrait: TextureRect
 var hud_class=""
 var target_slot=""
+var classic
+var details_window: PanelContainer
 func compact_button(b: Button):
 	for state in ["normal","hover","pressed","disabled","focus"]:
 		var skin=b.get_theme_stylebox(state).duplicate();skin.content_margin_left=p.px(6);skin.content_margin_right=p.px(6);skin.content_margin_top=p.px(4);skin.content_margin_bottom=p.px(4);b.add_theme_stylebox_override(state,skin)
@@ -25,43 +27,12 @@ func stat_name(key: String) -> String:
 func card(rect: Rect2) -> Panel:
 	var panel=Panel.new();panel.add_theme_stylebox_override("panel",T.box(Color(.065,.064,.055,.88),true));p.put(panel,rect);return panel
 func icon_action(parent: Control,key: String,label: String,cb: Callable) -> Button:
-	var b=ui.button(label,cb);b.icon=T.icon(key);b.expand_icon=true;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.alignment=HORIZONTAL_ALIGNMENT_CENTER;b.vertical_icon_alignment=VERTICAL_ALIGNMENT_TOP;b.add_theme_constant_override("icon_max_width",int(p.px(30)));b.add_theme_font_size_override("font_size",int(p.px(16)));b.custom_minimum_size=Vector2(maxf(48,p.px(88)),maxf(48,p.px(66)));b.tooltip_text=label;b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;parent.add_child(b);return b
+	var b=ui.button(label,cb);b.icon=T.icon(key);b.expand_icon=true;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.alignment=HORIZONTAL_ALIGNMENT_CENTER;b.vertical_icon_alignment=VERTICAL_ALIGNMENT_TOP;b.add_theme_constant_override("icon_max_width",int(p.px(24)));b.add_theme_constant_override("h_separation",0);b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(48),p.px(43));b.tooltip_text=label;b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;compact_button(b)
+	for state in ["normal","hover","pressed","disabled","focus"]:
+		var skin=b.get_theme_stylebox(state);skin.content_margin_top=0;skin.content_margin_bottom=0
+	parent.add_child(b);return b
 func hud():
-	if is_instance_valid(ui.root):ui.remove_child(ui.root);ui.root.queue_free()
-	ui.modal=null;ui.veil=null;ui.root=Control.new();ui.root.name="WorldHUD";ui.root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);ui.root.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.add_child(ui.root)
-	var s=p.size();var margin=p.px(14);var bar_h=p.px(72)
-	var identity=card(Rect2(margin,margin,p.px(330),p.px(112)))
-	ui.header=p.heading("",25);p.put(ui.header,Rect2(margin+p.px(72),margin+p.px(6),p.px(245),p.px(33)))
-	ui.header.autowrap_mode=TextServer.AUTOWRAP_OFF;ui.header.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
-	ui.stats=p.text("",17);p.put(ui.stats,Rect2(margin+p.px(72),margin+p.px(44),p.px(245),p.px(56)))
-	hud_portrait=TextureRect.new();hud_class="";hud_portrait.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;hud_portrait.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED;hud_portrait.mouse_filter=Control.MOUSE_FILTER_IGNORE;p.put(hud_portrait,Rect2(margin+p.px(4),margin+p.px(4),p.px(62),p.px(100)));refresh_portrait()
-	ui.spirit=p.text("",18,T.GOLD);p.put(ui.spirit,Rect2(p.px(365),margin,p.px(140),p.px(32)))
-	ui.realm_bar=ui.button("",func():p.route("menu"));ui.root.add_child(ui.realm_bar);ui.realm_bar.hide()
-	ui.chapter=ui.button("",func():p.route("quest") if game.world.has("kingdom") else ui.follow_chapter());ui.chapter.name="CurrentObjective";ui.chapter.add_theme_font_size_override("font_size",int(p.px(19)));p.put(ui.chapter,Rect2(s.x-p.px(325),margin,p.px(310),p.px(100)))
-	var mini=preload("res://scripts/rpg_minimap.gd").new();mini.game=game;p.put(mini,Rect2(s.x-p.px(150),p.px(128),p.px(135),p.px(110)))
-	ui.hint=p.text("",18);p.put(ui.hint,Rect2(s.x-p.px(325),p.px(250),p.px(305),p.px(70)))
-	var resource_row=HBoxContainer.new();resource_row.mouse_filter=Control.MOUSE_FILTER_IGNORE;p.put(resource_row,Rect2(p.px(365),p.px(55),p.px(380),p.px(35)));p.resource_labels.clear()
-	for key in ["wood","stone","gold","food"]:
-		var cell=HBoxContainer.new();cell.size_flags_horizontal=Control.SIZE_EXPAND_FILL;cell.mouse_filter=Control.MOUSE_FILTER_IGNORE;resource_row.add_child(cell);cell.add_child(p.image(T.icon(key),Vector2.ONE*p.px(25)));var label=p.text("0",17);cell.add_child(label);p.resource_labels[key]=label
-	card(Rect2(0,s.y-bar_h,s.x,bar_h))
-	var nav=HBoxContainer.new();nav.add_theme_constant_override("separation",int(p.px(5)));p.put(nav,Rect2(margin,s.y-bar_h+p.px(3),s.x-margin*2,bar_h-p.px(6)))
-	for entry in [["hero","hero",say("Character","Karakter")],["inventory","bag",say("Inventory","Çanta")],["skills","sword",say("Skills","Beceriler")],["attributes","shield",say("Stats","Statlar")],["quest","quest",say("Quests","Görevler")],["map","map",say("Travel","Işınlan")],["construction","hammer",say("Build","İnşa")],["workers","workers",say("People","Sakinler")],["menu","menu",say("More","Diğer")]]:
-		var key=entry[0];var b=icon_action(nav,entry[1],entry[2],func():p.route(key));b.name="WorldMenu" if key=="menu" else "Nav"+key.capitalize()
-	var chat_height=p.px(104)+52
-	chat_box=card(Rect2(margin,s.y-bar_h-chat_height-p.px(12),p.px(350),chat_height));chat_box.name="ChatPanel"
-	var copy=p.text(say("SYSTEM  ·  GENERAL  ·  PRIVATE","SİSTEM  ·  GENEL  ·  ÖZEL"),15,T.GOLD);chat_box.add_child(copy);copy.position=Vector2(p.px(10),p.px(7));copy.size=Vector2(p.px(330),p.px(24))
-	var log=p.text(say("Your world is ready.\nOpen chat to connect with friends.","Dünyan hazır.\nArkadaşlarınla konuşmak için sohbeti aç."),16);chat_box.add_child(log);log.position=Vector2(p.px(10),p.px(38));log.size=Vector2(p.px(330),p.px(65))
-	var open=ui.button(say("Chat","Sohbet"),func():p.route("chat"));open.custom_minimum_size=Vector2(0,48);open.add_theme_font_size_override("font_size",int(p.px(16)));compact_button(open);chat_box.add_child(open);open.position=Vector2(p.px(10),p.px(104));open.size=Vector2(p.px(350)-78,48)
-	chat_reopen=ui.button(say("Chat +","Sohbet +"),func():chat_collapsed=false;chat_box.show();chat_reopen.hide());chat_reopen.name="ReopenChat";chat_reopen.add_theme_font_size_override("font_size",int(p.px(16)));compact_button(chat_reopen);p.put(chat_reopen,Rect2(margin,s.y-bar_h-60,p.px(130),48));chat_reopen.hide()
-	var collapse=ui.button("−",func():chat_collapsed=true;chat_box.hide();chat_reopen.show());collapse.name="CollapseChat";collapse.tooltip_text=say("Minimize chat","Sohbeti küçült");collapse.add_theme_font_size_override("font_size",18);collapse.custom_minimum_size=Vector2(48,48);compact_button(collapse);chat_box.add_child(collapse);collapse.position=Vector2(p.px(350)-58,p.px(104));collapse.size=Vector2(48,48)
-	var controls=HBoxContainer.new();p.put(controls,Rect2(s.x-p.px(350),s.y-bar_h-p.px(76),p.px(335),p.px(62)))
-	icon_action(controls,"gift",say("Gifts","Armağan"),func():p.gifts_open=not p.gifts_open;p.tray.visible=p.gifts_open)
-	ui.speed_button=icon_action(controls,"crown","1×",func():game.speed=3 if game.speed==1 else 1;ui.refresh())
-	icon_action(controls,"map",say("Center","Ortala"),func():game.view.pan=Vector2.ZERO)
-	p.tray=HBoxContainer.new();p.tray.name="GiftPalette";p.tray.visible=false;p.put(p.tray,Rect2(p.px(390),s.y-bar_h-p.px(155),s.x-p.px(405),p.px(64)));ui.power_buttons.clear();ui.power_icons.clear()
-	for i in range(6):
-		var b=ui.button(ui.t(ui.POWER_KEYS[i]),func():ui.choose_power(i));b.custom_minimum_size=Vector2(0,p.px(58));b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;b.add_theme_font_size_override("font_size",int(p.px(17)));p.tray.add_child(b);ui.power_buttons.append(b)
-	ui.refresh()
+	classic=preload("res://scripts/classic_layout.gd").new(self);classic.build()
 func refresh_portrait():
 	if is_instance_valid(chat_box) and is_instance_valid(chat_reopen) and not game.in_menu:chat_box.visible=not chat_collapsed;chat_reopen.visible=chat_collapsed
 	if not is_instance_valid(hud_portrait):return
@@ -72,37 +43,43 @@ func refresh_portrait():
 	hud_portrait.texture=load(path) if ResourceLoader.exists(path) else load("res://assets/adventure/warrior.png")
 func inventory():
 	if not I.enabled(game.world):game.realm_ui.legacy_inventory();return
-	R.ensure(game.world);var v=p.surface(say("Character & Inventory","Karakter ve Çanta"));p.nested=false;ui.page="kingdom"
-	var layout=HBoxContainer.new();layout.add_theme_constant_override("separation",int(p.px(20)));v.add_child(layout)
-	var left=VBoxContainer.new();left.size_flags_horizontal=Control.SIZE_EXPAND_FILL;left.size_flags_stretch_ratio=1.8;layout.add_child(left)
-	details=VBoxContainer.new();details.custom_minimum_size.x=p.px(300);details.size_flags_horizontal=Control.SIZE_EXPAND_FILL;layout.add_child(details)
+	R.ensure(game.world);var v=p.surface(say("Inventory","Çanta"));p.nested=false;ui.page="kingdom";v.add_theme_constant_override("separation",int(p.px(4)))
 	if R.available(game.world):
-		var selector=HBoxContainer.new();left.add_child(selector)
+		var selector=HBoxContainer.new();v.add_child(selector)
 		for key in R.CLASSES:
 			var cls=key;var b=p.action(selector,R.NAMES[key],func():
-				if R.switch(game.world,cls):game.realm_ui.changed();inventory(),game.world.rpg.active==key);b.name="SelectClass"+key;b.add_theme_font_size_override("font_size",int(p.px(17)));b.custom_minimum_size.y=maxf(48,p.px(44));b.disabled=not R.home(game.world);compact_button(b)
-		var gear=HBoxContainer.new();left.add_child(gear);var slots_left=VBoxContainer.new();gear.add_child(slots_left)
-		for slot in ["head","armor","hands","feet"]:equipment_slot(slots_left,slot)
+				if R.switch(game.world,cls):selected_item=0;game.realm_ui.changed();inventory(),game.world.rpg.active==key);b.name="SelectClass"+key;b.add_theme_font_size_override("font_size",int(p.px(11)));b.custom_minimum_size.y=p.px(27);b.disabled=not R.home(game.world);compact_button(b)
+		var gear=HBoxContainer.new();v.add_child(gear);gear.add_theme_constant_override("separation",int(p.px(6)))
 		var hero=game.world.kingdom.adventure.hero;var path="res://assets/rpg/"+str(hero.get("class","warrior"))+".png"
 		if not ResourceLoader.exists(path):path="res://assets/rpg/warrior.png"
-		var portrait=p.image(load(path),Vector2(p.px(260),p.px(300)));portrait.set_script(preload("res://scripts/rpg_portrait.gd"));portrait.ui=ui;portrait.size_flags_horizontal=Control.SIZE_EXPAND_FILL;gear.add_child(portrait)
-		var slots_right=VBoxContainer.new();gear.add_child(slots_right)
-		for slot in ["neck","ring_left","ring_right","belt"]:equipment_slot(slots_right,slot)
-		var secondary=HBoxContainer.new();left.add_child(secondary)
-		for slot in ["weapon","shield","legs","ear_left","ear_right","artifact"]:equipment_slot(secondary,slot)
-		left.add_child(p.text(hero.name+" · "+R.NAMES[hero.get("class","warrior")]+" · Lv "+str(H.level(hero)),22,T.GOLD))
-	var tabs=HBoxContainer.new();left.add_child(tabs)
+		var portrait=p.image(load(path),Vector2(p.px(158),p.px(213)));portrait.set_script(preload("res://scripts/rpg_portrait.gd"));portrait.ui=ui;gear.add_child(portrait)
+		var equipment=GridContainer.new();equipment.columns=3;equipment.add_theme_constant_override("h_separation",int(p.px(3)));equipment.add_theme_constant_override("v_separation",int(p.px(3)));gear.add_child(equipment)
+		for slot in ["ear_left","head","ear_right","neck","armor","belt","weapon","hands","shield","ring_left","legs","ring_right","feet","artifact"]:equipment_slot(equipment,slot)
+		v.add_child(p.text(hero.name+" · "+R.NAMES[hero.get("class","warrior")]+" · Lv "+str(H.level(hero)),19,T.GOLD))
+	var tabs=HBoxContainer.new();v.add_child(tabs)
 	for tab in [["all",say("All","Tümü")],["weapon",say("Gear","Donanım")],["tool",say("Tools","Alet")],["consumable",say("Items","Eşya")]]:
-		var key=tab[0];var button=p.action(tabs,tab[1],func():p.filter=key;inventory());button.custom_minimum_size.y=maxf(48,p.px(44));button.add_theme_font_size_override("font_size",int(p.px(17)));compact_button(button)
-	var grid=GridContainer.new();grid.columns=8 if p.size().x>=1200 else 6;grid.add_theme_constant_override("h_separation",int(p.px(6)));grid.add_theme_constant_override("v_separation",int(p.px(6)));left.add_child(grid)
+		var key=tab[0];var button=p.action(tabs,tab[1],func():p.filter=key;inventory());button.custom_minimum_size.y=p.px(27);button.add_theme_font_size_override("font_size",int(p.px(11)));compact_button(button)
+	var grid=GridContainer.new();grid.name="InventoryGrid";grid.columns=7;grid.add_theme_constant_override("h_separation",int(p.px(3)));grid.add_theme_constant_override("v_separation",int(p.px(3)));v.add_child(grid)
+	var visible_items=[]
 	for item in game.world.kingdom.industry.items:
-		var id=int(item.id);var d=I.recipes()[item.recipe];var category=d.get("category","tool")
+		var category=I.recipes()[item.recipe].get("category","tool")
 		if p.filter!="all" and (not category in H.SLOTS+R.EXTRA_SLOTS if p.filter=="weapon" else category!=p.filter):continue
-		var b=ui.button("",func():selected_item=id;show_item(id));b.icon=load("res://assets/kingdom/"+item.recipe+".svg");b.expand_icon=true;b.tooltip_text=game.realm_ui.localized(d.name);b.custom_minimum_size=Vector2(p.px(64),p.px(64));b.add_theme_constant_override("icon_max_width",int(p.px(47)));grid.add_child(b)
-		b.mouse_entered.connect(func():
-			if selected_item==0:show_item(id))
+		visible_items.append(item)
+	for i in range(maxi(28,visible_items.size())):
+		var id=int(visible_items[i].id) if i<visible_items.size() else 0
+		var b=ui.button("",func():
+			if id>0:selected_item=id;show_item(id));b.custom_minimum_size=Vector2(p.px(45),p.px(45));compact_button(b);b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(36)));grid.add_child(b)
+		b.add_theme_stylebox_override("normal",T.box(Color("090c09"),false))
+		if id>0:
+			var item=I.item(game.world,id);b.icon=load("res://assets/kingdom/"+item.recipe+".svg");b.tooltip_text=game.realm_ui.localized(I.recipes()[item.recipe].name)
+			b.mouse_entered.connect(func():
+				if selected_item==0:show_item(id))
+		else:b.disabled=true;b.add_theme_stylebox_override("disabled",T.box(Color("090c09"),false))
+	details_window=PanelContainer.new();details_window.name="ItemComparison";details_window.add_theme_stylebox_override("panel",T.box(Color("10160e"),true));ui.veil.add_child(details_window);details_window.position=Vector2(ui.modal.position.x-p.px(277),ui.modal.position.y+p.px(35));details_window.size=Vector2(p.px(265),p.px(420))
+	var detail_scroll=ScrollContainer.new();detail_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;detail_scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;details_window.add_child(detail_scroll)
+	details=VBoxContainer.new();details.size_flags_horizontal=Control.SIZE_EXPAND_FILL;details.add_theme_constant_override("separation",int(p.px(5)));detail_scroll.add_child(details)
 	if selected_item>0 and not I.item(game.world,selected_item).is_empty():show_item(selected_item)
-	else:show_summary()
+	else:details_window.hide()
 func equipment_slot(parent: Control,slot: String):
 	var id=0
 	if slot in H.SLOTS:id=int(game.world.kingdom.adventure.hero.equipment[slot])
@@ -111,11 +88,15 @@ func equipment_slot(parent: Control,slot: String):
 	var b=ui.button(slot_names.get(slot,slot) if ui.language=="tr" else slot.replace("_"," "),func():
 		target_slot=slot
 		if id>0:selected_item=id;show_item(id)
-		else:ui.toast(say("Select equipment from your inventory.","Çantandan donanım seç.")));b.add_theme_font_size_override("font_size",int(p.px(13)));b.custom_minimum_size=Vector2(maxf(48,p.px(74)),maxf(48,p.px(48)));parent.add_child(b)
+		else:ui.toast(say("Select equipment from your inventory.","Çantandan donanım seç.")));b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(43),p.px(40));parent.add_child(b)
 	compact_button(b)
+	b.tooltip_text=slot_names.get(slot,slot);b.text="";b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(31)))
+	var empty="rpg_"+game.world.rpg.active+"_"+slot if slot in ["head","armor","legs","hands","feet"] else "rpg_"+slot.replace("_right","_left")
+	b.icon=load("res://assets/kingdom/"+empty+".svg") if ResourceLoader.exists("res://assets/kingdom/"+empty+".svg") else T.icon("sword" if slot=="weapon" else "shield" if slot=="shield" else "quest")
+	b.add_theme_color_override("icon_normal_color",Color(.5,.55,.45,.45))
 	if id>0:
 		var owned=I.item(game.world,id)
-		if not owned.is_empty():b.text="";b.icon=load("res://assets/kingdom/"+owned.recipe+".svg");b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(38)))
+		if not owned.is_empty():b.icon=load("res://assets/kingdom/"+owned.recipe+".svg");b.add_theme_color_override("icon_normal_color",Color.WHITE);b.tooltip_text+=" · "+game.realm_ui.localized(I.recipes()[owned.recipe].name)
 func clear_details():
 	for child in details.get_children():details.remove_child(child);child.queue_free()
 func show_summary():
@@ -126,6 +107,7 @@ func show_summary():
 	details.add_child(p.text(say("Select an item to compare and manage it.","Karşılaştırmak ve yönetmek için eşya seç."),21,T.MUTED))
 func show_item(id: int):
 	if not is_instance_valid(details):return
+	if is_instance_valid(details_window):details_window.show()
 	var owned=I.item(game.world,id)
 	if owned.is_empty():return
 	clear_details();var d=I.recipes()[owned.recipe];var slot=d.get("category","tool")
@@ -189,10 +171,10 @@ func skills():
 		info.add_child(p.text(str(12+i*3)+" mana · "+str(4+i*.5)+say("s cooldown"," sn bekleme"),16,T.MUTED))
 		var train=p.action(row,"+",func():
 			if R.train(game.world,index):game.realm_ui.changed();skills())
-		train.size_flags_horizontal=Control.SIZE_SHRINK_END;train.custom_minimum_size=Vector2(maxf(48,p.px(64)),maxf(48,p.px(58)));compact_button(train);train.tooltip_text=say("Spend one skill point","Bir beceri puanı harca")
+		train.size_flags_horizontal=Control.SIZE_SHRINK_END;train.custom_minimum_size=Vector2(p.px(32),p.px(30));compact_button(train);train.tooltip_text=say("Spend one skill point","Bir beceri puanı harca")
 		train.disabled=not R.home(game.world) or R.points(game.world,true)==0 or int(prog.skills[i])>=3 or H.level(game.world.kingdom.adventure.hero)<1+i*2
 		for slot in range(3):
 			var target=slot;var assign=p.action(row,str(slot+1),func():
 				if R.home(game.world):prog.bar[target]=index;game.realm_ui.changed();skills(),int(prog.bar[slot])==i)
-			assign.size_flags_horizontal=Control.SIZE_SHRINK_END;assign.custom_minimum_size=Vector2(maxf(48,p.px(64)),maxf(48,p.px(58)));compact_button(assign)
+			assign.size_flags_horizontal=Control.SIZE_SHRINK_END;assign.custom_minimum_size=Vector2(p.px(32),p.px(30));compact_button(assign)
 			assign.disabled=not R.home(game.world) or (i!=0 and int(prog.skills[i])==0);assign.tooltip_text=say("Assign to active slot ","Aktif yuvaya ata: ")+str(slot+1)

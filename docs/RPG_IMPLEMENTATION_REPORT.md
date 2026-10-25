@@ -1,5 +1,7 @@
 # RPG interface implementation checkpoint — 25 October 2026
 
+Historical checkpoint at `51f02ab`. The subsequent [compact mobile UI pass](CLASSIC_MOBILE_UI.md) replaces these wide panel layouts; its screenshots and Android evidence are separate. The APK path and hashes below describe this older checkpoint.
+
 This is a working implementation checkpoint, **not completion of the entire accepted RPG plan**.
 
 ## Implemented and connected to the game

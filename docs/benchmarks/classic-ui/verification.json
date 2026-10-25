@@ -1,0 +1,174 @@
+{
+  "all_passed": true,
+  "checks": {
+    "1280x720_adventure_entry": true,
+    "1280x720_attributes_window": true,
+    "1280x720_chat_does_not_move": true,
+    "1280x720_chat_reference_proportion": true,
+    "1280x720_circular_attack": true,
+    "1280x720_combat_modal_resumes": true,
+    "1280x720_combat_modal_single_hud": true,
+    "1280x720_comparison_bounds": true,
+    "1280x720_inventory_proportion": true,
+    "1280x720_inventory_seven_columns": true,
+    "1280x720_map_window": true,
+    "1280x720_menu_window": true,
+    "1280x720_nav_compact": true,
+    "1280x720_quest_window": true,
+    "1280x720_skills_window": true,
+    "1280x720_status_compact": true,
+    "1280x720_stick_accepts_touch": true,
+    "1280x720_world_remains_visible": true,
+    "1600x720_adventure_entry": true,
+    "1600x720_attributes_window": true,
+    "1600x720_chat_does_not_move": true,
+    "1600x720_chat_reference_proportion": true,
+    "1600x720_circular_attack": true,
+    "1600x720_combat_modal_resumes": true,
+    "1600x720_combat_modal_single_hud": true,
+    "1600x720_comparison_bounds": true,
+    "1600x720_inventory_proportion": true,
+    "1600x720_inventory_seven_columns": true,
+    "1600x720_map_window": true,
+    "1600x720_menu_window": true,
+    "1600x720_nav_compact": true,
+    "1600x720_quest_window": true,
+    "1600x720_skills_window": true,
+    "1600x720_status_compact": true,
+    "1600x720_stick_accepts_touch": true,
+    "1600x720_world_remains_visible": true,
+    "1920x1080_adventure_entry": true,
+    "1920x1080_attributes_window": true,
+    "1920x1080_chat_does_not_move": true,
+    "1920x1080_chat_reference_proportion": true,
+    "1920x1080_circular_attack": true,
+    "1920x1080_combat_modal_resumes": true,
+    "1920x1080_combat_modal_single_hud": true,
+    "1920x1080_comparison_bounds": true,
+    "1920x1080_inventory_proportion": true,
+    "1920x1080_inventory_seven_columns": true,
+    "1920x1080_map_window": true,
+    "1920x1080_menu_window": true,
+    "1920x1080_nav_compact": true,
+    "1920x1080_quest_window": true,
+    "1920x1080_skills_window": true,
+    "1920x1080_status_compact": true,
+    "1920x1080_stick_accepts_touch": true,
+    "1920x1080_world_remains_visible": true,
+    "960x540_adventure_entry": true,
+    "960x540_attributes_window": true,
+    "960x540_chat_does_not_move": true,
+    "960x540_chat_reference_proportion": true,
+    "960x540_circular_attack": true,
+    "960x540_combat_modal_resumes": true,
+    "960x540_combat_modal_single_hud": true,
+    "960x540_comparison_bounds": true,
+    "960x540_inventory_proportion": true,
+    "960x540_inventory_seven_columns": true,
+    "960x540_map_window": true,
+    "960x540_menu_window": true,
+    "960x540_nav_compact": true,
+    "960x540_quest_window": true,
+    "960x540_skills_window": true,
+    "960x540_status_compact": true,
+    "960x540_stick_accepts_touch": true,
+    "960x540_world_remains_visible": true,
+    "capture_attributes-1280x720": true,
+    "capture_combat-1280x720": true,
+    "capture_combat-1600x720": true,
+    "capture_combat-1920x1080": true,
+    "capture_combat-960x540": true,
+    "capture_combat-inventory-1280x720": true,
+    "capture_combat-inventory-1600x720": true,
+    "capture_combat-inventory-1920x1080": true,
+    "capture_combat-inventory-960x540": true,
+    "capture_home-1280x720": true,
+    "capture_home-1600x720": true,
+    "capture_home-1920x1080": true,
+    "capture_home-960x540": true,
+    "capture_inventory-1280x720": true,
+    "capture_inventory-1600x720": true,
+    "capture_inventory-1920x1080": true,
+    "capture_inventory-960x540": true,
+    "capture_item-detail-1280x720": true,
+    "capture_item-detail-1600x720": true,
+    "capture_item-detail-1920x1080": true,
+    "capture_item-detail-960x540": true,
+    "capture_map-1280x720": true,
+    "capture_menu-1280x720": true,
+    "capture_quest-1280x720": true,
+    "capture_skills-1280x720": true,
+    "save_compatible": true
+  },
+  "measurements": [
+    {
+      "chat": [
+        336.0,
+        139.0
+      ],
+      "inventory": [
+        664.0,
+        53.0,
+        288.0,
+        420.0
+      ],
+      "navigation_height": 33.0,
+      "viewport": [
+        960,
+        540
+      ]
+    },
+    {
+      "chat": [
+        448.0,
+        185.0
+      ],
+      "inventory": [
+        886.0,
+        70.0,
+        384.0,
+        560.0
+      ],
+      "navigation_height": 44.0,
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "chat": [
+        448.0,
+        185.0
+      ],
+      "inventory": [
+        1206.0,
+        70.0,
+        384.0,
+        560.0
+      ],
+      "navigation_height": 44.0,
+      "viewport": [
+        1600,
+        720
+      ]
+    },
+    {
+      "chat": [
+        672.0,
+        278.0
+      ],
+      "inventory": [
+        1329.0,
+        105.0,
+        576.0,
+        840.0
+      ],
+      "navigation_height": 66.0,
+      "viewport": [
+        1920,
+        1080
+      ]
+    }
+  ],
+  "source": "actual Godot rendering; scripted UI and touch events, not physical-device certification"
+}

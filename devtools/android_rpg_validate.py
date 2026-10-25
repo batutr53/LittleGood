@@ -1,7 +1,9 @@
 """Actual emulator install/start/render QA. Model navigation is programmatic, not native touch."""
 from pathlib import Path
-import subprocess,json,time,hashlib,uuid
-r=Path(__file__).resolve().parents[1];out=r/'builds/rpg-android';out.mkdir(exist_ok=True)
+import subprocess,json,time,hashlib,uuid,argparse
+parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');args=parser.parse_args()
+assert all(Path(v).name==v for v in [args.apk,args.output,args.screenshots])
+r=Path(__file__).resolve().parents[1];out=r/'builds'/args.output;out.mkdir(exist_ok=True)
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe';pkg='org.littlegod.livinguniverse.rpgqa';player='org.littlegod.livinguniverse'
 def run(*args,check=True):return subprocess.run([str(adb),'-s','emulator-5554',*args],capture_output=True,check=check,timeout=120).stdout
 def read(name,package=pkg):
@@ -22,7 +24,7 @@ def read(name,package=pkg):
 def put(name,source):
     run('push',str(source),'/data/local/tmp/littlegod-rpg-qa');run('shell','run-as',pkg,'cp','/data/local/tmp/littlegod-rpg-qa','files/'+name)
 names=['planet.json','planet.json.bak','settings.cfg'];before={name:read(name,player) for name in names}
-run('shell','am','force-stop',pkg);run('install','--no-incremental','-r',str(r/'builds/android/LittleGod-RPG-interface-qa-debug.apk'));run('shell','run-as',pkg,'mkdir','-p','files')
+run('shell','am','force-stop',pkg);run('install','--no-incremental','-r',str(r/'builds/android'/args.apk));run('shell','run-as',pkg,'mkdir','-p','files')
 put('rpg-fixture.json',r/'tests/fixtures/planet-v085e2.json')
 run_id=uuid.uuid4().hex
 config=out/'phase4_qa.json';config.write_text(json.dumps({'phase':'rpg','run_id':run_id}));put('phase4_qa.json',config)
@@ -40,6 +42,6 @@ after={name:read(name,player) for name in names}
 result['player_files_preserved']=all(before[name]==after[name] for name in names)
 result['player_file_hashes']={name:{'before':hashlib.sha256(before[name]).hexdigest(),'after':hashlib.sha256(after[name]).hexdigest(),'before_bytes':len(before[name]),'after_bytes':len(after[name])} for name in names}
 for name in ['rpg-android-home','rpg-android-inventory','rpg-android-mage','rpg-android-adventure']:
-    image=read(name+'.png');(r/'docs/screenshots/rpg'/f'{name}.png').write_bytes(image)
+    image=read(name+'.png');(r/'docs/screenshots'/args.screenshots/f'{name}.png').write_bytes(image)
 (out/'logcat.txt').write_bytes(run('logcat','-d','--pid='+str(result['pid']),'-s','godot:V','AndroidRuntime:E'))
 (out/'result.json').write_text(json.dumps(result,indent=2),encoding='utf8');print(json.dumps(result,indent=2));assert result['all_passed'] and result['player_files_preserved']
