@@ -1,4 +1,12 @@
-# LittleGod — V4B isolated animation preview / E3 gameplay baseline
+# LittleGod — RPG interface checkpoint / E3 gameplay baseline
+
+## RPG implementation checkpoint — 25 October 2026
+
+The requested RPG transformation is **in progress**. The new bottom-navigation HUD, combined character/inventory screen, four-hero roster, fourteen equipment positions, attribute/skill allocation, class combat behavior, 28 original equipment definitions and original generated class illustrations are connected to actual game state. Chat client/server source is added and compiles, but Windows App Control blocks running the API; live chat is not verified. Complete directional/layered character animation and full adaptation of the 877-item research catalogue are still outstanding.
+
+Full report, exact evidence and remaining work: [RPG_IMPLEMENTATION_REPORT.md](RPG_IMPLEMENTATION_REPORT.md). Retained checks: **822 passed**; new progression/combat: **21 + 41 passed**, plus **14** UI/travel interaction checks; landscape UI: **270 passed**. Minimized chat reopens, portraits follow class selection, learned abilities show real cooldowns, and safe travel banks expedition cargo before destination selection. APK: `D:/LittleGod/builds/android/LittleGod-RPG-interface-qa-debug.apk`. Android verification uses a separate QA package in the emulator; no physical device was tested. Stable 60/30 FPS across sessions is not claimed.
+
+The sections below describe earlier checkpoints; their layouts and art descriptions are historical.
 
 ## Landscape UI continuity update — 25 October 2026
 

@@ -22,6 +22,27 @@ namespace LittleGod.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("LittleGod.Api.ChatMessage", b => {
+                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                b.Property<string>("Sender").IsRequired().HasColumnType("text");
+                b.Property<string>("Recipient").HasColumnType("text");
+                b.Property<string>("Text").IsRequired().HasMaxLength(300).HasColumnType("character varying(300)");
+                b.Property<DateTimeOffset>("Created").HasColumnType("timestamp with time zone");
+                b.HasKey("Id");b.HasIndex("Sender","Created");b.HasIndex("Recipient","Id");b.ToTable("ChatMessage");
+            });
+            modelBuilder.Entity("LittleGod.Api.ChatReport", b => {
+                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                b.Property<long>("MessageId").HasColumnType("bigint");
+                b.Property<string>("Reporter").IsRequired().HasColumnType("text");
+                b.Property<string>("Sender").IsRequired().HasColumnType("text");
+                b.Property<string>("Text").IsRequired().HasMaxLength(300).HasColumnType("character varying(300)");
+                b.Property<string>("Reason").IsRequired().HasMaxLength(300).HasColumnType("character varying(300)");
+                b.Property<DateTimeOffset>("Created").HasColumnType("timestamp with time zone");
+                b.HasKey("Id");b.HasIndex("Reporter","MessageId").IsUnique();b.ToTable("ChatReport");
+            });
+
             modelBuilder.Entity("LittleGod.Api.Activity", b =>
                 {
                     b.Property<long>("Id")

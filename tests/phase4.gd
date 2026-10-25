@@ -121,7 +121,7 @@ func run() -> void:
 	motion.relative = Vector2(100, 60)
 	game._unhandled_input(motion)
 	verify(game.view.pan == start_pan and not game.dragging, "Dragging out of a UI control cannot pan the world")
-	press.position = Vector2(330, 550)
+	press.position = game.get_viewport_rect().size * Vector2(.5,.45)
 	game._input(press)
 	game._unhandled_input(press)
 	game._unhandled_input(motion)

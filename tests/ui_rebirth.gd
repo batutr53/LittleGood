@@ -16,7 +16,8 @@ func settle():
  await process_frame;await process_frame
 func capture(name):
  await settle();await RenderingServer.frame_post_draw
- root.get_texture().get_image().save_png("res://docs/screenshots/ui-rebirth/"+name+".png")
+ DirAccess.make_dir_recursive_absolute("res://builds/ui-rebirth/captures")
+ checks["capture-"+name]=root.get_texture().get_image().save_png("res://builds/ui-rebirth/captures/"+name+".png")==OK
 func fits(control: Control) -> bool:
  var rect=control.get_global_rect();var viewport=game.get_viewport_rect();return rect.position.x>=-1 and rect.position.y>=-1 and rect.end.x<=viewport.size.x+1 and rect.end.y<=viewport.size.y+1
 func visible_in_surface(control: Control) -> bool:
@@ -28,7 +29,9 @@ func run():
  var ui=game.ui;var p=ui.premium;checks.production_default=ui.rebirth_enabled and p!=null;checks.calm_hud=not p.tray.visible
  checks.landscape_default=game.get_viewport_rect().size.x>game.get_viewport_rect().size.y
  checks.world_camera_centred_for_landscape=game.view.origin.x>400 and game.view.origin.y<500
+ p.route("menu");await settle()
  checks.quick_access_icons=["AccessText","AccessContrast","AccessSound","AccessHaptics","AccessQuality","AccessLanguage"].all(func(node_name):return ui.root.find_child(node_name,true,false)!=null)
+ ui.close()
  var default_scale=ui.accessibility_scale;ui.accessibility_toggle("text");await settle();checks.quick_text_size_toggle=ui.accessibility_scale!=default_scale;ui.accessibility_toggle("text");await settle();checks.quick_text_size_restores=ui.accessibility_scale==default_scale
  var default_contrast=ui.high_contrast;ui.accessibility_toggle("contrast");await settle();checks.quick_contrast_toggle=ui.high_contrast!=default_contrast;ui.accessibility_toggle("contrast");await settle();checks.quick_contrast_restores=ui.high_contrast==default_contrast
  var blocked=0

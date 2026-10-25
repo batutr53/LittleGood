@@ -47,6 +47,11 @@ var pack_panel
 var pack_was_frozen=false
 var warrior_visual
 var presentation_feedback: Array=[]
+var ranged_trails: Array=[]
+var rpg_overlay=false
+var overlay_was_frozen=false
+var rpg_health_bar: ProgressBar
+var rpg_mana_bar: ProgressBar
 func say(en: String,tr: String) -> String:return tr if game.ui.language=="tr" else en
 func _ready() -> void:
 	var started=Time.get_ticks_usec();game.show_world(false);game.ui.root.hide()
@@ -77,7 +82,8 @@ func _ready() -> void:
 		regional_prop("forgotten-mine",Vector2(480,310),250,.5)
 		regional_prop("mine-cart",Vector2(560,370),100,.5)
 		for key in region_map.NODES:regional_prop("ore-vein" if key=="ore" else "mountain-rock",region_map.NODES[key].point,110,.42,.4 if game.world.kingdom.adventure.run.nodes[key] else 1.0)
-	make_body(0,Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y),load("res://assets/adventure/warrior.png"),110)
+	var hero_texture="res://assets/rpg/"+str(game.world.kingdom.adventure.hero.get("class","warrior"))+".png"
+	make_body(0,Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y),load(hero_texture) if ResourceLoader.exists(hero_texture) else load("res://assets/adventure/warrior.png"),110)
 	if game.v4_preview:
 		bodies[0].get_node("Art").hide();warrior_visual=preload("res://scripts/warrior_visual.gd").new();bodies[0].add_child(warrior_visual);warrior_visual.sample(game.world)
 	for e in game.world.kingdom.adventure.run.enemies:make_body(int(e.id),Vector2(e.x,e.y),load("res://assets/adventure/"+e.kind+".svg"),180 if e.kind=="thornheart" else 100)
@@ -105,6 +111,42 @@ func place(node: Control,rect: Rect2) -> void:
 func add_button(id: String,text: String,rect: Rect2,cb: Callable) -> void:
 	var b=game.ui.button(text,cb,true);b.add_theme_font_size_override("font_size",18);place(b,rect);buttons[id]=b;button_titles[id]=text
 func build_hud() -> void:
+	if not game.v4_preview:rpg_hud();return
+	legacy_hud()
+func rpg_hud():
+	var layer=CanvasLayer.new();layer.layer=12;add_child(layer);hud=Control.new();hud.mouse_filter=Control.MOUSE_FILTER_IGNORE;layer.add_child(hud)
+	var extent=get_viewport_rect().size;var width=extent.x;var height=extent.y
+	var status_panel=Panel.new();status_panel.add_theme_stylebox_override("panel",preload("res://scripts/premium_theme.gd").box(Color(.055,.06,.04,.87),true));place(status_panel,Rect2(10,10,360,105))
+	health=game.ui.label("",20);place(health,Rect2(18,16,340,45));objective=game.ui.label("",17);place(objective,Rect2(width-345,16,325,85))
+	rpg_health_bar=ProgressBar.new();rpg_health_bar.show_percentage=false;var red=StyleBoxFlat.new();red.bg_color=Color("9c3931");rpg_health_bar.add_theme_stylebox_override("fill",red);place(rpg_health_bar,Rect2(18,68,330,10))
+	rpg_mana_bar=ProgressBar.new();rpg_mana_bar.show_percentage=false;var blue=StyleBoxFlat.new();blue.bg_color=Color("426b9c");rpg_mana_bar.add_theme_stylebox_override("fill",blue);place(rpg_mana_bar,Rect2(18,85,330,10))
+	var chat_background=Panel.new();chat_background.add_theme_stylebox_override("panel",preload("res://scripts/premium_theme.gd").box(Color(.055,.06,.04,.72),true));place(chat_background,Rect2(18,height-340,295,95))
+	message=game.ui.label(say("Ready","Hazır"),17);place(message,Rect2(20,height-285,290,90))
+	message.position=Vector2(28,height-330);message.size=Vector2(275,78)
+	add_button("return",say("Home","Dön"),Rect2(width-118,125,100,54),go_home)
+	add_button("pause",say("Pause","Dur"),Rect2(width-118,188,100,54),toggle_pause)
+	var mini=preload("res://scripts/rpg_minimap.gd").new();mini.game=game;mini.adventure=true;place(mini,Rect2(width-265,125,130,116))
+	var bottom=HBoxContainer.new();place(bottom,Rect2(18,height-76,width-36,64))
+	for item in [["hero","hero",say("Hero","Karakter")],["inventory","bag",say("Inventory","Çanta")],["skills","sword",say("Skills","Beceri")],["attributes","shield",say("Stats","Stat")],["quest","quest",say("Quest","Görev")],["map","map",say("Travel","Işınlan")],["chat","workers",say("Chat","Sohbet")],["menu","menu",say("More","Diğer")]]:
+		var key=item[0];game.ui.premium.rpg.icon_action(bottom,item[1],item[2],func():open_rpg_panel(key))
+	for row in [["attack",say("Attack","Saldır"),Vector2(width-214,height-165)],["skill",say("Skill 1","Beceri 1"),Vector2(width-324,height-165)],["dodge",say("Dodge","Kaçın"),Vector2(width-104,height-165)],["heal",say("Potion","İksir"),Vector2(width-104,height-235)],["interact",say("Inspect","İncele"),Vector2(width-214,height-235)]]:
+		var key=row[0];add_button(key,row[1],Rect2(row[2],Vector2(94,64)),func():
+			if key=="interact":interact()
+			else:actions[key]=true)
+		if key=="attack":buttons[key].button_down.connect(func():attack_held=true);buttons[key].button_up.connect(func():attack_held=false)
+	for i in range(1,3):
+		var index=i;add_button("rpg_skill"+str(i),say("Skill ","Beceri ")+str(i+1),Rect2(width-324-i*110,height-165,94,64),func():actions.skill=true;actions.skill_slot=index)
+	for key in buttons:
+		var b=buttons[key];var skin=preload("res://scripts/premium_theme.gd").box(Color(.12,.15,.19,.94),true);skin.set_corner_radius_all(38);skin.set_content_margin_all(4);b.add_theme_stylebox_override("normal",skin);b.add_theme_stylebox_override("hover",skin);b.custom_minimum_size=Vector2(64,64);b.size=Vector2(94,64);b.add_theme_font_size_override("font_size",14)
+	stick=preload("res://scripts/adventure_stick.gd").new();stick.position=Vector2(125,height-155);layer.add_child(stick)
+	if region=="sanctuary":add_button("pack",say("Pack","Çanta"),Rect2(360,18,90,54),toggle_pack)
+	refresh_hud()
+func open_rpg_panel(key: String):
+	if key=="map":
+		if not A.can_travel(game.world):message.text=say("Leave combat before traveling.","Işınlanmak için önce savaştan uzaklaş.");return
+		go_home();game.ui.premium.call_deferred("route","map");return
+	clear_combat_input();overlay_was_frozen=frozen;frozen=true;rpg_overlay=true;game.ui.layer=20;game.ui.root.show();game.ui.premium.route(key)
+func legacy_hud() -> void:
 	var layer=CanvasLayer.new();layer.layer=12;add_child(layer);hud=Control.new();hud.mouse_filter=Control.MOUSE_FILTER_IGNORE;layer.add_child(hud)
 	var height=get_viewport_rect().size.y
 	var bg=ColorRect.new();bg.color=Color(.035,.09,.12,.92);bg.mouse_filter=Control.MOUSE_FILTER_IGNORE;place(bg,Rect2(0,0,720,190))
@@ -127,10 +169,19 @@ func build_hud() -> void:
 	refresh_hud()
 func refresh_hud() -> void:
 	var h=game.world.kingdom.adventure.hero;var r=game.world.kingdom.adventure.run
+	if is_instance_valid(rpg_health_bar):
+		rpg_health_bar.max_value=H.stats(game.world).health;rpg_health_bar.value=h.hp;rpg_mana_bar.max_value=preload("res://scripts/rpg_progression.gd").modifiers(game.world).mana;rpg_mana_bar.value=game.world.rpg.progression[game.world.rpg.active].mana if game.world.has("rpg") else 100
 	health.text=h.name+" · "+str(int(h.hp))+" / "+str(H.stats(game.world).health)+say(" HP"," Can")
 	if region=="ashen_desert" and preload("res://scripts/ashen_desert.gd").poisoned(r):health.text+=say(" · POISON "," · ZEHİR ")+str(ceili((r.poison_until-r.clock)/1000.0))+"s"
 	for key in ["attack","skill","dodge","heal"]:
 		var cd=int(h.cooldowns[key]);buttons[key].text=button_titles[key]+("\n"+str(snappedf(cd/1000.0,.1))+"s" if cd>0 else "")
+	if game.world.has("rpg") and not game.v4_preview:
+		var R=preload("res://scripts/rpg_progression.gd");var p=R.selected(game.world)
+		for i in range(3):
+			var key="skill" if i==0 else "rpg_skill"+str(i);var index=int(p.bar[i]);var rank=int(p.skills[index]);var cd=int(p.get("cooldowns",[0,0,0,0,0,0])[index]) if rank>0 else int(h.cooldowns.skill)
+			buttons[key].text=R.skill_name(h.get("class","warrior"),index,game.ui.language=="tr")+("\n"+str(snappedf(cd/1000.0,.1))+"s" if cd>0 else "")
+			buttons[key].disabled=not R.skill_ready(game.world,{"skill_slot":i})
+			buttons[key].tooltip_text=(str(12+index*3)+say(" mana"," mana")) if rank>0 else say("Starter ability","Başlangıç becerisi") if index==0 else say("Learn this ability first","Önce bu beceriyi öğren")
 	var q=preload("res://scripts/kingdom.gd").current(game.world)
 	objective.text=say("IRON HILLS · Find the mine to the north.\nInspect ore veins; take materials home.","DEMİR TEPELER · Kuzeydeki madeni bul.\nCevheri incele; malzemeyi eve taşı.") if region=="iron_hills" else say("WILDWOOD · ","YABANORMAN · ")+(game.realm_ui.localized(q.title) if not q.is_empty() else say("Explore and return safely","Keşfet ve güvenle dön"))
 	if region=="iron_hills" and r.landmark:objective.text=say("IRON HILLS · Forgotten Mine discovered\nOre and stone are finite · Home banks cargo.","DEMİR TEPELER · Unutulmuş Maden keşfedildi\nCevher ve taş sınırlı · Dön ganimeti depolar.")
@@ -140,6 +191,7 @@ func refresh_hud() -> void:
 		if e.kind=="thornheart" and e.hp>0 and Vector2(r.x,r.y).distance_to(Vector2(e.x,e.y))<320:objective.text+="\nThornheart · "+str(int(e.hp))+" / 220 · "+say("Phase ","Evre ")+("II" if e.hp<=110 else "I")
 	if h.defeated:message.text=say("Your champion fell. Home restores health and keeps your collected loot.","Şampiyonun düştü. Dön canı yeniler; toplanmış ganimetin korunur.")
 func _input(event: InputEvent) -> void:
+	if rpg_overlay:return
 	if event is InputEventScreenTouch:
 		if event.canceled:clear_combat_input();return
 		action_counts.touch=int(action_counts.get("touch",0))+1
@@ -169,6 +221,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not OS.has_feature("mobile") and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed:
 		mouse_aim=get_global_mouse_position()-bodies[0].position;actions.attack=true
 func _physics_process(delta: float) -> void:
+	if rpg_overlay:
+		if not is_instance_valid(game.ui.modal):rpg_overlay=false;game.ui.root.hide();game.ui.layer=1;frozen=overlay_was_frozen;clear_combat_input()
+		return
 	if game.suspended:clear_combat_input();return
 	if frozen:return
 	var frame_started=Time.get_ticks_usec()
@@ -189,7 +244,9 @@ func _physics_process(delta: float) -> void:
 			stone_distance+=before_position.distance_to(Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y))
 			if stone_distance>=65:stone_distance=fmod(stone_distance,65);game.audio.sanctuary("step")
 		for cue in feedback:
-			if cue is Dictionary:floats.append({"point":Vector2(cue.x,cue.y),"text":str(cue.damage),"age":0.0})
+			if cue is Dictionary:
+				floats.append({"point":Vector2(cue.x,cue.y),"text":str(cue.damage),"age":0.0})
+				if cue.get("ranged",false):ranged_trails.append({"from":Vector2(cue.fromx,cue.fromy-35),"to":Vector2(cue.x,cue.y-35),"age":0.0})
 			elif cue in ["swing","kill","boss","heal","plate","mechanism"]:game.audio.chime(6 if cue in ["kill","boss","plate","mechanism"] else 0 if cue=="swing" else 5)
 			elif cue=="hurt":game.audio.chime(2)
 			if region=="sanctuary":
@@ -209,6 +266,8 @@ func _physics_process(delta: float) -> void:
 			death_ages[e.id]=minf(1.0,float(death_ages.get(e.id,0))+delta);sprite.modulate.a=lerpf(1,.16,death_ages[e.id]);sprite.rotation=death_ages[e.id]*.22
 	bodies[0].get_node("Art").modulate=Color(1,.7,.6) if r.invulnerable>0 and r.dash==0 else Color(1,1,1,.6) if r.dash>0 else Color.WHITE
 	for f in floats:f.age+=delta;f.point.y-=delta*30
+	for trail in ranged_trails:trail.age+=delta
+	ranged_trails=ranged_trails.filter(func(trail):return trail.age<.22)
 	floats=floats.filter(func(f):return f.age<.8)
 	camera.position=camera.position.lerp(camera_target(),1-exp(-delta*7))
 	hud_clock+=delta;save_clock+=delta
@@ -220,6 +279,7 @@ func _physics_process(delta: float) -> void:
 	effects_were_dynamic=dynamic
 	presentation_cpu_us+=Time.get_ticks_usec()-frame_started;presentation_steps+=1
 func draw_effects(canvas: Node2D) -> void:
+	for trail in ranged_trails:canvas.draw_line(trail.from,trail.to,Color(.6,.8,1,1-trail.age/.22),3,true)
 	if not game:return
 	var draw_started=Time.get_ticks_usec()
 	var r=game.world.kingdom.adventure.run
@@ -331,4 +391,4 @@ func go_home() -> void:
 	var paused=game.world.kingdom.adventure.run.home_paused
 	if not A.exit(game.world):return
 	clear_combat_input()
-	game.adventure_scene=null;game.paused=paused;game.show_world(true);game.ui.root.show();game.ui.close();game.ui.refresh();game.checkpoint("return-home");queue_free()
+	game.adventure_scene=null;game.paused=paused;game.show_world(true);game.ui.layer=1;game.ui.root.show();game.ui.close();game.ui.refresh();game.checkpoint("return-home");queue_free()

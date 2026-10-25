@@ -1,0 +1,181 @@
+{
+  "date": "2026-10-25",
+  "milestone_complete": false,
+  "retained": {
+    "retained_checks": 745,
+    "sanctuary_checks": 77,
+    "game_checks": 822,
+    "all_passed": true,
+    "suite_seconds": 11.5,
+    "legal_1_23_seeds": [
+      7,
+      42,
+      2026
+    ]
+  },
+  "progression": {
+    "allocate": true,
+    "assassin": true,
+    "cannot_discard_equipped": true,
+    "cannot_discard_locked": true,
+    "four_heroes": true,
+    "idempotent": true,
+    "items_preserved": true,
+    "legacy_hero_preserved": true,
+    "lock": true,
+    "no_reset_in_run": true,
+    "no_switch_in_run": true,
+    "old_equipment_not_duplicated": true,
+    "overspend_rejected": true,
+    "priest_does_not_take_warrior_weapon": true,
+    "reject_negative": true,
+    "reset": true,
+    "roundtrip": true,
+    "stats_affect_combat": true,
+    "switch_priest": true,
+    "switch_warrior": true,
+    "valid_migration": true
+  },
+  "class_combat": {
+    "legal_hero": true,
+    "mage_cooldown_prevents_repeat": true,
+    "mage_enter_skill": true,
+    "mage_entry": true,
+    "mage_mana_spent": true,
+    "mage_no_switch": true,
+    "mage_range": true,
+    "mage_save": true,
+    "mage_untrained_does_not_spend_mana": true,
+    "mage_untrained_skill_locked": true,
+    "mage_valid": true,
+    "priest_cooldown_prevents_repeat": true,
+    "priest_enter_skill": true,
+    "priest_entry": true,
+    "priest_mana_spent": true,
+    "priest_no_switch": true,
+    "priest_range": true,
+    "priest_save": true,
+    "priest_untrained_does_not_spend_mana": true,
+    "priest_untrained_skill_locked": true,
+    "priest_valid": true,
+    "rogue_cooldown_prevents_repeat": true,
+    "rogue_enter_skill": true,
+    "rogue_entry": true,
+    "rogue_mana_spent": true,
+    "rogue_no_switch": true,
+    "rogue_range": true,
+    "rogue_save": true,
+    "rogue_untrained_does_not_spend_mana": true,
+    "rogue_untrained_skill_locked": true,
+    "rogue_valid": true,
+    "warrior_cooldown_prevents_repeat": true,
+    "warrior_enter_skill": true,
+    "warrior_entry": true,
+    "warrior_mana_spent": true,
+    "warrior_no_switch": true,
+    "warrior_range": true,
+    "warrior_save": true,
+    "warrior_untrained_does_not_spend_mana": true,
+    "warrior_untrained_skill_locked": true,
+    "warrior_valid": true
+  },
+  "ui_interactions": {
+    "adventure": true,
+    "chat_minimizes": true,
+    "chat_reopens": true,
+    "chat_state_survives_modal": true,
+    "class_button_switches": true,
+    "class_refresh_back_closes": true,
+    "class_switch": true,
+    "combat_blocks_travel": true,
+    "open_chat_survives_modal": true,
+    "portrait_matches_active": true,
+    "safe_travel_banks_cargo": true,
+    "safe_travel_opens_map": true,
+    "travel_allowed_at_safe_spawn": true,
+    "travel_save_valid": true
+  },
+  "ui_check_count": 270,
+  "ui_all_passed": true,
+  "android": {
+    "all_passed": true,
+    "checks": {
+      "adventure_entry": true,
+      "class_switch": true,
+      "fixture": true,
+      "inventory_visible": true,
+      "landscape": true,
+      "restore": true,
+      "save": true
+    },
+    "pid": 5580,
+    "profiles": [
+      {
+        "draw_calls": 234.0,
+        "fps": 13.9705194099411,
+        "memory_mb": 42.0721445083618,
+        "p95_ms": 79.712,
+        "process_cpu_p95_ms": 89.026,
+        "scene": "paused_home_with_ambient_animation",
+        "target": 60,
+        "texture_memory_mb": 34.1994018554688,
+        "world_update_cpu_p95_ms": 1.15
+      },
+      {
+        "draw_calls": 186.0,
+        "fps": 18.572405120472,
+        "memory_mb": 42.0613870620728,
+        "p95_ms": 61.645,
+        "process_cpu_p95_ms": 62.609,
+        "scene": "paused_home_with_ambient_animation",
+        "target": 30,
+        "texture_memory_mb": 34.1994018554688,
+        "world_update_cpu_p95_ms": 1.092
+      }
+    ],
+    "run_id": "b337b7f3714645acb70d9aad942a4a02",
+    "source": "actual_android_emulator_render_with_programmatic_model_actions_no_native_input_claim",
+    "stage": "rpg_complete",
+    "viewport": [
+      1600.0,
+      720.0
+    ],
+    "physical_device": false,
+    "player_files_preserved": true,
+    "player_file_hashes": {
+      "planet.json": {
+        "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+        "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+        "before_bytes": 40618,
+        "after_bytes": 40618
+      },
+      "planet.json.bak": {
+        "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+        "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+        "before_bytes": 41031,
+        "after_bytes": 41031
+      },
+      "settings.cfg": {
+        "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "before_bytes": 0,
+        "after_bytes": 0
+      }
+    }
+  },
+  "apk": {
+    "apk": "D:\\LittleGod\\builds\\android\\LittleGod-RPG-interface-qa-debug.apk",
+    "bytes": 69305696,
+    "sha256": "1f63fe1b26f227f529621d5e2214174d90d640b5395223e365724f442a3a328a",
+    "package": "org.littlegod.livinguniverse.rpgqa",
+    "production_preset_preserved": true
+  },
+  "research": {
+    "read": 877,
+    "failed": 0,
+    "numeric": 492
+  },
+  "online_live_verified": false,
+  "online_blocker": "Windows App Control 0x800711C7 prevents loading built API DLL",
+  "directional_equipment_animation_complete": false
+}

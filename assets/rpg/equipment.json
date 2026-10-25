@@ -1,0 +1,714 @@
+[
+  {
+    "id": "rpg_warrior_armor",
+    "name": [
+      "Emberguard Cuirass",
+      "Köz Muhafızı Göğüslük"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "armor",
+    "classes": [
+      "warrior"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "armor"
+  },
+  {
+    "id": "rpg_warrior_head",
+    "name": [
+      "Emberguard Helm",
+      "Köz Muhafızı Başlık"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "head",
+    "classes": [
+      "warrior"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "head"
+  },
+  {
+    "id": "rpg_warrior_legs",
+    "name": [
+      "Emberguard Legguards",
+      "Köz Muhafızı Bacaklık"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "legs",
+    "classes": [
+      "warrior"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "legs"
+  },
+  {
+    "id": "rpg_warrior_hands",
+    "name": [
+      "Emberguard Gauntlets",
+      "Köz Muhafızı Eldiven"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "hands",
+    "classes": [
+      "warrior"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "hands"
+  },
+  {
+    "id": "rpg_warrior_feet",
+    "name": [
+      "Emberguard Boots",
+      "Köz Muhafızı Çizme"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "feet",
+    "classes": [
+      "warrior"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "feet"
+  },
+  {
+    "id": "rpg_warrior_weapon",
+    "name": [
+      "Emberguard Blade",
+      "Köz Muhafızı Kılıcı"
+    ],
+    "description": [
+      "A balanced class starter weapon.",
+      "Sınıf için dengeli başlangıç silahı."
+    ],
+    "category": "weapon",
+    "classes": [
+      "warrior"
+    ],
+    "cost": {
+      "iron": 1,
+      "wood": 1
+    },
+    "effects": {
+      "attack": 5
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "weapon"
+  },
+  {
+    "id": "rpg_priest_armor",
+    "name": [
+      "Dawnkeeper Cuirass",
+      "Şafak Bekçisi Göğüslük"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "armor",
+    "classes": [
+      "priest"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "armor"
+  },
+  {
+    "id": "rpg_priest_head",
+    "name": [
+      "Dawnkeeper Helm",
+      "Şafak Bekçisi Başlık"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "head",
+    "classes": [
+      "priest"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "head"
+  },
+  {
+    "id": "rpg_priest_legs",
+    "name": [
+      "Dawnkeeper Legguards",
+      "Şafak Bekçisi Bacaklık"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "legs",
+    "classes": [
+      "priest"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "legs"
+  },
+  {
+    "id": "rpg_priest_hands",
+    "name": [
+      "Dawnkeeper Gauntlets",
+      "Şafak Bekçisi Eldiven"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "hands",
+    "classes": [
+      "priest"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "hands"
+  },
+  {
+    "id": "rpg_priest_feet",
+    "name": [
+      "Dawnkeeper Boots",
+      "Şafak Bekçisi Çizme"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "feet",
+    "classes": [
+      "priest"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "feet"
+  },
+  {
+    "id": "rpg_priest_weapon",
+    "name": [
+      "Dawnkeeper Mace",
+      "Şafak Bekçisi Topuzu"
+    ],
+    "description": [
+      "A balanced class starter weapon.",
+      "Sınıf için dengeli başlangıç silahı."
+    ],
+    "category": "weapon",
+    "classes": [
+      "priest"
+    ],
+    "cost": {
+      "iron": 1,
+      "wood": 1
+    },
+    "effects": {
+      "attack": 5
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "weapon"
+  },
+  {
+    "id": "rpg_mage_armor",
+    "name": [
+      "Starweave Cuirass",
+      "Yıldız Örgüsü Göğüslük"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "armor",
+    "classes": [
+      "mage"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "armor"
+  },
+  {
+    "id": "rpg_mage_head",
+    "name": [
+      "Starweave Helm",
+      "Yıldız Örgüsü Başlık"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "head",
+    "classes": [
+      "mage"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "head"
+  },
+  {
+    "id": "rpg_mage_legs",
+    "name": [
+      "Starweave Legguards",
+      "Yıldız Örgüsü Bacaklık"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "legs",
+    "classes": [
+      "mage"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "legs"
+  },
+  {
+    "id": "rpg_mage_hands",
+    "name": [
+      "Starweave Gauntlets",
+      "Yıldız Örgüsü Eldiven"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "hands",
+    "classes": [
+      "mage"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "hands"
+  },
+  {
+    "id": "rpg_mage_feet",
+    "name": [
+      "Starweave Boots",
+      "Yıldız Örgüsü Çizme"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "feet",
+    "classes": [
+      "mage"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "feet"
+  },
+  {
+    "id": "rpg_mage_weapon",
+    "name": [
+      "Starweave Staff",
+      "Yıldız Örgüsü Asası"
+    ],
+    "description": [
+      "A balanced class starter weapon.",
+      "Sınıf için dengeli başlangıç silahı."
+    ],
+    "category": "weapon",
+    "classes": [
+      "mage"
+    ],
+    "cost": {
+      "iron": 1,
+      "wood": 1
+    },
+    "effects": {
+      "attack": 5
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "weapon"
+  },
+  {
+    "id": "rpg_rogue_armor",
+    "name": [
+      "Nightleaf Cuirass",
+      "Gece Yaprağı Göğüslük"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "armor",
+    "classes": [
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "armor"
+  },
+  {
+    "id": "rpg_rogue_head",
+    "name": [
+      "Nightleaf Helm",
+      "Gece Yaprağı Başlık"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "head",
+    "classes": [
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "head"
+  },
+  {
+    "id": "rpg_rogue_legs",
+    "name": [
+      "Nightleaf Legguards",
+      "Gece Yaprağı Bacaklık"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "legs",
+    "classes": [
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "legs"
+  },
+  {
+    "id": "rpg_rogue_hands",
+    "name": [
+      "Nightleaf Gauntlets",
+      "Gece Yaprağı Eldiven"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "hands",
+    "classes": [
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "hands"
+  },
+  {
+    "id": "rpg_rogue_feet",
+    "name": [
+      "Nightleaf Boots",
+      "Gece Yaprağı Çizme"
+    ],
+    "description": [
+      "Original class equipment.",
+      "Sınıfa özel özgün donanım."
+    ],
+    "category": "feet",
+    "classes": [
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "defense": 1
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "feet"
+  },
+  {
+    "id": "rpg_rogue_weapon",
+    "name": [
+      "Nightleaf Bow",
+      "Gece Yaprağı Yayı"
+    ],
+    "description": [
+      "A balanced class starter weapon.",
+      "Sınıf için dengeli başlangıç silahı."
+    ],
+    "category": "weapon",
+    "classes": [
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "wood": 1
+    },
+    "effects": {
+      "attack": 5
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "weapon"
+  },
+  {
+    "id": "rpg_neck",
+    "name": [
+      "Wayfarer Pendant",
+      "Gezgin Kolyesi"
+    ],
+    "description": [
+      "A simple protective accessory.",
+      "Basit bir koruyucu takı."
+    ],
+    "category": "neck",
+    "classes": [
+      "warrior",
+      "priest",
+      "mage",
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "health": 3
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "neck"
+  },
+  {
+    "id": "rpg_belt",
+    "name": [
+      "Wayfarer Belt",
+      "Gezgin Kemeri"
+    ],
+    "description": [
+      "A simple protective accessory.",
+      "Basit bir koruyucu takı."
+    ],
+    "category": "belt",
+    "classes": [
+      "warrior",
+      "priest",
+      "mage",
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "health": 3
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "belt"
+  },
+  {
+    "id": "rpg_ring_left",
+    "name": [
+      "Wayfarer Ring",
+      "Gezgin Yüzüğü"
+    ],
+    "description": [
+      "A simple protective accessory.",
+      "Basit bir koruyucu takı."
+    ],
+    "category": "ring_left",
+    "classes": [
+      "warrior",
+      "priest",
+      "mage",
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "health": 3
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "ring_left"
+  },
+  {
+    "id": "rpg_ear_left",
+    "name": [
+      "Wayfarer Earring",
+      "Gezgin Küpesi"
+    ],
+    "description": [
+      "A simple protective accessory.",
+      "Basit bir koruyucu takı."
+    ],
+    "category": "ear_left",
+    "classes": [
+      "warrior",
+      "priest",
+      "mage",
+      "rogue"
+    ],
+    "cost": {
+      "iron": 1,
+      "gold": 1
+    },
+    "effects": {
+      "health": 3
+    },
+    "level": 11,
+    "ticks": 3,
+    "slot": "ear_left"
+  }
+]

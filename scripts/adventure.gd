@@ -40,6 +40,13 @@ static func enter(w: Dictionary,home_paused: bool=false,region: String="") -> bo
 	if w.kingdom.claimed.size()>=14 and not a.run.enemies.any(func(e):return e.kind=="thornheart"):
 		a.run.enemies.append({"id":4,"kind":"thornheart","x":720,"y":230,"hp":220,"state":"idle","timer":0,"aimx":0,"aimy":0,"pattern":0})
 	return true
+static func can_travel(w: Dictionary) -> bool:
+	if not H.writable(w) or w.kingdom.adventure.hero.is_empty():return false
+	var r=w.kingdom.adventure.run
+	if r.is_empty() or not r.get("active",false) or w.kingdom.adventure.hero.defeated:return false
+	if int(r.swing)>0 or int(r.dash)>0:return false
+	var position=Vector2(r.x,r.y)
+	return not r.enemies.any(func(e):return e.hp>0 and position.distance_to(Vector2(e.x,e.y))<270)
 static func exit(w: Dictionary) -> bool:
 	if not H.writable(w) or w.kingdom.adventure.run.is_empty() or not w.kingdom.adventure.run.active:return false
 	var a=w.kingdom.adventure;var r=a.run
@@ -64,6 +71,8 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 	if not H.writable(w) or w.kingdom.adventure.run.is_empty() or not w.kingdom.adventure.run.active:return []
 	var a=w.kingdom.adventure;var r=a.run;var h=a.hero;r.clock+=STEP
 	var feedback=[]
+	load("res://scripts/rpg_progression.gd").combat_tick(w)
+	if w.has("rpg") and input.get("skill",false):h.cooldowns.skill=0 if load("res://scripts/rpg_progression.gd").skill_ready(w,input) else 100
 	for key in h.cooldowns:h.cooldowns[key]=maxi(0,int(h.cooldowns[key])-STEP)
 	r.invulnerable=maxi(0,int(r.invulnerable)-STEP);r.swing=maxi(0,int(r.swing)-STEP)
 	r.dash=maxi(0,int(r.get("dash",0))-STEP)
@@ -81,6 +90,8 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 	if input.get("heal",false) and heal(w):feedback.append("heal")
 	if (input.get("attack",false) and h.cooldowns.attack==0) or (input.get("skill",false) and h.cooldowns.skill==0):
 		var heavy=input.get("skill",false) and h.cooldowns.skill==0
+		var cast_input=input.duplicate();cast_input.skill=heavy
+		var attack_context=load("res://scripts/rpg_progression.gd").attack_context(w,cast_input)
 		h.cooldowns.attack=500
 		if heavy:h.cooldowns.skill=4000
 		r.swing=200
@@ -93,15 +104,20 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 		feedback.append("swing")
 		for e in r.enemies:
 			var offset=Vector2(e.x,e.y)-p
-			if e.hp<=0 or offset.length()>(105 if heavy else 78):continue
+			if e.hp<=0 or offset.length()>(maxi(105,int(attack_context.range)) if heavy else int(attack_context.range)):continue
+			if int(attack_context.range)>105 and not load("res://scripts/rpg_progression.gd").clear_shot(w,p,Vector2(e.x,e.y)):continue
 			if r.get("region","")=="sanctuary" and not load("res://scripts/sanctuary.gd").line_clear(p,Vector2(e.x,e.y),r):continue
-			if not heavy and offset.length()>1 and offset.normalized().dot(Vector2(r.facing[0],r.facing[1]).normalized())<.15:continue
+			if not heavy and not attack_context.area and offset.length()>1 and offset.normalized().dot(Vector2(r.facing[0],r.facing[1]).normalized())<.15:continue
 			var rng=RandomNumberGenerator.new();rng.state=int(r.rng);var critical=rng.randi_range(0,999)<int(H.stats(w).crit);r.rng=str(rng.state)
 			var armor=0 if e.kind=="dune_scorpion" and e.state=="recover" else int(enemies()[e.kind].defense)
+			if attack_context.get("pierce",false):armor=0
 			if e.kind in load("res://scripts/sanctuary.gd").KINDS:armor=load("res://scripts/sanctuary.gd").armor(e,armor);load("res://scripts/sanctuary.gd").struck(w,e)
-			var hit=maxi(1,roundi(int(H.stats(w).attack)*(1.6 if heavy else 1.0)*(1.5 if critical else 1.0))-armor)
+			var hit=maxi(1,roundi(int(H.stats(w).attack)*(float(attack_context.multiplier) if attack_context.cast else 1.6 if heavy else 1.0)*(1.5 if critical else 1.0))-armor)
+			if attack_context.multiplier==0:continue
 			e.hp=maxi(0,int(e.hp)-hit);feedback.append({"damage":hit,"x":e.x,"y":e.y})
+			if int(attack_context.range)>105:feedback[-1].fromx=r.x;feedback[-1].fromy=r.y;feedback[-1].ranged=true
 			if e.hp==0:defeat_enemy(w,e);feedback.append("boss" if e.kind=="thornheart" else "kill")
+			if int(attack_context.range)>105 and not heavy and not attack_context.area:break
 	for e in r.enemies:
 		if e.hp<=0:continue
 		if e.kind in load("res://scripts/sanctuary.gd").KINDS:feedback.append_array(load("res://scripts/sanctuary.gd").enemy_step(w,e,mover));continue
@@ -151,12 +167,17 @@ static func heal(w: Dictionary) -> bool:
 	if not h.defeated and h.cooldowns.heal==0 and a.run.get("region","")=="ashen_desert" and (h.hp<H.stats(w).health or load("res://scripts/ashen_desert.gd").poisoned(a.run)):
 		for tonic in w.kingdom.industry.items:
 			if tonic.recipe=="crystal_tonic":
-				w.kingdom.industry.items.erase(tonic);a.run.poison_next=0;a.run.poison_until=0;h.hp=mini(int(H.stats(w).health),int(h.hp)+35);h.cooldowns.heal=1500;H.event(w,"healed");return true
+				w.kingdom.industry.items.erase(tonic)
+				if w.has("rpg"):w.rpg.locked.erase(int(tonic.id))
+				a.run.poison_next=0;a.run.poison_until=0;h.hp=mini(int(H.stats(w).health),int(h.hp)+35);h.cooldowns.heal=1500;H.event(w,"healed");return true
 	if h.defeated or h.hp>=H.stats(w).health or h.cooldowns.heal>0:return false
 	var potion=I.item(w,0)
 	for item in w.kingdom.industry.items:
 		if item.recipe=="healing_potion":potion=item;break
-	if not potion.is_empty():w.kingdom.industry.items.erase(potion);h.hp=mini(int(H.stats(w).health),int(h.hp)+35)
+	if not potion.is_empty():
+		w.kingdom.industry.items.erase(potion)
+		if w.has("rpg"):w.rpg.locked.erase(int(potion.id))
+		h.hp=mini(int(H.stats(w).health),int(h.hp)+35)
 	elif a.run.cargo.get("herb",0)>0:a.run.cargo.herb-=1;h.hp=mini(int(H.stats(w).health),int(h.hp)+25)
 	elif w.kingdom.stock.herb>=1000:w.kingdom.stock.herb-=1000;h.hp=mini(int(H.stats(w).health),int(h.hp)+25)
 	else:return false

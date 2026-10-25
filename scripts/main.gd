@@ -333,7 +333,10 @@ func reset_gesture() -> void:
 
 func navigate_back() -> void:
 	if is_instance_valid(army_scene):army_scene.toggle_pause();return
-	if is_instance_valid(adventure_scene):adventure_scene.toggle_pause();return
+	if is_instance_valid(adventure_scene):
+		if adventure_scene.rpg_overlay:ui.premium.back()
+		else:adventure_scene.toggle_pause()
+		return
 	if loading: return
 	if realm_ui!=null and realm_ui.active:realm_ui.finish();return
 	if decorator!=null and decorator.active:decorator.finish();return

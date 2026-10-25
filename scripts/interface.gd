@@ -33,6 +33,7 @@ func ui_font() -> Font:
 	return body_font
 
 func accessibility_toggle(kind: String) -> void:
+	var previous=premium.current if premium!=null else ""
 	match kind:
 		"text": accessibility_scale = 1.15 if accessibility_scale < 1.1 else 1.0
 		"contrast": high_contrast = not high_contrast
@@ -42,6 +43,8 @@ func accessibility_toggle(kind: String) -> void:
 		"language": language = "tr" if language == "en" else "en"
 	game.save_settings()
 	build()
+	if premium!=null and not previous.is_empty():premium.route(previous,0,false)
+	else:close()
 
 const TEXT = {
 "guardian_victory": ["Thornheart's roots release the Wildwood. Your champion brought its living heart home.", "Thornheart'ın kökleri Yabanorman'ı serbest bıraktı. Şampiyonun onun yaşayan kalbini eve getirdi."],
@@ -271,10 +274,10 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 		b.add_theme_color_override("font_color",Color("192a2e") if primary else Color("eee4ca"))
 		b.add_theme_color_override("font_disabled_color",Color("84908a"))
 		var theme=preload("res://scripts/premium_theme.gd")
-		b.add_theme_stylebox_override("normal",theme.box(Color("c5ad7a") if primary else Color("1c3440"),primary))
-		b.add_theme_stylebox_override("hover",theme.box(Color("dcc593") if primary else Color("2a4751"),true))
+		b.add_theme_stylebox_override("normal",theme.box(Color("c5ad7a") if primary else Color("333528"),primary))
+		b.add_theme_stylebox_override("hover",theme.box(Color("dcc593") if primary else Color("4e5038"),true))
 		b.add_theme_stylebox_override("pressed",theme.box(Color("a68b58"),true))
-		b.add_theme_stylebox_override("disabled",theme.box(Color("1a2b33")))
+		b.add_theme_stylebox_override("disabled",theme.box(Color("26281e")))
 		b.add_theme_stylebox_override("focus",theme.box(Color(0,0,0,0),true))
 	b.pressed.connect(func():
 		if not b.is_inside_tree() or b.disabled:return

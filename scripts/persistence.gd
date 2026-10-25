@@ -31,6 +31,7 @@ static func save_world(w: Dictionary, path: String = PATH) -> bool:
 
 static func validate(w: Variant) -> bool:
 	if not w is Dictionary: return false
+	if not load("res://scripts/rpg_progression.gd").validate(w):return false
 	for key in ["version", "seed", "name", "tick", "cells", "creatures", "settlements", "events", "discoveries", "achievements", "energy", "xp", "weather", "rng_state", "saved_at", "theme"]:
 		if not w.has(key): return false
 	if w.version != 1 or not w.cells is Array or w.cells.is_empty() or w.cells.size() > 400: return false
@@ -166,6 +167,7 @@ static func normalize_integer_fields(w: Dictionary) -> Dictionary:
 		for key in ["id","cell","rotation"]:p[key]=int(p[key])
 	for c in w.wardrobe.coats:c.id=int(c.id)
 	preload("res://scripts/kingdom.gd").normalize(w)
+	load("res://scripts/rpg_progression.gd").normalize(w)
 	return w
 
 static func read_checked(path: String) -> Dictionary:

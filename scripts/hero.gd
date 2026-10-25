@@ -30,6 +30,9 @@ static func stats(w: Dictionary) -> Dictionary:
 		if not owned.is_empty():
 			for key in I.recipes()[owned.recipe].effects:
 				if result.has(key):result[key]+=int(I.recipes()[owned.recipe].effects[key])
+	var mods=load("res://scripts/rpg_progression.gd").modifiers(w)
+	for key in mods:
+		if result.has(key):result[key]+=int(mods[key])
 	return result
 static func equip(w: Dictionary,slot: String,id: int) -> bool:
 	if not writable(w) or w.kingdom.adventure.hero.is_empty() or not slot in SLOTS:return false
@@ -38,6 +41,11 @@ static func equip(w: Dictionary,slot: String,id: int) -> bool:
 	if id!=0:
 		var owned=I.item(w,id)
 		if owned.is_empty() or I.recipes()[owned.recipe].get("category","tool")!=slot:return false
+		var allowed=I.recipes()[owned.recipe].get("classes",["warrior"] if slot!="artifact" else ["warrior","priest","mage","rogue"])
+		if not a.hero.get("class","warrior") in allowed:return false
+		if w.has("rpg"):
+			for key in w.rpg.roster:
+				if key!=w.rpg.active and w.rpg.roster[key].equipment.values().any(func(value):return int(value)==id):return false
 	a.hero.equipment[slot]=id;a.hero.hp=mini(int(a.hero.hp),int(stats(w).health));return true
 static func preview(w: Dictionary,slot: String,id: int) -> Dictionary:
 	var result=stats(w)
@@ -80,7 +88,7 @@ static func validate(w: Dictionary) -> bool:
 	if not a.hero is Dictionary:return false
 	if a.hero.is_empty():return a.run.is_empty()
 	var h=a.hero
-	if not C.shape(h,["id","name","class","xp","hp","equipment","cooldowns","defeated"]) or not C.number(h.id,1,1,true) or not valid_name(h.name) or h.get("class")!="warrior" or not C.number(h.xp,0,1000000,true) or not h.defeated is bool:return false
+	if not C.shape(h,["id","name","class","xp","hp","equipment","cooldowns","defeated"]) or not C.number(h.id,1,1,true) or not valid_name(h.name) or not h.get("class") in ["warrior","priest","mage","rogue"] or not C.number(h.xp,0,1000000,true) or not h.defeated is bool:return false
 	if not C.shape(h.equipment,SLOTS) or not C.shape(h.cooldowns,["attack","skill","dodge","heal"]):return false
 	var used=[]
 	for slot in SLOTS:
@@ -89,6 +97,7 @@ static func validate(w: Dictionary) -> bool:
 		if id>0:
 			var owned=I.item(w,int(id))
 			if owned.is_empty() or used.has(int(id)) or I.recipes()[owned.recipe].get("category","tool")!=slot:return false
+			if not h.get("class","warrior") in I.recipes()[owned.recipe].get("classes",["warrior"] if slot!="artifact" else ["warrior","priest","mage","rogue"]):return false
 			used.append(int(id))
 	for key in h.cooldowns:
 		if not C.number(h.cooldowns[key],0,10000,true):return false

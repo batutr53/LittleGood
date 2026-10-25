@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-25",
+  "device": "LittleGod_Test emulator-5554",
+  "package": "org.littlegod.livinguniverse.rpgqa",
+  "apk_sha256": "1f63fe1b26f227f529621d5e2214174d90d640b5395223e365724f442a3a328a",
+  "physical_device": false,
+  "input": "actual ADB input tap",
+  "inspection": "Screenshots viewed and checked: inventory opens from bottom bar; class selector changes Mage to Warrior; one close tap returns home; bottom Skills icon opens skill screen. No multitouch or physical-device claim.",
+  "screenshots": {
+    "native-home-final": {
+      "path": "docs/screenshots/rpg/native-home-final.png",
+      "sha256": "0801d361d11340855cb55e281bf65275ae22af87e12aebb54e6e53963e7446b4"
+    },
+    "native-inventory-final": {
+      "path": "docs/screenshots/rpg/native-inventory-final.png",
+      "sha256": "cebe426d26598499a808a68bd4cc9ddcffce5cccb925d9da960942886cab03d8"
+    },
+    "native-warrior-final": {
+      "path": "docs/screenshots/rpg/native-warrior-final.png",
+      "sha256": "8fcf7f323d014ef76e3b4434a8745e9b6312f681f56a3f74cb45cbbda0f50465"
+    },
+    "native-home-after-class": {
+      "path": "docs/screenshots/rpg/native-home-after-class.png",
+      "sha256": "a548bac80e9d4c7afab9fc1eefd90892892600544f2d4e41eaac694b31e90b6a"
+    },
+    "native-skills-final": {
+      "path": "docs/screenshots/rpg/native-skills-final.png",
+      "sha256": "ffa212133f998b7fda26c4a14fd3f6d815295110bf766bb8228a993ec202c4e9"
+    }
+  }
+}

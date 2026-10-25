@@ -3,8 +3,12 @@ extends Control
 var book=false
 func _draw():
  var w=size.x;var h=size.y
- draw_rect(Rect2(Vector2.ZERO,size),Color("101f2b"))
- draw_rect(Rect2(6,6,w-12,h-12),Color("243d46"),false,1)
+ draw_rect(Rect2(Vector2.ZERO,size),Color("181a13"))
+ # Original subtle leather grain, deterministic and retained between redraws.
+ for i in range(380):
+  var x=fposmod(i*137.37,w);var y=fposmod(i*79.73,h)
+  draw_line(Vector2(x,y),Vector2(minf(w,x+8+fmod(i,21)),y+1),Color(.55,.47,.29,.045),1)
+ draw_rect(Rect2(6,6,w-12,h-12),Color("62583b"),false,1)
  draw_line(Vector2(22,12),Vector2(w-22,12),Color("aa8c59"),2,true)
  for x in [22.0,w-22]:
   for y in [22.0,h-22]:

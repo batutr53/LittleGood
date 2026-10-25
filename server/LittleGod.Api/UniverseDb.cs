@@ -71,6 +71,14 @@ public sealed class UniverseDb(DbContextOptions<UniverseDb> options) : IdentityD
     public DbSet<Activity> Activities => Set<Activity>();
     protected override void OnModelCreating(ModelBuilder b) {
         base.OnModelCreating(b);
+        b.Entity<ChatMessage>().HasKey(x=>x.Id);
+        b.Entity<ChatMessage>().Property(x=>x.Text).HasMaxLength(300);
+        b.Entity<ChatMessage>().HasIndex(x=>new{x.Sender,x.Created});
+        b.Entity<ChatMessage>().HasIndex(x=>new{x.Recipient,x.Id});
+        b.Entity<ChatReport>().HasKey(x=>x.Id);
+        b.Entity<ChatReport>().HasIndex(x=>new{x.Reporter,x.MessageId}).IsUnique();
+        b.Entity<ChatReport>().Property(x=>x.Text).HasMaxLength(300);
+        b.Entity<ChatReport>().Property(x=>x.Reason).HasMaxLength(300);
         b.Entity<PurchaseReceipt>().HasKey(x=>new{x.Store,x.Transaction});
         b.Entity<PurchaseReceipt>().Property(x=>x.Transaction).HasMaxLength(256);
         b.Entity<PurchaseReceipt>().Property(x=>x.State).IsConcurrencyToken();

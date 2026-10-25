@@ -122,6 +122,7 @@ static func collect(w: Dictionary,id: int) -> bool:
 		for good in c.cargo:w.kingdom.stock[good]+=c.cargo[good]*1000
 	K().home(w).food=minf(100,K().home(w).food+c.supplies/1000.0);c.supplies=0;c.state="collected";K().record(w,"trade","delivered:"+c.route);return true
 static func salvage(w: Dictionary,id: int) -> bool:
+	if w.has("rpg") and (id in w.rpg.locked or load("res://scripts/rpg_progression.gd").reserved(w,id)):return false
 	if w.get("_read_only",false) or not I.enabled(w) or M.item_reserved(w,id):return false
 	if local_merchants(w).is_empty() and not w.kingdom.buildings.any(func(b):return b.kind=="forge" and K().ready(b) and not K().assigned(w,int(b.id)).is_empty()):return false
 	var owned=I.item(w,id)

@@ -47,9 +47,7 @@ func update_landscape_layout() -> void:
 	layout_size=viewport
 	# The HUD reserves narrow action rails. Keep the whole miniature planet in the open centre,
 	# rather than preserving the former portrait bottom-weighted camera.
-	var left=clampf(viewport.y*.115,58.0,92.0)
-	var right=clampf(viewport.y*.47,235.0,340.0)
-	origin=Vector2(left+(viewport.x-left-right)*.5,viewport.y*.58)
+	origin=Vector2(viewport.x*.5,viewport.y*.48)
 
 func project(c: Dictionary) -> Vector2:
 	return Vector2((c.x - c.y) * 30, (c.x + c.y - 16) * 15 - c.height * 42)
