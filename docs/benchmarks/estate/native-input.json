@@ -1,0 +1,29 @@
+{
+  "adb_coordinates": [
+    [
+      870,
+      48
+    ],
+    [
+      2040,
+      438
+    ],
+    [
+      870,
+      48
+    ]
+  ],
+  "native_display": [
+    2400,
+    1080
+  ],
+  "game_viewport": [
+    1600,
+    720
+  ],
+  "before_cells": 1088,
+  "observed_after_cells": 1152,
+  "before_wood": 6000,
+  "observed_after_wood": 0,
+  "observation": "Rendered resource counter, expanded land and reopened land-panel count inspected; isolated test session does not autosave native actions."
+}

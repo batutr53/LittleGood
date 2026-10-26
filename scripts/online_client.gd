@@ -43,7 +43,7 @@ func raw(method: int, path: String, body: Dictionary = {}, authenticated: bool =
 	var request_node = HTTPRequest.new()
 	request_node.use_threads = true
 	request_node.timeout = 6.0
-	request_node.body_size_limit = 600000
+	request_node.body_size_limit = 2200000
 	add_child(request_node)
 	var headers = PackedStringArray(["Content-Type: application/json","Accept: application/json"])
 	if authenticated and not access.is_empty(): headers.append("Authorization: Bearer " + access)

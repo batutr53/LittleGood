@@ -36,7 +36,8 @@ func corner(x: float, y: float) -> Vector2:
 			if lookup.has(Vector2i(cx, cy)):
 				height_sum += lookup[Vector2i(cx, cy)].height
 				n += 1
-	var result = Vector2((x - y) * 30, (x + y - 16) * 15 - height_sum / maxf(1, n) * 42)
+	var pitch=1.65 if view.world.cells.size()>400 else 1.0
+	var result = Vector2((x - y) * 30*pitch, (x + y - 16) * 15*pitch - height_sum / maxf(1, n) * 42)
 	corner_cache[key] = result
 	return result
 

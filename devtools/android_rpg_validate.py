@@ -1,7 +1,7 @@
 """Actual emulator install/start/render QA. Model navigation is programmatic, not native touch."""
 from pathlib import Path
 import subprocess,json,time,hashlib,uuid,argparse
-parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');parser.add_argument('--phase',choices=['rpg','estate'],default='rpg');args=parser.parse_args()
 assert all(Path(v).name==v for v in [args.apk,args.output,args.screenshots])
 r=Path(__file__).resolve().parents[1];out=r/'builds'/args.output;out.mkdir(exist_ok=True)
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe';pkg='org.littlegod.livinguniverse.rpgqa';player='org.littlegod.livinguniverse'
@@ -27,13 +27,13 @@ names=['planet.json','planet.json.bak','settings.cfg'];before={name:read(name,pl
 run('shell','am','force-stop',pkg);run('install','--no-incremental','-r',str(r/'builds/android'/args.apk));run('shell','run-as',pkg,'mkdir','-p','files')
 put('rpg-fixture.json',r/'tests/fixtures/planet-v085e2.json')
 run_id=uuid.uuid4().hex
-config=out/'phase4_qa.json';config.write_text(json.dumps({'phase':'rpg','run_id':run_id}));put('phase4_qa.json',config)
+config=out/'phase4_qa.json';config.write_text(json.dumps({'phase':args.phase,'run_id':run_id}));put('phase4_qa.json',config)
 startup=run('shell','am','start','-W','-n',pkg+'/com.godot.game.GodotAppLauncher').decode();(out/'startup.txt').write_text(startup)
 deadline=time.monotonic()+100
 while time.monotonic()<deadline:
     try:
         result=json.loads(read('phase4_qa_status.json'))
-        if result.get('stage')=='rpg_complete' and result.get('run_id')==run_id:break
+        if result.get('stage')==args.phase+'_complete' and result.get('run_id')==run_id:break
     except ValueError:pass
     time.sleep(.5)
 else:raise RuntimeError('Android RPG QA timed out')
@@ -41,7 +41,9 @@ result['physical_device']=False
 after={name:read(name,player) for name in names}
 result['player_files_preserved']=all(before[name]==after[name] for name in names)
 result['player_file_hashes']={name:{'before':hashlib.sha256(before[name]).hexdigest(),'after':hashlib.sha256(after[name]).hexdigest(),'before_bytes':len(before[name]),'after_bytes':len(after[name])} for name in names}
-for name in ['rpg-android-home','rpg-android-inventory','rpg-android-mage','rpg-android-adventure']:
+images=['rpg-android-home','rpg-android-inventory','rpg-android-mage','rpg-android-adventure'] if args.phase=='rpg' else ['estate-android-village','estate-android-harvest','estate-android-panel','estate-android-world']
+for name in images:
     image=read(name+'.png');(r/'docs/screenshots'/args.screenshots/f'{name}.png').write_bytes(image)
 (out/'logcat.txt').write_bytes(run('logcat','-d','--pid='+str(result['pid']),'-s','godot:V','AndroidRuntime:E'))
 (out/'result.json').write_text(json.dumps(result,indent=2),encoding='utf8');print(json.dumps(result,indent=2));assert result['all_passed'] and result['player_files_preserved']
+run('shell','run-as',pkg,'rm','-f','files/phase4_qa.json')

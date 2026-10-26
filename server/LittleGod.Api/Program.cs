@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder=WebApplication.CreateBuilder(args);
-builder.WebHost.ConfigureKestrel(o=>o.Limits.MaxRequestBodySize=540672);
+builder.WebHost.ConfigureKestrel(o=>o.Limits.MaxRequestBodySize=2113536);
 builder.Services.ConfigureHttpJsonOptions(o=>{o.SerializerOptions.MaxDepth=12;o.SerializerOptions.UnmappedMemberHandling=System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow;});
 builder.Services.AddDbContext<UniverseDb>(o=>o.UseNpgsql(builder.Configuration.GetConnectionString("Universe")??throw new InvalidOperationException("Configure ConnectionStrings__Universe")));
 builder.Services.AddIdentityApiEndpoints<Player>(o=>{

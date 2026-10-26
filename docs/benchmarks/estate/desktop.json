@@ -1,0 +1,25 @@
+{
+  "all_passed": true,
+  "cells": 1088,
+  "checks": {
+    "1280_panel_bounds": true,
+    "1600_panel_bounds": true,
+    "960_panel_bounds": true,
+    "capture_expand-1280": true,
+    "capture_expand-1600": true,
+    "capture_expand-960": true,
+    "capture_expanded-world": true,
+    "capture_harvest-feedback": true,
+    "capture_village-1280": true,
+    "capture_village-1600": true,
+    "capture_village-960": true,
+    "expand": true,
+    "real_icon_click": true
+  },
+  "draw_calls": 633.0,
+  "fps": 60.1090264828415,
+  "p95_frame_ms": 16.691,
+  "static_memory_mb": 52.3651695251465,
+  "texture_memory_mb": 44.0543127059937,
+  "world_cpu_p95_ms": 0.878
+}

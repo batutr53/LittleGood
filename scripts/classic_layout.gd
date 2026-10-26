@@ -54,6 +54,9 @@ func build():
 	p.tray=HBoxContainer.new();p.tray.name="GiftPalette";p.tray.visible=false;p.put(p.tray,Rect2(s.x-p.px(510),bottom-p.px(110),p.px(500),p.px(44)));ui.power_buttons.clear();ui.power_icons.clear()
 	for i in range(6):
 		var b=ui.button(ui.t(ui.POWER_KEYS[i]),func():ui.choose_power(i));b.custom_minimum_size=Vector2.ZERO;b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;p.tray.add_child(b);ui.power_buttons.append(b)
+	var land=ui.button(r.say("LAND +","ARAZİ +"),func():p.route("estate"));land.name="ExpandLand";r.compact_button(land);p.put(land,Rect2(p.px(535),p.px(8),p.px(90),p.px(48)))
+	var zoom_out=ui.button("−",func():game.view.zoom_at(game.view.origin,.8));zoom_out.name="ZoomOut";r.compact_button(zoom_out);p.put(zoom_out,Rect2(p.px(632),p.px(8),p.px(48),p.px(48)))
+	var zoom_in=ui.button("+",func():game.view.zoom_at(game.view.origin,1.25));zoom_in.name="ZoomIn";r.compact_button(zoom_in);p.put(zoom_in,Rect2(p.px(684),p.px(8),p.px(48),p.px(48)))
 	ui.refresh()
 func refresh():
 	if not is_instance_valid(ui.header) or game.world.is_empty():return

@@ -34,7 +34,7 @@ static func validate(w: Variant) -> bool:
 	if not load("res://scripts/rpg_progression.gd").validate(w):return false
 	for key in ["version", "seed", "name", "tick", "cells", "creatures", "settlements", "events", "discoveries", "achievements", "energy", "xp", "weather", "rng_state", "saved_at", "theme"]:
 		if not w.has(key): return false
-	if w.version != 1 or not w.cells is Array or w.cells.is_empty() or w.cells.size() > 400: return false
+	if w.version != 1 or not w.cells is Array or w.cells.is_empty() or w.cells.size() > (2304 if w.has("estate") else 400): return false
 	if w.has("user_paused") and not w.user_paused is bool: return false
 	if not w.name is String or w.name.length() > 32 or not w.rng_state is String or not w.rng_state.is_valid_int(): return false
 	for key in ["seed", "tick", "energy", "xp", "weather", "saved_at", "theme"]:
@@ -123,6 +123,7 @@ static func validate(w: Variant) -> bool:
 		if s.has("rival_cell") and (s.rival_cell < -1 or s.rival_cell >= w.cells.size()): return false
 	if not preload("res://scripts/cosmetics.gd").validate(w):return false
 	if not preload("res://scripts/kingdom.gd").validate(w):return false
+	if not preload("res://scripts/estate.gd").validate(w):return false
 	return true
 
 static func normalize_integer_fields(w: Dictionary) -> Dictionary:
@@ -168,6 +169,7 @@ static func normalize_integer_fields(w: Dictionary) -> Dictionary:
 	for c in w.wardrobe.coats:c.id=int(c.id)
 	preload("res://scripts/kingdom.gd").normalize(w)
 	load("res://scripts/rpg_progression.gd").normalize(w)
+	load("res://scripts/estate.gd").normalize(w)
 	return w
 
 static func read_checked(path: String) -> Dictionary:

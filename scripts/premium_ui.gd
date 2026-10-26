@@ -17,6 +17,7 @@ var toast_label
 var craft_filter="all"
 var current_recipe=""
 var forge_selected=0
+var estate_selected=Vector2i(-2,0)
 var filter="all"
 var gifts_open=false
 var scroll: ScrollContainer
@@ -58,6 +59,7 @@ func route(destination: String,arg: int=0,remember=true):
   "unit":unit_detail(arg)
   "trade":trade()
   "construction":construction()
+  "estate":estate_screen()
   "settings":ui.legacy_settings()
   "attributes":rpg.attributes()
   "skills":rpg.skills()
@@ -203,6 +205,7 @@ func building(id: int):
  var bar=ProgressBar.new();bar.max_value=b.required;bar.value=b.progress;bar.show_percentage=true;bar.custom_minimum_size.y=px(22);v.add_child(bar)
  v.add_child(text(say("Assigned workers: ","Atanmış işçiler: ")+str(K.occupied(game.world,id))+" / "+str(int(d.slots))+say("  ·  Output / tick: ","  ·  Üretim / tur: ")+str(snappedf(rate,.01)),22))
  var controls=HBoxContainer.new();v.add_child(controls)
+ if load("res://scripts/estate.gd").enabled(game.world) and load("res://scripts/estate.gd").status(game.world,b)!="":action(v,say("Collect ready output","Hazır ürünü topla"),func():game.view.estate_layer.collect(id);route("building",id,false),true,"gift")
  if b.kind=="forge":action(controls,say("Forge","Üret"),func():route("forge",id),true,"forge")
  elif b.kind=="marketplace" and preload("res://scripts/trade.gd").enabled(game.world):action(controls,say("Trade","Ticaret"),func():route("trade"),true,"caravan")
  elif b.kind=="barracks" and preload("res://scripts/military.gd").enabled(game.world):action(controls,say("Company","Birlik"),func():route("army"),true,"sword")
@@ -400,6 +403,33 @@ func workers():
   else:ui.toast(say("Needs realm4, food, gold, trust and available housing.","Diyar4, besin, altın, güven ve boş konut gerekli.")),true,"workers")
  recruit.disabled=K.level(w)<4 or w.kingdom.workers.size()>=K.MAX_WORKERS
  v.add_child(text(say("Free citizens build. Give production buildings workers, then return to watch your village.","Boştaki sakinler inşa eder. Üretim binalarına işçi ata; sonra köyünü izlemek için dön."),23,T.MUTED))
+func estate_screen():
+ var E=load("res://scripts/estate.gd");var w=game.world
+ if game.visiting or not E.enabled(w):ui.toast(say("Return to your own world first.","Önce kendi dünyana dön."));return
+ game.view.estate_layer.land_mode=true
+ var v=surface(say("A World to Grow","Büyüyen Dünyan"));v.add_child(text(say("Explore, build, and make room for your village.","Keşfet, inşa et; köyüne yeni alanlar aç."),28,T.GOLD))
+ v.add_child(text(str(w.cells.size())+" / 2304 "+say("land tiles · ","arazi karesi · ")+str(w.estate.plots.size())+" / 36 "+say("plots","parsel"),23))
+ v.add_child(text(say("+64 tiles per plot. First expansion free. Drag to explore; pinch or + / − to zoom.","Parsel başına +64 kare. İlk genişleme ücretsiz. Gezmek için sürükle; yakınlaşmak için iki parmak veya + / − kullan."),21,T.MUTED))
+ if not w.has("kingdom"):
+  action(v,say("Meet your settlement to begin","Başlamak için yerleşiminle tanış"),ui.close,true);return
+ var choices=E.candidates(w)
+ if choices.is_empty():v.add_child(text(say("Your entire realm is open!","Bütün krallığın keşfe açık!"),28,T.GOLD));return
+ if not choices.has(estate_selected):estate_selected=choices[0]
+ var price=E.cost(w);var parts=[]
+ for key in price:parts.append(game.realm_ui.cost({key:price[key]}))
+ v.add_child(text(say("SELECTED PLOT · +64 tiles","SEÇİLİ PARSEL · +64 kare"),22,T.GOLD));v.add_child(text(say("Free first expansion","İlk genişleme ücretsiz") if price.is_empty() else " · ".join(parts),23))
+ var purchase=action(v,say("Open this land","Bu araziyi aç"),func():
+  var point=estate_selected
+  if not E.expand(w,point):ui.toast(say("Return home and check materials.","Eve dön ve malzemeleri kontrol et."));return
+  game.view.invalidate();game.schedule_save();ui.refresh();ui.close();game.view.pan=-game.view.project({"x":point.x*8+3.5,"y":point.y*8+3.5,"height":.2})*game.view.zoom;game.audio.chime(2);ui.toast(say("64 new tiles · your world has grown!","64 yeni kare · dünyan büyüdü!")),true,"map")
+ purchase.disabled=not K.afford(w,price)
+ var grid=GridContainer.new();grid.columns=4;v.add_child(grid)
+ for plot in choices:
+  var point=plot;var button=action(grid,("● " if point==estate_selected else "+ ")+str(point.x+3)+" · "+str(point.y+3),func():estate_selected=point;route("estate",0,false))
+  button.custom_minimum_size=Vector2(px(85),px(48))
+ action(v,say("Explore plot borders","Parsel sınırlarını keşfet"),ui.close,false,"map")
+ action(v,say("Hide plot borders","Parsel sınırlarını gizle"),func():game.view.estate_layer.land_mode=false;ui.close())
+
 func construction():
  if not game.world.has("kingdom"):return
  var w=game.world;var v=surface(say("Build a Living Village","Yaşayan Bir Köy Kur"));v.add_child(text(say("Choose a real building, then find its place in your world. Materials are spent only when you confirm.","Gerçek bir bina seç; sonra dünyanda yerini bul. Malzeme yalnızca onayladığında harcanır."),25,T.MUTED));var grid=GridContainer.new();grid.columns=2;grid.add_theme_constant_override("h_separation",int(px(14)));grid.add_theme_constant_override("v_separation",int(px(18)));v.add_child(grid)

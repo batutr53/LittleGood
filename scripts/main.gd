@@ -181,6 +181,7 @@ func new_planet(seed_value: int, planet_name: String, persist: bool = true) -> v
 	if visiting: return
 	var start = Time.get_ticks_usec()
 	world = WorldGen.generate(seed_value, planet_name)
+	preload("res://scripts/estate.gd").start(world)
 	preload("res://scripts/cosmetics.gd").ensure(world)
 	pipeline.world_generation_ms = (Time.get_ticks_usec() - start) / 1000.0
 	has_player_world = persist
@@ -224,6 +225,7 @@ func restore() -> void:
 		return
 	var recovery = Persistence.last_recovery
 	var report = await replay_offline(restored, Time.get_unix_time_from_system())
+	preload("res://scripts/estate.gd").start(restored)
 	world = restored
 	has_player_world = true
 	onboarding_live = false
@@ -492,8 +494,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if ui_pointer_blocked: return
 		drag_distance += event.relative.length()
 		view.pan += event.relative
-		view.pan = view.pan.clamp(Vector2(-450, -400), Vector2(450, 400))
-	if event is InputEventMagnifyGesture: view.zoom = clampf(view.zoom * event.factor, 0.5, 2)
+		var extent=6000.0 if world.has("estate") else 450.0
+		view.pan = view.pan.clamp(Vector2(-extent,-extent), Vector2(extent,extent))
+	if event is InputEventMagnifyGesture: view.zoom_at(event.position,event.factor)
 	if event is InputEventKey and event.pressed:
 		if event.keycode == KEY_ESCAPE: ui.menu()
 		if event.keycode == KEY_SPACE: paused = not paused; ui.refresh()
@@ -504,8 +507,10 @@ func touch_world(pos: Vector2) -> void:
 	var input_started = Time.get_ticks_usec()
 	if visiting: power = -1
 	if power < 0:
+		if not visiting and view.estate_layer.pick(pos):return
 		for home in world.settlements:
-			if pos.distance_to(view.screen_point(world.cells[int(home.cell)])) < 13 * view.display_zoom:
+			var point=view.screen_point(world.cells[int(home.cell)])
+			if (Rect2(point+Vector2(-56,-105)*view.display_zoom,Vector2(112,115)*view.display_zoom).has_point(pos) if world.has("estate") else pos.distance_to(point)<13*view.display_zoom):
 				view.selected = int(home.cell)
 				view.selected_creature = -1
 				view.selected_identity = -1

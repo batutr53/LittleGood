@@ -8,7 +8,7 @@ func _process(delta):
 	elapsed+=delta
 	if elapsed<.15:return
 	elapsed=0
-	var next=str(game.world.get("seed",0))+":"+str(game.world.get("tick",0))
+	var next=str(game.world.get("seed",0))+":"+str(game.world.get("tick",0))+":"+str(game.world.get("cells",[]).size())
 	if adventure:next+=str(game.world.get("kingdom",{}).get("adventure",{}).get("run",{}).get("clock",0))
 	if next!=signature:signature=next;queue_redraw()
 func _draw():
@@ -23,5 +23,11 @@ func _draw():
 		for e in r.enemies:
 			if e.hp>0:draw_circle(Vector2(e.x,e.y)/extent*size,2,Color("c46a55"))
 	else:
+		var bounds=Rect2(Vector2.ZERO,Vector2.ONE);var first=true
 		for cell in game.world.cells:
-			var point=Vector2((cell.x-cell.y)*3+size.x*.5,(cell.x+cell.y)*1.5+10);draw_rect(Rect2(point,Vector2(4,3)),[Color("8d9966"),Color("3b6952"),Color("b49a68"),Color("579598"),Color("8a8b79"),Color("bbcecb")][clampi(int(cell.biome),0,5)])
+			var point=Vector2(cell.x-cell.y,(cell.x+cell.y)*.5)
+			if first:bounds=Rect2(point,Vector2.ONE);first=false
+			else:bounds=bounds.expand(point)
+		for cell in game.world.cells:
+			var point=(Vector2(cell.x-cell.y,(cell.x+cell.y)*.5)-bounds.position)/bounds.size*(size-Vector2(8,8))+Vector2(4,4)
+			draw_rect(Rect2(point,Vector2(2,2)),TerrainSurface.PALETTE[clampi(int(cell.biome),0,6)])

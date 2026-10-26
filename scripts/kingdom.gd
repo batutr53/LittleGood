@@ -93,12 +93,15 @@ static func valid_site(w: Dictionary,kind: String,cell: int,ignore: int=0) -> bo
 		if int(p.cell)==cell:return false
 	for b in w.kingdom.buildings:
 		if int(b.cell)==cell and int(b.id)!=ignore:return false
+		if w.has("estate") and int(b.id)!=ignore:
+			var at=w.cells[int(b.cell)];var target=w.cells[cell]
+			if Vector2(at.x-target.x,at.y-target.y).length()<2:return false
 	var c=w.cells[cell];var site=buildings()[kind].site
 	if int(buildings()[kind].level)>5 and not INDUSTRY.enabled(w):return false
 	if int(buildings()[kind].level)>15 and not MILITARY.enabled(w):return false
 	if int(buildings()[kind].level)>20 and not TRADE.enabled(w):return false
 	var capital=w.cells[int(home(w).cell)]
-	if Vector2(c.x-capital.x,c.y-capital.y).length()>(7.0 if INDUSTRY.enabled(w) else 5.5):return false
+	if not w.has("estate") and Vector2(c.x-capital.x,c.y-capital.y).length()>(7.0 if INDUSTRY.enabled(w) else 5.5):return false
 	return int(c.biome)==1 if site=="forest" else int(c.biome) in [0,1,5] if site=="fertile" else int(c.biome) in [3,4] if site=="rock" else int(c.biome) in [0,1,2,5]
 static func begin_build(w: Dictionary,kind: String,cell: int) -> int:
 	if not writable(w) or not buildings().has(kind):return -1
@@ -167,6 +170,7 @@ static func available_output(w: Dictionary,b: Dictionary) -> float:
 	if data.output.is_empty():return 0
 	var k=w.kingdom;var c=w.cells[int(b.cell)]
 	var space=maxf(0,100-home(w).food) if data.output=="food" else maxf(0,storage(w)-float(k.stock.get(data.output,0))/SCALE)
+	if w.has("estate"):space=load("res://scripts/estate.gd").room(w,b)
 	var available=float(c.resources)
 	if data.has("inputs"):
 		available=INF
@@ -190,9 +194,11 @@ static func tick(w: Dictionary) -> void:
 		if data.has("inputs"):
 			for key in data.inputs:k.stock[key]-=roundi(amount*SCALE)*int(data.inputs[key])
 		else:c.resources-=amount
-		if data.output=="food":home(w).food+=amount
-		else:k.stock[data.output]+=roundi(amount*SCALE)
-		event(w,"produce_"+data.output,amount)
+		if w.has("estate"):load("res://scripts/estate.gd").deposit(w,b,data.output,roundi(amount*SCALE))
+		else:
+			if data.output=="food":home(w).food+=amount
+			else:k.stock[data.output]+=roundi(amount*SCALE)
+			event(w,"produce_"+data.output,amount)
 		for worker in assigned(w,int(b.id)):
 			worker.skill=mini(1500,int(worker.skill)+1)
 			if INDUSTRY.multiplier(w,int(worker.id),b.kind)>SCALE:event(w,"tool_work")

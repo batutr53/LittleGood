@@ -1,5 +1,13 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Growing world and village collection — 26 October 2026
+
+Implemented a **1,024-tile starting world**, expandable through adjacent 64-tile parcels to **2,304 tiles**; first expansion free, later purchases use ordinary resources. Twelve original painted building sprites replace most home/industry buildings, at approximately twice the previous size. Buildings are clickable; completed construction, production and forge jobs show tappable bubbles. Collection transfers real output once, retains warehouse overflow and preserves item IDs. Added village paths, wider terrain spacing, zoom controls, fitting minimap, sparse decorations and offscreen prop visibility. Legacy save migration appends cells without reindexing old content; private buffers and public read-only v3 previews are validated.
+
+Checks: **822 campaign + 270 landscape UI + 98 compact UI + 14 RPG interactions** retained; **44 new model/offline/save checks + 13 rendered checks + 6 Android checks** pass. Godot MCP mouse collection and native ADB land purchase were performed and inspected. Desktop sample ~**60.11 FPS**; emulator **17.77 FPS** at 60 cap / **21.33 FPS** at battery 30 cap, so mobile performance remains unresolved. No physical device tested. Android production saves/backup/settings preserved. Existing shutdown resource warnings and dense legacy-layout overlap remain; live v3 server exchange is unverified.
+
+Build: `D:/LittleGod/builds/android/LittleGod-Growing-World-debug.apk` (isolated QA package). Launcher: `D:/LittleGod/Launch LittleGod.cmd`. Full implementation, research, original assets, screenshots, measurements and commands: [GROWING_WORLD.md](GROWING_WORLD.md). Machine-readable evidence: `docs/benchmarks/estate/`.
+
 ## Compact mobile RPG layout — 25 October 2026
 
 The full-screen dashboard structure has been replaced with the proportions of the user's Knight-style mobile references: 384×560 right-side inventory at 1280×720, a 40-pixel bottom strip, 235×61 status frame, 448×185 chat, floating stat/skill/quest/forge windows and circular combat controls. Twenty original vector icons and a seven-column bag with adjacent item comparison are implemented. Reference browsing, dimensions, screenshots and verification are documented in [CLASSIC_MOBILE_UI.md](CLASSIC_MOBILE_UI.md). This is a UI pass; earlier incomplete animation/online milestones remain incomplete.

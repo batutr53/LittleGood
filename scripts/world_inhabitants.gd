@@ -13,6 +13,7 @@ var capture_key = ""
 var sync_ms = 0.0
 var props_created = 0
 var animate_ms = 0.0
+var cull_time=0.0
 
 func _ready() -> void:
 	y_sort_enabled = true
@@ -42,14 +43,20 @@ func begin_props(key: String, value: String) -> bool:
 func sync(w: Dictionary) -> void:
 	var start = Time.get_ticks_usec()
 	var valid: Dictionary = {}
-	var base = str(w.seed) + ":" + str(view.low_quality)
+	var base = str(w.seed) + ":" + str(view.low_quality)+":"+str(w.has("estate"))
+	var occupied_cells={}
+	for building in w.get("kingdom",{}).get("buildings",[]):
+		var at=w.cells[int(building.cell)]
+		var radius=1 if w.has("estate") else 0
+		for dy in range(-radius,radius+1):
+			for dx in range(-radius,radius+1):occupied_cells[Vector2i(at.x+dx,at.y+dy)]=true
 	for i in range(w.cells.size()):
 		var c = w.cells[i]
 		var p = view.project(c)
 		var b = int(c.biome)
 		var d = c.detail
 		var occupied = false
-		if w.has("kingdom") and w.kingdom.buildings.any(func(b):return int(b.cell)==i):occupied=true
+		if occupied_cells.has(Vector2i(c.x,c.y)):occupied=true
 		for s in w.settlements:
 			var home = w.cells[int(s.cell)]
 			var separation = p - view.project(home)
@@ -59,6 +66,7 @@ func sync(w: Dictionary) -> void:
 		var value = base + ":%d:%d:%d:%d:%s" % [b, int(c.height * 1000), int(c.plants * 8), int(c.get("last_gift", -1)), str(occupied)]
 		value += str(c.plants > .25) + str(c.plants > .55)
 		if not begin_props(key, value) or occupied: continue
+		if w.has("estate") and d<(.89 if view.low_quality else .77 if b in [3,4] else .62):continue
 		if b == 1 and c.plants > .25 and (d > .22 or c.get("last_gift", -1) == 1): add_prop(12 if d > .5 else 7, p, 40 + c.plants * 14 + d * 9, true)
 		elif b == 0 and d > .87 and c.plants > .55: add_prop(12, p, 42, true)
 		elif b == 3 and (d > .62 or c.get("last_gift", -1) == 2): add_prop(6, p, 64 + d * 27)
@@ -74,7 +82,9 @@ func sync(w: Dictionary) -> void:
 		var c = w.cells[int(s.cell)]
 		if not begin_props(key, base + ":" + str(s.stage) + ":" + str(c.height) + ":" + str(s.get("landmark", false)) + str(s.custom)): continue
 		var p = view.project(c)
-		if s.stage == 0: add_prop(13, p, 50)
+		if w.has("estate"):
+			var house=add_prop(13,p,50);house.hframes=1;house.vframes=1;house.frame=0;house.texture=view.kingdom_layer.texture("house" if int(s.stage)<2 else "townhall");house.centered=false;house.offset=Vector2(-256,-450);house.scale=Vector2.ONE*(.24+.035*int(s.stage))
+		elif s.stage == 0: add_prop(13, p, 50)
 		else:
 			add_prop(8 if s.stage == 1 else 9, p, 50 if s.stage == 1 else 68)
 			add_prop(8, p + Vector2(-30, 12), 35)
@@ -109,6 +119,12 @@ func sync(w: Dictionary) -> void:
 func animate(w: Dictionary, delta: float) -> void:
 	var started = Time.get_ticks_usec()
 	time += delta
+	cull_time+=delta
+	if w.has("estate") and cull_time>.15:
+		cull_time=0
+		var inverse=view.world_root.global_transform.affine_inverse();var rect=Rect2(inverse*Vector2.ZERO,Vector2.ZERO).expand(inverse*view.get_viewport_rect().size).grow(150)
+		for entry in prop_cache.values():
+			for sprite in entry.sprites:sprite.visible=rect.has_point(sprite.position)
 	var decay = 1 - exp(-delta * 2.3)
 	for i in range(mini(animals.size(), w.creatures.size())):
 		var cr = w.creatures[i]

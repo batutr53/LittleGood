@@ -3,6 +3,7 @@ extends RefCounted
 # Public, inert data only. Never deserialize a save or a Godot resource from a visit.
 const FORMAT = "littlegod.showcase"
 const MAX_BYTES = 524288
+const MAX_LARGE_BYTES = 2097152
 const MAX_VISITS = 8
 const CELL_FIELDS = ["x", "y", "biome", "height", "moisture", "plants", "resources", "temperature", "detail", "meadow", "spring", "grove_until", "last_gift", "canopy_arch", "reed_shelter"]
 const CREATURE_FIELDS = ["id", "name", "species", "cell", "trait", "hunger", "phase", "recorded_at", "preferred", "trail", "companion", "rival", "silver", "parent", "parent_name", "lineage", "origin_cell", "migrant"]
@@ -38,18 +39,18 @@ static func index_list(value: Variant, limit: int, highest: int) -> bool:
 		seen[int(item)] = true
 	return true
 
-static func validate(data: Variant) -> bool:
-	if data is Dictionary and number(data.get("version"),2,2,true):
+static func validate(data: Variant, large: bool=false) -> bool:
+	if data is Dictionary and number(data.get("version"),2,3,true):
 		if not shape(data,["format","version","planet","cells","creatures","settlements","memories","discoveries","secrets","findings","appearance"]):return false
 		var legacy=data.duplicate();legacy.erase("appearance");legacy.version=1
-		if not validate(legacy):return false
+		if not validate(legacy,int(data.version)==3):return false
 		return preload("res://scripts/cosmetics.gd").public_valid(data.appearance,data.cells.size(),data.creatures.size())
 	if not shape(data, ["format", "version", "planet", "cells", "creatures", "settlements", "memories", "discoveries", "secrets", "findings"]): return false
 	if data.format != FORMAT or not number(data.version, 1, 1, true): return false
 	var p = data.planet
 	if not shape(p, ["name", "tick", "weather", "theme", "xp"]) or not safe_text(p.name, 32) or p.name.strip_edges().is_empty(): return false
 	if not number(p.tick, 0, 1000000000, true) or not number(p.weather, 0, 3, true) or not number(p.theme, 0, 1, true) or not number(p.xp, 0, 1000000000, true): return false
-	if not data.cells is Array or data.cells.is_empty() or data.cells.size() > 400: return false
+	if not data.cells is Array or data.cells.is_empty() or data.cells.size() > (2304 if large else 400): return false
 	var positions: Dictionary = {}
 	var place_counts = {"canopy_arch":0, "reed_shelter":0}
 	for c in data.cells:
@@ -103,7 +104,7 @@ static func validate(data: Variant) -> bool:
 	return true
 
 static func parse(text: String) -> Dictionary:
-	if text.to_utf8_buffer().size() > MAX_BYTES: return {}
+	if text.to_utf8_buffer().size() > MAX_LARGE_BYTES: return {}
 	# Bound nesting BEFORE asking the JSON parser to allocate recursive structures.
 	var depth = 0
 	var quoted = false
@@ -124,13 +125,14 @@ static func parse(text: String) -> Dictionary:
 	if quoted or depth != 0: return {}
 	var parser = JSON.new()
 	if parser.parse(text) != OK or not validate(parser.data): return {}
+	if int(parser.data.version)!=3 and text.to_utf8_buffer().size()>MAX_BYTES:return {}
 	return parser.data
 
 static func read_file(path: String) -> Dictionary:
 	var f = FileAccess.open(path, FileAccess.READ)
-	if f == null or f.get_length() > MAX_BYTES: return {}
-	var bytes = f.get_buffer(MAX_BYTES+1)
-	if bytes.size()>MAX_BYTES: return {}
+	if f == null or f.get_length() > MAX_LARGE_BYTES: return {}
+	var bytes = f.get_buffer(MAX_LARGE_BYTES+1)
+	if bytes.size()>MAX_LARGE_BYTES: return {}
 	return parse(bytes.get_string_from_utf8())
 
 static func project(w: Dictionary) -> Dictionary:
@@ -158,6 +160,8 @@ static func project(w: Dictionary) -> Dictionary:
 	if w.has("wardrobe"):
 		var appearance=preload("res://scripts/cosmetics.gd").appearance(w,ids)
 		if appearance.theme!="enchanted" or appearance.sky!="" or appearance.frame!="" or not appearance.placements.is_empty() or not appearance.coats.is_empty():data.version=2;data.appearance=appearance
+	if w.cells.size()>400:
+		data.version=3;data.appearance=preload("res://scripts/cosmetics.gd").appearance(w,ids)
 	return data
 
 static func encode(w: Dictionary) -> String:
@@ -199,7 +203,7 @@ static func world_from(data: Dictionary) -> Dictionary:
 			w.living.records[m.key] = m.duplicate(true)
 			w.living.remembered.append(m.key)
 	w = Persistence.normalize_integer_fields(w)
-	if data.get("version")==2:w.wardrobe=preload("res://scripts/cosmetics.gd").from_appearance(data.appearance)
+	if data.get("version") in [2,3]:w.wardrobe=preload("res://scripts/cosmetics.gd").from_appearance(data.appearance)
 	for i in range(w.cells.size()):
 		for kind in ["canopy_arch","reed_shelter"]:
 			if w.cells[i][kind]:

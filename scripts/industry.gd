@@ -68,7 +68,7 @@ static func queue(w: Dictionary,recipe: String,building: int) -> bool:
 	state.queue.append({"id":int(state.next_item),"recipe":recipe,"building":building,"progress":0});state.next_item+=1
 	return true
 static func work_rate(w: Dictionary,b: Dictionary) -> int:
-	if not enabled(w) or b.kind!="forge" or int(b.progress)<int(b.required) or not w.kingdom.industry.queue.any(func(job):return int(job.building)==int(b.id)):return 0
+	if not enabled(w) or b.kind!="forge" or int(b.progress)<int(b.required) or not w.kingdom.industry.queue.any(func(job):return int(job.building)==int(b.id) and not w.get("estate",{}).get("craft_ready",[]).has(int(job.id))):return 0
 	var rate=0
 	for c in w.kingdom.workers:
 		if int(c.building)==int(b.id):rate+=int(c.skill)
@@ -83,8 +83,11 @@ static func tick(w: Dictionary) -> void:
 		if work<=0:continue
 		for job in state.queue.duplicate():
 			if int(job.building)!=int(b.id):continue
+			if w.get("estate",{}).get("craft_ready",[]).has(int(job.id)):continue
 			var required=int(recipes()[job.recipe].ticks)*SCALE;var used=mini(work,required-int(job.progress));job.progress+=used;work-=used
 			if int(job.progress)>=required:
+				if w.has("estate"):
+					job.progress=required-1;w.estate.craft_ready.append(int(job.id));continue
 				state.items.append({"id":int(job.id),"recipe":job.recipe});state.queue.erase(job);event(w,"craft_"+job.recipe)
 				w.kingdom.history.append({"tick":int(w.tick),"key":"craft","subject":job.recipe})
 				if w.kingdom.history.size()>30:w.kingdom.history.pop_front()

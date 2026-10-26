@@ -9,7 +9,14 @@ var clock=0.0
 var seed_key=""
 var rates: Dictionary={}
 func texture(kind: String) -> Texture2D:
-	if kind in ["barracks","watchtower","wall","marketplace"]:return load("res://assets/kingdom/"+kind+".svg")
+	if kind in ["house","farm","lumber","storage","townhall","forge"]:
+		var atlas=AtlasTexture.new();var slot=["house","farm","lumber","storage","townhall","forge"].find(kind)
+		atlas.atlas=preload("res://assets/estate/village-atlas.png");atlas.region=Rect2((slot%3)*512,(slot/3)*512,512,512);atlas.filter_clip=true
+		return atlas
+	if kind in ["quarry","mine","furnace","barracks","watchtower","marketplace"]:
+		var atlas=AtlasTexture.new();var slot=["quarry","mine","furnace","barracks","watchtower","marketplace"].find(kind)
+		atlas.atlas=preload("res://assets/estate/industry-atlas.png");atlas.region=Rect2((slot%3)*512,(slot/3)*512,512,512);atlas.filter_clip=true;return atlas
+	if kind=="wall":return load("res://assets/kingdom/wall.svg")
 	var t=AtlasTexture.new();var index=["lumber","farm","house","storage","townhall","scaffold"].find(kind)
 	if index>=0:t.atlas=ATLAS;t.region=Rect2((index%3)*192,(index/3)*192,192,192)
 	else:t.atlas=INDUSTRY_ATLAS;t.region=Rect2(["quarry","mine","furnace","forge"].find(kind)*192,0,192,192)
@@ -29,9 +36,10 @@ func sync(w: Dictionary) -> void:
 			var sprite=Sprite2D.new();sprite.texture=texture(b.kind);sprite.centered=false;sprite.offset=Vector2(-96,-145);view.inhabitants.props.add_child(sprite)
 			var scaffold=Sprite2D.new();scaffold.texture=texture("scaffold");scaffold.centered=false;scaffold.offset=Vector2(-96,-145);view.inhabitants.props.add_child(scaffold)
 			structures[id]={"sprite":sprite,"scaffold":scaffold,"kind":b.kind}
-		var data=structures[id];var scale_value=.34+int(b.level)*.025
+		var data=structures[id];var width=(132+int(b.level)*8) if w.has("estate") else (65+int(b.level)*4.8)
 		if data.kind!=b.kind:data.sprite.texture=texture(b.kind);data.kind=b.kind
-		for sprite in [data.sprite,data.scaffold]:sprite.position=view.project(w.cells[int(b.cell)]);sprite.scale=Vector2.ONE*scale_value
+		for sprite in [data.sprite,data.scaffold]:
+			var size=sprite.texture.get_size();sprite.offset=Vector2(-size.x*.5,-size.y*.88);sprite.position=view.project(w.cells[int(b.cell)]);sprite.scale=Vector2.ONE*width/size.x
 		data.sprite.modulate=Color(1,1,1,.3+.7*float(b.progress)/float(b.required));data.scaffold.visible=not K.ready(b)
 		rates[id]=K.activity_rate(w,b)
 	for id in structures.keys():

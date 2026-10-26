@@ -1,0 +1,65 @@
+{
+  "all_passed": true,
+  "checks": {
+    "expansion": true,
+    "fixture": true,
+    "harvest": true,
+    "large_world": true,
+    "restore": true,
+    "save": true
+  },
+  "pid": 4415,
+  "profiles": [
+    {
+      "draw_calls": 631.0,
+      "fps": 17.7739256510699,
+      "memory_mb": 52.1981048583984,
+      "p95_ms": 62.354,
+      "process_cpu_p95_ms": 65.587,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 60,
+      "texture_memory_mb": 45.6037883758545,
+      "world_update_cpu_p95_ms": 1.069
+    },
+    {
+      "draw_calls": 497.0,
+      "fps": 21.3254632408805,
+      "memory_mb": 52.0422325134277,
+      "p95_ms": 53.175,
+      "process_cpu_p95_ms": 55.222,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 30,
+      "texture_memory_mb": 45.6037883758545,
+      "world_update_cpu_p95_ms": 1.031
+    }
+  ],
+  "run_id": "cdd06f18a09346d9805a3db5d95d182d",
+  "source": "actual_android_emulator_render_with_programmatic_model_actions_no_native_input_claim",
+  "stage": "estate_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "player_file_hashes": {
+    "planet.json": {
+      "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "before_bytes": 40618,
+      "after_bytes": 40618
+    },
+    "planet.json.bak": {
+      "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "before_bytes": 41031,
+      "after_bytes": 41031
+    },
+    "settings.cfg": {
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_bytes": 0,
+      "after_bytes": 0
+    }
+  }
+}

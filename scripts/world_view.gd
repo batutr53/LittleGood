@@ -23,6 +23,8 @@ var frame_cpu_ms = 0.0
 var foreground_cpu_ms = 0.0
 var decoration_cells: Array = []
 var cosmetic_layer
+var estate_layer
+var estate_paths
 var kingdom_layer
 var layout_size = Vector2.ZERO
 
@@ -33,6 +35,7 @@ func _ready() -> void:
 	terrain = TerrainSurface.new()
 	terrain.view = self
 	world_root.add_child(terrain)
+	estate_paths=preload("res://scripts/estate_paths.gd").new();estate_paths.view=self;world_root.add_child(estate_paths)
 	inhabitants = WorldInhabitants.new()
 	inhabitants.view = self
 	world_root.add_child(inhabitants)
@@ -40,6 +43,8 @@ func _ready() -> void:
 	cosmetic_layer.view=self
 	world_root.add_child(cosmetic_layer)
 	kingdom_layer=preload("res://scripts/kingdom_renderer.gd").new();kingdom_layer.view=self;world_root.add_child(kingdom_layer)
+
+	estate_layer=preload("res://scripts/estate_overlay.gd").new();estate_layer.view=self;add_child(estate_layer)
 
 func update_landscape_layout() -> void:
 	var viewport=get_viewport_rect().size
@@ -50,7 +55,8 @@ func update_landscape_layout() -> void:
 	origin=Vector2(viewport.x*.5,viewport.y*.48)
 
 func project(c: Dictionary) -> Vector2:
-	return Vector2((c.x - c.y) * 30, (c.x + c.y - 16) * 15 - c.height * 42)
+	var pitch=1.65 if world.get("cells",[]).size()>400 else 1.0
+	return Vector2((c.x - c.y) * 30*pitch, (c.x + c.y - 16) * 15*pitch - c.height * 42)
 
 func to_screen(p: Vector2) -> Vector2:
 	return origin + display_pan + p * display_zoom
@@ -60,7 +66,7 @@ func screen_point(c: Dictionary) -> Vector2:
 
 func zoom_at(anchor: Vector2, factor: float) -> void:
 	var old = zoom
-	zoom = clampf(zoom * factor, .55, 1.8)
+	zoom = clampf(zoom * factor, .25 if world.has("estate") else .55, 2.0)
 	pan = (pan + origin - anchor) * zoom / old - origin + anchor
 
 func pick(pos: Vector2) -> int:
@@ -68,7 +74,7 @@ func pick(pos: Vector2) -> int:
 	var best = INF
 	for i in range(world.get("cells", []).size()):
 		var d = (screen_point(world.cells[i]) - pos) / Vector2(1, .5)
-		if d.length() < 33 * display_zoom and d.length() < best:
+		if d.length() < 33 * display_zoom * (1.65 if world.cells.size()>400 else 1.0) and d.length() < best:
 			best = d.length()
 			result = i
 	return result
@@ -141,6 +147,7 @@ func _process(delta: float) -> void:
 				inhabitants.sync(world)
 				cosmetic_layer.sync(world)
 				kingdom_layer.sync(world)
+				estate_paths.sync(world)
 				reconcile_selection()
 		inhabitants.animate(world, delta)
 		cosmetic_layer.animate(delta)

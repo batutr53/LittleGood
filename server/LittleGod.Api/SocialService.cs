@@ -56,7 +56,7 @@ public sealed class SocialService(UniverseDb db) {
     }
     public async Task<bool> Publish(string me,Publish request) {
         if(!Visibility(request.Visibility)||!Snapshot.Valid(request.Snapshot))return false;
-        var raw=request.Snapshot.GetRawText(); if(Encoding.UTF8.GetByteCount(raw)>Snapshot.MaxBytes)return false;
+        var raw=request.Snapshot.GetRawText(); if(Encoding.UTF8.GetByteCount(raw)>(request.Snapshot.TryGetProperty("version",out var snapshotVersion)&&snapshotVersion.ValueKind==JsonValueKind.Number&&snapshotVersion.TryGetInt32(out var snapshotVersionNumber)&&snapshotVersionNumber==3?Snapshot.MaxBytes:524288))return false;
         var hash=Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(raw)));
         var s=await db.Showcases.SingleOrDefaultAsync(x=>x.Owner==me);
         if(s is null){s=new Showcase{Owner=me};db.Showcases.Add(s);}

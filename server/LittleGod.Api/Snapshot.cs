@@ -3,7 +3,7 @@ namespace LittleGod.Api;
 
 // Mirrors the public v1 projection, never accepts a private save or resource reference.
 public static class Snapshot {
-    public const int MaxBytes=524288;
+    public const int MaxBytes=2097152;
     static bool Shape(JsonElement e,string keys)=>e.ValueKind==JsonValueKind.Object && e.EnumerateObject().Select(x=>x.Name).Order().SequenceEqual(keys.Split(' ').Order());
     static bool Num(JsonElement e,double lo,double hi,bool whole=false)=>e.ValueKind==JsonValueKind.Number && e.TryGetDouble(out var n)&&double.IsFinite(n)&&n>=lo&&n<=hi&&(!whole||Math.Floor(n)==n);
     static bool N(JsonElement e,string k,double lo,double hi,bool whole=false)=>Num(e.GetProperty(k),lo,hi,whole);
@@ -14,18 +14,18 @@ public static class Snapshot {
     static bool Indices(JsonElement e,int max,int highest)=>Array(e,0,max)&&e.EnumerateArray().All(x=>Num(x,0,highest,true))&&e.EnumerateArray().Select(x=>x.GetDouble()).Distinct().Count()==e.GetArrayLength();
     static bool Choices(JsonElement e,string choices,int max)=>Array(e,0,max)&&e.EnumerateArray().All(x=>x.ValueKind==JsonValueKind.String&&choices.Split(' ').Contains(x.GetString()))&&e.EnumerateArray().Select(x=>x.GetString()).Distinct().Count()==e.GetArrayLength();
     const string Memories="rain_bloom friendship lantern_grove first_village first_birth companions rivalry explored landmark alliance mountain_spring silver_fox rainbow_choir elder rescue canopy_arch reed_shelter migration trade boundary cooperation";
-    public static bool Valid(JsonElement d) {
+    public static bool Valid(JsonElement d, bool large=false) {
         try {
-            if(d.ValueKind==JsonValueKind.Object&&d.TryGetProperty("version",out var version)&&Num(version,2,2,true)) {
+            if(d.ValueKind==JsonValueKind.Object&&d.TryGetProperty("version",out var version)&&Num(version,2,3,true)) {
                 if(!Shape(d,"format version planet cells creatures settlements memories discoveries secrets findings appearance"))return false;
                 var legacy=System.Text.Json.Nodes.JsonNode.Parse(d.GetRawText())!.AsObject();legacy.Remove("appearance");legacy["version"]=1;
-                return Valid(JsonSerializer.SerializeToElement(legacy))&&Appearance(d.GetProperty("appearance"),d.GetProperty("cells").GetArrayLength(),d.GetProperty("creatures").GetArrayLength());
+                return Valid(JsonSerializer.SerializeToElement(legacy),version.GetInt32()==3)&&Appearance(d.GetProperty("appearance"),d.GetProperty("cells").GetArrayLength(),d.GetProperty("creatures").GetArrayLength());
             }
             if(!Shape(d,"format version planet cells creatures settlements memories discoveries secrets findings")||d.GetProperty("format").GetString()!="littlegod.showcase"||!N(d,"version",1,1,true))return false;
             var p=d.GetProperty("planet");
             if(!Shape(p,"name tick weather theme xp")||!T(p,"name",32,true)||!N(p,"tick",0,1e9,true)||!N(p,"weather",0,3,true)||!N(p,"theme",0,1,true)||!N(p,"xp",0,1e9,true))return false;
             var tick=p.GetProperty("tick").GetDouble();
-            var cells=d.GetProperty("cells"); if(!Array(cells,1,400))return false;
+            var cells=d.GetProperty("cells"); if(!Array(cells,1,large?2304:400))return false;
             var positions=new HashSet<string>(); int arches=0,reeds=0;
             foreach(var c in cells.EnumerateArray()) {
                 if(!Shape(c,"x y biome height moisture plants resources temperature detail meadow spring grove_until last_gift canopy_arch reed_shelter"))return false;
