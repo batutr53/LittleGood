@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+SCROLL_SET_CHECKS {"all_passed":true,"checks":{"collect_four":true,"craft_element":true,"craft_normal":true,"craft_once":true,"craft_rebirth":true,"craft_reverse":true,"final_valid":true,"finished_scrolls_wait":true,"locked_scroll_blocked":true,"locked_scroll_retained":true,"mage_actual_stats":true,"mage_bag_not_equipped":true,"mage_empty_set":true,"mage_full_set":true,"mage_mana_bonus":true,"mage_preview_exact":true,"mage_two_pieces":true,"mage_valid_save":true,"missing_scroll_quote":true,"no_scroll_no_spend":true,"priest_actual_stats":true,"priest_bag_not_equipped":true,"priest_empty_set":true,"priest_full_set":true,"priest_preview_exact":true,"priest_two_pieces":true,"priest_valid_save":true,"ready_scrollback_saved":true,"removal_clamps_hp":true,"repeat_does_not_consume":true,"rogue_actual_stats":true,"rogue_bag_not_equipped":true,"rogue_empty_set":true,"rogue_full_set":true,"rogue_preview_exact":true,"rogue_two_pieces":true,"rogue_valid_save":true,"scroll_state_valid":true,"success_consumes_one":true,"unlocked_scroll_selected":true,"warrior_actual_stats":true,"warrior_bag_not_equipped":true,"warrior_empty_set":true,"warrior_full_set":true,"warrior_preview_exact":true,"warrior_two_pieces":true,"warrior_valid_save":true,"wrong_type_blocked":true},"count":48}
+

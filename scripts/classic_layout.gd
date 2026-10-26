@@ -36,10 +36,10 @@ func build():
 	# The visual strip is 5.6% of the reference height. Icons keep separate labels.
 	r.card(Rect2(0,bottom,s.x,p.px(40)))
 	var nav=HBoxContainer.new();nav.add_theme_constant_override("separation",0);p.put(nav,Rect2(s.x-p.px(9*49+8),bottom-p.px(4),p.px(9*49),p.px(44)))
-	for entry in [["hero","hero",r.say("Char","Karakter")],["inventory","bag",r.say("Bag","Çanta")],["skills","sword",r.say("Skill","Beceri")],["attributes","shield",r.say("Stat","Stat")],["quest","quest",r.say("Quest","Görev")],["map","map",r.say("Town","Işınlan")],["construction","hammer",r.say("Build","İnşa")],["workers","workers",r.say("People","Halk")],["menu","menu",r.say("Menu","Menü")]]:
+	for entry in [["hero","hero",r.say("Char","Karakter")],["inventory","bag",r.say("Bag","Çanta")],["skills","sword",r.say("Skill","Beceri")],["attributes","shield",r.say("Stat","Stat")],["quest","quest",r.say("Quest","Görev")],["map","map",r.say("Regions","Bölgeler")],["construction","hammer",r.say("Build","İnşa")],["workers","workers",r.say("People","Halk")],["menu","menu",r.say("Menu","Menü")]]:
 		var key=entry[0];var b=r.icon_action(nav,entry[1],entry[2],func():p.route(key));b.name="WorldMenu" if key=="menu" else "Nav"+key.capitalize()
 	var left=HBoxContainer.new();p.put(left,Rect2(p.px(7),bottom-p.px(4),p.px(150),p.px(44)))
-	r.icon_action(left,"menu",r.say("Menu","Menü"),func():p.route("menu"));r.icon_action(left,"map",r.say("Map","Harita"),func():p.route("map"));r.icon_action(left,"workers",r.say("Chat","Sohbet"),func():p.route("chat"))
+	r.icon_action(left,"menu",r.say("Village","Köy"),func():p.route("guide"));r.icon_action(left,"sword",r.say("Battle","Savaş"),func():p.route("army"));r.icon_action(left,"workers",r.say("Chat","Sohbet"),func():p.route("chat"))
 	xp=bar(Color("70943e"),Rect2(p.px(170),bottom+p.px(15),maxf(p.px(60),s.x-p.px(635)),p.px(9)))
 	r.chat_box=r.card(Rect2(p.px(6),bottom-p.px(190),p.px(448),p.px(185)));r.chat_box.name="ChatPanel"
 	var tabs=p.text(r.say("GENERAL     PRIVATE     SYSTEM","GENEL       ÖZEL       SİSTEM"),17,Color("d8c68f"));r.chat_box.add_child(tabs);tabs.position=Vector2(p.px(6),p.px(2));tabs.size=Vector2(p.px(300),p.px(21))

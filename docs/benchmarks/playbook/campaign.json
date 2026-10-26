@@ -1,0 +1,12 @@
+{
+  "retained_checks": 745,
+  "sanctuary_checks": 77,
+  "game_checks": 822,
+  "all_passed": true,
+  "suite_seconds": 8.488,
+  "legal_1_23_seeds": [
+    7,
+    42,
+    2026
+  ]
+}

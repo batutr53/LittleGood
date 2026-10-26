@@ -23,6 +23,9 @@ var gifts_open=false
 var scroll: ScrollContainer
 var current_title=""
 var rpg
+var playbook_pages={}
+var playbook_region="wildwood"
+func playbook():return preload("res://scripts/playbook_ui.gd").new(self)
 func _init(u,g):ui=u;game=g
 func say(en: String,tr: String) -> String:return tr if ui.language=="tr" else en
 func size() -> Vector2:return ui.get_viewport().get_visible_rect().size
@@ -46,6 +49,11 @@ func route(destination: String,arg: int=0,remember=true):
  current=destination;argument=arg;nested=false;routing=true
  match destination:
   "quest":quest()
+  "quest_history":playbook().history()
+  "guide":playbook().guide()
+  "destination":playbook().destination(playbook_region)
+  "army_roster":playbook().roster()
+  "worker":playbook().worker(arg)
   "building":building(arg)
   "inventory":inventory()
   "item":item_detail(arg)
@@ -83,7 +91,8 @@ func surface(title: String,compact=false) -> VBoxContainer:
  if is_instance_valid(ui.modal):ui.root.remove_child(ui.modal);ui.modal.queue_free()
  if is_instance_valid(ui.veil):ui.root.remove_child(ui.veil);ui.veil.queue_free()
  var viewport=size();var margin=px(10);var width=px({"inventory":384,"hero":384,"attributes":380,"skills":470,"quest":440,"map":480,"forge":500,"construction":510,"trade":500,"workers":470,"army":480,"chat":480,"menu":430,"settings":480}.get(current,460))
- var height=minf(viewport.y-px(122),px(560));var top=px(70)
+ var extent=440 if compact else 500 if current in ["quest","workers","construction","guide","worker","quest_history","army","map","destination"] else 560
+ var height=minf(viewport.y-px(122),px(extent));var top=px(70)
  if game.world.is_empty():width=minf(viewport.x-px(40),px(680));height=minf(viewport.y-px(60),px(630));top=(viewport.y-height)*.5
  var x=viewport.x-width-margin
  if current in ["attributes","quest","menu","workers"]:x=margin
@@ -166,13 +175,19 @@ func refresh_hud():
  ui.realm_bar.hide();tray.visible=gifts_open and not game.in_menu;ui.spirit.text=str(int(w.energy))+" · "+say("spirit","ruh")
  if w.has("kingdom"):
   for key in resource_labels:resource_labels[key].text=str(int(K.home(w).food)) if key=="food" else str(int(w.kingdom.stock[key])/1000)
-  var q=K.current(w);ui.chapter.text=(game.realm_ui.localized(q.title)+"\n"+game.realm_ui.localized(q.objectives[0].text)) if not q.is_empty() else say("Beyond your kingdom\nOpen your journal and choose a new journey","Krallığının ötesinde\nGünlüğünü aç ve yeni yolculuğunu seç")
+  var q=K.current(w)
+  if q.is_empty():ui.chapter.text=say("Choose your next journey","Yeni yolculuğunu seç")
+  else:
+   var pending=q.objectives.filter(func(o):return K.progress(w,o)<float(o.target));var next=game.realm_ui.localized(pending[0].text) if not pending.is_empty() else say("Claim your reward","Ödülünü al")
+   ui.chapter.text=game.realm_ui.localized(q.title)+"\n"+next
  else:
   for l in resource_labels.values():l.text="—"
  if not w.has("kingdom"):ui.chapter.text=ui.t(LivingStories.objective(w))
  if ui.toast_until==0:ui.hint.text=""
  if rpg!=null and rpg.classic!=null:rpg.classic.refresh()
 func quest():
+ playbook().quest()
+func previous_quest():
  if not game.world.has("kingdom"):game.realm_ui.intro();return
  ui.page="kingdom";var w=game.world;var q=K.current(w);var v=surface(say("The Kingdom Chronicle","Krallık Günlüğü"));banner(v,190)
  if H.enabled(w):action(v,say("Hunting contracts & drop guide","Av görevleri ve drop rehberi"),func():route("contracts"),false,"quest")
@@ -201,6 +216,8 @@ func quest():
 func completed_quest(q: Dictionary):
  var v=surface(say("Remembered chapter","Hatırlanan bölüm"));banner(v,150);v.add_child(heading(game.realm_ui.localized(q.title)));v.add_child(text(game.realm_ui.localized(q.description)));v.add_child(text(say("Completed · this reward has already been received.","Tamamlandı · bu ödül zaten alındı."),25,T.GOLD));action(v,say("Current chapter","Güncel bölüm"),func():route("quest",0,false))
 func building(id: int):
+ playbook().building(id)
+func previous_building(id: int):
  var found=game.world.kingdom.buildings.filter(func(b):return int(b.id)==id)
  if found.is_empty():ui.toast(say("This building is unavailable.","Bu bina kullanılamıyor."));return
  var b=found[0];var d=K.buildings()[b.kind];game.view.selected=int(b.cell);game.view.pan=-game.view.project(game.world.cells[int(b.cell)])*game.view.zoom
@@ -209,6 +226,9 @@ func building(id: int):
  var rate=K.activity_rate(game.world,b);info.add_child(text(say("Working","Çalışıyor") if rate>0 else say("Construction","İnşa ediliyor") if not K.ready(b) else say("Resting · check workers and supplies","Dinleniyor · işçi ve malzemeyi kontrol et"),21,T.MUTED))
  var bar=ProgressBar.new();bar.max_value=b.required;bar.value=b.progress;bar.show_percentage=true;bar.custom_minimum_size.y=px(22);v.add_child(bar)
  v.add_child(text(say("Assigned workers: ","Atanmış işçiler: ")+str(K.occupied(game.world,id))+" / "+str(int(d.slots))+say("  ·  Output / tick: ","  ·  Üretim / tur: ")+str(snappedf(rate,.01)),22))
+ v.add_child(text(playbook().work_status(game.world,b),22,T.GOLD))
+ if not K.ready(b):v.add_child(text(say("Close this menu to continue construction.","İnşaatın sürmesi için menüyü kapat."),20,T.MUTED))
+ action(v,say("Locate in village","Köyde yerini göster"),func():game.realm_ui.focus(int(b.cell)),false,"map")
  var controls=HBoxContainer.new();v.add_child(controls)
  if load("res://scripts/estate.gd").enabled(game.world) and load("res://scripts/estate.gd").status(game.world,b)!="":action(v,say("Collect ready output","Hazır ürünü topla"),func():game.view.estate_layer.collect(id);route("building",id,false),true,"gift")
  if b.kind=="forge":action(controls,say("Forge","Üret"),func():route("forge",id),true,"forge")
@@ -268,6 +288,8 @@ func hero():
   b.icon=load("res://assets/kingdom/"+owned.recipe+".svg") if not owned.is_empty() else T.icon("sword" if slot=="weapon" else "shield" if slot in ["shield","armor"] else "chest");b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(px(62)));b.add_theme_font_size_override("font_size",int(px(23)))
  action(v,say("Open your satchel","Çantanı aç"),func():route("inventory"),false,"bag");action(v,say("Prepare an expedition","Bir sefer hazırla"),func():route("map"),true,"map")
 func world_map():
+ playbook().world_map()
+func previous_world_map():
  if not H.enabled(game.world):route("quest",0,false);return
  ui.page="kingdom";var v=surface(say("Beyond the Kingdom","Krallığın Ötesinde"));v.add_child(text(say("Choose a real path. Your kingdom waits safely during the expedition.","Gerçek bir patika seç. Sefer boyunca krallığın güvenle bekler."),24,T.MUTED))
  var R=preload("res://scripts/regions.gd")
@@ -279,18 +301,19 @@ func world_map():
   action(region,say("Inspect destination","Bölgeyi incele"),func():game.hero_ui.destination(key),unlocked,"map")
  if preload("res://scripts/trade.gd").enabled(game.world):action(v,say("Caravan routes · a different journey","Kervan yolları · başka bir yolculuk"),func():route("trade"),false,"caravan")
 func menu():
- ui.page="menu";game.checkpoint("menu");var v=surface(say("Your Living Kingdom","Yaşayan Krallığın"));banner(v,150)
+ ui.page="menu";game.checkpoint("menu");var v=surface(say("Your Living Kingdom","Yaşayan Krallığın"));action(v,say("Village guide · where is everything?","Köy rehberi · ne nerede?"),func():route("guide"),true,"map")
  var entries=[["quest",say("The Chronicle","Görev Günlüğü"),"quest"],["construction",say("Build & grow","Kur ve büyüt"),"hammer"],["workers",say("People & work","İnsanlar ve işler"),"workers"],["chat",say("Chat","Sohbet"),"workers"]]
  if I.enabled(game.world):entries.append_array([["inventory",say("The Satchel","Çanta"),"bag"],["forge",say("The Hearthforge","Ocak Demircisi"),"forge"]])
  if H.enabled(game.world):entries.append_array([["hero",say("Champion","Şampiyon"),"hero"],["map",say("World paths","Dünya yolları"),"map"]])
  if preload("res://scripts/military.gd").enabled(game.world):entries.append(["army",say("The Company","Sınır Birliği"),"sword"])
  if preload("res://scripts/trade.gd").enabled(game.world):entries.append(["trade",say("Trade routes","Ticaret yolları"),"caravan"])
- var grid=GridContainer.new();grid.columns=2;grid.add_theme_constant_override("h_separation",int(px(12)));grid.add_theme_constant_override("v_separation",int(px(12)));v.add_child(grid)
+ var grid=GridContainer.new();grid.columns=3;grid.add_theme_constant_override("h_separation",int(px(4)));grid.add_theme_constant_override("v_separation",int(px(4)));v.add_child(grid)
  for entry in entries:
-  var key=entry[0];var b=action(grid,entry[1],func():route(key),false,entry[2]);b.custom_minimum_size.y=px(38);b.add_theme_font_size_override("font_size",int(px(13)))
- action(v,ui.t("chronicle"),ui.history,false,"quest");action(v,ui.t("journal"),ui.journal,false,"map");action(v,ui.t("neighbors"),ui.neighbors,false,"hero");action(v,ui.t("settings"),func():route("settings"),false,"menu")
- action(v,say("World gifts, collections & more","Dünya armağanları, koleksiyonlar ve diğerleri"),ui.legacy_menu)
- action(v,say("Return to your world","Dünyana dön"),ui.close,true)
+  var key=entry[0];var b=action(grid,entry[1],func():route(key),false,entry[2]);rpg.compact_button(b);b.custom_minimum_size.y=px(48);b.add_theme_font_size_override("font_size",int(px(13)));b.add_theme_constant_override("icon_max_width",int(px(20)))
+ var extra=HBoxContainer.new();v.add_child(extra)
+ playbook().button(extra,ui.t("settings"),func():route("settings"));playbook().button(extra,ui.t("neighbors"),ui.neighbors)
+ playbook().button(v,say("World gifts, collections & more","Dünya armağanları, koleksiyonlar ve diğerleri"),ui.legacy_menu)
+ playbook().button(v,say("Return to your world","Dünyana dön"),ui.close,true)
  var access=HBoxContainer.new();access.name="AccessibilityQuickAccess";v.add_child(access)
  quick_access(access,"A","text",say("Text size","Metin boyutu"));quick_access(access,"C","contrast",say("High contrast","Yüksek kontrast"));quick_access(access,"S","sound",say("Sound","Ses"));quick_access(access,"V","haptics",say("Haptics","Titreşim"));quick_access(access,"30","quality",say("Battery saver","Pil tasarrufu"));quick_access(access,"TR" if ui.language=="en" else "EN","language",say("Language","Dil"))
 func chat_screen():
@@ -350,6 +373,8 @@ func recipe_detail():
  craft.disabled=not reasons.is_empty()
  if forge_selected>0 and K.assigned(w,forge_selected).is_empty():v.add_child(text(say("Assign a smith after queuing; work needs a real worker.","Sıraya aldıktan sonra demirci ata; üretim için gerçek işçi gerekir."),23,T.MUTED))
 func army():
+ playbook().army()
+func previous_army():
  var M=preload("res://scripts/military.gd");var w=game.world
  if not M.enabled(w):return
  ui.page="kingdom";var v=surface(say("The Border Company","Sınır Birliği"));var row=HBoxContainer.new();v.add_child(row);row.add_child(image(T.icon("sword"),Vector2.ONE*px(98)));var title=VBoxContainer.new();title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(title);title.add_child(heading(w.kingdom.adventure.hero.name,36));title.add_child(text(say("COMMANDER · ","KOMUTAN · ")+str(w.kingdom.military.units.size())+" / 6",21,T.GOLD))
@@ -392,6 +417,8 @@ func trade():
   if c.state!="collected":action(v,say("Follow the caravan","Kervanı izle"),func():game.trade_ui.watch(id),false,"map")
  action(v,say("Assign merchants / recruit citizens","Tüccar ata / sakin işe al"),func():route("workers"),false,"workers");action(v,say("Trade rules & salvage","Ticaret kuralları ve söküm"),game.trade_ui.legacy_open)
 func workers():
+ playbook().workers()
+func previous_workers():
  if not game.world.has("kingdom"):return
  var w=game.world;var v=surface(say("People & Work","İnsanlar ve İşler"));var header=HBoxContainer.new();v.add_child(header);header.add_child(image(T.icon("workers"),Vector2.ONE*px(90)));var words=VBoxContainer.new();words.size_flags_horizontal=Control.SIZE_EXPAND_FILL;header.add_child(words);words.add_child(heading(say("Every pair of hands matters","Her elin bir hikâyesi var"),31));words.add_child(text(str(int(K.home(w).population))+" / "+str(K.capacity(w))+say(" residents · "," sakin · ")+str(K.assigned(w,0).size())+say(" free builders"," boşta inşaatçı"),23,T.GOLD))
  for c in w.kingdom.workers:
@@ -436,6 +463,8 @@ func estate_screen():
  action(v,say("Hide plot borders","Parsel sınırlarını gizle"),func():game.view.estate_layer.land_mode=false;ui.close())
 
 func construction():
+ playbook().construction()
+func previous_construction():
  if not game.world.has("kingdom"):return
  var w=game.world;var v=surface(say("Build a Living Village","Yaşayan Bir Köy Kur"));v.add_child(text(say("Choose a real building, then find its place in your world. Materials are spent only when you confirm.","Gerçek bir bina seç; sonra dünyanda yerini bul. Malzeme yalnızca onayladığında harcanır."),25,T.MUTED));var grid=GridContainer.new();grid.columns=2;grid.add_theme_constant_override("h_separation",int(px(14)));grid.add_theme_constant_override("v_separation",int(px(18)));v.add_child(grid)
  for id in K.buildings():

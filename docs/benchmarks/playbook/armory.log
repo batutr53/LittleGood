@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+
+ARMORY_CHECKS {"all_passed":true,"checks":{"additive":true,"adventure_entry":true,"baseline_item_preserved":true,"cap":true,"combat_blocked":true,"contract":true,"contract_no_duplicate":true,"costs":true,"element":true,"failure_consumes_scroll":true,"failure_keeps_item":true,"final_valid":true,"glow":true,"grade_high":true,"grade_middle":true,"grade_unique":true,"idempotent":true,"insufficient_atomic":true,"invalid_element":true,"item_name":true,"kill_exactly_once":true,"legacy_victories_credited":true,"load":true,"lock_protected":true,"no_middle_rebirth":true,"no_normal_after_reverse":true,"no_replay":true,"no_second_reverse":true,"pickup":true,"quote":true,"rebirth_success_and_failure":true,"reject_element":true,"reject_malformed_equipped":true,"reject_orphan":true,"reject_overflow":true,"reject_wrong_grade":true,"reverse_quote":true,"reverse_stats_preserved":true,"rng_saved":true,"save":true,"stats":true,"unique_drop":true,"upgrade_success":true,"visitor_blocked":true,"world_valid":true},"count":45}
+

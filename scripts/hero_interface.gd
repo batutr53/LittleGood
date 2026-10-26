@@ -57,6 +57,7 @@ func production_legacy_map() -> void:
 		add(list,say("River Guild / Iron Hills trade post","Nehir Loncası / Demir Tepeler ticaret karakolu"),game.trade_ui.open)
 	add(v,ui.t("back"),profile)
 func destination(id: String) -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.playbook_region=id;ui.premium.route("destination");return
 	var R=preload("res://scripts/regions.gd");var d=R.data(id);ui.page="kingdom";var v=ui.popup(game.realm_ui.localized(d.name));var list=ui.card_list(v,440)
 	list.add_child(ui.label(say("ADVENTURE DESTINATION · Hero level ","MACERA BÖLGESİ · Kahraman seviyesi ")+str(d.level)+"\n"+game.realm_ui.localized(d.risk)+"\n\n"+game.realm_ui.localized(d.resources)+"\n"+game.realm_ui.localized(d.enemies)+"\n"+game.realm_ui.localized(d.landmark),21))
 	if id=="iron_hills":list.add_child(ui.label(say("Two finite mineral deposits. They do not refresh when you leave or reload. Ore feeds your existing furnace; stone can build your kingdom. No travel fee.","İki sınırlı maden damarı. Ayrılınca veya kayıt yükleyince yenilenmez. Cevher mevcut fırınında eritilir; taş krallığında kullanılır. Yol ücreti yok."),19))

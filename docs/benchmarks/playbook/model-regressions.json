@@ -1,0 +1,14 @@
+{
+  "estate": {
+    "exit_code": 0,
+    "script_errors": false
+  },
+  "armory": {
+    "exit_code": 0,
+    "script_errors": false
+  },
+  "scroll_sets": {
+    "exit_code": 0,
+    "script_errors": false
+  }
+}

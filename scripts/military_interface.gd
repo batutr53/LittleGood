@@ -40,12 +40,14 @@ func legacy_open() -> void:
 	list.add_child(ui.label(say("Village defense: +2 attack from watchtower, +3 armor from palisade. Camp: no home bonus. Retreat preserves survivors; no offline battles occur.","Köy savunması: kuleden +2 saldırı, çitten +3 zırh. Kampta ev bonusu yok. Geri çekilme sağ kalanları korur; çevrimdışı savaş olmaz."),18))
 	add(v,say("Watch training / recovery","Eğitimi / iyileşmeyi izle"),ui.close,true);add(v,ui.t("back"),game.realm_ui.open)
 func candidates() -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.playbook().candidates();return
 	var w=game.world;ui.page="kingdom";var v=ui.popup(say("Choose a citizen","Bir sakin seç"));var list=ui.card_list(v,440)
 	for c in K.assigned(w,0):
 		var id=int(c.id);add(list,c.name,func():kits(id),true)
 	list.add_child(ui.label(say("Only free citizens appear. Unassign or recruit someone in People & Work. Keep an instructor and food producer working.","Yalnızca boştakiler görünür. İnsanlar ve İşler'de birini boşa çıkar veya işe al. Eğitmen ve besin üreticisi çalışmaya devam etsin."),20))
 	add(v,ui.t("back"),open)
 func kits(worker: int) -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.playbook().kits(worker);return
 	var w=game.world;ui.page="kingdom";var v=ui.popup(say("Assign a real kit","Gerçek bir takım ata"));var list=ui.card_list(v,440)
 	var barracks=w.kingdom.buildings.filter(func(b):return b.kind=="barracks" and K.ready(b))
 	for item in w.kingdom.industry.items:

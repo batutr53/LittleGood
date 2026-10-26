@@ -14,6 +14,8 @@ var moving=0
 var previous_pause=false
 var panel
 var notice
+var confirm_button
+var placement_backdrop
 func _init(owner_game,interface) -> void:game=owner_game;ui=interface
 func say(en: String,tr: String) -> String:return tr if ui.language=="tr" else en
 func localized(pair: Array) -> String:return pair[1 if ui.language=="tr" else 0]
@@ -84,6 +86,7 @@ func legacy_open() -> void:
 		var button=add(row,entry[0],entry[1]);button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	add(v,say("Watch the village","Köyü izle"),ui.close,true)
 func intro() -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.playbook().intro();return
 	ui.page="kingdom";var v=ui.popup(say("Elder Arin awaits","Bilge Arin seni bekliyor"))
 	var portrait=TextureRect.new();portrait.texture=load("res://assets/kingdom/arin.png");portrait.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;portrait.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;portrait.custom_minimum_size=Vector2(160,180);v.add_child(portrait)
 	v.add_child(ui.label(say("Your settlers can build a home together. Begin the First Flame: five quests, real work and a growing village.","Yerleşimcilerin birlikte bir yuva kurabilir. İlk Alev'e başla: beş görev, gerçek işler ve büyüyen bir köy."),23))
@@ -168,6 +171,7 @@ func legacy_workers() -> void:
 	recruit.disabled=K.level(w)<4 or w.kingdom.workers.size()>=K.MAX_WORKERS
 	add(v,ui.t("back"),open)
 func assignments(worker: int) -> void:
+	if ui.premium!=null and ui.rebirth_enabled:ui.premium.route("worker",worker);return
 	if T.worker_reserved(game.world,worker):game.trade_ui.open();return
 	if M.worker_reserved(game.world,worker):game.military_ui.open();return
 	ui.page="kingdom";var v=ui.popup(say("Choose a profession","Bir meslek seç"));var list=ui.card_list(v,400)
@@ -303,25 +307,40 @@ func begin(new_mode: String,id: String,move_id: int=0) -> void:
 	panel=VBoxContainer.new();panel.name="KingdomPlacement";ui.place(panel,Rect2(28,1040,664,178))
 	if ui.premium!=null and ui.rebirth_enabled:
 		var p=ui.premium;var viewport=game.get_viewport_rect().size
-		panel.position=Vector2(p.px(24),viewport.y-p.px(218));panel.size=Vector2(viewport.x-p.px(48),p.px(194))
+		panel.position=Vector2(p.px(24),viewport.y-p.px(142));panel.size=Vector2(viewport.x-p.px(48),p.px(118))
 		for child in ui.root.get_children():
 			if child!=panel and child is Control and child.position.y>viewport.y*.5:child.hide()
 	for child in ui.root.get_children():
 		if child!=panel and child is Control and child.position.y>=1020+maxf(0,game.get_viewport_rect().size.y-1280):child.hide()
 	notice=ui.label(say("Touch a suitable tile · drag / pinch to navigate","Uygun hücreye dokun · sürükle / sıkıştır"),18);panel.add_child(notice)
+	if ui.premium!=null and ui.rebirth_enabled:
+		notice.add_theme_font_size_override("font_size",int(ui.premium.px(15)));notice.add_theme_color_override("font_color",Color("ffe6b2"))
+		placement_backdrop=Panel.new();placement_backdrop.name="PlacementBackdrop";placement_backdrop.mouse_filter=Control.MOUSE_FILTER_IGNORE;placement_backdrop.add_theme_stylebox_override("panel",preload("res://scripts/premium_theme.gd").box(Color("15211d"),true));ui.root.add_child(placement_backdrop);ui.root.move_child(placement_backdrop,panel.get_index());placement_backdrop.position=panel.position-Vector2(8,8)*ui.premium.scale_ui();placement_backdrop.size=panel.size+Vector2(16,16)*ui.premium.scale_ui()
+	if ui.premium!=null and ui.rebirth_enabled and mode=="build":notice.text=localized(K.buildings()[kind].name)+" · "+cost(K.buildings()[kind].cost)+"\n"+ui.premium.playbook().builders(game.world)
 	var row=HBoxContainer.new();panel.add_child(row)
 	for entry in [[say("Confirm","Onayla"),commit],[say("Cancel","İptal"),finish]]:
 		var b=add(row,entry[0],entry[1],true);b.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+		if entry[1]==commit:confirm_button=b
+		if ui.premium!=null and ui.rebirth_enabled:ui.premium.rpg.compact_button(b);b.custom_minimum_size.y=ui.premium.px(48);b.add_theme_font_size_override("font_size",int(ui.premium.px(16)))
 	for i in range(game.world.cells.size()):
 		if valid(i):cell=i;game.view.pan=-game.view.project(game.world.cells[i])*game.view.zoom;break
+	refresh_placement()
+func refresh_placement() -> void:
+	if not active:return
+	if is_instance_valid(confirm_button):confirm_button.disabled=not valid(cell)
+	var detail=say("Suitable tile · confirm placement","Uygun kare · yerleşimi onayla") if valid(cell) else say("Choose clear land suitable for this building","Bu binaya uygun boş arazi seç")
+	if mode=="build":
+		var d=K.buildings()[kind];var sites={"forest":say("Forest","Orman"),"fertile":say("Fertile land","Verimli arazi"),"rock":say("Mountain","Dağ"),"land":say("Land","Kara")}
+		notice.text=localized(d.name)+" · "+(cost(d.cost) if moving==0 else say("Relocate","Taşı"))+" · "+str(sites.get(d.site,d.site))+"\n"+detail
+		if ui.premium!=null:notice.text+=" · "+ui.premium.playbook().builders(game.world)
+	else:notice.text=detail+say(" · confirm to gather"," · toplamak için onayla")
 func valid(index: int) -> bool:
 	if index<0 or index>=game.world.cells.size():return false
 	if mode=="build":return K.valid_site(game.world,kind,index,moving)
 	return int(game.world.cells[index].biome)==1 if kind=="wood" else int(game.world.cells[index].biome) in [3,4]
 func pick(pos: Vector2) -> void:
 	cell=game.view.pick(pos)
-	if cell<0:return
-	notice.text=say("Ready · confirm when you like the place","Uygun · konumu beğendiğinde onayla") if valid(cell) else say("Needs clear suitable land; avoid buildings, water and decor.","Uygun boş arazi seç; bina, su ve dekordan uzak dur.")
+	refresh_placement()
 func commit() -> void:
 	if not active or not valid(cell):return
 	var success=false
@@ -329,8 +348,9 @@ func commit() -> void:
 	else:success=K.gather(game.world,kind,cell)>0
 	if not success:ui.toast(say("Check level, costs, plot limits, storage or gather cooldown. Return to the planet to let time pass.","Seviye, maliyet, bina sınırı, depo veya toplama süresini kontrol et. Zamanın geçmesi için gezegene dön."));return
 	var target=cell;changed();finish();game.view.effects.append({"cell":target,"age":0.0,"power":5})
-	ui.toast(say("The village is at work. Keep a free citizen for construction.","Köy iş başında. İnşaat için bir sakini boşta bırak."))
+	ui.toast((ui.premium.playbook().builders(game.world) if ui.premium!=null else "")+say(" · close menus to resume work"," · çalışmaları için menüleri kapat"))
 func finish() -> void:
+	if is_instance_valid(placement_backdrop):placement_backdrop.queue_free()
 	if not active:return
 	active=false;game.paused=previous_pause
 	if is_instance_valid(panel):ui.root.remove_child(panel);panel.queue_free()

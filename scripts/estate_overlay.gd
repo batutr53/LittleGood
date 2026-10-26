@@ -6,7 +6,9 @@ var land_mode=false
 var rewards: Array=[]
 var clock=0.0
 var icons={}
+var work_skin
 func _ready():
+	work_skin=preload("res://scripts/premium_theme.gd").box(Color("17211e"),true)
 	for key in ["wood","stone","food","gold","hammer"]:icons[key]=preload("res://scripts/premium_theme.gd").icon(key)
 	icons.ore=icons.stone;icons.iron=icons.hammer
 func _process(delta):
@@ -49,6 +51,13 @@ func pick(pos: Vector2) -> bool:
 	return false
 func _draw():
 	if view==null or not E.enabled(view.world):return
+	var game=view.get_parent()
+	if game.realm_ui!=null and game.realm_ui.active and game.realm_ui.cell>=0:
+		var placement=game.realm_ui;var point=view.screen_point(view.world.cells[placement.cell]);var z=view.display_zoom;var valid=placement.valid(placement.cell);var tint=Color(.45,1,.6,.7) if valid else Color(1,.3,.25,.7)
+		var pitch=1.65 if view.world.cells.size()>400 else 1.0
+		var ring=PackedVector2Array([point+Vector2(-30,0)*z*pitch,point+Vector2(0,-15)*z*pitch,point+Vector2(30,0)*z*pitch,point+Vector2(0,15)*z*pitch,point+Vector2(-30,0)*z*pitch])
+		draw_colored_polygon(ring,tint*Color(1,1,1,.3));draw_polyline(ring,tint,3,true)
+		if placement.mode=="build":draw_texture_rect(view.kingdom_layer.texture(placement.kind),Rect2(point+Vector2(-70,-123)*z,Vector2(140,140)*z),false,tint)
 	if land_mode:
 		for p in E.candidates(view.world):
 			var polygon=PackedVector2Array()
@@ -58,6 +67,15 @@ func _draw():
 			var at=plot_point(p);draw_circle(at,24,Color("273c32"));draw_arc(at,24,0,TAU,32,Color("d6b66a"),2,true)
 			draw_line(at-Vector2(8,0),at+Vector2(8,0),Color("ffe4a0"),3,true);draw_line(at-Vector2(0,8),at+Vector2(0,8),Color("ffe4a0"),3,true)
 	for b in view.world.get("kingdom",{}).get("buildings",[]):
+		if not K.ready(b):
+			var at=bubble(b);var free=K.assigned(view.world,0).size();var queue=view.world.kingdom.buildings.filter(func(site):return not K.ready(site));var queued=queue[0].id!=b.id
+			if get_viewport_rect().grow(60).has_point(at):
+				var color=Color("f0bd61") if free>0 else Color("ef7770")
+				draw_style_box(work_skin,Rect2(at-Vector2(62,22),Vector2(124,38)))
+				var caption=("Sırada" if game.ui.language=="tr" else "Queued") if queued else (str(free)+(" inşaatçı" if game.ui.language=="tr" else " builders")) if free>0 else ("İşçi gerekli" if game.ui.language=="tr" else "Needs builder")
+				draw_string(ThemeDB.fallback_font,at+Vector2(-55,-5),caption,HORIZONTAL_ALIGNMENT_LEFT,114,13,color)
+				draw_rect(Rect2(at+Vector2(-55,4),Vector2(110,5)),Color("37413a"));draw_rect(Rect2(at+Vector2(-55,4),Vector2(110*float(b.progress)/maxf(1,b.required),5)),color)
+			continue
 		var status=E.status(view.world,b)
 		if status.is_empty():continue
 		var point=bubble(b)

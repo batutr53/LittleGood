@@ -1,0 +1,99 @@
+{
+  "all_passed": true,
+  "checks": {
+    "army_rosteren_fits": true,
+    "army_rosteren_no_scroll": true,
+    "army_rostertr_fits": true,
+    "army_rostertr_no_scroll": true,
+    "armyen_fits": true,
+    "armyen_no_scroll": true,
+    "armytr_fits": true,
+    "armytr_no_scroll": true,
+    "builder_command": true,
+    "compact_placement": true,
+    "constructionen_fits": true,
+    "constructionen_no_scroll": true,
+    "constructiontr_fits": true,
+    "constructiontr_no_scroll": true,
+    "fixture": true,
+    "guideen_fits": true,
+    "guideen_no_scroll": true,
+    "guidetr_fits": true,
+    "guidetr_no_scroll": true,
+    "mapen_fits": true,
+    "mapen_no_scroll": true,
+    "maptr_fits": true,
+    "maptr_no_scroll": true,
+    "menuen_fits": true,
+    "menuen_no_scroll": true,
+    "menutr_fits": true,
+    "menutr_no_scroll": true,
+    "navigation_read_only": true,
+    "questen_fits": true,
+    "questen_no_scroll": true,
+    "questtr_fits": true,
+    "questtr_no_scroll": true,
+    "restore": true,
+    "save": true,
+    "valid": true,
+    "worker_restored": true,
+    "workersen_fits": true,
+    "workersen_no_scroll": true,
+    "workerstr_fits": true,
+    "workerstr_no_scroll": true
+  },
+  "pid": 4922,
+  "profiles": [
+    {
+      "draw_calls": 423.0,
+      "fps": 8.26963417894937,
+      "memory_mb": 46.8853521347046,
+      "p95_ms": 163.329,
+      "process_cpu_p95_ms": 174.131,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 60,
+      "texture_memory_mb": 45.1454563140869,
+      "world_update_cpu_p95_ms": 3.173
+    },
+    {
+      "draw_calls": 341.0,
+      "fps": 12.2159640582694,
+      "memory_mb": 46.6774206161499,
+      "p95_ms": 96.554,
+      "process_cpu_p95_ms": 124.061,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 30,
+      "texture_memory_mb": 45.1454563140869,
+      "world_update_cpu_p95_ms": 2.663
+    }
+  ],
+  "run_id": "73f50ec91c6a4300be3d63a37a570b0d",
+  "source": "actual_android_emulator_render_with_programmatic_ui_actions_no_native_input_claim",
+  "stage": "playbook_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "player_file_hashes": {
+    "planet.json": {
+      "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "before_bytes": 40618,
+      "after_bytes": 40618
+    },
+    "planet.json.bak": {
+      "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "before_bytes": 41031,
+      "after_bytes": 41031
+    },
+    "settings.cfg": {
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_bytes": 0,
+      "after_bytes": 0
+    }
+  }
+}
