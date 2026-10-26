@@ -1,5 +1,13 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Armory, item rebirth and KO Bugda research checkpoint — 26 October 2026
+
+The existing RPG now includes normal enhancement through +10, High/Unique item reverse conversion, rebirth through +21, elemental affinity colors, increasing item glow, real combat-stat bonuses, protected ownership and serial-checked confirmations. Added 16 original painted inventory icons, eight original class weapons, class-weapon drops, searchable real-game drop tables, four one-time contracts and class-specific procedural spell overlays. Old item IDs, campaigns, growing world and saves remain intact. Research covers 13 page entries and explicitly records missing interactive data and contradictory reference percentages. **This is not completion of the requested one-to-one game recreation.** No third-party art was copied; exact KO formulas, full maps/items, layered directional animation, set bonuses, real scroll inventory and full NPC quest chains remain open.
+
+Validation: **822 campaign, 270 landscape UI, 98 compact UI, 14 RPG interactions and 44 estate checks** retained; **44 new model, 37 rendered and 10 Android checks** pass. Actual Godot MCP clicks and native Android anvil confirmation were inspected. The emulator sample remains ~24 FPS at a 60 cap / ~30 at the battery 30 cap; no physical device verified. Existing shutdown resource warnings remain.
+
+APK: `D:/LittleGod/builds/android/LittleGod-Armory-debug.apk`; launcher: `D:/LittleGod/Launch LittleGod.cmd`. Report and exact remaining work: [ARMORY_REFERENCE_IMPLEMENTATION.md](ARMORY_REFERENCE_IMPLEMENTATION.md). Research: `docs/research/kobugda-audit.json`; evidence: `docs/benchmarks/armory/`; real screenshots: `docs/screenshots/armory/`.
+
 ## Growing world and village collection — 26 October 2026
 
 Implemented a **1,024-tile starting world**, expandable through adjacent 64-tile parcels to **2,304 tiles**; first expansion free, later purchases use ordinary resources. Twelve original painted building sprites replace most home/industry buildings, at approximately twice the previous size. Buildings are clickable; completed construction, production and forge jobs show tappable bubbles. Collection transfers real output once, retains warehouse overflow and preserves item IDs. Added village paths, wider terrain spacing, zoom controls, fitting minimap, sparse decorations and offscreen prop visibility. Legacy save migration appends cells without reindexing old content; private buffers and public read-only v3 previews are validated.

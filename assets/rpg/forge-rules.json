@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "balance": "LittleGod adaptation, not verified Knight Online server odds",
+  "normal_chance_bp": [10000,10000,9800,8000,5700,3500,2000,600,100,100],
+  "rebirth_chance_bp": 2500,
+  "reverse_map": {"7":1,"8":5,"9":11,"10":21},
+  "failure": "retain_item_and_level_consume_materials",
+  "normal_attack_bonus": [0,1,2,3,4,5,7,9,12,16,21],
+  "rebirth_attack_bonus": [0,9,10,10,11,12,13,14,14,15,15,16,17,17,18,18,19,19,20,20,21,21],
+  "elements": ["none","fire","frost","lightning","poison"],
+  "grade_colors": {"low":"c4c8bf","middle":"76aef0","high":"b38ae5","unique":"e8b24f"}
+}

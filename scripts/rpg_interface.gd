@@ -3,6 +3,7 @@ const R=preload("res://scripts/rpg_progression.gd")
 const H=preload("res://scripts/hero.gd")
 const I=preload("res://scripts/industry.gd")
 const T=preload("res://scripts/premium_theme.gd")
+const F=preload("res://scripts/armory.gd")
 var p
 var ui
 var game
@@ -43,7 +44,7 @@ func refresh_portrait():
 	hud_portrait.texture=load(path) if ResourceLoader.exists(path) else load("res://assets/adventure/warrior.png")
 func inventory():
 	if not I.enabled(game.world):game.realm_ui.legacy_inventory();return
-	R.ensure(game.world);var v=p.surface(say("Inventory","Çanta"));p.nested=false;ui.page="kingdom";v.add_theme_constant_override("separation",int(p.px(4)))
+	R.ensure(game.world);F.ensure(game.world);var v=p.surface(say("Inventory","Çanta"));p.nested=false;ui.page="kingdom";v.add_theme_constant_override("separation",int(p.px(4)))
 	if R.available(game.world):
 		var selector=HBoxContainer.new();v.add_child(selector)
 		for key in R.CLASSES:
@@ -57,6 +58,7 @@ func inventory():
 		for slot in ["ear_left","head","ear_right","neck","armor","belt","weapon","hands","shield","ring_left","legs","ring_right","feet","artifact"]:equipment_slot(equipment,slot)
 		v.add_child(p.text(hero.name+" · "+R.NAMES[hero.get("class","warrior")]+" · Lv "+str(H.level(hero)),19,T.GOLD))
 	var tabs=HBoxContainer.new();v.add_child(tabs)
+	var codex=p.action(v,say("Drops & bestiary · Contracts","Drop rehberi · Görev panosu"),func():p.route("bestiary"));codex.name="OpenBestiary";codex.custom_minimum_size.y=p.px(28);compact_button(codex)
 	for tab in [["all",say("All","Tümü")],["weapon",say("Gear","Donanım")],["tool",say("Tools","Alet")],["consumable",say("Items","Eşya")]]:
 		var key=tab[0];var button=p.action(tabs,tab[1],func():p.filter=key;inventory());button.custom_minimum_size.y=p.px(27);button.add_theme_font_size_override("font_size",int(p.px(11)));compact_button(button)
 	var grid=GridContainer.new();grid.name="InventoryGrid";grid.columns=7;grid.add_theme_constant_override("h_separation",int(p.px(3)));grid.add_theme_constant_override("v_separation",int(p.px(3)));v.add_child(grid)
@@ -71,7 +73,12 @@ func inventory():
 			if id>0:selected_item=id;show_item(id));b.custom_minimum_size=Vector2(p.px(45),p.px(45));compact_button(b);b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(36)));grid.add_child(b)
 		b.add_theme_stylebox_override("normal",T.box(Color("090c09"),false))
 		if id>0:
-			var item=I.item(game.world,id);b.icon=load("res://assets/kingdom/"+item.recipe+".svg");b.tooltip_text=game.realm_ui.localized(I.recipes()[item.recipe].name)
+			var item=I.item(game.world,id);b.icon=F.icon(item.recipe);b.tooltip_text=F.label(game.world,item,ui.language=="tr")
+			var box=T.box(Color("090c09"),false);box.border_color=F.color(item.recipe);box.set_border_width_all(1);b.add_theme_stylebox_override("normal",box)
+			var s=F.state(game.world,id)
+			add_glow(b,id)
+			if int(s.normal)>0 or int(s.rebirth)>0:
+				var tag=p.text(("R+"+str(int(s.rebirth))) if int(s.rebirth)>0 else "+"+str(int(s.normal)),16,F.color(item.recipe));tag.position=Vector2(p.px(2),p.px(26));b.add_child(tag)
 			b.mouse_entered.connect(func():
 				if selected_item==0:show_item(id))
 		else:b.disabled=true;b.add_theme_stylebox_override("disabled",T.box(Color("090c09"),false))
@@ -96,7 +103,10 @@ func equipment_slot(parent: Control,slot: String):
 	b.add_theme_color_override("icon_normal_color",Color(.5,.55,.45,.45))
 	if id>0:
 		var owned=I.item(game.world,id)
-		if not owned.is_empty():b.icon=load("res://assets/kingdom/"+owned.recipe+".svg");b.add_theme_color_override("icon_normal_color",Color.WHITE);b.tooltip_text+=" · "+game.realm_ui.localized(I.recipes()[owned.recipe].name)
+		if not owned.is_empty():b.icon=F.icon(owned.recipe);b.add_theme_color_override("icon_normal_color",Color.WHITE);b.tooltip_text+=" · "+F.label(game.world,owned,ui.language=="tr");add_glow(b,id)
+func add_glow(button: Control,id: int):
+	if F.glow(game.world,id).strength<=0:return
+	var glow=preload("res://scripts/equipment_glow.gd").new();glow.world=game.world;glow.item_id=id;glow.reduce_motion=ui.reduce_motion;button.add_child(glow);glow.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 func clear_details():
 	for child in details.get_children():details.remove_child(child);child.queue_free()
 func show_summary():
@@ -111,10 +121,13 @@ func show_item(id: int):
 	var owned=I.item(game.world,id)
 	if owned.is_empty():return
 	clear_details();var d=I.recipes()[owned.recipe];var slot=d.get("category","tool")
-	details.add_child(p.image(load("res://assets/kingdom/"+owned.recipe+".svg"),Vector2(0,p.px(90))));details.add_child(p.heading(game.realm_ui.localized(d.name),27));details.add_child(p.text(game.realm_ui.localized(d.description),21,T.MUTED))
+	details.add_child(p.image(F.icon(owned.recipe),Vector2(0,p.px(90))));details.add_child(p.heading(F.label(game.world,owned,ui.language=="tr"),27));details.add_child(p.text(F.grade(owned.recipe).to_upper()+" · "+str(F.state(game.world,id).element),20,F.color(owned.recipe)));details.add_child(p.text(game.realm_ui.localized(d.description),21,T.MUTED))
+	if F.eligible(game.world,id):
+		var enhance=p.action(details,say("Upgrade / Rebirth","Yükselt / Rebirth"),func():p.route("enhance",id),true,"forge");enhance.name="EnhanceItem";enhance.disabled=not R.home(game.world)
 	var allowed=d.get("classes",["warrior"] if slot in H.SLOTS and slot!="artifact" else R.CLASSES)
 	if slot in H.SLOTS+R.EXTRA_SLOTS:details.add_child(p.text(say("Classes: ","Sınıflar: ")+", ".join(allowed)+"\n"+say("Slot: ","Yuva: ")+slot.replace("_"," "),17,T.MUTED))
-	for effect in d.get("effects",{}):details.add_child(p.text(stat_name(effect)+"  +"+str(d.effects[effect]),18,T.GOLD))
+	var bonuses=I.effects(game.world,owned)
+	for effect in bonuses:details.add_child(p.text(stat_name(effect)+"  +"+str(bonuses[effect]),18,T.GOLD))
 	if R.available(game.world) and slot in H.SLOTS:
 		var before=H.stats(game.world);var after=H.preview(game.world,slot,id)
 		for key in ["attack","defense","health"]:details.add_child(p.text(stat_name(key)+"   "+str(before[key])+" → "+str(after[key]),21,T.GOLD))
@@ -133,7 +146,7 @@ func show_item(id: int):
 	if R.available(game.world):
 		p.action(details,say("Unlock","Kilidi kaldır") if id in game.world.rpg.locked else say("Lock item","Eşyayı kilitle"),func():R.lock_item(game.world,id);game.realm_ui.changed();show_item(id),false,"shield")
 		p.action(details,say("Discard…","Çöpe at…"),func():confirm_discard(id),false,"hammer")
-	details.add_child(p.text(say("Upgrade · not enabled yet\nSale · rules pending","Yükseltme · henüz etkin değil\nSatış · kurallar belirlenecek"),18,T.MUTED))
+	details.add_child(p.text(say("Sale · rules pending","Satış · kurallar belirlenecek"),18,T.MUTED))
 func confirm_discard(id: int):
 	var owned=I.item(game.world,id)
 	if owned.is_empty():return
@@ -141,6 +154,76 @@ func confirm_discard(id: int):
 		if R.discard(game.world,id):selected_item=0;game.realm_ui.changed();inventory()
 		else:ui.toast(say("Protected, equipped or reserved item.","Korunan, kuşanılmış veya ayrılmış eşya."))
 		dialog.queue_free());dialog.canceled.connect(dialog.queue_free);dialog.popup_centered()
+func enhance(id: int):
+	R.ensure(game.world);F.ensure(game.world);var owned=I.item(game.world,id)
+	if owned.is_empty():p.route("inventory");return
+	var v=p.surface(say("The Magic Anvil","Büyülü Örs"));p.nested=false;ui.page="kingdom"
+	var header=HBoxContainer.new();v.add_child(header);header.add_child(p.image(F.icon(owned.recipe),Vector2.ONE*p.px(100)))
+	var words=VBoxContainer.new();header.add_child(words);words.size_flags_horizontal=Control.SIZE_EXPAND_FILL;words.add_child(p.heading(F.label(game.world,owned,ui.language=="tr"),25));words.add_child(p.text(F.grade(owned.recipe).to_upper(),21,F.color(owned.recipe)))
+	v.add_child(p.text(say("Your item stays at its current level on failure. Materials are consumed. Rates are LittleGod balance.","Başarısızlıkta eşyan ve seviyesi korunur; malzeme harcanır. Oranlar LittleGod dengesidir."),19,T.MUTED))
+	if K_count_forge()==0:v.add_child(p.text(say("A completed forge is required.","Tamamlanmış bir demirci gerekli."),21,T.GOLD))
+	var s=F.state(game.world,id)
+	for mode in ["normal","reverse","rebirth"]:
+		var q=F.quote(game.world,id,mode)
+		if q.is_empty():continue
+		var title={"normal":say("Upgrade +","Yükselt +")+str(int(q.after.normal)),"reverse":say("Reverse → REB +","Rebirth dönüşümü → +")+str(int(q.after.rebirth)),"rebirth":"REB +"+str(int(q.after.rebirth))}[mode]
+		var box=VBoxContainer.new();v.add_child(box);box.add_child(p.text(title+" · "+str(q.chance_bp/100.0)+"%",22,T.GOLD));box.add_child(p.text(game.realm_ui.cost(q.cost),18,T.MUTED))
+		var copy=game.world.duplicate(true);copy.armory.items[str(id)]=q.after;var before=I.effects(game.world,owned);var after=I.effects(copy,owned)
+		for key in after:
+			if after[key]!=before[key]:box.add_child(p.text(stat_name(key)+" "+str(before[key])+" → "+str(after[key]),20))
+		var quote=q.duplicate(true);var button=p.action(box,say("Review & confirm","İncele ve onayla"),func():confirm_upgrade(quote),true,"forge");button.name="Confirm"+mode.capitalize();button.disabled=K_count_forge()==0 or not load("res://scripts/kingdom.gd").afford(game.world,q.cost)
+	v.add_child(p.text(say("Weapon element","Silah elementi"),22,T.GOLD));var row=GridContainer.new();row.columns=2;v.add_child(row)
+	for entry in [["fire","Ateş"],["frost","Buz"],["lightning","Yıldırım"],["poison","Zehir"]]:
+		var q=F.quote(game.world,id,"element",entry[0]);var quote=q.duplicate(true);var b=p.action(row,entry[1] if ui.language=="tr" else entry[0].capitalize(),func():confirm_upgrade(quote));b.disabled=q.is_empty() or K_count_forge()==0 or not load("res://scripts/kingdom.gd").afford(game.world,q.get("cost",{}))
+	if F.quote(game.world,id,"normal").is_empty() and F.quote(game.world,id,"rebirth").is_empty():v.add_child(p.text(say("Locked, reserved, or maximum level. Only active-hero equipment can be changed at home.","Kilitli, ayrılmış veya son seviyede. Yalnızca aktif kahramanın donanımı evde değiştirilebilir."),19,T.MUTED))
+	p.action(v,say("Your satchel","Çantana dön"),func():p.route("inventory"),false,"bag")
+func K_count_forge() -> int:return load("res://scripts/kingdom.gd").count(game.world,"forge")
+func resource_name(key: String) -> String:
+	return {"gold":"Altın","iron":"Demir","wood":"Odun","stone":"Taş","herb":"Şifalı bitki","leather":"Deri","thornhide":"Dikenderi","heart":"Yaşayan kalp","ore":"Cevher","desert_crystal":"Çöl kristali","ancient_alloy":"Kadim alaşım"}.get(key,key) if ui.language=="tr" else key.replace("_"," ").capitalize()
+func confirm_upgrade(q: Dictionary):
+	if q.is_empty():return
+	var v=p.surface(say("Confirm enhancement","Yükseltmeyi onayla"));v.name="EnhanceConfirmation"
+	var owned=I.item(game.world,int(q.id))
+	if owned.is_empty():enhance(int(q.id));return
+	v.add_child(p.image(F.icon(owned.recipe),Vector2(0,p.px(110))))
+	v.add_child(p.heading(F.label(game.world,owned,ui.language=="tr"),25))
+	v.add_child(p.text(game.realm_ui.cost(q.cost),23,T.GOLD));v.add_child(p.text(str(q.chance_bp/100.0)+"% "+say("success chance","başarı şansı"),24,T.GOLD))
+	v.add_child(p.text(say("On failure: item and level stay; materials spent.","Başarısızlık: eşya ve seviye korunur, malzeme harcanır."),22,T.MUTED))
+	var confirm=p.action(v,say("Confirm enhancement","Yükseltmeyi onayla"),func():
+		var result=F.attempt(game.world,int(q.id),q.mode,int(q.serial),q.element)
+		if result.is_empty():ui.toast(say("State changed. Check resources and item protection.","Durum değişti. Kaynakları ve eşya korumasını kontrol et."))
+		else:
+			game.realm_ui.changed();game.audio.chime(6 if result.success else 2);ui.toast(say("Enhancement succeeded!","Yükseltme başarılı!") if result.success else say("Unchanged · materials spent","Seviye korundu · malzeme harcandı"))
+		enhance(int(q.id)),true,"forge")
+	confirm.name="ConfirmEnhancement";confirm.custom_minimum_size.y=p.px(48)
+	p.action(v,say("Cancel","Vazgeç"),func():enhance(int(q.id)))
+func bestiary():
+	var v=p.surface(say("Drops & Bestiary","Drop ve Canavar Rehberi"));ui.page="kingdom";p.nested=false
+	v.add_child(p.text(say("LittleGod drop tables · original rewards, not unverified reference odds.","LittleGod drop tabloları · özgün ödüller, doğrulanmamış referans oranları değil."),19,T.MUTED))
+	p.action(v,say("Contracts & rewards","Görevler ve ödüller"),func():p.route("contracts"),true,"quest")
+	var search=LineEdit.new();search.placeholder_text=say("Search monsters…","Canavar ara…");search.custom_minimum_size.y=p.px(40);v.add_child(search);var sections=[]
+	for kind in load("res://scripts/adventure.gd").enemies():
+		var group=VBoxContainer.new();v.add_child(group);var container=group
+		var d=load("res://scripts/adventure.gd").enemies()[kind];var monster_name=d.name.get("tr" if ui.language=="tr" else "en",kind) if d.name is Dictionary else game.realm_ui.localized(d.name);container.add_child(p.heading(monster_name,25));container.add_child(p.text("HP "+str(int(d.health))+" · ATK "+str(int(d.attack))+" · DEF "+str(int(d.defense)),19));sections.append({"node":group,"name":(monster_name+" "+kind).to_lower()})
+		if kind=="thornheart":
+			container.add_child(p.text(say("First victory only: 1 living heart, 5 gold. Extra class weapon: Unique · 100%.","İlk zafer: 1 yaşayan kalp, 5 altın. Ek sınıf silahı: Unique · %100."),19,T.GOLD));continue
+		container.add_child(p.text(say("Guaranteed: ","Kesin: ")+str(int(d.quantity))+" "+resource_name(d.material),18,T.MUTED))
+		var total=0
+		for entry in d.weights:total+=int(entry[1])
+		for entry in d.weights:container.add_child(p.text(resource_name(entry[0])+" · "+str(snappedf(int(entry[1])*100.0/maxi(1,total),.01))+"%",18))
+		container.add_child(p.text(say("Extra class weapon: ","Ek sınıf silahı: ")+("Unique · 100%" if kind in ["thornheart","ruin_sentinel","sunward_warden"] else "High · 25%"),19,T.GOLD))
+	search.text_changed.connect(func(query):
+		for section in sections:section.node.visible=query.strip_edges().is_empty() or section.name.contains(query.to_lower().strip_edges()))
+	p.action(v,say("Back to inventory","Çantaya dön"),func():p.route("inventory"),false,"bag")
+func contracts():
+	F.ensure(game.world);var v=p.surface(say("The Adventurer's Board","Maceracı Panosu"));ui.page="kingdom";p.nested=false
+	v.add_child(p.text(say("One-time objectives. No absence penalty. Rewards are delivered once at home when storage has room.","Tek seferlik hedefler. Yokluk cezası yok. Ödüller evde, depoda yer varsa bir kez verilir."),20,T.MUTED))
+	for key in F.contracts():
+		var id=key;var d=F.contracts()[key];var value=F.progress(game.world,key);var claimed=key in game.world.get("armory",{}).get("claims",[])
+		v.add_child(p.heading(game.realm_ui.localized(d.title),24));v.add_child(p.text(str(mini(value,int(d.target)))+" / "+str(d.target),20,T.GOLD));v.add_child(p.text({"hunt":say("Defeat two forest threats (wolf or thorn).","2 orman tehdidini yen (kurt veya dikenli)."),"guardian":say("Defeat a guardian boss.","Bir muhafız boss yen."),"craft":say("Forge an Iron Sword and collect it.","Demir Kılıç üret ve topla."),"refine":say("Successfully enhance one item.","Bir eşyayı başarıyla yükselt.")}[key],19));v.add_child(p.text(game.realm_ui.cost(d.rewards),19,T.MUTED))
+		var button=p.action(v,say("Claimed","Alındı") if claimed else say("Claim reward","Ödülü al"),func():
+			if F.claim(game.world,id):game.realm_ui.changed();contracts()
+			else:ui.toast(say("Return home and make room in storage.","Eve dön ve depoda yer aç.")),true,"quest");button.disabled=claimed or value<int(d.target) or not R.home(game.world)
 func attributes():
 	if not R.available(game.world):p.route("hero");return
 	R.ensure(game.world);draft=R.selected(game.world).attributes.duplicate();var v=p.surface(say("Attributes","Statlar"));p.nested=false;v.add_child(p.text(say("Available points: ","Kullanılabilir puan: ")+str(R.points(game.world)),24,T.GOLD))

@@ -192,6 +192,7 @@ static func defeat_enemy(w: Dictionary,e: Dictionary) -> void:
 	e=candidates[0]
 	if e.state=="dead" or e.hp>0:return
 	e.state="dead";var a=w.kingdom.adventure;var r=a.run;var data=enemies()[e.kind];var before=int(H.stats(w).health);a.hero.xp+=int(data.xp);a.hero.hp+=int(H.stats(w).health)-before;H.event(w,"kills")
+	if w.has("armory"):load("res://scripts/armory.gd").defeated(w,e)
 	if r.get("region","")=="sanctuary":load("res://scripts/sanctuary.gd").defeated(w,e)
 	if r.get("region","")=="ashen_desert":a.regions.quest.kill=true
 	if e.kind=="thornheart":

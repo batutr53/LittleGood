@@ -27,6 +27,7 @@ var physics_steps=0
 var combat_cpu_us=0
 var startup_ms=0.0
 var effects
+var spell_fx
 var props
 var floats: Array=[]
 var stone_distance=0.0
@@ -89,6 +90,7 @@ func _ready() -> void:
 	for e in game.world.kingdom.adventure.run.enemies:make_body(int(e.id),Vector2(e.x,e.y),load("res://assets/adventure/"+e.kind+".svg"),180 if e.kind=="thornheart" else 100)
 	props=preload("res://scripts/adventure_props.gd").new();add_child(props)
 	effects=preload("res://scripts/adventure_effects.gd").new();add_child(effects)
+	spell_fx=preload("res://scripts/class_spell_fx.gd").new();spell_fx.reduce_motion=game.ui.reduce_motion;add_child(spell_fx)
 	camera=Camera2D.new();camera.zoom=Vector2.ONE*1.15;camera.position=camera_target();camera.position_smoothing_enabled=false;add_child(camera);camera.make_current()
 	build_hud();startup_ms=(Time.get_ticks_usec()-started)/1000.0
 func regional_prop(key: String,point: Vector2,size: float,anchor: float,alpha: float=1.0) -> void:
@@ -214,7 +216,11 @@ func _physics_process(delta: float) -> void:
 		for key in ["attack","skill","dodge","heal"]:
 			if command.get(key,false):action_counts[key]=int(action_counts.get(key,0))+1
 		var before_position=Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y)
+		var can_cast=command.get("skill",false) and load("res://scripts/rpg_progression.gd").skill_ready(game.world,command)
 		var feedback=A.step(game.world,command,move_body);presentation_feedback.append_array(feedback);actions.clear();combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
+		if can_cast and feedback.has("swing"):
+			var cls=game.world.kingdom.adventure.hero.get("class","warrior");var prog=load("res://scripts/rpg_progression.gd").selected(game.world);var index=int(prog.get("bar",[0,1,2])[clampi(int(command.get("skill_slot",0)),0,2)])
+			var run=game.world.kingdom.adventure.run;spell_fx.cast(Vector2(run.x,run.y),cls,index,Vector2(run.facing[0],run.facing[1]))
 		if region=="sanctuary":
 			stone_distance+=before_position.distance_to(Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y))
 			if stone_distance>=65:stone_distance=fmod(stone_distance,65);game.audio.sanctuary("step")
@@ -230,6 +236,7 @@ func _physics_process(delta: float) -> void:
 				elif cue in ["plate","mechanism"]:game.audio.sanctuary("switch")
 			if cue is String and cue=="boss":message.text=say("Thornheart falls! Inspect the living heart, then return to Arin.","Dikenyürek düştü! Yaşayan kalbi İncele ile al; Arin'e dön.")
 	var r=game.world.kingdom.adventure.run;bodies[0].position=Vector2(r.x,r.y)
+	spell_fx.aura_position=Vector2(r.x,r.y);spell_fx.aura_direction=Vector2(r.facing[0],r.facing[1]).normalized();spell_fx.aura=load("res://scripts/armory.gd").glow(game.world,int(game.world.kingdom.adventure.hero.equipment.weapon))
 	if is_instance_valid(warrior_visual):warrior_visual.sample(game.world,presentation_feedback)
 	bodies[0].get_node("Art").rotation=sin(r.clock*.012)*.025*direction.length()
 	bodies[0].get_node("Art").position.y=-46.2-absf(sin(r.clock*.015))*3*direction.length()

@@ -60,6 +60,9 @@ func route(destination: String,arg: int=0,remember=true):
   "trade":trade()
   "construction":construction()
   "estate":estate_screen()
+  "enhance":rpg.enhance(arg)
+  "bestiary":rpg.bestiary()
+  "contracts":rpg.contracts()
   "settings":ui.legacy_settings()
   "attributes":rpg.attributes()
   "skills":rpg.skills()
@@ -171,6 +174,7 @@ func refresh_hud():
 func quest():
  if not game.world.has("kingdom"):game.realm_ui.intro();return
  ui.page="kingdom";var w=game.world;var q=K.current(w);var v=surface(say("The Kingdom Chronicle","Krallık Günlüğü"));banner(v,190)
+ if H.enabled(w):action(v,say("Hunting contracts & drop guide","Av görevleri ve drop rehberi"),func():route("contracts"),false,"quest")
  var chapter_name=say("CHAPTER ","BÖLÜM ")+str(K.tier(w))+"    /    "+say("REALM ","DİYAR ")+str(K.level(w))
  v.add_child(text(chapter_name,19,T.GOLD))
  if q.is_empty():

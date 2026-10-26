@@ -88,8 +88,9 @@ static func modifiers(w: Dictionary) -> Dictionary:
 	for id in w.rpg.loadouts[key].values():
 		var item=I.item(w,int(id))
 		if not item.is_empty():
-			for stat in I.recipes()[item.recipe].effects:
-				if result.has(stat):result[stat]+=int(I.recipes()[item.recipe].effects[stat])
+			var bonuses=I.effects(w,item)
+			for stat in bonuses:
+				if result.has(stat):result[stat]+=int(bonuses[stat])
 	return result
 static func combat_tick(w: Dictionary):
 	if not w.has("rpg"):return
@@ -186,7 +187,7 @@ static func discard(w: Dictionary,id: int) -> bool:
 	ensure(w);var I=load("res://scripts/industry.gd");var owned=I.item(w,id)
 	if owned.is_empty() or id in w.rpg.locked or reserved(w,id) or load("res://scripts/military.gd").item_reserved(w,id):return false
 	if I.recipes()[owned.recipe].get("category")=="artifact" or w.kingdom.industry.equipped.any(func(s):return int(s.item)==id):return false
-	w.kingdom.industry.items.erase(owned);return true
+	w.kingdom.industry.items.erase(owned);load("res://scripts/armory.gd").remove(w,id);return true
 static func validate(w: Dictionary) -> bool:
 	if not w.has("rpg"):return true
 	if not available(w):return false

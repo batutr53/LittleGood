@@ -1,0 +1,36 @@
+{
+  "display": [
+    2400,
+    1080
+  ],
+  "viewport": [
+    1600,
+    720
+  ],
+  "adb_taps": [
+    [
+      1836,
+      1050
+    ],
+    [
+      2004,
+      700
+    ],
+    [
+      1590,
+      445
+    ],
+    [
+      2040,
+      523
+    ],
+    [
+      2040,
+      556
+    ]
+  ],
+  "observed": "Inventory -> Iron Sword(+1) -> Anvil -> confirmation -> Iron Sword(+2), attack9 to10; gold21 to19, iron21 to20.",
+  "source": "Actual emulator ADB touch screenshots, inspected visually. Test session native changes do not autosave; save/load separately tested.",
+  "tested_apk_sha256": "d01c478cc2c2cdae983e66dc0b6d85aee956367dd49f4d222e9ee2a8ec6b085f",
+  "later_change": "Final APK adds one-time credit for saved defeated enemies; anvil UI and transaction unchanged. Final APK separately passes Android harness."
+}

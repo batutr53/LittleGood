@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-26",
+  "complete": false,
+  "art_permission": "No redistribution license found; all-rights-reserved footer. No third-party image copied into assets.",
+  "sources": [
+    {
+      "url": "https://kobugda.com/drops",
+      "status": "Public page readable; live monster rows absent in returned HTML; direct HTTP403; browser disabled",
+      "verified": [
+        "Zone filters and separate item/monster searches"
+      ],
+      "missing": [
+        "Complete live monster-item rows",
+        "Monster drop percentages",
+        "Item stat tables"
+      ]
+    },
+    {
+      "url": "https://old.kobugda.com/Drops",
+      "status": "Readable static reference; explicitly player-observed",
+      "verified": [
+        "Dragon Tooth: hammer family",
+        "Harpy Queen: class earrings",
+        "Shaula: bow/shield families",
+        "Bosses grouped by region"
+      ],
+      "missing": [
+        "Authoritative drop rates"
+      ]
+    },
+    {
+      "url": "https://kobugda.com/blog/knight-online-anvil-simulator-guide",
+      "status": "Conflicts with other guides",
+      "verified": [
+        "Simulator keeps items on failure",
+        "Published standard row chances:98,80,57,35,20,6,1 percent"
+      ],
+      "conflict": "Article example says6% at+7 while table says1%; not authoritative server rates"
+    },
+    {
+      "url": "https://kobugda.com/blog/knight-online-rebirth-upgrade-system-guide",
+      "status": "Reference mechanics, approximate odds",
+      "verified": [
+        "High/unique equipment +7 or higher may reverse; accessories excluded",
+        "Normal7/8/9/10 maps to rebirth1/5/11/21",
+        "Conversion100%; strengthened rebirth described as approximately25%",
+        "Four glow bands"
+      ],
+      "conflict": "Destruction described here; simulator guide retains items"
+    },
+    {
+      "url": "https://kobugda.com/rebirth",
+      "status": "Character progression, separate from item rebirth",
+      "verified": [
+        "Character level83 requirement",
+        "2 bonus stat points per character rebirth",
+        "Quest-reset behavior"
+      ],
+      "adaptation": "Character rebirth not implemented; existing campaign never reset"
+    },
+    {
+      "url": "https://kobugda.com/quests/skill",
+      "status": "Readable",
+      "verified": [
+        "Accessory disassembly supplies skill powders",
+        "Requirements scale with ability level"
+      ],
+      "adaptation": "Class skill trees retained; powder unlocks pending"
+    },
+    {
+      "url": "https://kobugda.com/quests/keyholder",
+      "status": "Readable",
+      "verified": [
+        "Seven NPCs with sequential questions and level requirement"
+      ],
+      "adaptation": "LittleGod contract board implemented; seven-NPC quest/map not yet implemented"
+    },
+    {
+      "url": "https://kobugda.com/quests/daily",
+      "status": "Readable",
+      "verified": [
+        "NPC kill objectives and explicit rewards"
+      ],
+      "adaptation": "One-time hunt/craft/guardian/refinement contracts, no daily absence penalty"
+    },
+    {
+      "url": "https://kobugda.com/skill-calculator",
+      "status": "App shell only",
+      "missing": [
+        "Complete class skill numbers and animations"
+      ]
+    },
+    {
+      "url": "https://kobugda.com/calculator/advanced",
+      "status": "App shell only",
+      "missing": [
+        "AP formula and full item stats"
+      ]
+    },
+    {
+      "url": "https://kobugda.com/sets",
+      "status": "App shell only",
+      "verified": [
+        "Class filters and piece-count bonuses"
+      ],
+      "missing": [
+        "Complete bonus values"
+      ]
+    },
+    {
+      "url": "https://kobugda.com/probabilities",
+      "status": "App shell only, data loading message",
+      "missing": [
+        "Loaded probability tables"
+      ]
+    },
+    {
+      "url": "https://kobugda.com/anvil",
+      "status": "Readable controls and image references",
+      "verified": [
+        "Separate upgrade, reverse and rebirth-strengthening scroll roles"
+      ]
+    }
+  ],
+  "balance": "See assets/rpg/forge-rules.json; explicit LittleGod adaptation, not verified KO server odds"
+}

@@ -1,0 +1,882 @@
+[
+  {
+    "id": "forest_axe",
+    "name": [
+      "Forester’s Axe",
+      "Ormancı Baltası"
+    ],
+    "category": "tool",
+    "classes": [],
+    "effects": {
+      "lumber": 1500
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "iron_pick",
+    "name": [
+      "Iron Pick",
+      "Demir Kazma"
+    ],
+    "category": "tool",
+    "classes": [],
+    "effects": {
+      "mine": 1500,
+      "quarry": 1350
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "field_sickle",
+    "name": [
+      "Rainseed Sickle",
+      "Yağmur Tohumu Orağı"
+    ],
+    "category": "tool",
+    "classes": [],
+    "effects": {
+      "farm": 1350
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "mason_hammer",
+    "name": [
+      "Mason’s Hammer",
+      "Taşçı Çekici"
+    ],
+    "category": "tool",
+    "classes": [],
+    "effects": {
+      "quarry": 1250,
+      "builder": 1250
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "iron_sword",
+    "name": [
+      "Iron Sword",
+      "Demir Kılıç"
+    ],
+    "category": "weapon",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "attack": 8
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "reinforced_shield",
+    "name": [
+      "Reinforced Shield",
+      "Güçlendirilmiş Kalkan"
+    ],
+    "category": "shield",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "defense": 3
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "leather_armor",
+    "name": [
+      "Trailguard Armor",
+      "Patika Muhafızı Zırhı"
+    ],
+    "category": "armor",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "defense": 4
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "healing_potion",
+    "name": [
+      "Herbal Draught",
+      "Şifalı Bitki İksiri"
+    ],
+    "category": "consumable",
+    "classes": [],
+    "effects": {
+      "heal": 35
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "thornblade",
+    "name": [
+      "Thornhide Blade",
+      "Dikenderi Kılıcı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "attack": 16
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "heartward",
+    "name": [
+      "Heart of Wildwood",
+      "Yabanorman Kalbi"
+    ],
+    "category": "artifact",
+    "classes": [],
+    "effects": {
+      "health": 20,
+      "attack": 2
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "militia_kit",
+    "name": [
+      "Militia kit",
+      "Milis takımı"
+    ],
+    "category": "military",
+    "classes": [],
+    "effects": {
+      "attack": 11,
+      "defense": 3,
+      "range": 48,
+      "speed": 100
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "spearman_kit",
+    "name": [
+      "Spearman kit",
+      "Mızrakçı takımı"
+    ],
+    "category": "military",
+    "classes": [],
+    "effects": {
+      "attack": 14,
+      "defense": 2,
+      "range": 78,
+      "speed": 90
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "archer_kit",
+    "name": [
+      "Archer kit",
+      "Okçu takımı"
+    ],
+    "category": "military",
+    "classes": [],
+    "effects": {
+      "attack": 10,
+      "defense": 1,
+      "range": 190,
+      "speed": 85
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "crystal_tonic",
+    "name": [
+      "Crystal Purification Tonic",
+      "Kristal Arındırma İksiri"
+    ],
+    "category": "consumable",
+    "classes": [],
+    "effects": {
+      "heal": 35
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "sun_relic",
+    "name": [
+      "Ancient Sun Relic",
+      "Kadim Güneş Yadigârı"
+    ],
+    "category": "artifact",
+    "classes": [],
+    "effects": {},
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "ancient_blade",
+    "name": [
+      "Ancient Iron Blade",
+      "Kadim Demir Kılıç"
+    ],
+    "category": "weapon",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "attack": 20
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "ruinwalker_armor",
+    "name": [
+      "Ruinwalker Armor",
+      "Harabe Gezgini Zırhı"
+    ],
+    "category": "armor",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "health": 18,
+      "defense": 4,
+      "hazard_resist": 4
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "sunguard_shield",
+    "name": [
+      "Sunguard Shield",
+      "Güneş Muhafızı Kalkanı"
+    ],
+    "category": "shield",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "defense": 7
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "sunstone_talisman",
+    "name": [
+      "Sunstone Talisman",
+      "Güneştaşı Tılsımı"
+    ],
+    "category": "artifact",
+    "classes": [],
+    "effects": {
+      "hazard_resist": 2
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_warrior_armor",
+    "name": [
+      "Emberguard Cuirass",
+      "Köz Muhafızı Göğüslük"
+    ],
+    "category": "armor",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_warrior_head",
+    "name": [
+      "Emberguard Helm",
+      "Köz Muhafızı Başlık"
+    ],
+    "category": "head",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_warrior_legs",
+    "name": [
+      "Emberguard Legguards",
+      "Köz Muhafızı Bacaklık"
+    ],
+    "category": "legs",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_warrior_hands",
+    "name": [
+      "Emberguard Gauntlets",
+      "Köz Muhafızı Eldiven"
+    ],
+    "category": "hands",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_warrior_feet",
+    "name": [
+      "Emberguard Boots",
+      "Köz Muhafızı Çizme"
+    ],
+    "category": "feet",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_warrior_weapon",
+    "name": [
+      "Emberguard Blade",
+      "Köz Muhafızı Kılıcı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "attack": 5
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_priest_armor",
+    "name": [
+      "Dawnkeeper Cuirass",
+      "Şafak Bekçisi Göğüslük"
+    ],
+    "category": "armor",
+    "classes": [
+      "priest"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_priest_head",
+    "name": [
+      "Dawnkeeper Helm",
+      "Şafak Bekçisi Başlık"
+    ],
+    "category": "head",
+    "classes": [
+      "priest"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_priest_legs",
+    "name": [
+      "Dawnkeeper Legguards",
+      "Şafak Bekçisi Bacaklık"
+    ],
+    "category": "legs",
+    "classes": [
+      "priest"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_priest_hands",
+    "name": [
+      "Dawnkeeper Gauntlets",
+      "Şafak Bekçisi Eldiven"
+    ],
+    "category": "hands",
+    "classes": [
+      "priest"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_priest_feet",
+    "name": [
+      "Dawnkeeper Boots",
+      "Şafak Bekçisi Çizme"
+    ],
+    "category": "feet",
+    "classes": [
+      "priest"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_priest_weapon",
+    "name": [
+      "Dawnkeeper Mace",
+      "Şafak Bekçisi Topuzu"
+    ],
+    "category": "weapon",
+    "classes": [
+      "priest"
+    ],
+    "effects": {
+      "attack": 5
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_mage_armor",
+    "name": [
+      "Starweave Cuirass",
+      "Yıldız Örgüsü Göğüslük"
+    ],
+    "category": "armor",
+    "classes": [
+      "mage"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_mage_head",
+    "name": [
+      "Starweave Helm",
+      "Yıldız Örgüsü Başlık"
+    ],
+    "category": "head",
+    "classes": [
+      "mage"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_mage_legs",
+    "name": [
+      "Starweave Legguards",
+      "Yıldız Örgüsü Bacaklık"
+    ],
+    "category": "legs",
+    "classes": [
+      "mage"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_mage_hands",
+    "name": [
+      "Starweave Gauntlets",
+      "Yıldız Örgüsü Eldiven"
+    ],
+    "category": "hands",
+    "classes": [
+      "mage"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_mage_feet",
+    "name": [
+      "Starweave Boots",
+      "Yıldız Örgüsü Çizme"
+    ],
+    "category": "feet",
+    "classes": [
+      "mage"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_mage_weapon",
+    "name": [
+      "Starweave Staff",
+      "Yıldız Örgüsü Asası"
+    ],
+    "category": "weapon",
+    "classes": [
+      "mage"
+    ],
+    "effects": {
+      "attack": 5
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_rogue_armor",
+    "name": [
+      "Nightleaf Cuirass",
+      "Gece Yaprağı Göğüslük"
+    ],
+    "category": "armor",
+    "classes": [
+      "rogue"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_rogue_head",
+    "name": [
+      "Nightleaf Helm",
+      "Gece Yaprağı Başlık"
+    ],
+    "category": "head",
+    "classes": [
+      "rogue"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_rogue_legs",
+    "name": [
+      "Nightleaf Legguards",
+      "Gece Yaprağı Bacaklık"
+    ],
+    "category": "legs",
+    "classes": [
+      "rogue"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_rogue_hands",
+    "name": [
+      "Nightleaf Gauntlets",
+      "Gece Yaprağı Eldiven"
+    ],
+    "category": "hands",
+    "classes": [
+      "rogue"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_rogue_feet",
+    "name": [
+      "Nightleaf Boots",
+      "Gece Yaprağı Çizme"
+    ],
+    "category": "feet",
+    "classes": [
+      "rogue"
+    ],
+    "effects": {
+      "defense": 1
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_rogue_weapon",
+    "name": [
+      "Nightleaf Bow",
+      "Gece Yaprağı Yayı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "rogue"
+    ],
+    "effects": {
+      "attack": 5
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_neck",
+    "name": [
+      "Wayfarer Pendant",
+      "Gezgin Kolyesi"
+    ],
+    "category": "neck",
+    "classes": [
+      "warrior",
+      "priest",
+      "mage",
+      "rogue"
+    ],
+    "effects": {
+      "health": 3
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_belt",
+    "name": [
+      "Wayfarer Belt",
+      "Gezgin Kemeri"
+    ],
+    "category": "belt",
+    "classes": [
+      "warrior",
+      "priest",
+      "mage",
+      "rogue"
+    ],
+    "effects": {
+      "health": 3
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_ring_left",
+    "name": [
+      "Wayfarer Ring",
+      "Gezgin Yüzüğü"
+    ],
+    "category": "ring_left",
+    "classes": [
+      "warrior",
+      "priest",
+      "mage",
+      "rogue"
+    ],
+    "effects": {
+      "health": 3
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "rpg_ear_left",
+    "name": [
+      "Wayfarer Earring",
+      "Gezgin Küpesi"
+    ],
+    "category": "ear_left",
+    "classes": [
+      "warrior",
+      "priest",
+      "mage",
+      "rogue"
+    ],
+    "effects": {
+      "health": 3
+    },
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "high_warrior_weapon",
+    "name": [
+      "Dawnsteel Weapon",
+      "Şafak Çeliği Silahı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "attack": 10
+    },
+    "source": "LittleGod original adaptation",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "legend_warrior_weapon",
+    "name": [
+      "Dawnsteel Relic",
+      "Şafak Çeliği Yadigârı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "warrior"
+    ],
+    "effects": {
+      "attack": 15
+    },
+    "source": "LittleGod original adaptation",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "high_priest_weapon",
+    "name": [
+      "Hallowlight Weapon",
+      "Kutsal Işık Silahı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "priest"
+    ],
+    "effects": {
+      "attack": 10
+    },
+    "source": "LittleGod original adaptation",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "legend_priest_weapon",
+    "name": [
+      "Hallowlight Relic",
+      "Kutsal Işık Yadigârı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "priest"
+    ],
+    "effects": {
+      "attack": 15
+    },
+    "source": "LittleGod original adaptation",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "high_mage_weapon",
+    "name": [
+      "Winterglass Weapon",
+      "Kış Camı Silahı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "mage"
+    ],
+    "effects": {
+      "attack": 10
+    },
+    "source": "LittleGod original adaptation",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "legend_mage_weapon",
+    "name": [
+      "Winterglass Relic",
+      "Kış Camı Yadigârı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "mage"
+    ],
+    "effects": {
+      "attack": 15
+    },
+    "source": "LittleGod original adaptation",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "high_rogue_weapon",
+    "name": [
+      "Verdant Whisper Weapon",
+      "Yeşil Fısıltı Silahı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "rogue"
+    ],
+    "effects": {
+      "attack": 10
+    },
+    "source": "LittleGod original adaptation",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "legend_rogue_weapon",
+    "name": [
+      "Verdant Whisper Relic",
+      "Yeşil Fısıltı Yadigârı"
+    ],
+    "category": "weapon",
+    "classes": [
+      "rogue"
+    ],
+    "effects": {
+      "attack": 15
+    },
+    "source": "LittleGod original adaptation",
+    "reference_stats_copied": false
+  }
+]

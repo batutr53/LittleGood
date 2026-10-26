@@ -1,0 +1,202 @@
+[
+  {
+    "id": "high_warrior_weapon",
+    "name": [
+      "Dawnsteel Weapon",
+      "Şafak Çeliği Silahı"
+    ],
+    "description": [
+      "Original class weapon. Its grade, enhancement and element are separate properties.",
+      "Sınıfa özel özgün silah. Derece, yükseltme ve element ayrı özelliklerdir."
+    ],
+    "category": "weapon",
+    "classes": [
+      "warrior"
+    ],
+    "cost": {
+      "iron": 4,
+      "gold": 4
+    },
+    "effects": {
+      "attack": 10
+    },
+    "level": 14,
+    "ticks": 5,
+    "source": "LittleGod original balance; not a copied KO item"
+  },
+  {
+    "id": "legend_warrior_weapon",
+    "name": [
+      "Dawnsteel Relic",
+      "Şafak Çeliği Yadigârı"
+    ],
+    "description": [
+      "Original class weapon. Its grade, enhancement and element are separate properties.",
+      "Sınıfa özel özgün silah. Derece, yükseltme ve element ayrı özelliklerdir."
+    ],
+    "category": "weapon",
+    "classes": [
+      "warrior"
+    ],
+    "cost": {
+      "iron": 8,
+      "gold": 8
+    },
+    "effects": {
+      "attack": 15
+    },
+    "level": 15,
+    "ticks": 8,
+    "source": "LittleGod original balance; not a copied KO item"
+  },
+  {
+    "id": "high_priest_weapon",
+    "name": [
+      "Hallowlight Weapon",
+      "Kutsal Işık Silahı"
+    ],
+    "description": [
+      "Original class weapon. Its grade, enhancement and element are separate properties.",
+      "Sınıfa özel özgün silah. Derece, yükseltme ve element ayrı özelliklerdir."
+    ],
+    "category": "weapon",
+    "classes": [
+      "priest"
+    ],
+    "cost": {
+      "iron": 4,
+      "gold": 4
+    },
+    "effects": {
+      "attack": 10
+    },
+    "level": 14,
+    "ticks": 5,
+    "source": "LittleGod original balance; not a copied KO item"
+  },
+  {
+    "id": "legend_priest_weapon",
+    "name": [
+      "Hallowlight Relic",
+      "Kutsal Işık Yadigârı"
+    ],
+    "description": [
+      "Original class weapon. Its grade, enhancement and element are separate properties.",
+      "Sınıfa özel özgün silah. Derece, yükseltme ve element ayrı özelliklerdir."
+    ],
+    "category": "weapon",
+    "classes": [
+      "priest"
+    ],
+    "cost": {
+      "iron": 8,
+      "gold": 8
+    },
+    "effects": {
+      "attack": 15
+    },
+    "level": 15,
+    "ticks": 8,
+    "source": "LittleGod original balance; not a copied KO item"
+  },
+  {
+    "id": "high_mage_weapon",
+    "name": [
+      "Winterglass Weapon",
+      "Kış Camı Silahı"
+    ],
+    "description": [
+      "Original class weapon. Its grade, enhancement and element are separate properties.",
+      "Sınıfa özel özgün silah. Derece, yükseltme ve element ayrı özelliklerdir."
+    ],
+    "category": "weapon",
+    "classes": [
+      "mage"
+    ],
+    "cost": {
+      "iron": 4,
+      "gold": 4
+    },
+    "effects": {
+      "attack": 10
+    },
+    "level": 14,
+    "ticks": 5,
+    "source": "LittleGod original balance; not a copied KO item"
+  },
+  {
+    "id": "legend_mage_weapon",
+    "name": [
+      "Winterglass Relic",
+      "Kış Camı Yadigârı"
+    ],
+    "description": [
+      "Original class weapon. Its grade, enhancement and element are separate properties.",
+      "Sınıfa özel özgün silah. Derece, yükseltme ve element ayrı özelliklerdir."
+    ],
+    "category": "weapon",
+    "classes": [
+      "mage"
+    ],
+    "cost": {
+      "iron": 8,
+      "gold": 8
+    },
+    "effects": {
+      "attack": 15
+    },
+    "level": 15,
+    "ticks": 8,
+    "source": "LittleGod original balance; not a copied KO item"
+  },
+  {
+    "id": "high_rogue_weapon",
+    "name": [
+      "Verdant Whisper Weapon",
+      "Yeşil Fısıltı Silahı"
+    ],
+    "description": [
+      "Original class weapon. Its grade, enhancement and element are separate properties.",
+      "Sınıfa özel özgün silah. Derece, yükseltme ve element ayrı özelliklerdir."
+    ],
+    "category": "weapon",
+    "classes": [
+      "rogue"
+    ],
+    "cost": {
+      "iron": 4,
+      "gold": 4
+    },
+    "effects": {
+      "attack": 10
+    },
+    "level": 14,
+    "ticks": 5,
+    "source": "LittleGod original balance; not a copied KO item"
+  },
+  {
+    "id": "legend_rogue_weapon",
+    "name": [
+      "Verdant Whisper Relic",
+      "Yeşil Fısıltı Yadigârı"
+    ],
+    "description": [
+      "Original class weapon. Its grade, enhancement and element are separate properties.",
+      "Sınıfa özel özgün silah. Derece, yükseltme ve element ayrı özelliklerdir."
+    ],
+    "category": "weapon",
+    "classes": [
+      "rogue"
+    ],
+    "cost": {
+      "iron": 8,
+      "gold": 8
+    },
+    "effects": {
+      "attack": 15
+    },
+    "level": 15,
+    "ticks": 8,
+    "source": "LittleGod original balance; not a copied KO item"
+  }
+]

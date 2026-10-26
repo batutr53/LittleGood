@@ -28,8 +28,9 @@ static func stats(w: Dictionary) -> Dictionary:
 	for slot in SLOTS:
 		var owned=I.item(w,int(h.equipment[slot]))
 		if not owned.is_empty():
-			for key in I.recipes()[owned.recipe].effects:
-				if result.has(key):result[key]+=int(I.recipes()[owned.recipe].effects[key])
+			var bonuses=I.effects(w,owned)
+			for key in bonuses:
+				if result.has(key):result[key]+=int(bonuses[key])
 	var mods=load("res://scripts/rpg_progression.gd").modifiers(w)
 	for key in mods:
 		if result.has(key):result[key]+=int(mods[key])
@@ -52,8 +53,9 @@ static func preview(w: Dictionary,slot: String,id: int) -> Dictionary:
 	for pair in [[int(w.kingdom.adventure.hero.equipment[slot]),-1],[id,1]]:
 		var owned=I.item(w,pair[0])
 		if not owned.is_empty():
-			for key in I.recipes()[owned.recipe].effects:
-				if result.has(key):result[key]+=int(I.recipes()[owned.recipe].effects[key])*pair[1]
+			var bonuses=I.effects(w,owned)
+			for key in bonuses:
+				if result.has(key):result[key]+=int(bonuses[key])*pair[1]
 	return result
 static func progress(w: Dictionary,key: String) -> float:
 	if not enabled(w):return 0

@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-26",
+  "tool": "built-in ImageGen",
+  "source": "C:/Users/batua/.codex/generated_images/01a163ae-d724-7830-80ba-6b39304c80cc/exec-c281db11-8eed-471e-8810-fa82b9f83daa.png",
+  "destination": "assets/rpg/equipment-atlas-v2.png",
+  "original": true,
+  "third_party_art_copied": false,
+  "layout": "4 columns by 4 rows; actual dimensions queried by Godot; equal cells",
+  "alpha": "requested transparent, preserved without raster editing",
+  "prompt": "Production fantasy RPG inventory ICON ATLAS, original LittleGod art, 1024x1024 exactly 4 columns x4 rows of256 pixel square cells, 16 separate complete isolated item icons. Transparent alpha background, no gradient background, no text, no borders, padding28px insideeachcell. Polished handpainted realistic metal/enamel/leather detail, aged silver and burnished gold, dramatic tiny colored magical glints. Precise row order: row1 silver redgem broadsword, holy ivory gold mace, icy indigo crystal staff, emerald recurved bow. Row2 burgundy silver warrior horned helm, ivory gold priest crown, indigo hood mage, green leather rogue hood. Row3 burgundy ornate plate cuirass, ivory priest ceremonial cuirass, indigo layered mage robe torso, green rogue leather vest. Row4 gold ruby ring, silver sapphire pendant necklace, gilded shield with original sun emblem, ancient glowing parchment upgrade scroll. Each is one readable diagonal or frontal object centered in its own cell. Cohesive premium MMORPG equipment icon style. No copied game emblems or logos. Actual transparent cutouts suitable for64px gameplay inventory."
+}
