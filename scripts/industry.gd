@@ -12,6 +12,7 @@ static func recipes() -> Dictionary:
 		if FileAccess.file_exists("res://assets/rpg/equipment.json"):
 			for data in JSON.parse_string(FileAccess.get_file_as_string("res://assets/rpg/equipment.json")):recipe_data[data.id]=data
 		for data in JSON.parse_string(FileAccess.get_file_as_string("res://assets/rpg/armory-equipment.json")):recipe_data[data.id]=data
+		for data in JSON.parse_string(FileAccess.get_file_as_string("res://assets/rpg/upgrade-scrolls.json")):recipe_data[data.id]=data
 	return recipe_data
 static func effects(w: Dictionary,owned: Dictionary) -> Dictionary:return load("res://scripts/armory.gd").effects(w,owned)
 static func enabled(w: Dictionary) -> bool:return w.has("kingdom") and int(w.kingdom.get("version",1)) in [2,3]

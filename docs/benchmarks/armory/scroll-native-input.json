@@ -1,0 +1,35 @@
+{
+  "display": [
+    2400,
+    1080
+  ],
+  "viewport": [
+    1600,
+    720
+  ],
+  "adb_taps": [
+    [
+      1836,
+      1050
+    ],
+    [
+      2004,
+      748
+    ],
+    [
+      1590,
+      445
+    ],
+    [
+      2040,
+      556
+    ],
+    [
+      2040,
+      596
+    ]
+  ],
+  "apk_sha256": "272d771d93ba6b416b3c560a270423a0184b044a74192bd9c2c3684248a4b921",
+  "observation": "Iron Sword+1 ->+2; matching owned scroll displayed on review, missing afterward with next action disabled. Gold21->19, iron21->20.",
+  "source": "Actual emulator native taps and inspected screenshots; native QA actions do not autosave."
+}

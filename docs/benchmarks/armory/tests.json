@@ -10,6 +10,7 @@
     "contract_no_duplicate": true,
     "costs": true,
     "element": true,
+    "failure_consumes_scroll": true,
     "failure_keeps_item": true,
     "final_valid": true,
     "glow": true,
@@ -46,5 +47,5 @@
     "visitor_blocked": true,
     "world_valid": true
   },
-  "count": 44
+  "count": 45
 }

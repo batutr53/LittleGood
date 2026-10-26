@@ -91,6 +91,9 @@ static func modifiers(w: Dictionary) -> Dictionary:
 			var bonuses=I.effects(w,item)
 			for stat in bonuses:
 				if result.has(stat):result[stat]+=int(bonuses[stat])
+	var set_bonuses=load("res://scripts/equipment_sets.gd").bonuses(w)
+	for stat in set_bonuses:
+		if result.has(stat):result[stat]+=int(set_bonuses[stat])
 	return result
 static func combat_tick(w: Dictionary):
 	if not w.has("rpg"):return
@@ -145,7 +148,7 @@ static func clear_shot(w: Dictionary,from: Vector2,to: Vector2) -> bool:
 static func extra_equip(w: Dictionary,slot: String,id: int) -> bool:
 	if not home(w) or not slot in EXTRA_SLOTS:return false
 	ensure(w)
-	if id==0:w.rpg.loadouts[w.rpg.active][slot]=0;return true
+	if id==0:w.rpg.loadouts[w.rpg.active][slot]=0;clamp_equipment_health(w);return true
 	var I=load("res://scripts/industry.gd");var item=I.item(w,id)
 	if item.is_empty():return false
 	var d=I.recipes()[item.recipe];var category=slot.replace("_right","_left")
@@ -154,7 +157,10 @@ static func extra_equip(w: Dictionary,slot: String,id: int) -> bool:
 		if key!=w.rpg.active and (w.rpg.loadouts[key].values().has(id) or w.rpg.roster[key].equipment.values().has(id)):return false
 	for key in EXTRA_SLOTS:
 		if int(w.rpg.loadouts[w.rpg.active][key])==id:w.rpg.loadouts[w.rpg.active][key]=0
-	w.rpg.loadouts[w.rpg.active][slot]=id;return true
+	w.rpg.loadouts[w.rpg.active][slot]=id;clamp_equipment_health(w);return true
+static func clamp_equipment_health(w: Dictionary):
+	w.kingdom.adventure.hero.hp=mini(int(w.kingdom.adventure.hero.hp),int(load("res://scripts/hero.gd").stats(w).health))
+	selected(w).mana=minf(float(selected(w).mana),float(modifiers(w).mana))
 static func normalize(w: Dictionary) -> void:
 	if not w.has("rpg") or not available(w):return
 	for cls in CLASSES:
@@ -217,7 +223,7 @@ static func validate(w: Dictionary) -> bool:
 			if not C.number(cd,0,10000,true):return false
 		if not C.shape(r.loadouts[key],EXTRA_SLOTS):return false
 		if not p is Dictionary or not p.get("attributes") is Dictionary or not p.get("skills") is Array or p.skills.size()!=6 or not p.get("bar") is Array or p.bar.size()!=3:return false
-		if not C.shape(p.attributes,ATTRIBUTES) or not C.number(p.get("mana"),0,380,false) or not C.number(p.get("guard_ms",0),0,4500,false):return false
+		if not C.shape(p.attributes,ATTRIBUTES) or not C.number(p.get("mana"),0,388,false) or not C.number(p.get("guard_ms",0),0,4500,false):return false
 		var spent=0
 		for attr in ATTRIBUTES:
 			var n=p.attributes.get(attr,-1)

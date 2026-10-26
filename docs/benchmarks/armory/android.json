@@ -8,36 +8,38 @@
     "replay_blocked": true,
     "restore": true,
     "save": true,
+    "scroll_consumed": true,
+    "set_bonus": true,
     "spell": true,
     "upgrade": true,
     "valid": true
   },
-  "pid": 3315,
+  "pid": 4460,
   "profiles": [
     {
       "draw_calls": 431.0,
-      "fps": 24.8191675452652,
-      "memory_mb": 53.5785531997681,
-      "p95_ms": 44.322,
-      "process_cpu_p95_ms": 67.108,
+      "fps": 25.9082227118655,
+      "memory_mb": 57.1783304214478,
+      "p95_ms": 50.878,
+      "process_cpu_p95_ms": 61.378,
       "scene": "paused_home_with_ambient_animation",
       "target": 60,
-      "texture_memory_mb": 59.6660976409912,
-      "world_update_cpu_p95_ms": 1.177
+      "texture_memory_mb": 59.9994297027588,
+      "world_update_cpu_p95_ms": 1.152
     },
     {
-      "draw_calls": 330.0,
-      "fps": 30.175364832151,
-      "memory_mb": 53.3762865066528,
-      "p95_ms": 34.674,
-      "process_cpu_p95_ms": 34.499,
+      "draw_calls": 332.0,
+      "fps": 30.0361408372763,
+      "memory_mb": 56.9760637283325,
+      "p95_ms": 36.158,
+      "process_cpu_p95_ms": 39.998,
       "scene": "paused_home_with_ambient_animation",
       "target": 30,
-      "texture_memory_mb": 59.6660976409912,
-      "world_update_cpu_p95_ms": 1.016
+      "texture_memory_mb": 59.9994297027588,
+      "world_update_cpu_p95_ms": 1.166
     }
   ],
-  "run_id": "3eb5d152a5f24e858abfddca0eb8c7de",
+  "run_id": "72a97323080440a6954e3526e12a6870",
   "source": "actual_android_emulator_render_with_programmatic_model_actions_no_native_input_claim",
   "stage": "armory_complete",
   "viewport": [

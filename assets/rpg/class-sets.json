@@ -1,0 +1,10 @@
+{
+  "version":1,
+  "balance":"Original LittleGod piece bonuses; not unverified KO set values",
+  "classes":{
+    "warrior":{"name":["Emberguard","Köz Muhafızı"],"pieces":["rpg_warrior_head","rpg_warrior_armor","rpg_warrior_legs","rpg_warrior_hands","rpg_warrior_feet"],"bonuses":{"2":{"defense":1},"3":{"health":6},"5":{"attack":3}}},
+    "priest":{"name":["Dawnwarden","Şafak Koruyucusu"],"pieces":["rpg_priest_head","rpg_priest_armor","rpg_priest_legs","rpg_priest_hands","rpg_priest_feet"],"bonuses":{"2":{"health":4},"3":{"defense":1},"5":{"attack":3}}},
+    "mage":{"name":["Starweaver","Yıldız Dokuyucu"],"pieces":["rpg_mage_head","rpg_mage_armor","rpg_mage_legs","rpg_mage_hands","rpg_mage_feet"],"bonuses":{"2":{"mana":8},"3":{"health":4},"5":{"attack":3}}},
+    "rogue":{"name":["Verdant Shadow","Yeşil Gölge"],"pieces":["rpg_rogue_head","rpg_rogue_armor","rpg_rogue_legs","rpg_rogue_hands","rpg_rogue_feet"],"bonuses":{"2":{"crit":10},"3":{"health":4},"5":{"attack":3}}}
+  }
+}

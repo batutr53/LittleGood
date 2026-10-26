@@ -878,5 +878,53 @@
     },
     "source": "LittleGod original adaptation",
     "reference_stats_copied": false
+  },
+  {
+    "id": "armory_refine_scroll",
+    "name": [
+      "Tempered Refinement Scroll",
+      "Tavlanmış Yükseltme Parşömeni"
+    ],
+    "category": "upgrade_scroll",
+    "classes": [],
+    "effects": {},
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "armory_reverse_scroll",
+    "name": [
+      "Awakening Scroll",
+      "Uyanış Parşömeni"
+    ],
+    "category": "upgrade_scroll",
+    "classes": [],
+    "effects": {},
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "armory_rebirth_scroll",
+    "name": [
+      "Rebirth Strengthening Scroll",
+      "Rebirth Güçlendirme Parşömeni"
+    ],
+    "category": "upgrade_scroll",
+    "classes": [],
+    "effects": {},
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
+  },
+  {
+    "id": "armory_element_scroll",
+    "name": [
+      "Elemental Inscription Scroll",
+      "Element İşleme Parşömeni"
+    ],
+    "category": "upgrade_scroll",
+    "classes": [],
+    "effects": {},
+    "source": "LittleGod existing definition",
+    "reference_stats_copied": false
   }
 ]

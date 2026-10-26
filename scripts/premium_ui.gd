@@ -63,6 +63,7 @@ func route(destination: String,arg: int=0,remember=true):
   "enhance":rpg.enhance(arg)
   "bestiary":rpg.bestiary()
   "contracts":rpg.contracts()
+  "sets":rpg.set_screen()
   "settings":ui.legacy_settings()
   "attributes":rpg.attributes()
   "skills":rpg.skills()
@@ -314,7 +315,7 @@ func forge(forge_id: int=0):
   for job in w.kingdom.industry.queue:
    var d=I.recipes()[job.recipe];v.add_child(text(game.realm_ui.localized(d.name),24));var bar=ProgressBar.new();bar.max_value=int(d.ticks)*K.SCALE;bar.value=job.progress;bar.custom_minimum_size.y=px(23);v.add_child(bar)
  var tabs=HBoxContainer.new();v.add_child(tabs)
- for tab in [["all",say("All","Tümü")],["tool",say("Tools","Aletler")],["gear",say("Equipment","Donanım")]]:
+ for tab in [["all",say("All","Tümü")],["tool",say("Tools","Aletler")],["gear",say("Equipment","Donanım")],["scroll",say("Scrolls","Parşömenler")]]:
   var key=tab[0];var button=action(tabs,tab[1],func():craft_filter=key;route("forge",forge_selected,false),craft_filter==key);button.add_theme_font_size_override("font_size",int(px(13)))
  var grid=GridContainer.new();grid.columns=2;grid.add_theme_constant_override("h_separation",int(px(14)));grid.add_theme_constant_override("v_separation",int(px(20)));v.add_child(grid)
  for id in I.recipes():
@@ -323,15 +324,15 @@ func forge(forge_id: int=0):
   if id in preload("res://scripts/sanctuary.gd").GEAR and not preload("res://scripts/sanctuary.gd").enabled(w):continue
   if id=="crystal_tonic" and not preload("res://scripts/ashen_desert.gd").enabled(w):continue
   if category!="tool" and (not H.enabled(w) or (int(d.level)>H.REALM_CAP and not preload("res://scripts/military.gd").enabled(w))):continue
-  if craft_filter=="tool" and category!="tool" or craft_filter=="gear" and category=="tool":continue
+  if craft_filter=="tool" and category!="tool" or craft_filter=="gear" and category in ["tool","upgrade_scroll"] or craft_filter=="scroll" and category!="upgrade_scroll":continue
   var key=id;var tile=VBoxContainer.new();tile.size_flags_horizontal=Control.SIZE_EXPAND_FILL;grid.add_child(tile)
-  var b=action(tile,"",func():current_recipe=key;route("recipe"));b.icon=load("res://assets/kingdom/"+id+".svg");b.expand_icon=true;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.add_theme_constant_override("icon_max_width",int(px(96)));b.custom_minimum_size.y=px(130)
+  var b=action(tile,"",func():current_recipe=key;route("recipe"));b.icon=load("res://scripts/armory.gd").icon(id);b.expand_icon=true;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.add_theme_constant_override("icon_max_width",int(px(96)));b.custom_minimum_size.y=px(130)
   tile.add_child(text(game.realm_ui.localized(d.name),23));tile.add_child(text(game.realm_ui.cost(d.cost),20,T.MUTED));tile.add_child(text(say("Inspect recipe","Tarifi incele") if K.afford(w,d.cost) else say("Materials missing","Malzeme eksik"),19,T.GOLD))
  action(v,say("Assign a smith","Bir demirci ata"),func():route("workers"),false,"workers");action(v,say("Watch your village work","Köyünün çalışmasını izle"),ui.close,true)
 func recipe_detail():
  var w=game.world
  if not I.recipes().has(current_recipe):route("forge",forge_selected,false);return
- var d=I.recipes()[current_recipe];var v=surface(game.realm_ui.localized(d.name));v.add_child(image(load("res://assets/kingdom/"+current_recipe+".svg"),Vector2(0,px(190))));v.add_child(heading(game.realm_ui.localized(d.name),34));v.add_child(text(game.realm_ui.localized(d.description),26,T.MUTED));v.add_child(text(say("MATERIALS · OWNED / REQUIRED","MALZEMELER · MEVCUT / GEREKLİ"),19,T.GOLD))
+ var d=I.recipes()[current_recipe];var v=surface(game.realm_ui.localized(d.name));v.add_child(image(load("res://scripts/armory.gd").icon(current_recipe),Vector2(0,px(190))));v.add_child(heading(game.realm_ui.localized(d.name),34));v.add_child(text(game.realm_ui.localized(d.description),26,T.MUTED));v.add_child(text(say("MATERIALS · OWNED / REQUIRED","MALZEMELER · MEVCUT / GEREKLİ"),19,T.GOLD))
  var reasons=[]
  for key in d.cost:
   var owned=w.kingdom.stock.get(key,0)/1000.0;var required=int(d.cost[key]);var title=game.realm_ui.cost({key:required});v.add_child(text(title+"    ·    "+str(snappedf(owned,.1))+" / "+str(required),25,T.CREAM if owned>=required else Color("e0a583")))

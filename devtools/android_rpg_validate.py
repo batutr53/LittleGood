@@ -42,7 +42,7 @@ after={name:read(name,player) for name in names}
 result['player_files_preserved']=all(before[name]==after[name] for name in names)
 result['player_file_hashes']={name:{'before':hashlib.sha256(before[name]).hexdigest(),'after':hashlib.sha256(after[name]).hexdigest(),'before_bytes':len(before[name]),'after_bytes':len(after[name])} for name in names}
 images=['rpg-android-home','rpg-android-inventory','rpg-android-mage','rpg-android-adventure'] if args.phase=='rpg' else ['estate-android-village','estate-android-harvest','estate-android-panel','estate-android-world']
-if args.phase=='armory':images=['armory-android-inventory','armory-android-anvil','armory-android-bestiary','armory-android-contracts','armory-android-spell']
+if args.phase=='armory':images=['armory-android-inventory','armory-android-anvil','armory-android-bestiary','armory-android-contracts','armory-android-spell','armory-android-sets']
 for name in images:
     image=read(name+'.png');(r/'docs/screenshots'/args.screenshots/f'{name}.png').write_bytes(image)
 (out/'logcat.txt').write_bytes(run('logcat','-d','--pid='+str(result['pid']),'-s','godot:V','AndroidRuntime:E'))

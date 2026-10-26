@@ -47,16 +47,13 @@ static func equip(w: Dictionary,slot: String,id: int) -> bool:
 		if w.has("rpg"):
 			for key in w.rpg.roster:
 				if key!=w.rpg.active and w.rpg.roster[key].equipment.values().any(func(value):return int(value)==id):return false
-	a.hero.equipment[slot]=id;a.hero.hp=mini(int(a.hero.hp),int(stats(w).health));return true
+	a.hero.equipment[slot]=id;a.hero.hp=mini(int(a.hero.hp),int(stats(w).health))
+	if w.has("rpg"):load("res://scripts/rpg_progression.gd").clamp_equipment_health(w)
+	return true
 static func preview(w: Dictionary,slot: String,id: int) -> Dictionary:
-	var result=stats(w)
-	for pair in [[int(w.kingdom.adventure.hero.equipment[slot]),-1],[id,1]]:
-		var owned=I.item(w,pair[0])
-		if not owned.is_empty():
-			var bonuses=I.effects(w,owned)
-			for key in bonuses:
-				if result.has(key):result[key]+=int(bonuses[key])*pair[1]
-	return result
+	var candidate=w.duplicate(true)
+	candidate.kingdom.adventure.hero.equipment[slot]=id
+	return stats(candidate)
 static func progress(w: Dictionary,key: String) -> float:
 	if not enabled(w):return 0
 	var a=w.kingdom.adventure

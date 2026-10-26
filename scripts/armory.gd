@@ -23,6 +23,7 @@ static func grade(recipe: String) -> String:
 static func color(recipe: String) -> Color:return Color(rules().grade_colors[grade(recipe)])
 static func icon(recipe: String) -> Texture2D:
 	var slot=-1;var cls=0
+	if recipe.begins_with("armory_") and recipe.ends_with("scroll"):slot=15
 	for key in ["warrior","priest","mage","rogue"]:
 		if recipe.contains(key):
 			if recipe.ends_with("weapon"):slot=cls
@@ -80,14 +81,23 @@ static func quote(w: Dictionary,id: int,mode: String,element: String="none") -> 
 			if category!="weapon" or not element in rules().elements or element=="none" or s.element==element:return {}
 			q.cost={"iron":2,"gold":3};q.after.element=element
 		_:return {}
+	q.scroll_recipe=scroll_recipe(mode);q.scroll_id=scroll_item(w,mode)
 	return q
+static func scroll_recipe(mode: String) -> String:return {"normal":"armory_refine_scroll","reverse":"armory_reverse_scroll","rebirth":"armory_rebirth_scroll","element":"armory_element_scroll"}.get(mode,"")
+static func scroll_item(w: Dictionary,mode: String) -> int:
+	var recipe=scroll_recipe(mode);var locked=w.get("rpg",{}).get("locked",[])
+	for item in w.get("kingdom",{}).get("industry",{}).get("items",[]):
+		if item.recipe==recipe and not int(item.id) in locked:return int(item.id)
+	return 0
 static func attempt(w: Dictionary,id: int,mode: String,serial: int,element: String="none") -> Dictionary:
 	ensure(w)
 	if not w.has("armory") or serial!=int(w.armory.serial):return {}
 	var q=quote(w,id,mode,element);var K=load("res://scripts/kingdom.gd")
-	if q.is_empty() or not K.afford(w,q.cost) or K.count(w,"forge")==0:return {}
+	if q.is_empty() or int(q.scroll_id)==0 or not K.afford(w,q.cost) or K.count(w,"forge")==0:return {}
+	var industry=load("res://scripts/industry.gd");var scroll=industry.item(w,int(q.scroll_id))
 	var rng=RandomNumberGenerator.new();rng.state=int(w.armory.rng);var roll=rng.randi_range(1,10000)
 	K.spend(w,q.cost);w.armory.rng=str(rng.state);w.armory.serial+=1
+	w.kingdom.industry.items.erase(scroll)
 	var success=roll<=int(q.chance_bp)
 	if success:w.armory.items[str(id)]=q.after
 	var result={"serial":int(w.armory.serial),"item":id,"mode":mode,"success":success,"chance_bp":int(q.chance_bp),"roll":roll}

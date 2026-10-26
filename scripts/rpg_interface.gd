@@ -57,6 +57,7 @@ func inventory():
 		var equipment=GridContainer.new();equipment.columns=3;equipment.add_theme_constant_override("h_separation",int(p.px(3)));equipment.add_theme_constant_override("v_separation",int(p.px(3)));gear.add_child(equipment)
 		for slot in ["ear_left","head","ear_right","neck","armor","belt","weapon","hands","shield","ring_left","legs","ring_right","feet","artifact"]:equipment_slot(equipment,slot)
 		v.add_child(p.text(hero.name+" · "+R.NAMES[hero.get("class","warrior")]+" · Lv "+str(H.level(hero)),19,T.GOLD))
+		var sets=load("res://scripts/equipment_sets.gd");var set_name=game.realm_ui.localized(sets.definitions()[game.world.rpg.active].name);var set_button=p.action(v,set_name+" · "+str(sets.count(game.world))+" / 5",func():p.route("sets"));set_button.name="EquipmentSet";set_button.custom_minimum_size.y=p.px(27);compact_button(set_button)
 	var tabs=HBoxContainer.new();v.add_child(tabs)
 	var codex=p.action(v,say("Drops & bestiary · Contracts","Drop rehberi · Görev panosu"),func():p.route("bestiary"));codex.name="OpenBestiary";codex.custom_minimum_size.y=p.px(28);compact_button(codex)
 	for tab in [["all",say("All","Tümü")],["weapon",say("Gear","Donanım")],["tool",say("Tools","Alet")],["consumable",say("Items","Eşya")]]:
@@ -65,7 +66,7 @@ func inventory():
 	var visible_items=[]
 	for item in game.world.kingdom.industry.items:
 		var category=I.recipes()[item.recipe].get("category","tool")
-		if p.filter!="all" and (not category in H.SLOTS+R.EXTRA_SLOTS if p.filter=="weapon" else category!=p.filter):continue
+		if p.filter!="all" and (not category in H.SLOTS+R.EXTRA_SLOTS if p.filter=="weapon" else not category in ["consumable","upgrade_scroll"] if p.filter=="consumable" else category!=p.filter):continue
 		visible_items.append(item)
 	for i in range(maxi(28,visible_items.size())):
 		var id=int(visible_items[i].id) if i<visible_items.size() else 0
@@ -128,6 +129,7 @@ func show_item(id: int):
 	if slot in H.SLOTS+R.EXTRA_SLOTS:details.add_child(p.text(say("Classes: ","Sınıflar: ")+", ".join(allowed)+"\n"+say("Slot: ","Yuva: ")+slot.replace("_"," "),17,T.MUTED))
 	var bonuses=I.effects(game.world,owned)
 	for effect in bonuses:details.add_child(p.text(stat_name(effect)+"  +"+str(bonuses[effect]),18,T.GOLD))
+	if game.world.has("rpg") and owned.recipe in load("res://scripts/equipment_sets.gd").definitions().get(game.world.rpg.active,{}).get("pieces",[]):set_details(details)
 	if R.available(game.world) and slot in H.SLOTS:
 		var before=H.stats(game.world);var after=H.preview(game.world,slot,id)
 		for key in ["attack","defense","health"]:details.add_child(p.text(stat_name(key)+"   "+str(before[key])+" → "+str(after[key]),21,T.GOLD))
@@ -171,13 +173,33 @@ func enhance(id: int):
 		var copy=game.world.duplicate(true);copy.armory.items[str(id)]=q.after;var before=I.effects(game.world,owned);var after=I.effects(copy,owned)
 		for key in after:
 			if after[key]!=before[key]:box.add_child(p.text(stat_name(key)+" "+str(before[key])+" → "+str(after[key]),20))
-		var quote=q.duplicate(true);var button=p.action(box,say("Review & confirm","İncele ve onayla"),func():confirm_upgrade(quote),true,"forge");button.name="Confirm"+mode.capitalize();button.disabled=K_count_forge()==0 or not load("res://scripts/kingdom.gd").afford(game.world,q.cost)
+		box.add_child(p.text(F.label(game.world,{"id":0,"recipe":q.scroll_recipe},ui.language=="tr")+" ×1 · "+(say("Owned","Mevcut") if q.scroll_id>0 else say("Missing","Eksik")),19,T.GOLD if q.scroll_id>0 else T.MUTED))
+		var quote=q.duplicate(true);var button=p.action(box,say("Review & confirm","İncele ve onayla"),func():confirm_upgrade(quote),true,"forge");button.name="Confirm"+mode.capitalize();button.disabled=q.scroll_id==0 or K_count_forge()==0 or not load("res://scripts/kingdom.gd").afford(game.world,q.cost)
 	v.add_child(p.text(say("Weapon element","Silah elementi"),22,T.GOLD));var row=GridContainer.new();row.columns=2;v.add_child(row)
 	for entry in [["fire","Ateş"],["frost","Buz"],["lightning","Yıldırım"],["poison","Zehir"]]:
-		var q=F.quote(game.world,id,"element",entry[0]);var quote=q.duplicate(true);var b=p.action(row,entry[1] if ui.language=="tr" else entry[0].capitalize(),func():confirm_upgrade(quote));b.disabled=q.is_empty() or K_count_forge()==0 or not load("res://scripts/kingdom.gd").afford(game.world,q.get("cost",{}))
+		var q=F.quote(game.world,id,"element",entry[0]);var quote=q.duplicate(true);var b=p.action(row,entry[1] if ui.language=="tr" else entry[0].capitalize(),func():confirm_upgrade(quote));b.disabled=q.is_empty() or int(q.get("scroll_id",0))==0 or K_count_forge()==0 or not load("res://scripts/kingdom.gd").afford(game.world,q.get("cost",{}))
+	v.add_child(p.text(say("Each operation consumes its matching scroll, even on failure. Craft missing scrolls at the forge and collect them above the building.","Her işlem kendi parşömenini tüketir; başarısızlıkta da. Eksik parşömenleri demircide üret, bina üstünden topla."),19,T.MUTED))
+	p.action(v,say("Craft upgrade scrolls","Yükseltme parşömeni üret"),func():p.craft_filter="scroll";p.route("forge"),false,"forge")
 	if F.quote(game.world,id,"normal").is_empty() and F.quote(game.world,id,"rebirth").is_empty():v.add_child(p.text(say("Locked, reserved, or maximum level. Only active-hero equipment can be changed at home.","Kilitli, ayrılmış veya son seviyede. Yalnızca aktif kahramanın donanımı evde değiştirilebilir."),19,T.MUTED))
 	p.action(v,say("Your satchel","Çantana dön"),func():p.route("inventory"),false,"bag")
 func K_count_forge() -> int:return load("res://scripts/kingdom.gd").count(game.world,"forge")
+func set_details(target: Node):
+	if not R.available(game.world):return
+	var sets=load("res://scripts/equipment_sets.gd");var d=sets.definitions()[game.world.rpg.active];var count=sets.count(game.world)
+	target.add_child(p.heading(game.realm_ui.localized(d.name)+" · "+str(count)+" / 5",24))
+	for needed in d.bonuses:
+		var parts=[]
+		for key in d.bonuses[needed]:parts.append("+"+str(int(d.bonuses[needed][key]))+" "+stat_name(key))
+		target.add_child(p.text(("✓ " if count>=int(needed) else "◇ ")+str(needed)+say(" pieces: "," parça: ")+" · ".join(parts),20,T.GOLD if count>=int(needed) else T.MUTED))
+func set_screen():
+	var v=p.surface(say("Equipment set","Donanım seti"));p.nested=false;ui.page="kingdom";set_details(v)
+	if not R.available(game.world):return
+	var sets=load("res://scripts/equipment_sets.gd");var I=load("res://scripts/industry.gd");var w=game.world;var ids=w.kingdom.adventure.hero.equipment.values()+w.rpg.loadouts[w.rpg.active].values()
+	v.add_child(p.text(say("Bonuses require distinct equipped pieces. Items in the bag do not count. These are LittleGod set values.","Bonuslar farklı kuşanılmış parçaları gerektirir. Çantadaki eşya sayılmaz. Değerler LittleGod dengesidir."),20,T.MUTED))
+	for recipe in sets.definitions()[w.rpg.active].pieces:
+		var row=HBoxContainer.new();v.add_child(row);row.add_child(p.image(F.icon(recipe),Vector2.ONE*p.px(42)))
+		var worn=ids.any(func(id):return I.item(w,int(id)).get("recipe","")==recipe);row.add_child(p.text(("✓ " if worn else "◇ ")+game.realm_ui.localized(I.recipes()[recipe].name),20,T.GOLD if worn else T.MUTED))
+	p.action(v,say("Back to inventory","Çantaya dön"),func():p.route("inventory"),false,"bag")
 func resource_name(key: String) -> String:
 	return {"gold":"Altın","iron":"Demir","wood":"Odun","stone":"Taş","herb":"Şifalı bitki","leather":"Deri","thornhide":"Dikenderi","heart":"Yaşayan kalp","ore":"Cevher","desert_crystal":"Çöl kristali","ancient_alloy":"Kadim alaşım"}.get(key,key) if ui.language=="tr" else key.replace("_"," ").capitalize()
 func confirm_upgrade(q: Dictionary):
@@ -188,6 +210,7 @@ func confirm_upgrade(q: Dictionary):
 	v.add_child(p.image(F.icon(owned.recipe),Vector2(0,p.px(110))))
 	v.add_child(p.heading(F.label(game.world,owned,ui.language=="tr"),25))
 	v.add_child(p.text(game.realm_ui.cost(q.cost),23,T.GOLD));v.add_child(p.text(str(q.chance_bp/100.0)+"% "+say("success chance","başarı şansı"),24,T.GOLD))
+	v.add_child(p.text(F.label(game.world,{"id":0,"recipe":q.scroll_recipe},ui.language=="tr")+" ×1",21,T.GOLD))
 	v.add_child(p.text(say("On failure: item and level stay; materials spent.","Başarısızlık: eşya ve seviye korunur, malzeme harcanır."),22,T.MUTED))
 	var confirm=p.action(v,say("Confirm enhancement","Yükseltmeyi onayla"),func():
 		var result=F.attempt(game.world,int(q.id),q.mode,int(q.serial),q.element)

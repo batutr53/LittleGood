@@ -6,6 +6,10 @@ const H=preload("res://scripts/hero.gd")
 const A=preload("res://scripts/adventure.gd")
 var checks={}
 func _initialize():call_deferred("run")
+func supply(w: Dictionary,mode: String):
+	var recipe=F.scroll_recipe(mode)
+	if F.scroll_item(w,mode)>0:return
+	var id=int(w.kingdom.industry.next_item);w.kingdom.industry.next_item+=1;w.kingdom.industry.items.append({"id":id,"recipe":recipe})
 func run():
 	var w=Persistence.load_world("res://tests/fixtures/planet-v085e2.json");R.ensure(w);F.ensure(w)
 	var original=w.kingdom.industry.items.duplicate(true);var weapon=w.kingdom.industry.items.filter(func(item):return item.recipe=="iron_sword")[0];var id=int(weapon.id)
@@ -16,7 +20,7 @@ func run():
 	checks.grade_middle=F.grade("rpg_mage_weapon")=="middle"
 	checks.grade_high=F.grade("ancient_blade")=="high"
 	checks.grade_unique=F.grade("legend_priest_weapon")=="unique"
-	var q=F.quote(w,id,"normal");checks.quote=q.chance_bp==10000 and q.after.normal==1 and q.before.normal==0
+	supply(w,"normal");var q=F.quote(w,id,"normal");checks.quote=q.chance_bp==10000 and q.after.normal==1 and q.before.normal==0
 	var stock=w.kingdom.stock.duplicate();var result=F.attempt(w,id,"normal",int(q.serial))
 	checks.upgrade_success=result.success and F.state(w,id).normal==1
 	checks.costs=w.kingdom.stock.iron==stock.iron-1000 and w.kingdom.stock.gold==stock.gold-1000
@@ -24,24 +28,24 @@ func run():
 	checks.no_replay=F.attempt(w,id,"normal",int(q.serial)).is_empty() and F.state(w,id).normal==1
 	checks.baseline_item_preserved=original==w.kingdom.industry.items
 	R.lock_item(w,id);stock=w.kingdom.stock.duplicate();checks.lock_protected=F.quote(w,id,"normal").is_empty() and F.attempt(w,id,"normal",int(w.armory.serial)).is_empty() and stock==w.kingdom.stock;R.lock_item(w,id)
-	w.kingdom.stock.gold=0;var serial=int(w.armory.serial);checks.insufficient_atomic=F.attempt(w,id,"normal",serial).is_empty() and serial==int(w.armory.serial);w.kingdom.stock.gold=50000
+	supply(w,"normal");w.kingdom.stock.gold=0;var serial=int(w.armory.serial);checks.insufficient_atomic=F.attempt(w,id,"normal",serial).is_empty() and serial==int(w.armory.serial);w.kingdom.stock.gold=50000
 	checks.no_middle_rebirth=F.quote(w,id,"reverse").is_empty()
 	var next=int(w.kingdom.industry.next_item);w.kingdom.industry.next_item+=1;var unique={"id":next,"recipe":"legend_warrior_weapon"};w.kingdom.industry.items.append(unique)
 	w.armory.items[str(next)]={"normal":7,"rebirth":0,"element":"none"}
 	var before=I.effects(w,unique).attack;q=F.quote(w,next,"reverse");checks.reverse_quote=q.chance_bp==10000 and q.after.rebirth==1
-	result=F.attempt(w,next,"reverse",int(w.armory.serial));checks.reverse_stats_preserved=result.success and F.state(w,next).rebirth==1 and I.effects(w,unique).attack==before
+	supply(w,"reverse");result=F.attempt(w,next,"reverse",int(w.armory.serial));checks.reverse_stats_preserved=result.success and F.state(w,next).rebirth==1 and I.effects(w,unique).attack==before
 	checks.no_second_reverse=F.quote(w,next,"reverse").is_empty()
 	checks.no_normal_after_reverse=F.quote(w,next,"normal").is_empty()
 	var failed=false;var success=false
 	for attempt in range(30):
 		for key in ["iron","gold"]:w.kingdom.stock[key]=50000
-		var previous=F.state(w,next).duplicate();result=F.attempt(w,next,"rebirth",int(w.armory.serial))
-		if not result.success:failed=true;checks.failure_keeps_item=F.state(w,next)==previous and not I.item(w,next).is_empty()
+		supply(w,"rebirth");var previous=F.state(w,next).duplicate();result=F.attempt(w,next,"rebirth",int(w.armory.serial))
+		if not result.success:failed=true;checks.failure_keeps_item=F.state(w,next)==previous and not I.item(w,next).is_empty();checks.failure_consumes_scroll=F.scroll_item(w,"rebirth")==0
 		else:success=true
 	checks.rebirth_success_and_failure=failed and success
 	checks.rng_saved=F.validate(w)
 	w.armory.items[str(next)]={"normal":8,"rebirth":5,"element":"none"};before=I.effects(w,unique).attack
-	checks.element=F.attempt(w,next,"element",int(w.armory.serial),"fire").success and I.effects(w,unique).attack==before+2
+	supply(w,"element");checks.element=F.attempt(w,next,"element",int(w.armory.serial),"fire").success and I.effects(w,unique).attack==before+2
 	checks.glow=F.glow(w,next).strength==.55 and F.glow(w,next).color==Color("ff9251")
 	w.armory.items[str(next)]={"normal":10,"rebirth":21,"element":"fire"};checks.cap=F.quote(w,next,"rebirth").is_empty() and F.glow(w,next).strength==1
 	checks.invalid_element=F.quote(w,next,"element","invented").is_empty()

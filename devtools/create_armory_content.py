@@ -13,6 +13,9 @@ write('assets/rpg/armory-equipment.json',rows)
 for row in rows:
  cls=row['classes'][0]
  (r/'assets/kingdom'/f"{row['id']}.svg").write_bytes((r/'assets/kingdom'/f'rpg_{cls}_weapon.svg').read_bytes())
+scrolls=json.loads((r/'assets/rpg/upgrade-scrolls.json').read_text(encoding='utf8'))
+for row in scrolls:
+ (r/'assets/kingdom'/f"{row['id']}.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><path d="M22 12h52v72H22z" fill="#cdb579" stroke="#73572d" stroke-width="4"/><path d="M32 28h32M32 38h32M32 48h24" stroke="#73572d" stroke-width="3"/><circle cx="48" cy="66" r="9" fill="#c87546"/></svg>',encoding='utf8')
 sources=[
  {'url':'https://kobugda.com/drops','status':'Public page readable; live monster rows absent in returned HTML; direct HTTP403; browser disabled','verified':['Zone filters and separate item/monster searches'],'missing':['Complete live monster-item rows','Monster drop percentages','Item stat tables']},
  {'url':'https://old.kobugda.com/Drops','status':'Readable static reference; explicitly player-observed','verified':['Dragon Tooth: hammer family','Harpy Queen: class earrings','Shaula: bow/shield families','Bosses grouped by region'],'missing':['Authoritative drop rates']},
@@ -29,5 +32,5 @@ sources=[
  {'url':'https://kobugda.com/anvil','status':'Readable controls and image references','verified':['Separate upgrade, reverse and rebirth-strengthening scroll roles']}
 ]
 write('docs/research/kobugda-audit.json',{'date':'2026-10-26','complete':False,'art_permission':'No redistribution license found; all-rights-reserved footer. No third-party image copied into assets.','sources':sources,'balance':'See assets/rpg/forge-rules.json; explicit LittleGod adaptation, not verified KO server odds'})
-all_rows=json.loads((r/'assets/kingdom/recipes.json').read_text(encoding='utf8'))+json.loads((r/'assets/rpg/equipment.json').read_text(encoding='utf8'))+rows
+all_rows=json.loads((r/'assets/kingdom/recipes.json').read_text(encoding='utf8'))+json.loads((r/'assets/rpg/equipment.json').read_text(encoding='utf8'))+rows+scrolls
 write('docs/research/littlegod-armory-catalogue.json',[{'id':x['id'],'name':x['name'],'category':x.get('category','tool'),'classes':x.get('classes',['warrior'] if x.get('category') in ['weapon','shield','armor'] else []),'effects':x['effects'],'source':'LittleGod existing definition' if x not in rows else 'LittleGod original adaptation','reference_stats_copied':False} for x in all_rows])
