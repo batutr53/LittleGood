@@ -47,6 +47,11 @@ func route(destination: String,arg: int=0,remember=true):
  if remember and not current.is_empty() and current!=destination:history.append({"key":current,"arg":argument})
  if history.size()>16:history.pop_front()
  current=destination;argument=arg;nested=false;routing=true
+ if not game.world.is_empty():
+  var needs_industry=destination in ["inventory","item","forge","recipe"]
+  var needs_hero=destination in ["hero","attributes","skills","enhance","bestiary","contracts","sets"]
+  if needs_industry and not I.enabled(game.world) or needs_hero and not preload("res://scripts/rpg_progression.gd").available(game.world):
+   var locked=surface(say("Feature locked","Özellik henüz açılmadı"));locked.add_child(text(say("Complete the village chapters to unlock equipment and heroes. Your current objective shows the next step.","Donanım ve kahramanları açmak için köy bölümlerini tamamla. Güncel görevin sonraki adımı gösterir."),24));playbook().button(locked,say("Open current quest","Güncel görevi aç"),func():route("quest"),true);routing=false;return
  match destination:
   "quest":quest()
   "quest_history":playbook().history()
@@ -61,6 +66,7 @@ func route(destination: String,arg: int=0,remember=true):
   "recipe":recipe_detail()
   "hero":hero()
   "map":world_map()
+  "hunts":playbook().hunts()
   "menu":menu()
   "workers":workers()
   "army":army()

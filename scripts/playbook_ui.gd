@@ -161,6 +161,22 @@ func world_map():
  label(v,say("Path open","Yol açık") if R.unlocked(game.world,key) else say("Locked · inspect requirements","Kilitli · koşulları incele"))
  button(v,say("Inspect destination","Bölgeyi incele"),func():game.hero_ui.destination(key),true)
  button(v,say("Village & army","Köy ve birlik"),func():p.route("guide"))
+func hunts():
+ var w=game.world;var v=p.surface(say("Boss hunts & adventures","Boss avı ve maceralar"));label(v,say("CONTROL YOUR HERO · explore, fight, collect and return","KAHRAMANINI YÖNET · keşfet, savaş, topla ve dön"),Color("f4cf7d"))
+ if not H.enabled(w):
+  label(v,say("Complete chapter 10 to unlock heroes; chapter 11 opens Wildwood.","Kahraman için 10. bölümü tamamla; 11. bölüm Yabanorman yolunu açar."));button(v,say("Current quest","Güncel görev"),func():p.route("quest"),true);return
+ var R=preload("res://scripts/regions.gd");var regions=["wildwood","sanctuary"];var start=page(v,"hunt_regions",regions.size(),1);var id=regions[start];var d=R.data(id)
+ label(v,game.realm_ui.localized(d.name)+" · "+(say("Thornheart guardian","Dikenyürek muhafızı") if id=="wildwood" else say("Sunward Warden","Güneş Muhafızı")))
+ label(v,(say("Guardian gate opens after chapter 14.","Muhafız kapısı 14. bölümden sonra açılır.") if w.kingdom.claimed.size()<14 else say("Follow the northern trail. Read warning circles, dodge and attack in recovery windows.","Kuzey patikasını izle. Uyarı alanlarını oku, kaçın ve dinlenme aralığında saldır.")) if id=="wildwood" else say("Complete chapter 22, enter the sanctuary and open the rune doors.","22. bölümü tamamla, tapınağa gir ve rün kapılarını aç."))
+ var active=w.kingdom.adventure.run.get("active",false);var live=preload("res://scripts/regions.gd").current(w)
+ if active:
+  button(v,say("Return to battle","Savaşa dön"),ui.close,true)
+  label(v,say("Region travel is on the Regions icon; leave combat before traveling.","Bölge yolculuğu Bölgeler ikonunda; yolculuktan önce savaştan uzaklaş."))
+  if is_instance_valid(game.adventure_scene) and live==id:
+   button(v,say("Show boss direction","Boss yönünü göster"),func():
+    var scene=game.adventure_scene;scene.guide_point=Vector2(720,230) if id=="wildwood" else Vector2(570,270);ui.close();scene.message.text=say("Follow the golden direction marker. Doors and enemies still apply.","Altın yön işaretini izle. Kapı ve düşman koşulları geçerli."))
+ else:button(v,say("Inspect / enter region","Bölgeyi incele / gir"),func():game.hero_ui.destination(id),true)
+ var row=HBoxContainer.new();v.add_child(row);button(row,say("Drop guide / quests","Drop / av görevleri"),func():p.route("contracts"));button(row,say("Army battles","Birlik savaşları"),func():p.route("army"))
 func destination(id):
  var R=preload("res://scripts/regions.gd");var d=R.data(id);var v=p.surface(game.realm_ui.localized(d.name));label(v,game.realm_ui.localized(d.risk));label(v,game.realm_ui.localized(d.resources));label(v,game.realm_ui.localized(d.landmark))
  if R.unlocked(game.world,id):button(v,say("Enter ","Gir: ")+game.realm_ui.localized(d.name),func():game.enter_adventure(id),true)

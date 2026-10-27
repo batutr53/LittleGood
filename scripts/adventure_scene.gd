@@ -55,6 +55,10 @@ var rpg_health_bar: ProgressBar
 var rpg_mana_bar: ProgressBar
 var targeting
 var action_captions={}
+var battle_feedback
+var rpg_experience_bar: ProgressBar
+var experience_label: Label
+var mana_label: Label
 func enemy_texture(kind: String) -> Texture2D:
 	var painted="res://assets/adventure/"+kind+"-painted-v2.png"
 	return load(painted) if ResourceLoader.exists(painted) else load("res://assets/adventure/"+kind+".svg")
@@ -97,7 +101,7 @@ func _ready() -> void:
 	effects=preload("res://scripts/adventure_effects.gd").new();add_child(effects)
 	spell_fx=preload("res://scripts/class_spell_fx.gd").new();spell_fx.reduce_motion=game.ui.reduce_motion;add_child(spell_fx)
 	camera=Camera2D.new();camera.zoom=Vector2.ONE*1.15;camera.position=camera_target();camera.position_smoothing_enabled=false;add_child(camera);camera.make_current()
-	build_hud();targeting=preload("res://scripts/combat_targeting.gd").new();targeting.name="CombatTargeting";add_child(targeting);startup_ms=(Time.get_ticks_usec()-started)/1000.0
+	build_hud();targeting=preload("res://scripts/combat_targeting.gd").new();targeting.name="CombatTargeting";add_child(targeting);battle_feedback=preload("res://scripts/combat_feedback.gd").new();battle_feedback.name="CombatFeedback";add_child(battle_feedback);startup_ms=(Time.get_ticks_usec()-started)/1000.0
 func regional_prop(key: String,point: Vector2,size: float,anchor: float,alpha: float=1.0) -> void:
 	var base=Node2D.new();base.position=point;actors.add_child(base)
 	var sprite=Sprite2D.new();sprite.texture=regional_textures[key];sprite.position.y=-size*anchor;sprite.scale=Vector2.ONE*size/sprite.texture.get_width();sprite.modulate.a=alpha;base.add_child(sprite)
@@ -110,6 +114,7 @@ func make_body(id: int,p: Vector2,texture: Texture2D,size: float) -> void:
 	var body=CharacterBody2D.new();body.position=p;body.collision_layer=2;body.collision_mask=1;actors.add_child(body)
 	var collision=CollisionShape2D.new();var circle=CircleShape2D.new();circle.radius=14;collision.shape=circle;body.add_child(collision)
 	var sprite=Sprite2D.new();sprite.name="Art";sprite.texture=texture;sprite.scale=Vector2.ONE*size/texture.get_width();sprite.position.y=-size*.42;body.add_child(sprite);bodies[id]=body
+	body.set_meta("art_rest",sprite.position)
 func move_body(id: int,p: Vector2,delta: Vector2) -> Vector2:
 	if not bodies.has(id):return region_map.move(p,delta,game.world.kingdom.claimed.size()<14)
 	var body=bodies[id];body.position=p;body.move_and_collide(delta);return body.position.round()
@@ -126,7 +131,9 @@ func open_rpg_panel(key: String):
 	if key=="map":
 		if not A.can_travel(game.world):message.text=say("Leave combat before traveling.","Işınlanmak için önce savaştan uzaklaş.");return
 		go_home();game.ui.premium.call_deferred("route","map");return
-	clear_combat_input();overlay_was_frozen=frozen;frozen=true;rpg_overlay=true;game.ui.layer=20;game.ui.root.show();game.ui.premium.route(key)
+	clear_combat_input()
+	if not rpg_overlay:overlay_was_frozen=frozen
+	frozen=true;rpg_overlay=true;game.ui.layer=20;game.ui.root.show();game.ui.premium.route(key)
 func legacy_hud() -> void:
 	var layer=CanvasLayer.new();layer.layer=12;add_child(layer);hud=Control.new();hud.mouse_filter=Control.MOUSE_FILTER_IGNORE;layer.add_child(hud)
 	var height=get_viewport_rect().size.y
@@ -152,6 +159,11 @@ func refresh_hud() -> void:
 	var h=game.world.kingdom.adventure.hero;var r=game.world.kingdom.adventure.run
 	if is_instance_valid(rpg_health_bar):
 		rpg_health_bar.max_value=H.stats(game.world).health;rpg_health_bar.value=h.hp;rpg_mana_bar.max_value=preload("res://scripts/rpg_progression.gd").modifiers(game.world).mana;rpg_mana_bar.value=game.world.rpg.progression[game.world.rpg.active].mana if game.world.has("rpg") else 100
+	if is_instance_valid(mana_label):mana_label.text="MP "+str(int(rpg_mana_bar.value))+" / "+str(int(rpg_mana_bar.max_value))
+	if is_instance_valid(rpg_experience_bar):
+		var level=H.level(h);rpg_experience_bar.max_value=40*(2*level-1);rpg_experience_bar.value=int(h.xp)-40*(level-1)*(level-1)
+		experience_label.text="Lv "+str(level)+" · EXP "+str(int(rpg_experience_bar.value))+" / "+str(int(rpg_experience_bar.max_value))
+		if level>=15:rpg_experience_bar.value=rpg_experience_bar.max_value;experience_label.text="Lv 15 · MAX"
 	health.text=h.name+" · "+str(int(h.hp))+" / "+str(H.stats(game.world).health)+say(" HP"," Can")
 	if region=="ashen_desert" and preload("res://scripts/ashen_desert.gd").poisoned(r):health.text+=say(" · POISON "," · ZEHİR ")+str(ceili((r.poison_until-r.clock)/1000.0))+"s"
 	for key in ["attack","skill","dodge","heal"]:
@@ -164,10 +176,12 @@ func refresh_hud() -> void:
 			var key="skill" if i==0 else "rpg_skill"+str(i);var index=int(p.bar[i]);var rank=int(p.skills[index]);var cd=int(p.get("cooldowns",[0,0,0,0,0,0])[index]) if rank>0 else int(h.cooldowns.skill)
 			buttons[key].text=str(snappedf(cd/1000.0,.1))+"s" if cd>0 else ""
 			buttons[key].disabled=not R.skill_ready(game.world,{"skill_slot":i})
-			if action_captions.has(key):action_captions[key].text=say("Locked","Kilitli") if rank==0 and index!=0 else say("Low mana","Mana az") if rank>0 and float(p.mana)<12+index*3 else say("Skill ","Beceri ")+["I","II","III"][i]
+			if action_captions.has(key):action_captions[key].text=say("Locked","Kilitli") if rank==0 and index!=0 else say("Low mana","Mana az") if float(p.mana)<(12+index*3 if rank>0 else 8) else say("Skill ","Beceri ")+["I","II","III"][i]
 			var badge=buttons[key].get_node_or_null("ActionBadge")
 			if badge:badge.sample(cd,4000+index*500,rank==0 and index!=0)
-			buttons[key].tooltip_text=R.skill_name(h.get("class","warrior"),index,game.ui.language=="tr")+" · "+((str(12+index*3)+say(" mana"," mana")) if rank>0 else say("Starter ability","Başlangıç becerisi") if index==0 else say("Learn this ability first","Önce bu beceriyi öğren"))
+			buttons[key].tooltip_text=R.skill_name(h.get("class","warrior"),index,game.ui.language=="tr")+" · "+((str(12+index*3)+say(" mana"," mana")) if rank>0 else say("Starter ability · 8 MP","Başlangıç becerisi · 8 MP") if index==0 else say("Learn this ability first","Önce bu beceriyi öğren"))
+	var near_loot=r.loot.any(func(l):return not l.taken and Vector2(r.x,r.y).distance_to(Vector2(l.x,l.y))<=90)
+	if action_captions.has("interact"):action_captions.interact.text=say("Collect","Topla") if near_loot else say("Inspect","İncele")
 	var q=preload("res://scripts/kingdom.gd").current(game.world)
 	objective.text=say("IRON HILLS · Find the mine to the north.\nInspect ore veins; take materials home.","DEMİR TEPELER · Kuzeydeki madeni bul.\nCevheri incele; malzemeyi eve taşı.") if region=="iron_hills" else say("WILDWOOD · ","YABANORMAN · ")+(game.realm_ui.localized(q.title) if not q.is_empty() else say("Explore and return safely","Keşfet ve güvenle dön"))
 	if region=="iron_hills" and r.landmark:objective.text=say("IRON HILLS · Forgotten Mine discovered\nOre and stone are finite · Home banks cargo.","DEMİR TEPELER · Unutulmuş Maden keşfedildi\nCevher ve taş sınırlı · Dön ganimeti depolar.")
@@ -184,7 +198,8 @@ func _input(event: InputEvent) -> void:
 		action_counts.touch=int(action_counts.get("touch",0))+1
 		if event.pressed and event.position.distance_to(stick.position)<stick.radius*1.4 and stick_index<0:stick_index=event.index
 		elif not event.pressed and event.index==stick_index:stick_index=-1;movement=Vector2.ZERO;stick.vector=Vector2.ZERO;stick.queue_redraw()
-		elif event.pressed and is_instance_valid(targeting):targeting.select_at(event.position)
+		elif event.pressed and is_instance_valid(targeting):
+			if not targeting.select_at(event.position) and is_instance_valid(battle_feedback):battle_feedback.pick_at(event.position)
 	if event is InputEventScreenDrag and event.index==stick_index:
 		movement=((event.position-stick.position)/maxf(30,stick.radius*.9)).limit_length(1);action_counts.drag=int(action_counts.get("drag",0))+1
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -193,6 +208,7 @@ func _input(event: InputEvent) -> void:
 		if event.keycode==KEY_E:interact()
 		if event.keycode==KEY_SPACE:actions.attack=true
 		if event.keycode==KEY_Q:actions.skill=true
+		if event.keycode in [KEY_1,KEY_2,KEY_3]:actions.skill=true;actions.skill_slot=int(event.keycode-KEY_1)
 		if event.keycode==KEY_SHIFT:actions.dodge=true
 		if event.keycode==KEY_F:actions.heal=true
 		if event.keycode==KEY_ESCAPE:toggle_pause()
@@ -212,6 +228,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		var previous=targeting.selected_id if is_instance_valid(targeting) else 0
 		if is_instance_valid(targeting) and targeting.select_at(event.position):
 			if previous==targeting.selected_id or event.double_click:actions.attack=true
+		elif is_instance_valid(battle_feedback):battle_feedback.pick_at(event.position)
 func _physics_process(delta: float) -> void:
 	if rpg_overlay:
 		if not is_instance_valid(game.ui.modal):rpg_overlay=false;game.ui.root.hide();game.ui.layer=1;frozen=overlay_was_frozen;clear_combat_input()
@@ -235,7 +252,12 @@ func _physics_process(delta: float) -> void:
 			if command.get(key,false):action_counts[key]=int(action_counts.get(key,0))+1
 		var before_position=Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y)
 		var can_cast=command.get("skill",false) and load("res://scripts/rpg_progression.gd").skill_ready(game.world,command)
+		if command.get("skill",false) and not can_cast and is_instance_valid(battle_feedback):
+			var prog=load("res://scripts/rpg_progression.gd").selected(game.world);var slot=clampi(int(command.get("skill_slot",0)),0,2);var index=int(prog.bar[slot]);var rank=int(prog.skills[index])
+			battle_feedback.announce(say("Learn this skill first","Önce bu beceriyi öğren") if rank==0 and index!=0 else say("Not enough mana","Yeterli mana yok") if float(prog.mana)<(12+index*3 if rank>0 else 8) else say("Skill is cooling down","Beceri bekleme süresinde"))
+		var before_feedback=battle_feedback.snapshot() if is_instance_valid(battle_feedback) else {}
 		var feedback=A.step(game.world,command,move_body);presentation_feedback.append_array(feedback);actions.clear();combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
+		if is_instance_valid(battle_feedback):battle_feedback.resolve(before_feedback,feedback,command)
 		if can_cast and feedback.has("swing"):
 			var cls=game.world.kingdom.adventure.hero.get("class","warrior");var prog=load("res://scripts/rpg_progression.gd").selected(game.world);var index=int(prog.get("bar",[0,1,2])[clampi(int(command.get("skill_slot",0)),0,2)])
 			var run=game.world.kingdom.adventure.run;spell_fx.cast(Vector2(run.x,run.y),cls,index,Vector2(run.facing[0],run.facing[1]))
@@ -244,7 +266,6 @@ func _physics_process(delta: float) -> void:
 			if stone_distance>=65:stone_distance=fmod(stone_distance,65);game.audio.sanctuary("step")
 		for cue in feedback:
 			if cue is Dictionary:
-				floats.append({"point":Vector2(cue.x,cue.y),"text":str(cue.damage),"age":0.0})
 				if cue.get("ranged",false):ranged_trails.append({"from":Vector2(cue.fromx,cue.fromy-35),"to":Vector2(cue.x,cue.y-35),"age":0.0})
 			elif cue in ["swing","kill","boss","heal","plate","mechanism"]:game.audio.chime(6 if cue in ["kill","boss","plate","mechanism"] else 0 if cue=="swing" else 5)
 			elif cue=="hurt":game.audio.chime(2)
@@ -253,14 +274,20 @@ func _physics_process(delta: float) -> void:
 				elif cue=="swing":game.audio.sanctuary("swing")
 				elif cue in ["plate","mechanism"]:game.audio.sanctuary("switch")
 			if cue is String and cue=="boss":message.text=say("Thornheart falls! Inspect the living heart, then return to Arin.","Dikenyürek düştü! Yaşayan kalbi İncele ile al; Arin'e dön.")
+		if feedback.has("kill") or feedback.has("boss"):game.checkpoint("combat-victory")
 	var r=game.world.kingdom.adventure.run;bodies[0].position=Vector2(r.x,r.y)
 	spell_fx.aura_position=Vector2(r.x,r.y);spell_fx.aura_direction=Vector2(r.facing[0],r.facing[1]).normalized();spell_fx.aura=load("res://scripts/armory.gd").glow(game.world,int(game.world.kingdom.adventure.hero.equipment.weapon))
 	if is_instance_valid(warrior_visual):warrior_visual.sample(game.world,presentation_feedback)
 	bodies[0].get_node("Art").rotation=sin(r.clock*.012)*.025*direction.length()
 	bodies[0].get_node("Art").position.y=-46.2-absf(sin(r.clock*.015))*3*direction.length()
 	if r.swing>0:bodies[0].get_node("Art").rotation+=sin(r.swing/200.0*PI)*.2
+	var facing=Vector2(r.facing[0],r.facing[1]).normalized();bodies[0].get_node("Art").position.x=sin(r.swing/200.0*PI)*8*facing.x
+	if absf(facing.x)>.15:bodies[0].get_node("Art").flip_h=facing.x>0
 	for e in r.enemies:
 		var body=bodies[int(e.id)];body.position=Vector2(e.x,e.y);var sprite=body.get_node("Art");sprite.rotation=sin(r.clock*.012+int(e.id))*(.12 if e.state=="windup" else .035);sprite.modulate.a=.22 if e.hp==0 else 1.0
+		var rest=Vector2(body.get_meta("art_rest"));var to_hero=(Vector2(r.x,r.y)-Vector2(e.x,e.y)).normalized();var data=A.enemies()[e.kind]
+		if absf(to_hero.x)>.15 and Vector2(e.x,e.y).distance_to(Vector2(r.x,r.y))<270:sprite.flip_h=to_hero.x>0
+		sprite.position=rest-to_hero*7*clampf(1-float(e.timer)/maxf(1,data.warning),0,1) if e.state=="windup" else rest+to_hero*10*clampf((float(e.timer)-float(data.cooldown)+180)/180.0,0,1) if e.state=="recover" else rest
 		if e.kind=="thornheart" and e.hp>0 and bodies[0].position.y<e.y and bodies[0].position.distance_to(body.position)<110:sprite.modulate.a=.48
 		if e.hp==0:
 			death_ages[e.id]=minf(1.0,float(death_ages.get(e.id,0))+delta);sprite.modulate.a=lerpf(1,.16,death_ages[e.id]);sprite.rotation=death_ages[e.id]*.22
@@ -270,6 +297,7 @@ func _physics_process(delta: float) -> void:
 	ranged_trails=ranged_trails.filter(func(trail):return trail.age<.22)
 	floats=floats.filter(func(f):return f.age<.8)
 	camera.position=camera.position.lerp(camera_target(),1-exp(-delta*7))
+	if is_instance_valid(battle_feedback) and battle_feedback.hurt_flash>0 and not game.ui.reduce_motion and not game.view.low_quality:camera.position+=Vector2(sin(r.clock*.071),cos(r.clock*.053))*battle_feedback.hurt_flash*6
 	hud_clock+=delta;save_clock+=delta
 	if hud_clock>.2:hud_clock=0;refresh_hud()
 	if save_clock>5:save_clock=0;game.checkpoint("adventure")
@@ -279,7 +307,8 @@ func _physics_process(delta: float) -> void:
 	effects_were_dynamic=dynamic
 	presentation_cpu_us+=Time.get_ticks_usec()-frame_started;presentation_steps+=1
 func draw_effects(canvas: Node2D) -> void:
-	for trail in ranged_trails:canvas.draw_line(trail.from,trail.to,Color(.6,.8,1,1-trail.age/.22),3,true)
+	for trail in ranged_trails:
+		var head=trail.from.lerp(trail.to,clampf(trail.age/.16,0,1));var direction=(trail.to-trail.from).normalized();var color=Color(.6,.8,1,1-trail.age/.22);canvas.draw_line(head-direction*minf(36,head.distance_to(trail.from)),head,color,3,true);canvas.draw_circle(head,4,color)
 	if not game:return
 	var draw_started=Time.get_ticks_usec()
 	var r=game.world.kingdom.adventure.run
@@ -310,12 +339,22 @@ func draw_effects(canvas: Node2D) -> void:
 	if r.dash>0:
 		var heading=Vector2(r.facing[0],r.facing[1]).normalized()
 		for i in range(1,4):canvas.draw_circle(Vector2(r.x,r.y)-heading*i*16,15-i*3,Color(.75,.9,.8,.5-i*.1))
+	var closest_loot=0;var loot_distance=110.0
+	for candidate in r.loot:
+		if candidate.taken:continue
+		var distance=Vector2(candidate.x,candidate.y).distance_to(Vector2(r.x,r.y))
+		if distance<loot_distance:closest_loot=int(candidate.id);loot_distance=distance
 	for l in r.loot:
 		if not l.taken:
-			var p=Vector2(l.x,l.y);var color=Color("f3cf7f") if l.resource=="heart" else Color("9ed9d5") if not l.recipe.is_empty() else Color("c5d39c");canvas.draw_circle(p,11,color);canvas.draw_arc(p,18,0,TAU,24,color,2,true)
+			var p=battle_feedback.loot_point(l) if is_instance_valid(battle_feedback) else Vector2(l.x,l.y);var color=Color("f3cf7f") if l.resource=="heart" else Color("9ed9d5") if not l.recipe.is_empty() else Color("c5d39c");canvas.draw_circle(p,11,color);canvas.draw_arc(p,18,0,TAU,24,color,2,true)
+			canvas.draw_line(p,p-Vector2(0,48),Color(color,.18),9,true);canvas.draw_line(p,p-Vector2(0,48),Color(color,.7),2,true)
+			canvas.draw_texture_rect(effect_textures.chest,Rect2(p-Vector2(12,20),Vector2(24,24)),false)
+			if is_instance_valid(battle_feedback) and (battle_feedback.selected_loot==int(l.id) or battle_feedback.selected_loot==0 and closest_loot==int(l.id)):
+				var title=battle_feedback.loot_name(l);canvas.draw_string_outline(game.ui.ui_font(),p-Vector2(75,53),title,HORIZONTAL_ALIGNMENT_CENTER,150,15,4,Color("10141c"));canvas.draw_string(game.ui.ui_font(),p-Vector2(75,53),title,HORIZONTAL_ALIGNMENT_CENTER,150,15,color)
 			if l.resource=="heart":
 				for i in range(6):canvas.draw_line(p+Vector2.from_angle(i*TAU/6)*23,p+Vector2.from_angle(i*TAU/6)*30,color,3,true)
-	for f in floats:canvas.draw_string(ThemeDB.fallback_font,f.point,f.text,HORIZONTAL_ALIGNMENT_CENTER,-1,24,Color("ffe4a7"))
+	for f in floats:
+		var color=Color(f.get("color",Color("ffe4a7")),clampf((.8-f.age)*3,0,1));var size=int(f.get("size",24));canvas.draw_string_outline(game.ui.ui_font(),f.point-Vector2(90,0),f.text,HORIZONTAL_ALIGNMENT_CENTER,180,size,4,Color(0,0,0,color.a));canvas.draw_string(game.ui.ui_font(),f.point-Vector2(90,0),f.text,HORIZONTAL_ALIGNMENT_CENTER,180,size,color)
 	effect_draw_cpu_us+=Time.get_ticks_usec()-draw_started;effect_draws+=1
 func draw_props(canvas: Node2D) -> void:
 	var r=game.world.kingdom.adventure.run
@@ -343,7 +382,10 @@ func ruin_style() -> StyleBoxFlat:
 func interact() -> void:
 	action_counts.interact=int(action_counts.get("interact",0))+1
 	var before=game.world.kingdom.adventure.run.loot.filter(func(l):return l.taken).map(func(l):return l.id)
-	var result=A.interact(game.world)
+	var before_feedback=battle_feedback.snapshot() if is_instance_valid(battle_feedback) else {}
+	var result=A.interact(game.world,battle_feedback.selected_loot if is_instance_valid(battle_feedback) else 0)
+	if is_instance_valid(battle_feedback):battle_feedback.resolve(before_feedback)
+	if is_instance_valid(battle_feedback) and result in ["far","full"]:battle_feedback.announce(say("Approach the selected loot","Seçili ganimete yaklaş") if result=="far" else say("Bag / storage full · loot stays here","Çanta / depo dolu · ganimet burada kalır"))
 	props.queue_redraw();effects.queue_redraw()
 	if region=="sanctuary" and not result.is_empty() and result!="loot" and result!="full":
 		var words={"inscription":say("Sunforged Dynasty: walk Sun then Moon. Inspect Sun → Moon → Star. The doors remember.","Güneşdövme Hanedanı: Güneş sonra Ay üzerine yürü. Güneş → Ay → Yıldız'ı incele. Kapılar hatırlar."),"lore":say("A broken forge: light once tempered metal. The dynasty vanished, its guardians stayed.","Kırık bir demirci: ışık bir zamanlar metali tavlardı. Hanedan kayboldu, muhafızları kaldı."),"secret":say("A hidden passage opens! The treasury is optional; your main route stays safe.","Gizli geçit açıldı! Hazine isteğe bağlı; ana yolun güvende."),"treasury":say("Ancient alloy revealed. Inspect the real loot to carry it home.","Kadim alaşım açığa çıktı. Eve taşımak için gerçek ganimeti İncele."),"switch":say("The symbol glows. Follow Sun → Moon → Star.","Simge parlıyor. Güneş → Ay → Yıldız sırasını izle."),"wrong_switch":say("The sequence resets safely. Sun → Moon → Star; try again.","Sıra güvenle sıfırlandı. Güneş → Ay → Yıldız; yeniden dene."),"runes_open":say("The rune door opens permanently. Beyond waits the Warden.","Rün kapısı kalıcı olarak açıldı. Ötede Muhafız bekliyor."),"relic":say("Ancient Sun Relic recovered! Return home, inspect it and unlock ancient forging.","Kadim Güneş Yadigârı alındı! Eve dön, incele ve kadim dövümü aç.")}
@@ -354,6 +396,7 @@ func interact() -> void:
 	elif result=="mine":message.text=say("Forgotten Mine discovered. Its last miners left rails pointing home. Recorded in the chronicle.","Unutulmuş Maden keşfedildi. Son madenciler eve uzanan raylar bıraktı. Tarihçeye kaydedildi.");game.audio.chime(6);game.checkpoint("forgotten-mine")
 	elif result=="mineral":message.text=say("Mineral gathered · finite vein. Return home to smelt ore or build with stone.","Maden toplandı · damar sınırlı. Cevheri eritmek veya taşla inşa etmek için eve dön.");game.audio.chime(5);game.checkpoint("mineral")
 	elif result=="full":message.text=say("Storage is full. Loot stays here; return home to use materials or equipment.","Depo dolu. Ganimet burada kalır; malzeme veya donanımı kullanmak için eve dön.")
+	elif result=="far":message.text=say("Move closer to the selected loot.","Seçili ganimete yaklaş.")
 	elif not result.is_empty():message.text=say("Collected · loot stays yours when you return. Herbs can heal (F).","Toplandı · döndüğünde ganimet senin. Bitkiler iyileştirir (F).");game.audio.chime(5);game.checkpoint("loot")
 	if result=="loot":
 		for l in game.world.kingdom.adventure.run.loot:

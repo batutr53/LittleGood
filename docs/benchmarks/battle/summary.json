@@ -1,0 +1,30 @@
+{
+  "mcp_skill_click": {
+    "source": "Godot Forge mouse click on visible skill, controlled QA wounded enemy and physics stepped explicitly",
+    "click": [
+      1100,
+      593
+    ],
+    "hp_before_enemy": 100,
+    "hp_after_enemy": 98,
+    "hp_after_level": 104,
+    "xp_before": 350,
+    "xp_after": 374,
+    "mp_before": 70.3,
+    "mp_after": 62.6,
+    "drops": 2
+  },
+  "all_passed": true,
+  "verification": {
+    "all_passed": true,
+    "count": 46
+  },
+  "navigation": {
+    "all_passed": true,
+    "count": 61
+  },
+  "android": {
+    "all_passed": true,
+    "count": 26
+  }
+}

@@ -118,7 +118,7 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 			if e.kind in load("res://scripts/sanctuary.gd").KINDS:armor=load("res://scripts/sanctuary.gd").armor(e,armor);load("res://scripts/sanctuary.gd").struck(w,e)
 			var hit=maxi(1,roundi(int(H.stats(w).attack)*(float(attack_context.multiplier) if attack_context.cast else 1.6 if heavy else 1.0)*(1.5 if critical else 1.0))-armor)
 			if attack_context.multiplier==0:continue
-			e.hp=maxi(0,int(e.hp)-hit);feedback.append({"damage":hit,"x":e.x,"y":e.y})
+			e.hp=maxi(0,int(e.hp)-hit);feedback.append({"damage":hit,"critical":critical,"enemy_id":int(e.id),"x":e.x,"y":e.y})
 			if int(attack_context.range)>105:feedback[-1].fromx=r.x;feedback[-1].fromy=r.y;feedback[-1].ranged=true
 			if e.hp==0:defeat_enemy(w,e);feedback.append("boss" if e.kind=="thornheart" else "kill")
 			if int(attack_context.range)>105 and not heavy and not attack_context.area:break
@@ -232,10 +232,15 @@ static func pickup(w: Dictionary,l: Dictionary) -> bool:
 	if r.get("region","")=="ashen_desert" and l.resource=="desert_crystal":w.kingdom.adventure.regions.quest.picked=true
 	if r.get("region","")=="sanctuary":load("res://scripts/sanctuary.gd").picked(w,l)
 	return true
-static func interact(w: Dictionary) -> String:
+static func interact(w: Dictionary,loot_id: int=0) -> String:
 	if not H.writable(w) or w.kingdom.adventure.run.is_empty() or not w.kingdom.adventure.run.active:return ""
 	if w.kingdom.adventure.hero.defeated:return ""
 	var r=w.kingdom.adventure.run;var p=Vector2(r.x,r.y)
+	if loot_id>0:
+		var selected=r.loot.filter(func(l):return int(l.id)==loot_id and not l.taken)
+		if selected.is_empty():return ""
+		if p.distance_to(Vector2(selected[0].x,selected[0].y))>90:return "far"
+		return "loot" if pickup(w,selected[0]) else "full"
 	for l in r.loot:
 		if pickup(w,l):return "loot"
 	if r.loot.any(func(l):return not l.taken and p.distance_to(Vector2(l.x,l.y))<=90):return "full"

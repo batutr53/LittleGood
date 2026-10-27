@@ -41,7 +41,7 @@ func build():
 		var key=entry[0];var b=r.icon_action(nav,entry[1],entry[2],func():p.route(key));b.name="WorldMenu" if key=="menu" else "Nav"+key.capitalize()
 		b.set_meta("nav_key",key)
 	var left=HBoxContainer.new();p.put(left,Rect2(p.px(7),bottom-p.px(4),p.px(150),p.px(44)))
-	r.icon_action(left,"menu",r.say("Village","Köy"),func():p.route("guide"));r.icon_action(left,"sword",r.say("Battle","Savaş"),func():p.route("army"));r.icon_action(left,"workers",r.say("Chat","Sohbet"),func():p.route("chat"))
+	r.icon_action(left,"menu",r.say("Village","Köy"),func():p.route("guide"));var hunts=r.icon_action(left,"sword",r.say("Boss / Hunt","Boss / Av"),func():p.route("hunts"));hunts.name="OpenHunts";r.icon_action(left,"workers",r.say("Chat","Sohbet"),func():p.route("chat"))
 	xp=bar(Color("70943e"),Rect2(p.px(170),bottom+p.px(15),maxf(p.px(60),s.x-p.px(635)),p.px(9)))
 	r.chat_box=r.card(Rect2(p.px(6),bottom-p.px(190),p.px(448),p.px(185)));r.chat_box.name="ChatPanel"
 	var tabs=p.text(r.say("GENERAL     PRIVATE     SYSTEM","GENEL       ÖZEL       SİSTEM"),17,Color("d8c68f"));r.chat_box.add_child(tabs);tabs.position=Vector2(p.px(6),p.px(2));tabs.size=Vector2(p.px(300),p.px(21))

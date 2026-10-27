@@ -103,7 +103,7 @@ static func combat_tick(w: Dictionary):
 static func skill_ready(w: Dictionary,input: Dictionary) -> bool:
 	if not w.has("rpg"):return true
 	var p=selected(w);var index=int(p.bar[clampi(int(input.get("skill_slot",0)),0,2)])
-	if int(p.skills[index])==0:return index==0 and int(w.kingdom.adventure.hero.cooldowns.skill)==0
+	if int(p.skills[index])==0:return index==0 and int(w.kingdom.adventure.hero.cooldowns.skill)==0 and float(p.mana)>=8
 	return int(p.get("cooldowns",[0,0,0,0,0,0])[index])==0 and (int(p.skills[index])==0 or float(p.mana)>=12+index*3)
 static func basic_range(w: Dictionary) -> int:
 	var key=w.kingdom.adventure.hero.get("class","warrior")
@@ -116,7 +116,10 @@ static func attack_context(w: Dictionary,input: Dictionary) -> Dictionary:
 	var p=selected(w)
 	if key=="rogue" and p.specialization=="assassin":result.range=78
 	var skill_slot=int(input.get("skill_slot",0));var index=int(p.bar[clampi(skill_slot,0,2)]);var rank=int(p.skills[index])
-	if not input.get("skill",false) or rank<=0:return result
+	if not input.get("skill",false):return result
+	if rank<=0:
+		if index!=0 or float(p.mana)<8:return {"range":0,"multiplier":0.0,"area":false,"cast":false}
+		p.mana-=8;result.cast=true;result.multiplier=1.6;p.cooldowns[0]=4000;return result
 	var cost=12+index*3
 	if float(p.mana)<cost:return {"range":0,"multiplier":0.0,"area":false,"cast":false}
 	p.mana-=cost;result.cast=true;result.multiplier=1.4+rank*.2+index*.1

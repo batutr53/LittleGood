@@ -47,6 +47,8 @@ func run() -> void:
 		var qa=preload("res://scripts/playbook_android_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
 	if options.get("phase", "new")=="targeting":
 		var qa=preload("res://scripts/targeting_android_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
+	if options.get("phase", "new")=="battle":
+		var qa=preload("res://scripts/battle_android_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
 	if options.get("phase", "new") in ["warrior_v4","warrior_v4_reopen","warrior_v4_profile"]:
 		var qa=preload("res://scripts/warrior_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
 	if options.get("phase", "new") in ["sanctuary","sanctuary_reopen"]:

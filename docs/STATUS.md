@@ -1,5 +1,13 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Action combat, real rewards and icon navigation — 27 October 2026
+
+Connected actual hits, enemy counterattacks, HP loss/recovery, MP use, critical damage, EXP and level-up to visible effects. Added contact flashes/sparks, projectile travel, enemy anticipation/recoil, opponent-facing sprites, outlined resource/damage numbers, screen-edge damage feedback, a live EXP bar, MP readout, falling loot and exact tap-to-collect. RPG starter skill costs 8 MP; learned skills retain existing costs. Rewards and pickups stay model-owned and exactly once; collected resources bank on safe return. Full-bag, distance, low mana and potion failures are explained.
+
+Fixed combat pause-state preservation when switching panels; pre-unlock icons now explain their requirement. Home and combat HUDs expose **Boss / Av**, region requirements, solo boss directions and separate army battles. Real viewport mouse-event tests cover correct panel opening at three horizontal sizes.
+
+Existing **822 campaign + 270 landscape UI + 98 compact HUD + 142 playbook + 66 targeting + 41 class-combat + 14 interaction** checks pass; **46 battle-loop + 61 real-input navigation** checks added. Android emulator: **26 checks**, preserved player files, no script errors; short active melee sample **60.05 / 30.03 FPS** at 60 / battery caps. New screenshots and detailed Android results: `docs/benchmarks/battle/`, `docs/screenshots/battle/`. Full behavior, QA limitations and remaining work: [BATTLE_LOOP.md](BATTLE_LOOP.md). APK: `D:/LittleGod/builds/android/LittleGod-Battle-debug.apk` (isolated QA package, version 101). Launcher: `D:/LittleGod/Launch LittleGod.cmd`. No physical phone test claimed; shutdown resource warnings and procedural rather than skeletal animations remain.
+
 ## MMORPG target clarity, HUD materials and forest art — 27 October 2026
 
 Implemented explicit enemy name/HP targeting, visible ground rings/pointers, range/obstruction feedback, target cycling, first-tap selection, selected-enemy ranged basics, warnings outside chat, cooldown arcs, localized action/locked/mana captions, persistent home-world context actions, selected inventory/equipment/nav feedback and stale-selection cleanup. Slate metal/gold surfaces improve contrast at the retained compact proportions. Added three original painted forest enemies (built-in image generation, transparent, imported at 512 px) and a richer original vector Wildwood floor aligned with existing collision and landmarks. Saved worlds and item ownership remain compatible.

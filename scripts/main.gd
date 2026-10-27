@@ -51,6 +51,7 @@ var v4_preview = OS.has_feature("v4_preview") or "--v4-preview" in OS.get_cmdlin
 
 func enter_adventure(region: String="") -> bool:
 	if is_instance_valid(adventure_scene) or visiting:return false
+	load("res://scripts/rpg_progression.gd").ensure(world)
 	load("res://scripts/armory.gd").ensure(world)
 	if not preload("res://scripts/adventure.gd").enter(world,paused,region):return false
 	ui.close();adventure_scene=load("res://scenes/adventure.tscn").instantiate();adventure_scene.game=self;add_child(adventure_scene);checkpoint("adventure-entry");return true

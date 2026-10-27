@@ -1,7 +1,7 @@
 """Actual emulator install/start/render QA. Model navigation is programmatic, not native touch."""
 from pathlib import Path
 import subprocess,json,time,hashlib,uuid,argparse
-parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');parser.add_argument('--phase',choices=['rpg','estate','armory','playbook','targeting'],default='rpg');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');parser.add_argument('--phase',choices=['rpg','estate','armory','playbook','targeting','battle'],default='rpg');args=parser.parse_args()
 assert all(Path(v).name==v for v in [args.apk,args.output,args.screenshots])
 r=Path(__file__).resolve().parents[1];out=r/'builds'/args.output;out.mkdir(exist_ok=True)
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe';pkg='org.littlegod.livinguniverse.rpgqa';player='org.littlegod.livinguniverse'
@@ -45,6 +45,7 @@ images=['rpg-android-home','rpg-android-inventory','rpg-android-mage','rpg-andro
 if args.phase=='armory':images=['armory-android-inventory','armory-android-anvil','armory-android-bestiary','armory-android-contracts','armory-android-spell','armory-android-sets']
 if args.phase=='playbook':images=['playbook-android-'+name for name in ['quest','guide','workers','construction','army','map','menu','army_roster','placement']]
 if args.phase=='targeting':images=['targeting-android-'+name for name in ['building','item','enemy','warning']]
+if args.phase=='battle':images=['battle-android-'+name for name in ['counterattack','kill','pickup','healing','hunts']]
 for name in images:
     image=read(name+'.png');(r/'docs/screenshots'/args.screenshots/f'{name}.png').write_bytes(image)
 logs=run('logcat','-d','--pid='+str(result['pid']),'-s','godot:V','AndroidRuntime:E')
