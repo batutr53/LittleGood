@@ -1,0 +1,6 @@
+--------- beginning of main
+10-27 09:04:18.335  7413  7464 I godot   : Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+10-27 09:04:18.485  7413  7464 E godot   : WARNING: Failed to load cached shader, recompiling.
+10-27 09:04:18.485  7413  7464 E godot   :    at: _load_from_cache (drivers/gles3/shader_gles3.cpp:615)
+10-27 09:04:18.834  7413  7464 I godot   : OpenGL API OpenGL ES 3.1 (4.5.0 NVIDIA 616.64) - Compatibility - Using Device: Google (NVIDIA Corporation) - Android Emulator OpenGL ES Translator (NVIDIA GeForce RTX 4070 Laptop GPU/PCIe/SSE2)
+10-27 09:04:18.847  7413  7464 I godot   :

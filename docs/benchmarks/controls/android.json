@@ -1,0 +1,88 @@
+{
+  "all_passed": true,
+  "checks": {
+    "bag_opens": true,
+    "boss_hub": true,
+    "correct_skill_window": true,
+    "counterattack": true,
+    "drops": true,
+    "effects": true,
+    "enter": true,
+    "experience": true,
+    "fixture": true,
+    "heal": true,
+    "image_battle-android-counterattack": true,
+    "image_battle-android-healing": true,
+    "image_battle-android-hunts": true,
+    "image_battle-android-kill": true,
+    "image_battle-android-pickup": true,
+    "kill": true,
+    "level": true,
+    "live_counterattacks": true,
+    "mana": true,
+    "no_duplicate": true,
+    "restore": true,
+    "save": true,
+    "touch_pickup": true,
+    "valid": true,
+    "window_switch_resumes": true,
+    "xp_hud": true
+  },
+  "pid": 7413,
+  "profiles": [
+    {
+      "draw_calls": 131.0,
+      "fps": 59.4536261715862,
+      "hero_hp_after": 114,
+      "hero_hp_before": 117,
+      "p95_ms": 22.619,
+      "process_cpu_p95_ms": 10.866,
+      "scene": "active_melee_enemy_counterattacks",
+      "simulation_ms_per_tick": 0.501975,
+      "target": 60,
+      "texture_memory_mb": 65.3846187591553
+    },
+    {
+      "draw_calls": 132.0,
+      "fps": 30.0316623071117,
+      "hero_hp_after": 110,
+      "hero_hp_before": 113,
+      "p95_ms": 37.007,
+      "process_cpu_p95_ms": 12.802,
+      "scene": "active_melee_enemy_counterattacks",
+      "simulation_ms_per_tick": 0.454,
+      "target": 30,
+      "texture_memory_mb": 65.3846187591553
+    }
+  ],
+  "run_id": "15bda0c928f445d6a46feb0b99ce2d12",
+  "source": "actual emulator rendering, live simulation and programmatic screen-touch pickup; controlled wounded enemy fixture",
+  "stage": "battle_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "player_file_hashes": {
+    "planet.json": {
+      "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "before_bytes": 40618,
+      "after_bytes": 40618
+    },
+    "planet.json.bak": {
+      "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "before_bytes": 41031,
+      "after_bytes": 41031
+    },
+    "settings.cfg": {
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_bytes": 0,
+      "after_bytes": 0
+    }
+  },
+  "script_errors": []
+}

@@ -15,6 +15,7 @@ var objective: Label
 var message: Label
 var stick
 var stick_index=-1
+var mouse_stick=false
 var movement=Vector2.ZERO
 var actions: Dictionary={}
 var buttons: Dictionary={}
@@ -192,6 +193,13 @@ func refresh_hud() -> void:
 	if h.defeated:message.text=say("Your champion fell. Home restores health and keeps your collected loot.","Şampiyonun düştü. Dön canı yeniler; toplanmış ganimetin korunur.")
 func _input(event: InputEvent) -> void:
 	if rpg_overlay:return
+	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT:
+		if not event.pressed and mouse_stick:
+			mouse_stick=false;movement=Vector2.ZERO;stick.vector=Vector2.ZERO;stick.queue_redraw();get_viewport().set_input_as_handled();return
+		if event.pressed and not frozen and not game.ui.visible_ui_hit(hud,event.position) and event.position.distance_to(stick.position)<stick.radius*1.4:
+			mouse_stick=true;movement=((event.position-stick.position)/maxf(30,stick.radius*.9)).limit_length(1);get_viewport().set_input_as_handled();return
+	if event is InputEventMouseMotion and mouse_stick:
+		movement=((event.position-stick.position)/maxf(30,stick.radius*.9)).limit_length(1);get_viewport().set_input_as_handled();return
 	if event is InputEventScreenTouch:
 		if event.canceled:clear_combat_input();return
 		if event.pressed and not game.v4_preview and game.ui.visible_ui_hit(hud,event.position):return
@@ -213,13 +221,14 @@ func _input(event: InputEvent) -> void:
 		if event.keycode==KEY_F:actions.heal=true
 		if event.keycode==KEY_ESCAPE:toggle_pause()
 func clear_combat_input() -> void:
-	attack_held=false;actions.clear();movement=Vector2.ZERO;mouse_aim=Vector2.ZERO;stick_index=-1
+	attack_held=false;actions.clear();movement=Vector2.ZERO;mouse_aim=Vector2.ZERO;stick_index=-1;mouse_stick=false
 	if is_instance_valid(stick):stick.vector=Vector2.ZERO;stick.queue_redraw()
 func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT,NOTIFICATION_WM_WINDOW_FOCUS_OUT]:clear_combat_input()
 func toggle_pause() -> void:
 	if is_instance_valid(pack_panel):toggle_pack()
 	frozen=not frozen;clear_combat_input()
+	if not frozen:controlled=false;set_physics_process(true)
 	buttons.pause.text=say("Resume","Sürdür") if frozen else button_titles.pause
 	message.text=say("Paused · Resume to continue; Home keeps collected loot.","Duraklatıldı · Sürdür ile devam et; Dön ganimeti korur.") if frozen else say("Watch the warning, then dodge. Attack during recovery.","Uyarıyı izle, sonra kaçın. Dinlenme aralığında saldır.")
 func _unhandled_input(event: InputEvent) -> void:

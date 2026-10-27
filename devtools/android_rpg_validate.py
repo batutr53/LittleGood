@@ -4,6 +4,7 @@ import subprocess,json,time,hashlib,uuid,argparse
 parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');parser.add_argument('--phase',choices=['rpg','estate','armory','playbook','targeting','battle'],default='rpg');args=parser.parse_args()
 assert all(Path(v).name==v for v in [args.apk,args.output,args.screenshots])
 r=Path(__file__).resolve().parents[1];out=r/'builds'/args.output;out.mkdir(exist_ok=True)
+(r/'docs/screenshots'/args.screenshots).mkdir(parents=True,exist_ok=True)
 adb=Path.home()/'AppData/Local/Android/Sdk/platform-tools/adb.exe';pkg='org.littlegod.livinguniverse.rpgqa';player='org.littlegod.livinguniverse'
 def run(*args,check=True):return subprocess.run([str(adb),'-s','emulator-5554',*args],capture_output=True,check=check,timeout=120).stdout
 def read(name,package=pkg):

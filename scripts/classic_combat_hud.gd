@@ -40,6 +40,7 @@ func build():
 	for row in [["return",a.say("Home","Dön"),Vector2(width-226*s,66*s),a.go_home],["pause",a.say("Pause","Dur"),Vector2(width-226*s,104*s),a.toggle_pause]]:
 		a.add_button(row[0],row[1],Rect2(row[2],Vector2(102*s,30*s)),row[3]);var b=a.buttons[row[0]];b.custom_minimum_size=Vector2(102*s,30*s);b.add_theme_font_size_override("font_size",int(12*s));game.ui.premium.rpg.compact_button(b)
 	a.stick=preload("res://scripts/adventure_stick.gd").new();a.stick.radius=55*s;a.stick.position=Vector2(85*s,height-300*s);layer.add_child(a.stick)
+	var movement_help=game.ui.premium.text(a.say("Drag / WASD","Sürükle / WASD"),17,T.CREAM);movement_help.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;a.place(movement_help,Rect2(15*s,height-240*s,140*s,19*s))
 	a.add_button("hunts",a.say("Boss / Hunt","Boss / Av"),Rect2(width-226*s,143*s,102*s,36*s),func():a.open_rpg_panel("hunts"));game.ui.premium.rpg.compact_button(a.buttons.hunts);a.buttons.hunts.custom_minimum_size.y=36*s;a.buttons.hunts.add_theme_font_size_override("font_size",int(12*s))
 	if a.region=="sanctuary":a.add_button("pack",a.say("Pack","Çanta"),Rect2(246*s,8*s,65*s,29*s),a.toggle_pack)
 	a.refresh_hud()

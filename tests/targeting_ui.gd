@@ -42,7 +42,7 @@ func run():
 		checks["range_truth_"+str(extent.x)]=not a.targeting.in_range();checks["target_card_fits_"+str(extent.x)]=fits(a.targeting.card);checks["target_button_fits_"+str(extent.x)]=fits(a.buttons.target)
 		var before=w.duplicate(true);a.targeting.refresh();a.targeting.queue_redraw();checks["presentation_read_only_"+str(extent.x)]=w==before
 		await shot("enemy-selected-"+str(extent.x))
-		run.enemies[0].state="windup";a.targeting.refresh();checks["warning_outside_chat_"+str(extent.x)]=a.targeting.warning.text.contains("KAÇIN") and not a.message.get_global_rect().intersects(a.targeting.warning.get_global_rect())
+		run.enemies[0].state="windup";a.frozen=false;a.targeting.refresh();a.frozen=true;checks["warning_outside_chat_"+str(extent.x)]=a.targeting.warning.text.contains("KAÇIN") and not a.message.get_global_rect().intersects(a.targeting.warning.get_global_rect())
 		run.enemies[0].hp=0;a.targeting.refresh();checks["death_clears_"+str(extent.x)]=a.targeting.selected_id==0 and not a.targeting.card.visible
 		run.enemies[0].hp=32;run.enemies[0].state="idle";a.frozen=false;a.targeting.cycle();a.frozen=true;checks["cycle_visible_"+str(extent.x)]=a.targeting.selected_id>0
 		run.enemies[1].hp=42;run.enemies[1].x=680;run.enemies[1].y=1180;a.targeting.choose(1);a.frozen=false;a.targeting.cycle();a.frozen=true;checks["cycle_changes_target_"+str(extent.x)]=a.targeting.selected_id==2

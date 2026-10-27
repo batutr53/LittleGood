@@ -1,0 +1,20 @@
+{
+  "all_passed": true,
+  "checks": {
+    "entry": true,
+    "modal_close_recovers": true,
+    "modal_freezes": true,
+    "no_stuck_input": true,
+    "pause_explained": true,
+    "pause_stops_clock": true,
+    "real_mouse_moves": true,
+    "real_skill_works": true,
+    "release_stops": true,
+    "resume_clock_advances": true,
+    "resume_restores_processing": true,
+    "touch_moves": true,
+    "touch_release": true,
+    "valid_save": true
+  },
+  "count": 14
+}

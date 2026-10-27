@@ -10,6 +10,7 @@ var title: Label
 var detail: Label
 var hp: ProgressBar
 var warning: Label
+var resume_button: Button
 var timer=0.0
 func _ready():
 	a=get_parent();var s=a.game.ui.premium.scale_ui();var extent=get_viewport_rect().size
@@ -19,6 +20,9 @@ func _ready():
 	hp=ProgressBar.new();hp.name="TargetHealth";hp.show_percentage=false;hp.mouse_filter=Control.MOUSE_FILTER_IGNORE;hp.add_theme_stylebox_override("background",T.box(Color("090d14")));var fill=StyleBoxFlat.new();fill.bg_color=Color("c54b49");hp.add_theme_stylebox_override("fill",fill);card.add_child(hp);hp.position=Vector2(10,29)*s;hp.size=Vector2(242,8)*s
 	var close=a.game.ui.button("×",clear);close.name="ClearTarget";a.game.ui.premium.rpg.compact_button(close);card.add_child(close);close.position=Vector2(260,9)*s;close.custom_minimum_size=Vector2.ONE*48*s;close.size=Vector2.ONE*48*s
 	warning=a.game.ui.premium.text("",22,Color("ffe7a9"));warning.name="CombatWarning";warning.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;warning.add_theme_color_override("font_shadow_color",Color("10141b"));warning.add_theme_constant_override("shadow_outline_size",5);a.place(warning,Rect2(extent.x*.5-180*s,82*s,360*s,28*s))
+	resume_button=a.game.ui.button(a.say("Resume battle","Savaşa devam et"),func():
+		if a.game.world.kingdom.adventure.hero.defeated:a.go_home()
+		elif a.frozen:a.toggle_pause());resume_button.name="ResumeBattle";a.game.ui.premium.rpg.compact_button(resume_button);a.place(resume_button,Rect2(extent.x*.5-110*s,158*s,220*s,48*s));resume_button.hide()
 func run_data() -> Dictionary:return a.game.world.kingdom.adventure.run
 func target() -> Dictionary:
 	for e in run_data().enemies:
@@ -57,6 +61,9 @@ func refresh():
 	var incoming=run.enemies.any(func(enemy):return enemy.hp>0 and enemy.state=="windup" and Vector2(enemy.x,enemy.y).distance_to(Vector2(run.x,run.y))<250)
 	if incoming:warning.text=a.say("ATTACK INCOMING · DODGE","SALDIRI GELİYOR · KAÇIN")
 	if hero.defeated:warning.text=a.say("DEFEATED · return home safely","YENİLDİN · güvenle eve dön")
+	elif a.frozen and not a.rpg_overlay:warning.text=a.say("PAUSED · resume to move and cast","DURAKLATILDI · hareket ve beceri için devam et")
+	resume_button.visible=(a.frozen or hero.defeated) and not a.rpg_overlay and not is_instance_valid(a.pack_panel)
+	resume_button.text=a.say("Return home & recover","Eve dön ve iyileş") if hero.defeated else a.say("Resume battle","Savaşa devam et")
 	warning.visible=not a.rpg_overlay
 	var e=target();card.visible=not e.is_empty() and not a.rpg_overlay
 	if e.is_empty():selected_id=0;return

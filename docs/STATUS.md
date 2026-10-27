@@ -1,5 +1,9 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Desktop stick and explicit control recovery — 27 October 2026
+
+Fixed missing desktop mouse support on the visible movement stick; added drag/WASD guidance, central pause/resume action, explicit defeated-hero return and restoration of physics/manual input when the user resumes. Fresh real Godot keyboard, mouse drag and skill clicks work; the original reported freeze was not reproduced. New **14 live control checks**, existing **61 navigation, 46 battle and 98 compact HUD checks** pass. Details and remaining uncertainty: [CONTROL_RECOVERY.md](CONTROL_RECOVERY.md). APK: `D:/LittleGod/builds/android/LittleGod-Controls-debug.apk` (QA package, version 102). Evidence: `docs/benchmarks/controls/`.
+
 ## Action combat, real rewards and icon navigation — 27 October 2026
 
 Connected actual hits, enemy counterattacks, HP loss/recovery, MP use, critical damage, EXP and level-up to visible effects. Added contact flashes/sparks, projectile travel, enemy anticipation/recoil, opponent-facing sprites, outlined resource/damage numbers, screen-edge damage feedback, a live EXP bar, MP readout, falling loot and exact tap-to-collect. RPG starter skill costs 8 MP; learned skills retain existing costs. Rewards and pickups stay model-owned and exactly once; collected resources bank on safe return. Full-bag, distance, low mana and potion failures are explained.
