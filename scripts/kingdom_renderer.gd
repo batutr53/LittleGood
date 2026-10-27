@@ -53,10 +53,15 @@ func animate(delta: float) -> void:
 	var w=view.world
 	if not w.has("kingdom"):return
 	for b in w.kingdom.buildings:
+		if structures.has(int(b.id)):
+			var selected=int(b.cell)==int(view.selected) and view.selected_worker_id<0
+			load("res://scripts/selection_outline.gd").set_selected(structures[int(b.id)].sprite,selected)
+			load("res://scripts/selection_outline.gd").set_selected(structures[int(b.id)].scaffold,selected and not K.ready(b))
 		if b.kind in ["furnace","forge"] and structures.has(int(b.id)):
 			var active=rates.get(int(b.id),0)>0
 			structures[int(b.id)].sprite.self_modulate=Color(1.12+.06*sin(clock*5),1.03,.90) if active else Color.WHITE
 	for i in range(mini(workers.size(),w.kingdom.workers.size())):
+		load("res://scripts/selection_outline.gd").set_selected(workers[i],int(w.kingdom.workers[i].id)==view.selected_worker_id,Color("88f4d0"))
 		var soldier=preload("res://scripts/military.gd").worker_reserved(w,int(w.kingdom.workers[i].id)) or preload("res://scripts/trade.gd").worker_reserved(w,int(w.kingdom.workers[i].id))
 		workers[i].visible=not soldier
 		if soldier:continue

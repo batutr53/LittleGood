@@ -304,6 +304,9 @@ func begin(new_mode: String,id: String,move_id: int=0) -> void:
 	if game.decorator.active:game.decorator.finish()
 	if active:finish()
 	mode=new_mode;kind=id;moving=move_id;cell=-1;previous_pause=game.paused;game.paused=true;game.power=-1;active=true;ui.close()
+	if moving>0:
+		var original=game.world.kingdom.buildings.filter(func(b):return int(b.id)==moving)
+		if not original.is_empty():cell=int(original[0].cell);game.view.select_cell(cell)
 	panel=VBoxContainer.new();panel.name="KingdomPlacement";ui.place(panel,Rect2(28,1040,664,178))
 	if ui.premium!=null and ui.rebirth_enabled:
 		var p=ui.premium;var viewport=game.get_viewport_rect().size
@@ -322,8 +325,9 @@ func begin(new_mode: String,id: String,move_id: int=0) -> void:
 		var b=add(row,entry[0],entry[1],true);b.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 		if entry[1]==commit:confirm_button=b
 		if ui.premium!=null and ui.rebirth_enabled:ui.premium.rpg.compact_button(b);b.custom_minimum_size.y=ui.premium.px(48);b.add_theme_font_size_override("font_size",int(ui.premium.px(16)))
-	for i in range(game.world.cells.size()):
-		if valid(i):cell=i;game.view.pan=-game.view.project(game.world.cells[i])*game.view.zoom;break
+	if moving<=0:
+		for i in range(game.world.cells.size()):
+			if valid(i):cell=i;game.view.pan=-game.view.project(game.world.cells[i])*game.view.zoom;break
 	refresh_placement()
 func refresh_placement() -> void:
 	if not active:return
@@ -333,6 +337,7 @@ func refresh_placement() -> void:
 		var d=K.buildings()[kind];var sites={"forest":say("Forest","Orman"),"fertile":say("Fertile land","Verimli arazi"),"rock":say("Mountain","Dağ"),"land":say("Land","Kara")}
 		notice.text=localized(d.name)+" · "+(cost(d.cost) if moving==0 else say("Relocate","Taşı"))+" · "+str(sites.get(d.site,d.site))+"\n"+detail
 		if ui.premium!=null:notice.text+=" · "+ui.premium.playbook().builders(game.world)
+		if moving>0:notice.text+=say(" · free move; tap new ground, confirm or cancel"," · ücretsiz taşı; yeni zemine dokun, onayla veya vazgeç")
 		if cell>=0:
 			var c=game.world.cells[cell]
 			if kind=="lumber":notice.text+=say(" · forest cover "," · orman yoğunluğu ")+str(roundi(c.plants*100))+"%"
@@ -352,7 +357,8 @@ func commit() -> void:
 	if mode=="build":success=K.move(game.world,moving,cell) if moving>0 else K.begin_build(game.world,kind,cell)>0
 	else:success=K.gather(game.world,kind,cell)>0
 	if not success:ui.toast(say("Check level, costs, plot limits, storage or gather cooldown. Return to the planet to let time pass.","Seviye, maliyet, bina sınırı, depo veya toplama süresini kontrol et. Zamanın geçmesi için gezegene dön."));return
-	var target=cell;changed();finish();game.view.effects.append({"cell":target,"age":0.0,"power":5})
+	var target=cell;var moved=moving>0;var object_id=moving;changed();finish();game.view.select_cell(target);game.view.effects.append({"cell":target,"age":0.0,"power":5})
+	if moved and ui.premium!=null:ui.premium.route("building",object_id)
 	ui.toast((ui.premium.playbook().builders(game.world) if ui.premium!=null else "")+say(" · close menus to resume work"," · çalışmaları için menüleri kapat"))
 func finish() -> void:
 	if is_instance_valid(placement_backdrop):placement_backdrop.queue_free()

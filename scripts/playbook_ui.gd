@@ -123,6 +123,7 @@ func worker(id):
  var w=game.world;var found=w.kingdom.workers.filter(func(c):return int(c.id)==id)
  if found.is_empty():return
  var c=found[0]
+ game.view.select_worker(id)
  if preload("res://scripts/colony.gd").reserved(w,id):p.colony_ui().worker(id);return
  var v=p.surface(c.name+say(" · choose work"," · iş seç"))
  if M.worker_reserved(w,id) or T.worker_reserved(w,id):
@@ -267,8 +268,8 @@ func building(id):
  if b.kind=="barracks" and M.enabled(w):button(v,say("Army & battlefields","Birlik ve savaş alanları"),func():p.route("army"))
  if b.kind=="marketplace" and T.enabled(w):button(v,say("Trade","Ticaret"),func():p.route("trade"))
  if K.ready(b) and int(b.level)<3:
-  button(v,say("Upgrade · ","Geliştir · ")+game.realm_ui.cost(K.upgrade_cost(b)),func():
-   if K.upgrade(w,id):game.realm_ui.changed();p.route("building",id,false),true).disabled=not K.afford(w,K.upgrade_cost(b)) or T.building_reserved(w,id)
+  button(v,say("Upgrade · level ","Geliştir · seviye ")+str(int(b.level)+1),func():p.route("building_upgrade",id),true)
+ elif int(b.level)>=3:label(v,say("Maximum building level: 3","Bina son seviyede: 3"))
  button(v,say("Relocate building","Binayı taşı"),func():game.realm_ui.begin("build",b.kind,id)).disabled=T.building_reserved(w,id)
 func staffing(id):
  var w=game.world;var matches=w.get("kingdom",{}).get("buildings",[]).filter(func(b):return int(b.id)==id)

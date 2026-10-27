@@ -10,8 +10,11 @@ var time = 0.0
 var selected = -1
 var selected_creature = -1
 var selected_identity = -1
+var selected_worker_id=-1
+func select_worker(id):
+	select_cell(-1);selected_worker_id=id;queue_redraw()
 func select_cell(index: int) -> void:
-	selected=index;selected_creature=-1;selected_identity=-1;queue_redraw()
+	selected=index;selected_creature=-1;selected_identity=-1;selected_worker_id=-1;queue_redraw()
 var effects: Array = []
 var creature_positions: Dictionary = {}
 var low_quality = false

@@ -1,7 +1,7 @@
 """Actual emulator install/start/render QA. Model navigation is programmatic, not native touch."""
 from pathlib import Path
 import subprocess,json,time,hashlib,uuid,argparse,re
-parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');parser.add_argument('--phase',choices=['rpg','estate','armory','playbook','targeting','battle','colony','journey'],default='rpg');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');parser.add_argument('--phase',choices=['rpg','estate','armory','playbook','targeting','battle','colony','journey','selection'],default='rpg');args=parser.parse_args()
 assert all(Path(v).name==v for v in [args.apk,args.output,args.screenshots])
 r=Path(__file__).resolve().parents[1];out=r/'builds'/args.output;out.mkdir(exist_ok=True)
 (r/'docs/screenshots'/args.screenshots).mkdir(parents=True,exist_ok=True)
@@ -35,7 +35,7 @@ close_sent=False
 while time.monotonic()<deadline:
     try:
         result=json.loads(read('phase4_qa_status.json'))
-        if args.phase in ['colony','journey'] and result.get('stage')==args.phase+'_close_ready' and result.get('run_id')==run_id and not close_sent:
+        if (args.phase in ['colony','journey','selection'] and result.get('stage')==args.phase+'_close_ready' or args.phase=='selection' and result.get('stage')=='selection_upgrade_ready') and result.get('run_id')==run_id and not close_sent:
             dimensions=re.findall(r'(\d+)x(\d+)',run('shell','wm','size').decode())[-1]
             width,height=map(int,dimensions);vx,vy=result['viewport'];x,y=result['close_point']
             # wm reports the device's natural portrait size even after landscape rotation.
@@ -56,6 +56,7 @@ if args.phase=='targeting':images=['targeting-android-'+name for name in ['build
 if args.phase=='battle':images=['battle-android-'+name for name in ['counterattack','kill','pickup','healing','hunts']]
 if args.phase=='colony':images=['colony-android-'+name for name in ['colony','workers','resources','defense','cargo','world']]
 if args.phase=='journey':images=['journey-android-'+name for name in ['journey','staffing','bestiary','contracts','forge','recipe','material']]
+if args.phase=='selection':images=['selection-android-'+name for name in ['building','building_upgrade','terrain','settlement','moving','enemy']]
 for name in images:
     image=read(name+'.png');(r/'docs/screenshots'/args.screenshots/f'{name}.png').write_bytes(image)
 logs=run('logcat','-d','--pid='+str(result['pid']),'-s','godot:V','AndroidRuntime:E')

@@ -191,6 +191,7 @@ func new_planet(seed_value: int, planet_name: String, persist: bool = true) -> v
 	show_world(true)
 	rng.state = int(world.rng_state)
 	view.world = world
+	view.selected_worker_id=-1
 	view.selected = -1
 	view.selected_creature = -1
 	view.selected_identity = -1
@@ -235,6 +236,7 @@ func restore() -> void:
 	show_world(true)
 	rng.state = int(world.rng_state)
 	view.world = world
+	view.selected_worker_id=-1
 	view.selected = -1
 	view.selected_creature = -1
 	view.selected_identity = -1
@@ -514,9 +516,11 @@ func touch_world(pos: Vector2) -> void:
 			var point=view.screen_point(world.cells[int(home.cell)])
 			if (Rect2(point+Vector2(-56,-105)*view.display_zoom,Vector2(112,115)*view.display_zoom).has_point(pos) if world.has("estate") else pos.distance_to(point)<13*view.display_zoom):
 				view.selected = int(home.cell)
+				view.selected_worker_id=-1
 				view.selected_creature = -1
 				view.selected_identity = -1
 				ui.inspect_settlement(home)
+				if world.has("colony") and ui.premium!=null:ui.premium.route("settlement",int(home.cell))
 				return
 		var creature = view.inhabitants.closest_creature(pos)
 		if world.has("kingdom") and not visiting:
@@ -552,8 +556,10 @@ func touch_world(pos: Vector2) -> void:
 	else:
 		ui.inspect(cell)
 		if world.has("kingdom") and not visiting:
+			var building_selected=false
 			for b in world.kingdom.buildings:
-				if int(b.cell)==cell:realm_ui.inspect_building(int(b.id));break
+				if int(b.cell)==cell:realm_ui.inspect_building(int(b.id));building_selected=true;break
+			if not building_selected and world.has("colony") and not world.settlements.any(func(home):return int(home.cell)==cell):ui.premium.route("terrain",cell)
 
 func visit_planet(data: Dictionary, id: String = "") -> bool:
 	var imported = showcases.world_from(data)
@@ -574,6 +580,7 @@ func visit_planet(data: Dictionary, id: String = "") -> bool:
 
 func reset_visit_camera() -> void:
 	view.world = world
+	view.selected_worker_id=-1
 	view.selected = -1
 	view.selected_creature = -1
 	view.selected_identity = -1

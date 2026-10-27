@@ -1,5 +1,13 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Object selection and contextual interactions — 27 October 2026
+
+Added sprite-shaped gold building/enemy contours, mint worker contours, green selected resource props and exclusive transient selection. Building upgrade now has current/next level, owned/required materials, source links and explicit validated confirmation. Moving begins at the original cell, keeps the original until confirmation, explains free move/cancel and returns to the moved building. Terrain offers compatible gathering at the selected real cell with explicit worker choice; original settlements and enemies have their own context panels. Enemy Inspect shows actual combat stats/XP/drop navigation and preserves combat pause state. Existing level, worker, resource, storage, range and collision rules remain authoritative.
+
+Validation: **97 new model/rendered/native-input checks**, **24 Android emulator checks**, retained **822 campaign + 270 landscape + 98 compact HUD + 142 playbook + 224 journey + 94 colony model + 66 targeting + 61 navigation + 14 controls** pass. Separate Godot MCP clicks verified real farm upgrade and relocation cancellation; Android used a native ADB upgrade tap and preserved production player files. No physical-phone or performance improvement claim. Existing shutdown warnings, dense old-layout occlusion and some advanced scrolling remain.
+
+APK: `D:/LittleGod/builds/android/LittleGod-Selection-debug.apk` (isolated QA package, version 105). Launcher: `D:/LittleGod/Launch LittleGod.cmd`. Report: [OBJECT_SELECTION_UX.md](OBJECT_SELECTION_UX.md); real screenshots: `docs/screenshots/selection/`; tests/build evidence: `docs/benchmarks/selection/`.
+
 ## Journey continuity, spacious settlement and compact forge — 27 October 2026
 
 Implemented modern chapter continuation at milestones 5/10/15/20, fixed the blocked first-hero recruitment route, added Arin's state-derived next action and explicit home resume. Building staffing now opens the selected building's slots and prioritizes available workers. Replaced long forge/drop/contract lists with search, filters and pagination; recipe ingredients lead to gathering, mine/furnace management or actual monster-drop sources. Recipe availability probes the existing command on a private clone. A fresh automated founding → gathering → first reward → lumber camp → staffing → output collection → second reward loop passes. Existing axe/pick bonuses now affect field gathering; profession tool/ripple/dust cues and smoother travel are rendered. Optional reviewed settlement rearrangement spaces building art, preserves IDs/order/work/output and protects active-caravan markets; new placements reject art overlap.

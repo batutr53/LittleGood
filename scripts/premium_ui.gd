@@ -31,6 +31,8 @@ var drop_region="all"
 var layout_plan=[]
 var forge_query=""
 var material_target="wood"
+var material_return="recipe"
+var material_return_arg=0
 func journey_ui():return preload("res://scripts/journey_ui.gd").new(self)
 func colony_ui():return preload("res://scripts/colony_ui.gd").new(self)
 func playbook():return preload("res://scripts/playbook_ui.gd").new(self)
@@ -72,6 +74,10 @@ func route(destination: String,arg: int=0,remember=true):
   "army_roster":playbook().roster()
   "worker":playbook().worker(arg)
   "building":building(arg)
+  "building_upgrade":preload("res://scripts/object_context_ui.gd").new(self).upgrade(arg)
+  "terrain":preload("res://scripts/object_context_ui.gd").new(self).terrain(arg)
+  "settlement":preload("res://scripts/object_context_ui.gd").new(self).settlement(arg)
+  "enemy_info":preload("res://scripts/object_context_ui.gd").new(self).enemy(arg)
   "inventory":inventory()
   "item":item_detail(arg)
   "forge":forge(arg)

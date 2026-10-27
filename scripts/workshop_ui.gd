@@ -48,7 +48,7 @@ func recipe():
 	if not forges.any(func(b):return int(b.id)==p.forge_selected):p.forge_selected=0 if forges.is_empty() else int(forges[0].id)
 	var keys=d.cost.keys();var start=p.playbook().page(v,"ingredients_"+p.current_recipe,keys.size(),3)
 	for key in keys.slice(start,start+3):
-		var resource=key;var owned=int(w.kingdom.stock.get(key,0))/1000.0;var amount=int(d.cost[key]);button(v,p.rpg.resource_name(key)+" · "+str(owned)+" / "+str(amount)+(say(" · find"," · bul") if owned<amount else " ✓"),func():p.material_target=resource;p.route("material"))
+		var resource=key;var owned=int(w.kingdom.stock.get(key,0))/1000.0;var amount=int(d.cost[key]);button(v,p.rpg.resource_name(key)+" · "+str(owned)+" / "+str(amount)+(say(" · find"," · bul") if owned<amount else " ✓"),func():p.material_target=resource;p.material_return="recipe";p.material_return_arg=0;p.route("material"))
 	# Probe the real command on a private clone; requirements cannot drift from the model.
 	var draft=w.duplicate(true);var can_queue=I.queue(draft,p.current_recipe,p.forge_selected)
 	var reason=say("Materials reserved once; collect the completed order above the forge.","Malzeme bir kez ayrılır; biten siparişi demirci üstünden teslim al.")
@@ -76,4 +76,4 @@ func material():
 		if found.is_empty():button(v,say("Build required building","Gerekli binayı kur"),func():p.playbook().go_objective("build_"+kind),true)
 		else:button(v,say("Manage production building","Üretim binasını yönet"),func():p.route("building",int(found[0].id)),true)
 	if not load("res://scripts/drop_guide.gd").search(key).is_empty():button(v,say("Find monster drops","Yaratık ganimetlerini bul"),func():p.drop_query=key;p.drop_region="all";p.route("bestiary"))
-	button(v,say("Return to recipe","Tarife dön"),func():p.route("recipe"))
+	button(v,say("Return to previous action","Önceki işleme dön"),func():p.route(p.material_return,p.material_return_arg))

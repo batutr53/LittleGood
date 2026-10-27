@@ -128,13 +128,13 @@ func build_hud() -> void:
 	legacy_hud()
 func rpg_hud():
 	preload("res://scripts/classic_combat_hud.gd").new(self).build()
-func open_rpg_panel(key: String):
+func open_rpg_panel(key: String,arg: int=0):
 	if key=="map":
 		if not A.can_travel(game.world):message.text=say("Leave combat before traveling.","Işınlanmak için önce savaştan uzaklaş.");return
 		go_home();game.ui.premium.call_deferred("route","map");return
 	clear_combat_input()
 	if not rpg_overlay:overlay_was_frozen=frozen
-	frozen=true;rpg_overlay=true;game.ui.layer=20;game.ui.root.show();game.ui.premium.route(key)
+	frozen=true;rpg_overlay=true;game.ui.layer=20;game.ui.root.show();game.ui.premium.route(key,arg)
 func legacy_hud() -> void:
 	var layer=CanvasLayer.new();layer.layer=12;add_child(layer);hud=Control.new();hud.mouse_filter=Control.MOUSE_FILTER_IGNORE;layer.add_child(hud)
 	var height=get_viewport_rect().size.y

@@ -1,0 +1,60 @@
+{
+  "all_passed": true,
+  "checks": {
+    "building_outline": true,
+    "building_upgrade_no_scroll": true,
+    "clear_enemy": true,
+    "enemy_outline": true,
+    "enter": true,
+    "exact_upgrade_cost": true,
+    "fixture": true,
+    "image_selection-android-building": true,
+    "image_selection-android-building_upgrade": true,
+    "image_selection-android-enemy": true,
+    "image_selection-android-moving": true,
+    "image_selection-android-settlement": true,
+    "image_selection-android-terrain": true,
+    "move_exact": true,
+    "move_free": true,
+    "move_origin": true,
+    "native_upgrade": true,
+    "preview_original": true,
+    "preview_readonly": true,
+    "restore": true,
+    "save": true,
+    "settlement_no_scroll": true,
+    "terrain_no_scroll": true,
+    "valid": true
+  },
+  "pid": 10743,
+  "run_id": "a3ec35193daf44a29674b9194739aed0",
+  "source": "real emulator renders; native ADB upgrade confirmation; programmatic move and target actions; private fixture",
+  "stage": "selection_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "player_file_hashes": {
+    "planet.json": {
+      "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "before_bytes": 40618,
+      "after_bytes": 40618
+    },
+    "planet.json.bak": {
+      "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "before_bytes": 41031,
+      "after_bytes": 41031
+    },
+    "settings.cfg": {
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_bytes": 0,
+      "after_bytes": 0
+    }
+  },
+  "script_errors": []
+}

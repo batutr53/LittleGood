@@ -11,6 +11,7 @@ var detail: Label
 var hp: ProgressBar
 var warning: Label
 var resume_button: Button
+var inspect_button: Button
 var timer=0.0
 func _ready():
 	a=get_parent();var s=a.game.ui.premium.scale_ui();var extent=get_viewport_rect().size
@@ -19,6 +20,8 @@ func _ready():
 	detail=Label.new();detail.add_theme_font_override("font",a.game.ui.ui_font());detail.add_theme_font_size_override("font_size",int(12*s));detail.add_theme_color_override("font_color",Color("ddd7c4"));detail.mouse_filter=Control.MOUSE_FILTER_IGNORE;card.add_child(detail);detail.position=Vector2(10,39)*s
 	hp=ProgressBar.new();hp.name="TargetHealth";hp.show_percentage=false;hp.mouse_filter=Control.MOUSE_FILTER_IGNORE;hp.add_theme_stylebox_override("background",T.box(Color("090d14")));var fill=StyleBoxFlat.new();fill.bg_color=Color("c54b49");hp.add_theme_stylebox_override("fill",fill);card.add_child(hp);hp.position=Vector2(10,29)*s;hp.size=Vector2(242,8)*s
 	var close=a.game.ui.button("×",clear);close.name="ClearTarget";a.game.ui.premium.rpg.compact_button(close);card.add_child(close);close.position=Vector2(260,9)*s;close.custom_minimum_size=Vector2.ONE*48*s;close.size=Vector2.ONE*48*s
+	inspect_button=a.game.ui.button(a.say("Inspect","İncele"),func():
+		if not target().is_empty():a.open_rpg_panel("enemy_info",selected_id));inspect_button.name="InspectTarget";a.game.ui.premium.rpg.compact_button(inspect_button);a.place(inspect_button,Rect2(extent.x*.5+160*s,8*s,65*s,48*s));inspect_button.hide()
 	warning=a.game.ui.premium.text("",22,Color("ffe7a9"));warning.name="CombatWarning";warning.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;warning.add_theme_color_override("font_shadow_color",Color("10141b"));warning.add_theme_constant_override("shadow_outline_size",5);a.place(warning,Rect2(extent.x*.5-180*s,82*s,360*s,28*s))
 	resume_button=a.game.ui.button(a.say("Resume battle","Savaşa devam et"),func():
 		if a.game.world.kingdom.adventure.hero.defeated:a.go_home()
@@ -38,6 +41,10 @@ func select_at(screen: Vector2) -> bool:
 	var found=0;var nearest=INF
 	for e in run_data().enemies:
 		if e.hp<=0:continue
+		if a.bodies.has(int(e.id)) and load("res://scripts/selection_outline.gd").hit(a.bodies[int(e.id)].get_node("Art"),screen):
+			var point=a.get_canvas_transform()*Vector2(e.x,e.y);var distance=point.distance_to(screen)
+			if distance<nearest:found=int(e.id);nearest=distance
+			continue
 		var point=a.get_canvas_transform()*Vector2(e.x,e.y-35);var radius=65.0 if e.kind=="thornheart" else 42.0;var distance=point.distance_to(screen)
 		if distance<radius*a.camera.zoom.x and distance<nearest:found=int(e.id);nearest=distance
 	if found>0:choose(found);return true
@@ -56,6 +63,9 @@ func in_range() -> bool:
 	return not e.is_empty() and Vector2(run.x,run.y).distance_to(Vector2(e.x,e.y))<=R.basic_range(a.game.world) and R.clear_shot(a.game.world,Vector2(run.x,run.y),Vector2(e.x,e.y))
 func refresh():
 	if not is_instance_valid(card):return
+	for id in a.bodies:
+		if int(id)==0:continue
+		load("res://scripts/selection_outline.gd").set_selected(a.bodies[id].get_node("Art"),int(id)==selected_id and not target().is_empty(),Color("ffbd70"))
 	var hero=a.game.world.kingdom.adventure.hero;var run=run_data()
 	warning.text=a.say("LOW HEALTH · potion or retreat","CAN AZ · iksir veya geri çekil") if hero.hp<load("res://scripts/hero.gd").stats(a.game.world).health*.25 else ""
 	var incoming=run.enemies.any(func(enemy):return enemy.hp>0 and enemy.state=="windup" and Vector2(enemy.x,enemy.y).distance_to(Vector2(run.x,run.y))<250)
@@ -66,6 +76,7 @@ func refresh():
 	resume_button.text=a.say("Return home & recover","Eve dön ve iyileş") if hero.defeated else a.say("Resume battle","Savaşa devam et")
 	warning.visible=not a.rpg_overlay
 	var e=target();card.visible=not e.is_empty() and not a.rpg_overlay
+	inspect_button.visible=card.visible
 	if e.is_empty():selected_id=0;return
 	var d=A.enemies()[e.kind];title.text="◆ "+a.game.realm_ui.localized(d.name);hp.max_value=d.health;hp.value=e.hp
 	var state=a.say("IN RANGE","MENZİLDE") if in_range() else a.say("APPROACH · range / obstacle","YAKLAŞ · menzil / engel")

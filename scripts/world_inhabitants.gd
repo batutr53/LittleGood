@@ -14,6 +14,8 @@ var sync_ms = 0.0
 var props_created = 0
 var animate_ms = 0.0
 var cull_time=0.0
+var highlighted_props=[]
+var highlight_key=""
 
 func _ready() -> void:
 	y_sort_enabled = true
@@ -119,6 +121,16 @@ func sync(w: Dictionary) -> void:
 
 func animate(w: Dictionary, delta: float) -> void:
 	var started = Time.get_ticks_usec()
+	var next_key="c:"+str(view.selected) if view.selected>=0 and view.selected_worker_id<0 and not w.get("kingdom",{}).get("buildings",[]).any(func(b):return int(b.cell)==view.selected) else ""
+	var next_props=prop_cache.get(next_key,{}).get("sprites",[])
+	if next_key!=highlight_key or next_props!=highlighted_props:
+		for sprite in highlighted_props:load("res://scripts/selection_outline.gd").set_selected(sprite,false)
+		highlighted_props=next_props.duplicate();highlight_key=next_key
+		for sprite in highlighted_props:load("res://scripts/selection_outline.gd").set_selected(sprite,true,Color("a4e6a0"))
+	for home in w.settlements:
+		var key="s:"+str(home.cell)
+		if prop_cache.has(key):
+			for sprite in prop_cache[key].sprites:load("res://scripts/selection_outline.gd").set_selected(sprite,int(view.selected)==int(home.cell) and view.selected_worker_id<0)
 	time += delta
 	cull_time+=delta
 	if w.has("estate") and cull_time>.15:

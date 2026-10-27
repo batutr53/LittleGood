@@ -729,6 +729,7 @@ func inspect(cell: int) -> void:
 			inspect_settlement(s)
 			return
 	for cr in game.world.creatures:
+		if game.world.has("colony"):break
 		if int(cr.cell) == cell:
 			LivingStories.observe(game.world, cr)
 			show_creature(cr)

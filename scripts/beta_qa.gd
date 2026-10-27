@@ -53,6 +53,8 @@ func run() -> void:
 		var qa=preload("res://scripts/colony_android_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
 	if options.get("phase", "new")=="journey":
 		var qa=preload("res://scripts/journey_android_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
+	if options.get("phase", "new")=="selection":
+		var qa=preload("res://scripts/selection_android_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
 	if options.get("phase", "new") in ["warrior_v4","warrior_v4_reopen","warrior_v4_profile"]:
 		var qa=preload("res://scripts/warrior_qa.gd").new();qa.game=game;qa.host=self;add_child(qa);await qa.run();return
 	if options.get("phase", "new") in ["sanctuary","sanctuary_reopen"]:

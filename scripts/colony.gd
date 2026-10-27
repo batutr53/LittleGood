@@ -22,11 +22,17 @@ static func source(w,resource):
 		var distance=Vector2(c.x-home.x,c.y-home.y).length()
 		if distance<nearest:nearest=distance;found=i
 	return found
-static func start(w,worker_id,resource):
+static func accepts_source(w,resource,cell):
+	if not resource in RESOURCES or cell<0 or cell>=w.cells.size():return false
+	var c=w.cells[cell];var biome=int(c.biome);var fits=biome==1 if resource=="wood" else biome in [3,4] if resource in ["stone","gold","copper","silver"] else biome in [0,5] if resource=="clay" else biome==6
+	if not fits or resource in ["wood","stone"] and float(c.resources)<1:return false
+	return not resource in ["gold","copper","silver","clay"] or int(w.get("colony",{}).get("spent",{}).get(resource+":"+str(cell),0))<12000
+static func start(w,worker_id,resource,chosen_cell=-1):
 	if not writable(w) or not resource in RESOURCES or reserved(w,worker_id):return false
 	if not K().assigned(w,0).any(func(c):return int(c.id)==worker_id):return false
-	var cell=source(w,resource)
+	var cell=source(w,resource) if chosen_cell<0 else chosen_cell
 	if cell<0:return false
+	if not accepts_source(w,resource,cell):return false
 	w.colony.jobs[str(worker_id)]={"resource":resource,"cell":cell,"progress":0,"buffer":0};return true
 static func release(w,worker_id):
 	if not writable(w) or not reserved(w,worker_id):return false
