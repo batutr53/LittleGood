@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-27",
+  "campaign": {
+    "checks": 822,
+    "passed": true,
+    "log": "builds/colony-campaign-final.log"
+  },
+  "landscape_ui": {
+    "checks": 270,
+    "passed": true
+  },
+  "compact_hud": {
+    "checks": 98,
+    "passed": true
+  },
+  "playbook": {
+    "checks": 142,
+    "passed": true,
+    "capture_override": "res://builds/colony/playbook-final"
+  },
+  "native_navigation": {
+    "checks": 61,
+    "passed": true,
+    "initial_concurrent_run_missed_two_clicks": true
+  },
+  "controls": {
+    "checks": 14,
+    "passed": true
+  },
+  "colony_model": {
+    "checks": 93,
+    "passed": true
+  },
+  "colony_ui": {
+    "checks": 100,
+    "passed": true
+  },
+  "android": {
+    "checks": 23,
+    "passed": true,
+    "physical_device": false
+  },
+  "mcp": {
+    "actual_mouse_x_closes": true,
+    "private_fixture": true
+  },
+  "known_shutdown_resource_warnings": true
+}

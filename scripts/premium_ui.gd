@@ -25,6 +25,7 @@ var current_title=""
 var rpg
 var playbook_pages={}
 var playbook_region="wildwood"
+func colony_ui():return preload("res://scripts/colony_ui.gd").new(self)
 func playbook():return preload("res://scripts/playbook_ui.gd").new(self)
 func _init(u,g):ui=u;game=g
 func say(en: String,tr: String) -> String:return tr if ui.language=="tr" else en
@@ -67,6 +68,10 @@ func route(destination: String,arg: int=0,remember=true):
   "hero":hero()
   "map":world_map()
   "hunts":playbook().hunts()
+  "colony":colony_ui().home()
+  "resources":colony_ui().resources()
+  "gathering":colony_ui().gathering(arg)
+  "defense":colony_ui().defense()
   "menu":menu()
   "workers":workers()
   "army":army()
@@ -93,6 +98,8 @@ func back():
  else:ui.close()
 func surface(title: String,compact=false) -> VBoxContainer:
  ui.end_live_route();game.reset_gesture();game.in_menu=true
+ var selected_context=ui.root.find_child("WorldSelection",true,false) if is_instance_valid(ui.root) else null
+ if selected_context:selected_context.hide()
  if is_instance_valid(game.adventure_scene):ui.world_controls(false)
  if not routing and not current.is_empty():nested=true
  if is_instance_valid(ui.modal):ui.root.remove_child(ui.modal);ui.modal.queue_free()
@@ -111,7 +118,7 @@ func surface(title: String,compact=false) -> VBoxContainer:
  var stack=VBoxContainer.new();stack.add_theme_constant_override("separation",int(px(5)));ui.modal.add_child(stack)
  var title_row=HBoxContainer.new();title_row.add_theme_constant_override("separation",int(px(4)));stack.add_child(title_row)
  var title_label=heading(title,23);title_label.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title_label)
- var close=ui.button("×",back);close.name="SurfaceBack";close.tooltip_text=ui.t("back");close.custom_minimum_size=Vector2.ONE*px(24);close.add_theme_font_size_override("font_size",int(px(15)));rpg.compact_button(close);title_row.add_child(close)
+ var close=ui.button("×",ui.close);close.name="SurfaceBack";close.tooltip_text=say("Close panel","Paneli kapat");close.custom_minimum_size=Vector2.ONE*px(32);close.add_theme_font_size_override("font_size",int(px(17)));rpg.compact_button(close);title_row.add_child(close)
  scroll=ScrollContainer.new();scroll.name="SurfaceScroll";scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;stack.add_child(scroll)
  var v=VBoxContainer.new();v.name="SurfaceContent";v.size_flags_horizontal=Control.SIZE_EXPAND_FILL;v.add_theme_constant_override("separation",int(px(8)));scroll.add_child(v);current_title=title
  ui.modal.modulate.a=1;return v
@@ -189,7 +196,7 @@ func refresh_hud():
    ui.chapter.text=game.realm_ui.localized(q.title)+"\n"+next
  else:
   for l in resource_labels.values():l.text="—"
- if not w.has("kingdom"):ui.chapter.text=ui.t(LivingStories.objective(w))
+ if not w.has("kingdom"):ui.chapter.text=say("FOUND YOUR COLONY · tap","KOLONİNİ KUR · dokun")
  if ui.toast_until==0:ui.hint.text=""
  if rpg!=null and rpg.classic!=null:rpg.classic.refresh()
 func quest():
@@ -308,7 +315,7 @@ func previous_world_map():
   action(region,say("Inspect destination","Bölgeyi incele"),func():game.hero_ui.destination(key),unlocked,"map")
  if preload("res://scripts/trade.gd").enabled(game.world):action(v,say("Caravan routes · a different journey","Kervan yolları · başka bir yolculuk"),func():route("trade"),false,"caravan")
 func menu():
- ui.page="menu";game.checkpoint("menu");var v=surface(say("Your Living Kingdom","Yaşayan Krallığın"));action(v,say("Village guide · where is everything?","Köy rehberi · ne nerede?"),func():route("guide"),true,"map")
+ ui.page="menu";game.checkpoint("menu");var v=surface(say("Your Living Kingdom","Yaşayan Krallığın"));action(v,say("Colony · resources, workers & defense","Koloni · kaynaklar, işçiler ve savunma"),func():route("colony"),true,"map")
  var entries=[["quest",say("The Chronicle","Görev Günlüğü"),"quest"],["construction",say("Build & grow","Kur ve büyüt"),"hammer"],["workers",say("People & work","İnsanlar ve işler"),"workers"],["chat",say("Chat","Sohbet"),"workers"]]
  if I.enabled(game.world):entries.append_array([["inventory",say("The Satchel","Çanta"),"bag"],["forge",say("The Hearthforge","Ocak Demircisi"),"forge"]])
  if H.enabled(game.world):entries.append_array([["hero",say("Champion","Şampiyon"),"hero"],["map",say("World paths","Dünya yolları"),"map"]])
@@ -318,7 +325,7 @@ func menu():
  for entry in entries:
   var key=entry[0];var b=action(grid,entry[1],func():route(key),false,entry[2]);rpg.compact_button(b);b.custom_minimum_size.y=px(48);b.add_theme_font_size_override("font_size",int(px(13)));b.add_theme_constant_override("icon_max_width",int(px(20)))
  var extra=HBoxContainer.new();v.add_child(extra)
- playbook().button(extra,ui.t("settings"),func():route("settings"));playbook().button(extra,ui.t("neighbors"),ui.neighbors)
+ playbook().button(extra,ui.t("settings"),func():route("settings"));playbook().button(extra,say("Workforce","İş gücü"),func():route("workers"))
  playbook().button(v,say("World gifts, collections & more","Dünya armağanları, koleksiyonlar ve diğerleri"),ui.legacy_menu)
  playbook().button(v,say("Return to your world","Dünyana dön"),ui.close,true)
  var access=HBoxContainer.new();access.name="AccessibilityQuickAccess";v.add_child(access)

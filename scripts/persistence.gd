@@ -125,6 +125,7 @@ static func validate(w: Variant) -> bool:
 	if not preload("res://scripts/kingdom.gd").validate(w):return false
 	if not preload("res://scripts/estate.gd").validate(w):return false
 	if not load("res://scripts/armory.gd").validate(w):return false
+	if not load("res://scripts/colony.gd").validate(w):return false
 	return true
 
 static func normalize_integer_fields(w: Dictionary) -> Dictionary:
@@ -172,6 +173,7 @@ static func normalize_integer_fields(w: Dictionary) -> Dictionary:
 	load("res://scripts/rpg_progression.gd").normalize(w)
 	load("res://scripts/estate.gd").normalize(w)
 	load("res://scripts/armory.gd").normalize(w)
+	load("res://scripts/colony.gd").normalize(w)
 	return w
 
 static func read_checked(path: String) -> Dictionary:

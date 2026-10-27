@@ -34,7 +34,7 @@ func _exit_tree():epoch+=1
 func change_channel(key):
 	epoch+=1;channel=key;last_id=0;oldest=0;messages.clear();seen.clear();rows.clear();message_selector.clear();recipients.visible=key=="private";entry.editable=key!="system";state.text="";elapsed=0
 	if key=="system":
-		for e in game.world.get("events",[]).slice(-50):rows.append_text(game.ui.event_text(e)+"\n")
+		for e in game.ui.system_events(50):rows.append_text(game.ui.event_text(e)+"\n")
 	elif key=="private":load_friends()
 	else:poll()
 func _process(delta):

@@ -1,0 +1,83 @@
+{
+  "all_passed": true,
+  "checks": {
+    "additive_migration": true,
+    "assign": true,
+    "available": true,
+    "colony_no_scroll": true,
+    "defense_no_scroll": true,
+    "exclusive": true,
+    "fixture": true,
+    "image_colony-android-cargo": true,
+    "image_colony-android-colony": true,
+    "image_colony-android-defense": true,
+    "image_colony-android-resources": true,
+    "image_colony-android-workers": true,
+    "image_colony-android-world": true,
+    "native_x_closes": true,
+    "no_repeat": true,
+    "real_output": true,
+    "release": true,
+    "resources_no_scroll": true,
+    "restore": true,
+    "save": true,
+    "valid": true,
+    "workers_no_scroll": true,
+    "world_collect": true
+  },
+  "pid": 4865,
+  "profiles": [
+    {
+      "draw_calls": 385.0,
+      "fps": 32.3516084640595,
+      "memory_mb": 54.7320051193237,
+      "p95_ms": 34.642,
+      "process_cpu_p95_ms": 38.963,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 60,
+      "texture_memory_mb": 45.8329486846924,
+      "world_update_cpu_p95_ms": 0.826
+    },
+    {
+      "draw_calls": 317.0,
+      "fps": 30.1050066619788,
+      "memory_mb": 54.5928182601929,
+      "p95_ms": 34.642,
+      "process_cpu_p95_ms": 32.111,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 30,
+      "texture_memory_mb": 45.8329486846924,
+      "world_update_cpu_p95_ms": 0.95
+    }
+  ],
+  "run_id": "86cef7f202ff44619e730b7ca00053c9",
+  "source": "actual emulator renders with programmatic model actions, native ADB close tap and world collection hit test; private fixture",
+  "stage": "colony_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "player_file_hashes": {
+    "planet.json": {
+      "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "before_bytes": 40618,
+      "after_bytes": 40618
+    },
+    "planet.json.bak": {
+      "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "before_bytes": 41031,
+      "after_bytes": 41031
+    },
+    "settings.cfg": {
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_bytes": 0,
+      "after_bytes": 0
+    }
+  },
+  "script_errors": []
+}

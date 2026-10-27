@@ -1,7 +1,7 @@
 """Actual emulator install/start/render QA. Model navigation is programmatic, not native touch."""
 from pathlib import Path
-import subprocess,json,time,hashlib,uuid,argparse
-parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');parser.add_argument('--phase',choices=['rpg','estate','armory','playbook','targeting','battle'],default='rpg');args=parser.parse_args()
+import subprocess,json,time,hashlib,uuid,argparse,re
+parser=argparse.ArgumentParser();parser.add_argument('--apk',default='LittleGod-RPG-interface-qa-debug.apk');parser.add_argument('--output',default='rpg-android');parser.add_argument('--screenshots',default='rpg');parser.add_argument('--phase',choices=['rpg','estate','armory','playbook','targeting','battle','colony'],default='rpg');args=parser.parse_args()
 assert all(Path(v).name==v for v in [args.apk,args.output,args.screenshots])
 r=Path(__file__).resolve().parents[1];out=r/'builds'/args.output;out.mkdir(exist_ok=True)
 (r/'docs/screenshots'/args.screenshots).mkdir(parents=True,exist_ok=True)
@@ -31,9 +31,16 @@ run_id=uuid.uuid4().hex
 config=out/'phase4_qa.json';config.write_text(json.dumps({'phase':args.phase,'run_id':run_id}));put('phase4_qa.json',config)
 startup=run('shell','am','start','-W','-n',pkg+'/com.godot.game.GodotAppLauncher').decode();(out/'startup.txt').write_text(startup)
 deadline=time.monotonic()+100
+close_sent=False
 while time.monotonic()<deadline:
     try:
         result=json.loads(read('phase4_qa_status.json'))
+        if args.phase=='colony' and result.get('stage')=='colony_close_ready' and result.get('run_id')==run_id and not close_sent:
+            dimensions=re.findall(r'(\d+)x(\d+)',run('shell','wm','size').decode())[-1]
+            width,height=map(int,dimensions);vx,vy=result['viewport'];x,y=result['close_point']
+            # wm reports the device's natural portrait size even after landscape rotation.
+            if (width>height)!=(vx>vy):width,height=height,width
+            run('shell','input','tap',str(round(x*width/vx)),str(round(y*height/vy)));close_sent=True
         if result.get('stage')==args.phase+'_complete' and result.get('run_id')==run_id:break
     except ValueError:pass
     time.sleep(.5)
@@ -47,6 +54,7 @@ if args.phase=='armory':images=['armory-android-inventory','armory-android-anvil
 if args.phase=='playbook':images=['playbook-android-'+name for name in ['quest','guide','workers','construction','army','map','menu','army_roster','placement']]
 if args.phase=='targeting':images=['targeting-android-'+name for name in ['building','item','enemy','warning']]
 if args.phase=='battle':images=['battle-android-'+name for name in ['counterattack','kill','pickup','healing','hunts']]
+if args.phase=='colony':images=['colony-android-'+name for name in ['colony','workers','resources','defense','cargo','world']]
 for name in images:
     image=read(name+'.png');(r/'docs/screenshots'/args.screenshots/f'{name}.png').write_bytes(image)
 logs=run('logcat','-d','--pid='+str(result['pid']),'-s','godot:V','AndroidRuntime:E')

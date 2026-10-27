@@ -45,7 +45,7 @@ func sync(w: Dictionary) -> void:
 	for id in structures.keys():
 		if not ids.has(id):structures[id].sprite.queue_free();structures[id].scaffold.queue_free();structures.erase(id)
 	while workers.size()<w.kingdom.workers.size():
-		var sprite=GameArt.sprite(14,17);view.inhabitants.add_child(sprite);workers.append(sprite)
+		var sprite=Sprite2D.new();sprite.texture=preload("res://assets/estate/hearthkin.svg");sprite.scale=Vector2.ONE*.28;sprite.offset=Vector2(0,-67);view.inhabitants.add_child(sprite);workers.append(sprite)
 	while workers.size()>w.kingdom.workers.size():workers.pop_back().queue_free()
 func animate(delta: float) -> void:
 	clock+=delta
@@ -61,13 +61,19 @@ func animate(delta: float) -> void:
 		workers[i].visible=not soldier
 		if soldier:continue
 		var worker=w.kingdom.workers[i];var target=int(K.home(w).cell);var working=false
+		var C=load("res://scripts/colony.gd")
+		if C.reserved(w,int(worker.id)):
+			var job=w.colony.jobs[str(int(worker.id))];var home=view.project(w.cells[int(K.home(w).cell)]);var destination=view.project(w.cells[int(job.cell)]);var phase=float(job.progress)
+			var amount=clampf(phase/2.0,0,1) if phase<2 else 1.0 if phase<8 else clampf((10-phase)/2.0,0,1)
+			if int(job.buffer)>=6000:amount=0
+			workers[i].position=home.lerp(destination,amount)+Vector2(sin(clock*3+i)*2,6+cos(clock*3+i));workers[i].rotation=sin(clock*6+i)*(.12 if phase>=2 and phase<8 else .03);workers[i].self_modulate=Color.WHITE;continue
 		for b in w.kingdom.buildings:
 			if int(worker.building)==int(b.id) or (int(worker.building)==0 and not K.ready(b)):
 				target=int(b.cell);working=not K.ready(b) or rates.get(int(b.id),0)>0;break
 		var point=view.project(w.cells[target]);var phase=i*2.17
 		workers[i].position=point+Vector2(sin(clock*.8+phase)*12,10+cos(clock*.8+phase)*5)
 		workers[i].rotation=sin(clock*(7 if working else 1)+phase)*(.13 if working else .02)
-		workers[i].self_modulate=Color("e0d3a4") if int(worker.building)==0 else Color("abd6b8")
+		workers[i].self_modulate=Color.WHITE
 		workers[i].flip_h=sin(clock*.8+phase)<0
 
 func _draw() -> void:

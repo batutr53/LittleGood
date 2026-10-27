@@ -19,6 +19,7 @@ static func worker_reserved(w: Dictionary,id: int) -> bool:return enabled(w) and
 static func item_reserved(w: Dictionary,id: int) -> bool:return enabled(w) and w.kingdom.military.units.any(func(u):return int(u.gear)==id)
 static func available(w: Dictionary) -> Array:return w.kingdom.military.units.filter(func(u):return u.status=="ready" and u.hp>0 and not load("res://scripts/trade.gd").guard_reserved(w,int(u.id))) if enabled(w) else []
 static func train(w: Dictionary,worker: int,kind: String,gear: int,barracks: int) -> bool:
+	if load("res://scripts/colony.gd").reserved(w,worker) or load("res://scripts/trade.gd").worker_reserved(w,worker):return false
 	if not writable(w) or not TYPES.has(kind) or w.kingdom.military.units.size()>=6 or K().home(w).food<3 or not K().afford(w,{"gold":2}) or worker_reserved(w,worker):return false
 	var citizens=w.kingdom.workers.filter(func(c):return int(c.id)==worker and c.building==0)
 	if citizens.is_empty() or not w.kingdom.buildings.any(func(b):return int(b.id)==barracks and b.kind=="barracks" and K().ready(b)) or K().assigned(w,barracks).is_empty():return false
@@ -59,7 +60,7 @@ static func formation(w: Dictionary,value: String) -> bool:
 static func stats(w: Dictionary,u: Dictionary,defending: bool=false) -> Dictionary:
 	var s=I.recipes()[I.item(w,int(u.gear)).recipe].effects.duplicate();var f=FORMATIONS[w.kingdom.military.formation];var veteran=mini(4,int(u.xp)/40)
 	s.attack=maxi(1,int((int(s.attack)+veteran)*f[0]/100.0));s.defense=maxi(0,int((int(s.defense)+veteran)*f[1]/100.0))
-	if defending:s.attack+=K().count(w,"watchtower")*2;s.defense+=K().count(w,"wall")*3
+	if defending:s.attack+=K().count(w,"watchtower")*2;s.defense+=K().count(w,"wall")*3+int(w.get("colony",{}).get("fortification",0))*2
 	return s
 static func progress(w: Dictionary,key: String) -> float:
 	if not enabled(w):return 0

@@ -17,6 +17,7 @@ func bar(color: Color,rect: Rect2) -> ProgressBar:
 func label_at(text: String,rect: Rect2,font_size=13,color=Color("ece6d0")) -> Label:
 	var l=p.text(text,20,color);l.add_theme_font_size_override("font_size",int(p.px(font_size)));p.put(l,rect);return l
 func build():
+	load("res://scripts/colony.gd").ensure(game.world)
 	if is_instance_valid(ui.root):ui.remove_child(ui.root);ui.root.queue_free()
 	ui.modal=null;ui.veil=null;ui.root=Control.new();ui.root.name="WorldHUD";ui.root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);ui.root.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.add_child(ui.root)
 	var s=p.size();var z=p.scale_ui();var bottom=s.y-p.px(40)
@@ -30,7 +31,7 @@ func build():
 	var resources=HBoxContainer.new();p.put(resources,Rect2(p.px(252),p.px(31),p.px(275),p.px(25)));p.resource_labels.clear()
 	for key in ["wood","stone","gold","food"]:
 		var row=HBoxContainer.new();row.custom_minimum_size.x=p.px(65);resources.add_child(row);row.add_child(p.image(r.T.icon(key),Vector2.ONE*p.px(16)));var l=p.text("0",18);l.autowrap_mode=TextServer.AUTOWRAP_OFF;l.custom_minimum_size.x=p.px(42);row.add_child(l);p.resource_labels[key]=l
-	ui.chapter=ui.button("",func():p.route("quest") if game.world.has("kingdom") else ui.follow_chapter());r.compact_button(ui.chapter);ui.chapter.name="CurrentObjective";ui.chapter.custom_minimum_size=Vector2.ZERO;ui.chapter.add_theme_font_size_override("font_size",int(p.px(12)));p.put(ui.chapter,Rect2(s.x-p.px(205),p.px(5),p.px(200),p.px(47)))
+	ui.chapter=ui.button("",func():p.route("quest") if game.world.has("kingdom") else game.realm_ui.intro());r.compact_button(ui.chapter);ui.chapter.name="CurrentObjective";ui.chapter.custom_minimum_size=Vector2.ZERO;ui.chapter.add_theme_font_size_override("font_size",int(p.px(12)));p.put(ui.chapter,Rect2(s.x-p.px(205),p.px(5),p.px(200),p.px(47)))
 	var mini=preload("res://scripts/rpg_minimap.gd").new();mini.game=game;p.put(mini,Rect2(s.x-p.px(110),p.px(60),p.px(104),p.px(84)))
 	var selection=preload("res://scripts/world_selection.gd").new();selection.game=game;selection.name="WorldSelection";p.put(selection,Rect2(s.x*.5-p.px(180),p.px(76),p.px(360),p.px(64)))
 	ui.hint=label_at("",Rect2(s.x-p.px(240),p.px(153),p.px(230),p.px(42)),13,Color("ffc36d"))
@@ -41,7 +42,7 @@ func build():
 		var key=entry[0];var b=r.icon_action(nav,entry[1],entry[2],func():p.route(key));b.name="WorldMenu" if key=="menu" else "Nav"+key.capitalize()
 		b.set_meta("nav_key",key)
 	var left=HBoxContainer.new();p.put(left,Rect2(p.px(7),bottom-p.px(4),p.px(150),p.px(44)))
-	r.icon_action(left,"menu",r.say("Village","Köy"),func():p.route("guide"));var hunts=r.icon_action(left,"sword",r.say("Boss / Hunt","Boss / Av"),func():p.route("hunts"));hunts.name="OpenHunts";r.icon_action(left,"workers",r.say("Chat","Sohbet"),func():p.route("chat"))
+	r.icon_action(left,"menu",r.say("Colony","Koloni"),func():p.route("colony"));var hunts=r.icon_action(left,"sword",r.say("Boss / Hunt","Boss / Av"),func():p.route("hunts"));hunts.name="OpenHunts";r.icon_action(left,"workers",r.say("Chat","Sohbet"),func():p.route("chat"))
 	xp=bar(Color("70943e"),Rect2(p.px(170),bottom+p.px(15),maxf(p.px(60),s.x-p.px(635)),p.px(9)))
 	r.chat_box=r.card(Rect2(p.px(6),bottom-p.px(190),p.px(448),p.px(185)));r.chat_box.name="ChatPanel"
 	var tabs=p.text(r.say("GENERAL     PRIVATE     SYSTEM","GENEL       ÖZEL       SİSTEM"),17,Color("d8c68f"));r.chat_box.add_child(tabs);tabs.position=Vector2(p.px(6),p.px(2));tabs.size=Vector2(p.px(300),p.px(21))
@@ -56,6 +57,7 @@ func build():
 	p.tray=HBoxContainer.new();p.tray.name="GiftPalette";p.tray.visible=false;p.put(p.tray,Rect2(s.x-p.px(510),bottom-p.px(110),p.px(500),p.px(44)));ui.power_buttons.clear();ui.power_icons.clear()
 	for i in range(6):
 		var b=ui.button(ui.t(ui.POWER_KEYS[i]),func():ui.choose_power(i));b.custom_minimum_size=Vector2.ZERO;b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;p.tray.add_child(b);ui.power_buttons.append(b)
+		if i==3:b.hide();b.disabled=true
 	var land=ui.button(r.say("LAND +","ARAZİ +"),func():p.route("estate"));land.name="ExpandLand";r.compact_button(land);p.put(land,Rect2(p.px(535),p.px(8),p.px(90),p.px(48)))
 	var zoom_out=ui.button("−",func():game.view.zoom_at(game.view.origin,.8));zoom_out.name="ZoomOut";r.compact_button(zoom_out);p.put(zoom_out,Rect2(p.px(632),p.px(8),p.px(48),p.px(48)))
 	var zoom_in=ui.button("+",func():game.view.zoom_at(game.view.origin,1.25));zoom_in.name="ZoomIn";r.compact_button(zoom_in);p.put(zoom_in,Rect2(p.px(684),p.px(8),p.px(48),p.px(48)))
@@ -70,5 +72,5 @@ func refresh():
 		xp.max_value=40*(level*level-(level-1)*(level-1));xp.value=h.xp-40*(level-1)*(level-1)
 	else:ui.header.text=r.say("LittleGod · Your realm","LittleGod · Krallığın");hp.value=100;mp.value=100
 	var lines=[]
-	for event in w.get("events",[]).slice(-4):lines.append(ui.event_text(event))
+	for event in ui.system_events(4):lines.append(ui.event_text(event))
 	log.text="\n".join(lines) if not lines.is_empty() else r.say("Your world is ready.\nSystem events appear here.","Dünyan hazır.\nOyun olayları burada görünür.")

@@ -22,6 +22,13 @@ func bubble(b: Dictionary) -> Vector2:
 	return point-Vector2(0,height+17+sin(clock*2+int(b.id)) * 2)
 func plot_point(p: Vector2i) -> Vector2:
 	return view.to_screen(view.project({"x":p.x*8+3.5,"y":p.y*8+3.5,"height":.2}))
+func worker_bubble(index):
+	return view.to_screen(view.kingdom_layer.workers[index].position)-Vector2(0,72*view.display_zoom)
+func collect_worker(id,at):
+	var game=view.get_parent();var C=load("res://scripts/colony.gd");var resource=view.world.colony.jobs[str(id)].resource;var amount=C.collect(view.world,id)
+	if amount<=0:game.ui.toast("Depo dolu · önce yer aç" if game.ui.language=="tr" else "Storage full · make room first");return
+	rewards.append({"position":at,"age":0.0,"text":"+"+str(amount/1000.0)+" "+C.NAMES[resource][1 if game.ui.language=="tr" else 0]});game.schedule_save();game.ui.refresh();view.invalidate();game.audio.chime(1)
+	if game.haptics and OS.has_feature("mobile"):Input.vibrate_handheld(22,.25)
 func collect(id: int) -> bool:
 	var game=view.get_parent();var result=E.collect(view.world,id)
 	if result.is_empty():game.ui.toast("Depo dolu · önce yer aç" if game.ui.language=="tr" else "Storage full · make room first");return false
@@ -42,6 +49,14 @@ func pick(pos: Vector2) -> bool:
 	# Ready bubbles always win over roofs, creatures and terrain.
 	for b in buildings:
 		if E.status(view.world,b)!="" and bubble(b).distance_to(pos)<=26:collect(int(b.id));return true
+	var C=load("res://scripts/colony.gd")
+	if C.enabled(view.world):
+		for i in range(mini(view.kingdom_layer.workers.size(),view.world.kingdom.workers.size())):
+			var id=int(view.world.kingdom.workers[i].id)
+			if C.reserved(view.world,id) and int(view.world.colony.jobs[str(id)].buffer)>0 and worker_bubble(i).distance_to(pos)<=25:collect_worker(id,worker_bubble(i));return true
+	for i in range(mini(view.kingdom_layer.workers.size(),view.world.get("kingdom",{}).get("workers",[]).size())):
+		var worker=view.kingdom_layer.workers[i]
+		if worker.visible and view.to_screen(worker.position+Vector2(0,-18)).distance_to(pos)<20:game.ui.premium.route("worker",int(view.world.kingdom.workers[i].id));return true
 	if land_mode:
 		for p in E.candidates(view.world):
 			if plot_point(p).distance_to(pos)<26:game.ui.premium.estate_selected=p;game.ui.premium.route("estate");return true
@@ -52,6 +67,17 @@ func pick(pos: Vector2) -> bool:
 func _draw():
 	if view==null or not E.enabled(view.world):return
 	var game=view.get_parent()
+	var C=load("res://scripts/colony.gd")
+	if C.enabled(view.world):
+		for i in range(mini(view.kingdom_layer.workers.size(),view.world.kingdom.workers.size())):
+			var worker=view.world.kingdom.workers[i];var id=int(worker.id)
+			if not C.reserved(view.world,id):continue
+			var job=view.world.colony.jobs[str(id)];var at=view.to_screen(view.kingdom_layer.workers[i].position)-Vector2(0,48*view.display_zoom)
+			if not get_viewport_rect().grow(70).has_point(at):continue
+			var text=worker.name+" · "+C.NAMES[job.resource][1 if game.ui.language=="tr" else 0];draw_string_outline(game.ui.ui_font(),at-Vector2(65,0),text,HORIZONTAL_ALIGNMENT_CENTER,130,13,4,Color("101a22"));draw_string(game.ui.ui_font(),at-Vector2(65,0),text,HORIZONTAL_ALIGNMENT_CENTER,130,13,Color("ffe4a7"))
+			if int(job.buffer)>0:
+				var point=worker_bubble(i);draw_circle(point,24,Color("f5e7b0"));draw_arc(point,24,0,TAU,32,Color("a47737"),2,true)
+				draw_string(game.ui.ui_font(),point+Vector2(-18,6),"+"+str(job.buffer/1000.0),HORIZONTAL_ALIGNMENT_CENTER,36,15,Color("365c3b"))
 	if game.realm_ui!=null and game.realm_ui.active and game.realm_ui.cell>=0:
 		var placement=game.realm_ui;var point=view.screen_point(view.world.cells[placement.cell]);var z=view.display_zoom;var valid=placement.valid(placement.cell);var tint=Color(.45,1,.6,.7) if valid else Color(1,.3,.25,.7)
 		var pitch=1.65 if view.world.cells.size()>400 else 1.0

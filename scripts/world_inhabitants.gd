@@ -103,6 +103,7 @@ func sync(w: Dictionary) -> void:
 	capture_key = ""
 	while animals.size() < w.creatures.size():
 		var animal = GameArt.sprite(0, 31)
+		animal.visible=false
 		add_child(animal)
 		animals.append(animal)
 	while animals.size() > w.creatures.size(): animals.pop_back().queue_free()
@@ -125,45 +126,6 @@ func animate(w: Dictionary, delta: float) -> void:
 		var inverse=view.world_root.global_transform.affine_inverse();var rect=Rect2(inverse*Vector2.ZERO,Vector2.ZERO).expand(inverse*view.get_viewport_rect().size).grow(150)
 		for entry in prop_cache.values():
 			for sprite in entry.sprites:sprite.visible=rect.has_point(sprite.position)
-	var decay = 1 - exp(-delta * 2.3)
-	for i in range(mini(animals.size(), w.creatures.size())):
-		var cr = w.creatures[i]
-		var sprite = animals[i]
-		var p = view.project(w.cells[int(cr.cell)])
-		var phase = float(cr.phase)
-		var grazing = cr.hunger < .5 and sin(time * .65 + phase) > .45
-		var radius = 3.0 if grazing else (15.0 if cr.get("trait") == "explorer" else 10.0)
-		var target = p + Vector2(sin(time * .42 + phase) * radius, cos(time * .38 + phase) * radius * .42)
-		if int(w.weather) == 1: target = target.lerp(p + Vector2(-4, 3), .7)
-		for home in w.settlements:
-			if int(home.cell) == int(cr.cell): target += Vector2(23 if i % 2 == 0 else -23, 12)
-		var identity = int(cr.get("identity", i))
-		var previous = position_memory.get(identity, target)
-		var next = previous.lerp(target, decay)
-		# A gift can change a cell while a creature is present; its feet still follow the live terrain.
-		position_memory[identity] = next
-		var moving = previous.distance_to(target) > .8
-		var bob = absf(sin(time * (5.0 if cr.species != 5 else 7.0) + phase)) * (1.8 if moving else .35)
-		if cr.species == 5: bob += 2 + sin(time * 2 + phase) * 1.6
-		sprite.position = next - Vector2(0, bob)
-		if sprite.frame != int(cr.species): sprite.frame = int(cr.species)
-		if absf(target.x - previous.x) > .05: sprite.flip_h = target.x < previous.x
-		var size = (33.0 if cr.species != 1 else 37.0) / 232.0
-		var breath = sin(time * 2 + phase) * .018
-		sprite.scale = Vector2(size * (1 - breath), size * (1 + breath))
-		if int(w.weather) == 1: sprite.scale.y *= .94
-		sprite.rotation = sin(time * 3 + phase) * (.045 if grazing else .012)
-		if int(cr.species) == 1: sprite.self_modulate = Color(1, .96 + sin(time * 2 + phase) * .025, .94)
-		var desired_material = GameArt.silver() if cr.get("silver", false) else null
-		if sprite.material != desired_material: sprite.material = desired_material
-		if cr.get("silver", false): sprite.self_modulate = Color.WHITE
-		var coat=view.cosmetic_layer.coats.get(identity,"")
-		if coat=="mint":sprite.self_modulate=Color(.77,1,.88)
-		elif coat=="sunset":sprite.self_modulate=Color(1,.82,.74)
-		elif int(cr.species)!=1 and not cr.get("silver",false):sprite.self_modulate=Color.WHITE
-		if coat=="dreamer":
-			var flourish=maxf(0,sin(time*.6+phase)-.85)
-			sprite.position.y-=flourish*13;sprite.rotation+=flourish*sin(time*8)*.6
 	for i in range(walkers.size()):
 		var settlement = w.settlements[i / 3]
 		var p = view.project(w.cells[int(settlement.cell)])
@@ -171,15 +133,9 @@ func animate(w: Dictionary, delta: float) -> void:
 		var angle = time * .32 + i * 2.1
 		walkers[i].position = p + Vector2(sin(angle) * radius, cos(angle) * radius * .42 + 9)
 		walkers[i].flip_h = cos(angle) < 0
-		walkers[i].visible = settlement.food > 1 and (i % 3) < 1 + int(settlement.stage)
+		walkers[i].visible = false
 		if w.has("kingdom") and i<3:walkers[i].visible=false
 	animate_ms = (Time.get_ticks_usec()-started)/1000.0
 
 func closest_creature(pos: Vector2, radius: float = 32) -> int:
-	var best = radius
-	var found = -1
-	for i in range(animals.size()):
-		var p = view.to_screen(animals[i].position + Vector2(0, -12))
-		var d = pos.distance_to(p)
-		if d < best: best = d; found = i
-	return found
+	return -1

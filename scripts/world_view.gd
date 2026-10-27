@@ -321,25 +321,9 @@ func draw_foreground(canvas: Node2D) -> void:
 	for cell in world.living.get("favorites", []):
 		var p = screen_point(world.cells[int(cell)])
 		canvas.draw_arc(p, 9, 0, TAU, 20, Color(.95, .85, .6, .65), 1.2, true)
-	var favorite_ids: Dictionary = {}
-	for favorite in world.living.get("favorite_creatures",[]): favorite_ids[int(favorite.id)] = true
-	for i in range(mini(world.creatures.size(), inhabitants.animals.size())):
-		var cr = world.creatures[i]
-		if int(cr.get("companion", -1)) >= 0:
-			var p = to_screen(inhabitants.animals[i].position) - Vector2(0, 38 * display_zoom)
-			canvas.draw_circle(p + Vector2(-2, 0), 2.8, Color(.96, .78, .7, .55 + sin(time * 2 + i) * .18))
-			canvas.draw_circle(p + Vector2(2, 0), 2.8, Color(.96, .78, .7, .55 + sin(time * 2 + i) * .18))
-		if favorite_ids.has(int(cr.identity)):
-			var p = to_screen(inhabitants.animals[i].position)
-			canvas.draw_arc(p-Vector2(0,20),18+sin(time*2)*1.5,0,TAU,20,Color(.95,.85,.55,.6),1.2,true)
 	if int(world.living.get("choir_until", 0)) > int(world.tick):
 		for i in range(3):
 			canvas.draw_arc(origin + Vector2(0, 45), 170 + i * 7, PI * 1.15, PI * 1.85, 40, [Color(.95, .7, .6, .25), Color(.85, .9, .6, .22), Color(.6, .92, .86, .2)][i], 5, true)
-	if selected_creature >= 0 and selected_creature < inhabitants.animals.size():
-		var p = to_screen(inhabitants.animals[selected_creature].position)
-		canvas.draw_arc(p - Vector2(0, 17), 21, 0, TAU, 32, Color(1, .89, .65, .7), 1.5, true)
-		var cr = world.creatures[selected_creature]
-		canvas.draw_string(preload("res://assets/phase2/nunito.ttf"), p + Vector2(-55, -49), str(cr.get("given_name", "")), HORIZONTAL_ALIGNMENT_CENTER, 110, 18, Color("fff0c9"))
 	var night = maxf(0, -sin(float(world.tick) / 30.0)) * .17
 	canvas.draw_rect(Rect2(0, 230, 720, 700), Color(.04, .08, .19, night))
 	if int(world.tick) >= 150 and int(world.tick) % 150 < 10:

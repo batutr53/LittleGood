@@ -650,6 +650,11 @@ func journal() -> void:
 		row.add_child(text)
 	add_close(v)
 
+func system_events(limit=50):
+	var events=game.world.get("events",[])
+	if game.world.has("colony"):
+		events=events.filter(func(e):return not str(e.get("key","")) in ["discovery","birth","first_birth","companions","rivalry","explored","elder","rescue","silver_fox","rainbow_choir","migration","friendship","cooperation"])
+	return events.slice(-limit)
 func event_text(e: Dictionary) -> String:
 	var key = str(e.get("key", "quiet"))
 	var text = t(key)

@@ -2,6 +2,7 @@ extends SceneTree
 const K=preload("res://scripts/kingdom.gd")
 var game
 var checks={}
+var capture_dir=OS.get_environment("LITTLEGOD_PLAYBOOK_CAPTURES") if not OS.get_environment("LITTLEGOD_PLAYBOOK_CAPTURES").is_empty() else "res://docs/screenshots/playbook"
 func _initialize():call_deferred("run")
 func settle():
  await process_frame;await process_frame
@@ -11,9 +12,9 @@ func find_button(prefix):
  return null
 func shot(name):
  await settle();await RenderingServer.frame_post_draw
- checks["screenshot_"+name]=root.get_texture().get_image().save_png("res://docs/screenshots/playbook/"+name+".png")==OK
+ checks["screenshot_"+name]=root.get_texture().get_image().save_png(capture_dir+"/"+name+".png")==OK
 func run():
- DirAccess.make_dir_recursive_absolute("res://docs/screenshots/playbook");DirAccess.make_dir_recursive_absolute("res://docs/benchmarks/playbook")
+ DirAccess.make_dir_recursive_absolute(capture_dir);DirAccess.make_dir_recursive_absolute("res://docs/benchmarks/playbook")
  game=load("res://scenes/main.tscn").instantiate();game.is_test_session=true;game.save_path="user://playbook-ui-only.json";root.add_child(game);current_scene=game
  game.new_planet(42,"Playbook QA",false);game.ui.language="tr";game.ui.build();game.ui.close();game.realm_ui.intro();await settle()
  checks.compact_intro=game.ui.modal.size.y<=440 and find_button("Köyümü kurmaya başla")!=null

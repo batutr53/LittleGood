@@ -66,7 +66,7 @@ static func storage(w: Dictionary) -> float:
 	for b in w.kingdom.buildings:
 		if b.kind=="storage":total+=80*(int(b.level) if ready(b) else maxi(0,int(b.level)-1))
 	return total
-static func assigned(w: Dictionary,id: int) -> Array:return w.kingdom.workers.filter(func(c):return int(c.building)==id and not MILITARY.worker_reserved(w,int(c.id)) and not TRADE.worker_reserved(w,int(c.id)))
+static func assigned(w: Dictionary,id: int) -> Array:return w.kingdom.workers.filter(func(c):return int(c.building)==id and not MILITARY.worker_reserved(w,int(c.id)) and not TRADE.worker_reserved(w,int(c.id)) and not load("res://scripts/colony.gd").reserved(w,int(c.id)))
 static func occupied(w: Dictionary,id: int) -> int:return w.kingdom.workers.filter(func(c):return int(c.building)==id).size()
 static func tier(w: Dictionary) -> int:
 	if not w.has("kingdom"):return 1
@@ -128,12 +128,14 @@ static func move(w: Dictionary,id: int,cell: int) -> bool:
 		if int(b.id)==id and valid_site(w,b.kind,cell,id):b.cell=cell;return true
 	return false
 static func assign(w: Dictionary,worker: int,building: int) -> bool:
-	if not writable(w) or MILITARY.worker_reserved(w,worker) or TRADE.worker_reserved(w,worker):return false
+	if not writable(w) or MILITARY.worker_reserved(w,worker) or TRADE.worker_reserved(w,worker) or load("res://scripts/colony.gd").reserved(w,worker):return false
 	if building!=0:
 		var match_build=w.kingdom.buildings.filter(func(b):return int(b.id)==building and ready(b))
 		if match_build.is_empty() or occupied(w,building)>=int(buildings()[match_build[0].kind].slots):return false
 	for c in w.kingdom.workers:
-		if int(c.id)==worker:c.building=building;return true
+		if int(c.id)==worker:
+			if w.has("colony") and int(c.building)!=0 and building!=0:return false
+			c.building=building;return true
 	return false
 static func recruit(w: Dictionary) -> bool:
 	if not writable(w) or level(w)<4 or w.kingdom.workers.size()>=MAX_WORKERS or home(w).food<4 or w.kingdom.stability<600 or not afford(w,{"gold":1}):return false
@@ -205,6 +207,7 @@ static func tick(w: Dictionary) -> void:
 	INDUSTRY.tick(w)
 	MILITARY.tick(w)
 	TRADE.tick(w)
+	load("res://scripts/colony.gd").tick(w)
 static func current(w: Dictionary) -> Dictionary:
 	if not w.has("kingdom"):return {}
 	for q in quests():
