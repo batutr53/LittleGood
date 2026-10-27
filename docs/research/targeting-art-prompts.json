@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-27",
+  "mode": "built-in image_gen; no CLI fallback",
+  "transparent_background": true,
+  "runtime_import_limit": 512,
+  "assets": [
+    {
+      "file": "assets/adventure/wolf-painted-v2.png",
+      "prompt": "Use case: stylized-concept. Asset type: a single original production sprite for LittleGod, a premium 2D fantasy RPG. Subject: a lean menacing forest wolf with layered charcoal and silver fur, amber eyes, a few mossy thorn vines caught around its shoulders, four anatomically convincing legs and a clearly recognizable long wolf snout. Composition: single full-body creature centered with 8% transparent padding, three-quarter elevated isometric view, facing down and slightly left, feet all visible on one ground plane. Style: detailed painterly semi-realistic fantasy game render, rich natural materials and refined shading, designed to match an ornate realistic armored knight sprite. Warm light from upper left, readable contrast at 110 pixels in game. True transparent background. No scenery, no ground tile, no text, no border, no UI, no other creatures. This is an original creature design, not a named franchise character."
+    },
+    {
+      "file": "assets/adventure/thorn-painted-v2.png",
+      "prompt": "Use case: stylized-concept. Asset type: a single original production sprite for LittleGod, a premium 2D fantasy RPG. Subject: a hulking four-legged bramble beast, bear-like heavy body formed from dark twisted roots and bark plates with sharp ivory thorns, moss patches, small amber eyes, clear strong silhouette. Composition: single full-body creature centered with 8% transparent padding, three-quarter elevated isometric view, facing down and slightly left, feet all visible on one ground plane. Style: detailed painterly semi-realistic fantasy game render, rich natural materials and refined shading, designed to match an ornate realistic armored knight sprite. Warm light from upper left, readable contrast at 110 pixels in game. True transparent background. No scenery, no ground tile, no text, no border, no UI, no other creatures. This is an original creature design, not a named franchise character."
+    },
+    {
+      "file": "assets/adventure/spider-painted-v2.png",
+      "prompt": "Use case: stylized-concept. Asset type: a single original production sprite for LittleGod, a premium 2D fantasy RPG. Subject: an ancient forest spider with eight articulated legs, dark chitin plates, subtle moss and small golden markings on its abdomen, threatening but elegant fantasy creature. Composition: single full-body creature centered with 8% transparent padding, three-quarter elevated isometric view, facing down and slightly left, feet all visible on one ground plane. Style: detailed painterly semi-realistic fantasy game render, rich natural materials and refined shading, designed to match an ornate realistic armored knight sprite. Warm light from upper left, readable contrast at 110 pixels in game. True transparent background. No scenery, no ground tile, no text, no border, no UI, no other creatures. This is an original creature design, not a named franchise character."
+    }
+  ]
+}

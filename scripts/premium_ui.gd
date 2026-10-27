@@ -77,6 +77,7 @@ func route(destination: String,arg: int=0,remember=true):
   "skills":rpg.skills()
   "chat":chat_screen()
  routing=false
+ if rpg!=null:rpg.highlight_navigation()
 func back():
  if game.world.is_empty():ui.main_menu();return
  if nested:nested=false;route(current,argument,false);return

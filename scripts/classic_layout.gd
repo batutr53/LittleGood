@@ -32,12 +32,14 @@ func build():
 		var row=HBoxContainer.new();row.custom_minimum_size.x=p.px(65);resources.add_child(row);row.add_child(p.image(r.T.icon(key),Vector2.ONE*p.px(16)));var l=p.text("0",18);l.autowrap_mode=TextServer.AUTOWRAP_OFF;l.custom_minimum_size.x=p.px(42);row.add_child(l);p.resource_labels[key]=l
 	ui.chapter=ui.button("",func():p.route("quest") if game.world.has("kingdom") else ui.follow_chapter());r.compact_button(ui.chapter);ui.chapter.name="CurrentObjective";ui.chapter.custom_minimum_size=Vector2.ZERO;ui.chapter.add_theme_font_size_override("font_size",int(p.px(12)));p.put(ui.chapter,Rect2(s.x-p.px(205),p.px(5),p.px(200),p.px(47)))
 	var mini=preload("res://scripts/rpg_minimap.gd").new();mini.game=game;p.put(mini,Rect2(s.x-p.px(110),p.px(60),p.px(104),p.px(84)))
+	var selection=preload("res://scripts/world_selection.gd").new();selection.game=game;selection.name="WorldSelection";p.put(selection,Rect2(s.x*.5-p.px(180),p.px(76),p.px(360),p.px(64)))
 	ui.hint=label_at("",Rect2(s.x-p.px(240),p.px(153),p.px(230),p.px(42)),13,Color("ffc36d"))
 	# The visual strip is 5.6% of the reference height. Icons keep separate labels.
 	r.card(Rect2(0,bottom,s.x,p.px(40)))
 	var nav=HBoxContainer.new();nav.add_theme_constant_override("separation",0);p.put(nav,Rect2(s.x-p.px(9*49+8),bottom-p.px(4),p.px(9*49),p.px(44)))
 	for entry in [["hero","hero",r.say("Char","Karakter")],["inventory","bag",r.say("Bag","Çanta")],["skills","sword",r.say("Skill","Beceri")],["attributes","shield",r.say("Stat","Stat")],["quest","quest",r.say("Quest","Görev")],["map","map",r.say("Regions","Bölgeler")],["construction","hammer",r.say("Build","İnşa")],["workers","workers",r.say("People","Halk")],["menu","menu",r.say("Menu","Menü")]]:
 		var key=entry[0];var b=r.icon_action(nav,entry[1],entry[2],func():p.route(key));b.name="WorldMenu" if key=="menu" else "Nav"+key.capitalize()
+		b.set_meta("nav_key",key)
 	var left=HBoxContainer.new();p.put(left,Rect2(p.px(7),bottom-p.px(4),p.px(150),p.px(44)))
 	r.icon_action(left,"menu",r.say("Village","Köy"),func():p.route("guide"));r.icon_action(left,"sword",r.say("Battle","Savaş"),func():p.route("army"));r.icon_action(left,"workers",r.say("Chat","Sohbet"),func():p.route("chat"))
 	xp=bar(Color("70943e"),Rect2(p.px(170),bottom+p.px(15),maxf(p.px(60),s.x-p.px(635)),p.px(9)))
@@ -60,6 +62,7 @@ func build():
 	ui.refresh()
 func refresh():
 	if not is_instance_valid(ui.header) or game.world.is_empty():return
+	r.highlight_navigation()
 	var w=game.world;ui.header.add_theme_font_size_override("font_size",int(p.px(13)));ui.stats.add_theme_font_size_override("font_size",int(p.px(10)));ui.realm_bar.hide()
 	if r.R.available(w):
 		var h=w.kingdom.adventure.hero;var level=r.H.level(h);hp.max_value=r.H.stats(w).health;hp.value=h.hp;mp.max_value=r.R.modifiers(w).mana;mp.value=w.rpg.progression[w.rpg.active].mana if w.has("rpg") else 100

@@ -271,13 +271,13 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 	if premium!=null and rebirth_enabled:
 		b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 		b.custom_minimum_size.y=premium.px(32);b.add_theme_font_size_override("font_size",int(premium.px(14)))
-		b.add_theme_color_override("font_color",Color("192a2e") if primary else Color("eee4ca"))
-		b.add_theme_color_override("font_disabled_color",Color("84908a"))
+		b.add_theme_color_override("font_color",Color("fff2ce") if primary else Color("f3ecdc"))
+		b.add_theme_color_override("font_disabled_color",Color("7f8b96"))
 		var theme=preload("res://scripts/premium_theme.gd")
-		b.add_theme_stylebox_override("normal",theme.box(Color("c5ad7a") if primary else Color("333528"),primary))
-		b.add_theme_stylebox_override("hover",theme.box(Color("dcc593") if primary else Color("4e5038"),true))
-		b.add_theme_stylebox_override("pressed",theme.box(Color("a68b58"),true))
-		b.add_theme_stylebox_override("disabled",theme.box(Color("26281e")))
+		b.add_theme_stylebox_override("normal",theme.box(Color("304557") if primary else Color("1c2935"),primary))
+		b.add_theme_stylebox_override("hover",theme.box(Color("415e70") if primary else Color("304858"),true))
+		b.add_theme_stylebox_override("pressed",theme.box(Color("53697b"),true))
+		b.add_theme_stylebox_override("disabled",theme.box(Color("151d27")))
 		b.add_theme_stylebox_override("focus",theme.box(Color(0,0,0,0),true))
 	b.pressed.connect(func():
 		if not b.is_inside_tree() or b.disabled:return

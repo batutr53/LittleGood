@@ -26,12 +26,30 @@ func say(en,tr):return p.say(en,tr)
 func stat_name(key: String) -> String:
 	return {"health":"Can","attack":"Saldırı","defense":"Savunma","speed":"Hız","crit":"Kritik","strength":"Güç","dexterity":"Çeviklik","intelligence":"Zekâ","magic":"Büyü Gücü","vitality":"Dayanıklılık"}.get(key,key.capitalize()) if ui.language=="tr" else key.capitalize()
 func card(rect: Rect2) -> Panel:
-	var panel=Panel.new();panel.add_theme_stylebox_override("panel",T.box(Color(.065,.064,.055,.88),true));p.put(panel,rect);return panel
+	var panel=Panel.new();panel.add_theme_stylebox_override("panel",T.box(Color(.045,.075,.105,.94),true));p.put(panel,rect);return panel
 func icon_action(parent: Control,key: String,label: String,cb: Callable) -> Button:
 	var b=ui.button(label,cb);b.icon=T.icon(key);b.expand_icon=true;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.alignment=HORIZONTAL_ALIGNMENT_CENTER;b.vertical_icon_alignment=VERTICAL_ALIGNMENT_TOP;b.add_theme_constant_override("icon_max_width",int(p.px(24)));b.add_theme_constant_override("h_separation",0);b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(48),p.px(43));b.tooltip_text=label;b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;compact_button(b)
 	for state in ["normal","hover","pressed","disabled","focus"]:
 		var skin=b.get_theme_stylebox(state);skin.content_margin_top=0;skin.content_margin_bottom=0
 	parent.add_child(b);return b
+func highlight_navigation():
+	if not is_instance_valid(ui.root):return
+	for b in ui.root.find_children("*","Button",true,false):
+		if not b.has_meta("nav_key"):continue
+		var active=game.in_menu and p.current==str(b.get_meta("nav_key"));b.toggle_mode=true;b.set_pressed_no_signal(active)
+		var skin=T.box(Color("354859") if active else Color("151f29"),active);skin.content_margin_top=0;skin.content_margin_bottom=0
+		if active:skin.set_border_width_all(2)
+		b.add_theme_stylebox_override("normal",skin);b.add_theme_stylebox_override("pressed",skin);b.add_theme_color_override("font_color",T.GOLD if active else T.CREAM)
+func highlight_item():
+	if not is_instance_valid(ui.modal):return
+	for b in ui.modal.find_children("*","Button",true,false):
+		if not b.has_meta("item_id"):continue
+		var active=(int(b.get_meta("item_id"))==selected_item and selected_item>0) or (selected_item==0 and b.has_meta("equipment_slot") and str(b.get_meta("equipment_slot"))==target_slot);var skin=T.box(Color("314658") if active else Color("0b141d"),active)
+		var recipe=str(b.get_meta("item_recipe"));skin.border_color=Color("ffe5a9") if active else F.color(recipe) if not recipe.is_empty() else T.MUTED;skin.set_border_width_all(3 if active else 1);b.add_theme_stylebox_override("normal",skin)
+		var marker=b.get_node_or_null("SelectedMark")
+		if active and marker==null:
+			marker=p.text("✓",18,Color("fff4bd"));marker.name="SelectedMark";b.add_child(marker);marker.position=Vector2(2,0)*p.scale_ui()
+		if is_instance_valid(marker):marker.visible=active
 func hud():
 	classic=preload("res://scripts/classic_layout.gd").new(self);classic.build()
 func refresh_portrait():
@@ -75,6 +93,7 @@ func inventory():
 		b.add_theme_stylebox_override("normal",T.box(Color("090c09"),false))
 		if id>0:
 			var item=I.item(game.world,id);b.icon=F.icon(item.recipe);b.tooltip_text=F.label(game.world,item,ui.language=="tr")
+			b.set_meta("item_id",id);b.set_meta("item_recipe",str(item.recipe))
 			var box=T.box(Color("090c09"),false);box.border_color=F.color(item.recipe);box.set_border_width_all(1);b.add_theme_stylebox_override("normal",box)
 			var s=F.state(game.world,id)
 			add_glow(b,id)
@@ -96,7 +115,11 @@ func equipment_slot(parent: Control,slot: String):
 	var b=ui.button(slot_names.get(slot,slot) if ui.language=="tr" else slot.replace("_"," "),func():
 		target_slot=slot
 		if id>0:selected_item=id;show_item(id)
-		else:ui.toast(say("Select equipment from your inventory.","Çantandan donanım seç.")));b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(43),p.px(40));parent.add_child(b)
+		else:
+			selected_item=0
+			if is_instance_valid(details_window):details_window.hide()
+			highlight_item();ui.toast(say("Select equipment from your inventory.","Çantandan donanım seç.")));b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(43),p.px(40));parent.add_child(b)
+	b.set_meta("equipment_slot",slot);b.set_meta("item_id",id);b.set_meta("item_recipe",str(I.item(game.world,id).get("recipe","")))
 	compact_button(b)
 	b.tooltip_text=slot_names.get(slot,slot);b.text="";b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(31)))
 	var empty="rpg_"+game.world.rpg.active+"_"+slot if slot in ["head","armor","legs","hands","feet"] else "rpg_"+slot.replace("_right","_left")
@@ -121,6 +144,7 @@ func show_item(id: int):
 	if is_instance_valid(details_window):details_window.show()
 	var owned=I.item(game.world,id)
 	if owned.is_empty():return
+	highlight_item()
 	clear_details();var d=I.recipes()[owned.recipe];var slot=d.get("category","tool")
 	details.add_child(p.image(F.icon(owned.recipe),Vector2(0,p.px(90))));details.add_child(p.heading(F.label(game.world,owned,ui.language=="tr"),27));details.add_child(p.text(F.grade(owned.recipe).to_upper()+" · "+str(F.state(game.world,id).element),20,F.color(owned.recipe)));details.add_child(p.text(game.realm_ui.localized(d.description),21,T.MUTED))
 	if F.eligible(game.world,id):

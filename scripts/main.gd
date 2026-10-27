@@ -533,7 +533,7 @@ func touch_world(pos: Vector2) -> void:
 			return
 	var cell = view.pick(pos)
 	if cell < 0: return
-	view.selected = cell
+	view.select_cell(cell)
 	if power >= 0:
 		if Powers.apply(world, power, cell):
 			note("first_power", power, true)

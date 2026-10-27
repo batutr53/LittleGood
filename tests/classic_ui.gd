@@ -2,15 +2,18 @@ extends SceneTree
 var game
 var checks={}
 var measures=[]
+var capture_dir="res://docs/screenshots/classic-ui"
 func _initialize():call_deferred("run")
 func settle():
 	await process_frame;await process_frame
 func shot(name):
 	await settle();await RenderingServer.frame_post_draw
-	checks["capture_"+name]=root.get_texture().get_image().save_png("res://docs/screenshots/classic-ui/"+name+".png")==OK
+	checks["capture_"+name]=root.get_texture().get_image().save_png(capture_dir+"/"+name+".png")==OK
 func fits(c: Control) -> bool:return Rect2(Vector2.ZERO,Vector2(root.size)).grow(1).encloses(c.get_global_rect())
 func run():
-	DirAccess.make_dir_recursive_absolute("res://docs/screenshots/classic-ui")
+	# Independent runs may use a fresh artifact directory when a preview holds an old PNG open.
+	if not OS.get_environment("LITTLEGOD_CLASSIC_CAPTURES").is_empty():capture_dir=OS.get_environment("LITTLEGOD_CLASSIC_CAPTURES")
+	DirAccess.make_dir_recursive_absolute(capture_dir)
 	game=load("res://scenes/main.tscn").instantiate();game.is_test_session=true;game.save_path="user://classic-ui-private.json";root.add_child(game);current_scene=game
 	var w=Persistence.load_world("res://tests/fixtures/planet-v085e2.json");game.world=w;game.view.world=w;game.has_player_world=true;game.paused=true;game.show_world(true);game.ui.language="tr"
 	for extent in [Vector2i(960,540),Vector2i(1280,720),Vector2i(1600,720),Vector2i(1920,1080)]:

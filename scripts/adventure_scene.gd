@@ -53,6 +53,11 @@ var rpg_overlay=false
 var overlay_was_frozen=false
 var rpg_health_bar: ProgressBar
 var rpg_mana_bar: ProgressBar
+var targeting
+var action_captions={}
+func enemy_texture(kind: String) -> Texture2D:
+	var painted="res://assets/adventure/"+kind+"-painted-v2.png"
+	return load(painted) if ResourceLoader.exists(painted) else load("res://assets/adventure/"+kind+".svg")
 func say(en: String,tr: String) -> String:return tr if game.ui.language=="tr" else en
 func _ready() -> void:
 	var started=Time.get_ticks_usec();game.show_world(false);game.ui.root.hide()
@@ -87,12 +92,12 @@ func _ready() -> void:
 	make_body(0,Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y),load(hero_texture) if ResourceLoader.exists(hero_texture) else load("res://assets/adventure/warrior.png"),110)
 	if game.v4_preview:
 		bodies[0].get_node("Art").hide();warrior_visual=preload("res://scripts/warrior_visual.gd").new();bodies[0].add_child(warrior_visual);warrior_visual.sample(game.world)
-	for e in game.world.kingdom.adventure.run.enemies:make_body(int(e.id),Vector2(e.x,e.y),load("res://assets/adventure/"+e.kind+".svg"),180 if e.kind=="thornheart" else 100)
+	for e in game.world.kingdom.adventure.run.enemies:make_body(int(e.id),Vector2(e.x,e.y),enemy_texture(e.kind),180 if e.kind=="thornheart" else 100)
 	props=preload("res://scripts/adventure_props.gd").new();add_child(props)
 	effects=preload("res://scripts/adventure_effects.gd").new();add_child(effects)
 	spell_fx=preload("res://scripts/class_spell_fx.gd").new();spell_fx.reduce_motion=game.ui.reduce_motion;add_child(spell_fx)
 	camera=Camera2D.new();camera.zoom=Vector2.ONE*1.15;camera.position=camera_target();camera.position_smoothing_enabled=false;add_child(camera);camera.make_current()
-	build_hud();startup_ms=(Time.get_ticks_usec()-started)/1000.0
+	build_hud();targeting=preload("res://scripts/combat_targeting.gd").new();targeting.name="CombatTargeting";add_child(targeting);startup_ms=(Time.get_ticks_usec()-started)/1000.0
 func regional_prop(key: String,point: Vector2,size: float,anchor: float,alpha: float=1.0) -> void:
 	var base=Node2D.new();base.position=point;actors.add_child(base)
 	var sprite=Sprite2D.new();sprite.texture=regional_textures[key];sprite.position.y=-size*anchor;sprite.scale=Vector2.ONE*size/sprite.texture.get_width();sprite.modulate.a=alpha;base.add_child(sprite)
@@ -151,12 +156,17 @@ func refresh_hud() -> void:
 	if region=="ashen_desert" and preload("res://scripts/ashen_desert.gd").poisoned(r):health.text+=say(" · POISON "," · ZEHİR ")+str(ceili((r.poison_until-r.clock)/1000.0))+"s"
 	for key in ["attack","skill","dodge","heal"]:
 		var cd=int(h.cooldowns[key]);buttons[key].text=button_titles[key]+("\n"+str(snappedf(cd/1000.0,.1))+"s" if cd>0 else "")
+		var badge=buttons[key].get_node_or_null("ActionBadge")
+		if badge:badge.sample(cd,500 if key=="attack" else 1200 if key=="dodge" else 4000 if key=="skill" else 6000)
 	if game.world.has("rpg") and not game.v4_preview:
 		var R=preload("res://scripts/rpg_progression.gd");var p=R.selected(game.world)
 		for i in range(3):
 			var key="skill" if i==0 else "rpg_skill"+str(i);var index=int(p.bar[i]);var rank=int(p.skills[index]);var cd=int(p.get("cooldowns",[0,0,0,0,0,0])[index]) if rank>0 else int(h.cooldowns.skill)
 			buttons[key].text=str(snappedf(cd/1000.0,.1))+"s" if cd>0 else ""
 			buttons[key].disabled=not R.skill_ready(game.world,{"skill_slot":i})
+			if action_captions.has(key):action_captions[key].text=say("Locked","Kilitli") if rank==0 and index!=0 else say("Low mana","Mana az") if rank>0 and float(p.mana)<12+index*3 else say("Skill ","Beceri ")+["I","II","III"][i]
+			var badge=buttons[key].get_node_or_null("ActionBadge")
+			if badge:badge.sample(cd,4000+index*500,rank==0 and index!=0)
 			buttons[key].tooltip_text=R.skill_name(h.get("class","warrior"),index,game.ui.language=="tr")+" · "+((str(12+index*3)+say(" mana"," mana")) if rank>0 else say("Starter ability","Başlangıç becerisi") if index==0 else say("Learn this ability first","Önce bu beceriyi öğren"))
 	var q=preload("res://scripts/kingdom.gd").current(game.world)
 	objective.text=say("IRON HILLS · Find the mine to the north.\nInspect ore veins; take materials home.","DEMİR TEPELER · Kuzeydeki madeni bul.\nCevheri incele; malzemeyi eve taşı.") if region=="iron_hills" else say("WILDWOOD · ","YABANORMAN · ")+(game.realm_ui.localized(q.title) if not q.is_empty() else say("Explore and return safely","Keşfet ve güvenle dön"))
@@ -174,9 +184,11 @@ func _input(event: InputEvent) -> void:
 		action_counts.touch=int(action_counts.get("touch",0))+1
 		if event.pressed and event.position.distance_to(stick.position)<stick.radius*1.4 and stick_index<0:stick_index=event.index
 		elif not event.pressed and event.index==stick_index:stick_index=-1;movement=Vector2.ZERO;stick.vector=Vector2.ZERO;stick.queue_redraw()
+		elif event.pressed and is_instance_valid(targeting):targeting.select_at(event.position)
 	if event is InputEventScreenDrag and event.index==stick_index:
 		movement=((event.position-stick.position)/maxf(30,stick.radius*.9)).limit_length(1);action_counts.drag=int(action_counts.get("drag",0))+1
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode in [KEY_Z,KEY_TAB] and is_instance_valid(targeting):targeting.cycle()
 		if event.keycode==KEY_F8 and OS.is_debug_build() and is_instance_valid(warrior_visual):warrior_visual.debug_enabled=not warrior_visual.debug_enabled;warrior_visual.queue_redraw()
 		if event.keycode==KEY_E:interact()
 		if event.keycode==KEY_SPACE:actions.attack=true
@@ -196,7 +208,10 @@ func toggle_pause() -> void:
 	message.text=say("Paused · Resume to continue; Home keeps collected loot.","Duraklatıldı · Sürdür ile devam et; Dön ganimeti korur.") if frozen else say("Watch the warning, then dodge. Attack during recovery.","Uyarıyı izle, sonra kaçın. Dinlenme aralığında saldır.")
 func _unhandled_input(event: InputEvent) -> void:
 	if not OS.has_feature("mobile") and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed:
-		mouse_aim=get_global_mouse_position()-bodies[0].position;actions.attack=true
+		if frozen or rpg_overlay:return
+		var previous=targeting.selected_id if is_instance_valid(targeting) else 0
+		if is_instance_valid(targeting) and targeting.select_at(event.position):
+			if previous==targeting.selected_id or event.double_click:actions.attack=true
 func _physics_process(delta: float) -> void:
 	if rpg_overlay:
 		if not is_instance_valid(game.ui.modal):rpg_overlay=false;game.ui.root.hide();game.ui.layer=1;frozen=overlay_was_frozen;clear_combat_input()
@@ -213,6 +228,9 @@ func _physics_process(delta: float) -> void:
 		accumulator-=.05;var started=Time.get_ticks_usec();var command=actions.duplicate();command.move=direction
 		if attack_held or (not controlled and Input.is_physical_key_pressed(KEY_SPACE)):command.attack=true
 		if mouse_aim.length()>.1:command.aim=mouse_aim;mouse_aim=Vector2.ZERO
+		if is_instance_valid(targeting) and not targeting.target().is_empty():
+			command.target_id=targeting.selected_id
+			if command.get("attack",false) and not targeting.in_range():command.erase("attack");message.text=say("Target out of range or behind an obstacle. Move closer.","Hedef menzil dışında veya engelin arkasında. Yaklaş.")
 		for key in ["attack","skill","dodge","heal"]:
 			if command.get(key,false):action_counts[key]=int(action_counts.get(key,0))+1
 		var before_position=Vector2(game.world.kingdom.adventure.run.x,game.world.kingdom.adventure.run.y)

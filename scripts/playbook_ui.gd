@@ -225,7 +225,7 @@ func roster():
 func building(id):
  var w=game.world;var found=w.kingdom.buildings.filter(func(b):return int(b.id)==id)
  if found.is_empty():return
- var b=found[0];var d=K.buildings()[b.kind];game.view.selected=int(b.cell);game.view.pan=-game.view.project(w.cells[int(b.cell)])*game.view.zoom
+ var b=found[0];var d=K.buildings()[b.kind];game.view.select_cell(int(b.cell));game.view.pan=-game.view.project(w.cells[int(b.cell)])*game.view.zoom
  var v=p.surface(game.realm_ui.localized(d.name));var row=HBoxContainer.new();v.add_child(row);row.add_child(p.image(game.view.kingdom_layer.texture(b.kind),Vector2.ONE*p.px(65)))
  label(row,say("Level ","Seviye ")+str(int(b.level))+" · "+str(K.occupied(w,id))+" / "+str(int(d.slots))+say(" workers"," işçi"))
  label(v,work_status(w,b),Color("f4cf7d"))

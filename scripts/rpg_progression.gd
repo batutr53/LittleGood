@@ -105,9 +105,13 @@ static func skill_ready(w: Dictionary,input: Dictionary) -> bool:
 	var p=selected(w);var index=int(p.bar[clampi(int(input.get("skill_slot",0)),0,2)])
 	if int(p.skills[index])==0:return index==0 and int(w.kingdom.adventure.hero.cooldowns.skill)==0
 	return int(p.get("cooldowns",[0,0,0,0,0,0])[index])==0 and (int(p.skills[index])==0 or float(p.mana)>=12+index*3)
+static func basic_range(w: Dictionary) -> int:
+	var key=w.kingdom.adventure.hero.get("class","warrior")
+	if key=="rogue" and w.has("rpg") and selected(w).specialization=="assassin":return 78
+	return 300 if key=="mage" else 190 if key=="priest" else 340 if key=="rogue" else 78
 static func attack_context(w: Dictionary,input: Dictionary) -> Dictionary:
-	var key=w.kingdom.adventure.hero.get("class","warrior");var range_value=300 if key=="mage" else 190 if key=="priest" else 340 if key=="rogue" else 78
-	var result={"range":range_value,"multiplier":1.0,"area":false,"cast":false}
+	var key=w.kingdom.adventure.hero.get("class","warrior")
+	var result={"range":basic_range(w),"multiplier":1.0,"area":false,"cast":false}
 	if not w.has("rpg"):return result
 	var p=selected(w)
 	if key=="rogue" and p.specialization=="assassin":result.range=78

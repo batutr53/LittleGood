@@ -10,6 +10,8 @@ var time = 0.0
 var selected = -1
 var selected_creature = -1
 var selected_identity = -1
+func select_cell(index: int) -> void:
+	selected=index;selected_creature=-1;selected_identity=-1;queue_redraw()
 var effects: Array = []
 var creature_positions: Dictionary = {}
 var low_quality = false
@@ -255,11 +257,17 @@ func draw_foreground(canvas: Node2D) -> void:
 			for i in range(8 if not low_quality else 4):
 				var p = screen_point(c) + Vector2(sin(time + i * 2.1) * 24, -12 + cos(time * .7 + i) * 18) * display_zoom
 				canvas.draw_circle(p, 2, Color(1, .87, .4, .55 + .3 * sin(time * 2 + i)))
-	if selected >= 0 and selected < world.cells.size():
+	if selected >= 0 and selected < world.cells.size() and selected_creature<0:
 		var selection = screen_point(world.cells[selected])
+		var building=world.get("kingdom",{}).get("buildings",[]).any(func(b):return int(b.cell)==selected)
 		canvas.draw_set_transform(selection, 0, Vector2(display_zoom, display_zoom * .5))
-		canvas.draw_arc(Vector2.ZERO, 24 + sin(time * 3) * 1.3, 0, TAU, 36, Color("f6dea3"), 1.8, true)
+		var radius=68 if building else 30
+		canvas.draw_arc(Vector2.ZERO,radius,0,TAU,48,Color("111b27"),7,true)
+		canvas.draw_arc(Vector2.ZERO,radius,0,TAU,48,Color("ffe2a1"),3,true)
 		canvas.draw_set_transform(Vector2.ZERO)
+		if building:
+			var at=selection-Vector2(0,145)*display_zoom
+			canvas.draw_colored_polygon(PackedVector2Array([at+Vector2(-9,-12),at+Vector2(9,-12),at+Vector2(0,0)]),Color("ffe2a1"))
 	for s in world.settlements:
 		var p = screen_point(world.cells[int(s.cell)])
 		if int(s.get("trade_until",0))>int(world.tick):

@@ -1,0 +1,24 @@
+{
+  "combat": {
+    "count": 41,
+    "all_passed": true,
+    "script_errors": false
+  },
+  "interactions": {
+    "count": 14,
+    "all_passed": true,
+    "script_errors": false
+  },
+  "targeting": {
+    "count": 66,
+    "all_passed": true
+  },
+  "android": {
+    "count": 13,
+    "all_passed": true,
+    "script_errors": [],
+    "player_files_preserved": true
+  },
+  "apk_hash_valid": true,
+  "all_passed": true
+}

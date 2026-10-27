@@ -236,7 +236,7 @@ func navigate(action: String) -> void:
 	elif action.begins_with("gather_"):begin("gather",action.trim_prefix("gather_"))
 	else:open()
 func focus(index: int) -> void:
-	ui.close();game.power=-1;game.view.pan=-game.view.project(game.world.cells[index])*game.view.zoom;game.view.selected=index
+	ui.close();game.power=-1;game.view.pan=-game.view.project(game.world.cells[index])*game.view.zoom;game.view.select_cell(index)
 func workshop(forge_id: int=0) -> void:
 	if ui.premium==null or not ui.rebirth_enabled:legacy_workshop(forge_id);return
 	ui.premium.route("forge",forge_id)

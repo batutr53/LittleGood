@@ -96,13 +96,17 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 		if heavy:h.cooldowns.skill=4000
 		r.swing=200
 		var aim=Vector2(input.get("aim",Vector2.ZERO));var nearest=INF
+		var locked=r.enemies.filter(func(e):return int(e.id)==int(input.get("target_id",0)) and e.hp>0)
+		if not locked.is_empty():aim=Vector2(locked[0].x,locked[0].y)-p
 		if aim.length()<.1:
 			for e in r.enemies:
 				var distance=p.distance_to(Vector2(e.x,e.y))
 				if e.hp>0 and distance<nearest:nearest=distance;aim=Vector2(e.x,e.y)-p
 		if aim.length()>.1:r.facing=[roundi(aim.normalized().x*1000),roundi(aim.normalized().y*1000)]
 		feedback.append("swing")
-		for e in r.enemies:
+		var attack_targets=r.enemies
+		if not locked.is_empty() and int(attack_context.range)>105 and not heavy and not attack_context.area:attack_targets=locked
+		for e in attack_targets:
 			var offset=Vector2(e.x,e.y)-p
 			if e.hp<=0 or offset.length()>(maxi(105,int(attack_context.range)) if heavy else int(attack_context.range)):continue
 			if int(attack_context.range)>105 and not load("res://scripts/rpg_progression.gd").clear_shot(w,p,Vector2(e.x,e.y)):continue

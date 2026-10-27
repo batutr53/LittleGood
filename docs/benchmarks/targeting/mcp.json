@@ -1,0 +1,10 @@
+{
+  "source": "Godot Forge native mouse click in controlled QA fixture; physics frozen for inspection",
+  "selected_id": 1,
+  "target_card_visible": true,
+  "target_hp": 32,
+  "first_click_attack": false,
+  "screenshot_save_error": 0,
+  "image": "docs/screenshots/targeting/mcp-inspected.png",
+  "separate_encounter_preview": "docs/screenshots/targeting/forest-encounter.png"
+}

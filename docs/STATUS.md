@@ -1,5 +1,13 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## MMORPG target clarity, HUD materials and forest art — 27 October 2026
+
+Implemented explicit enemy name/HP targeting, visible ground rings/pointers, range/obstruction feedback, target cycling, first-tap selection, selected-enemy ranged basics, warnings outside chat, cooldown arcs, localized action/locked/mana captions, persistent home-world context actions, selected inventory/equipment/nav feedback and stale-selection cleanup. Slate metal/gold surfaces improve contrast at the retained compact proportions. Added three original painted forest enemies (built-in image generation, transparent, imported at 512 px) and a richer original vector Wildwood floor aligned with existing collision and landmarks. Saved worlds and item ownership remain compatible.
+
+Validation: **822 campaign, 270 landscape UI, 98 compact HUD, 142 playbook, 41 class combat and 14 RPG interaction checks** retained; **66 new rendered targeting/art checks** pass. Android emulator **13 checks** pass with production files preserved and no script errors. Short paused-home sample ~26.11 FPS at 60 cap / 30.14 at battery 30 cap; this does not establish physical performance or a controlled optimization gain. No physical device connected. Full 3D KO/MMO recreation and directional animation remain unfinished; the existing 2D systems are extended.
+
+APK: `D:/LittleGod/builds/android/LittleGod-Targeting-debug.apk` (QA package, version 100). Launcher: `D:/LittleGod/Launch LittleGod.cmd`. Research, measurements, screenshots, exact generated assets/prompts, checks and limitations: [MMORPG_TARGETING.md](MMORPG_TARGETING.md). Evidence: `docs/benchmarks/targeting/`; screenshots: `docs/screenshots/targeting/`.
+
 ## Gameplay clarity and compact playbook — 26 October 2026
 
 Implemented a short first-village flow, current-objective instructions and rewards, separate paginated quest history, a village directory, direct building locate/collect/upgrade/staffing, named construction workers and queue status, placement preview and invalid-site protection, paginated catalogue/worker/region/army pages, trainee/kit selection and compact formation controls. Bottom-left **Köy** and **Savaş** now lead to the real village and army; solo hero expeditions remain separate. Menus explicitly explain that work resumes after closing. Existing model commands, item ownership, saves, original art, chapter conditions and enhancement mechanics remain intact.
