@@ -24,7 +24,8 @@ func home():
  var row=HBoxContainer.new();v.add_child(row);button(row,say("Workers","İşçiler"),func():p.route("workers"));button(row,say("Resources","Kaynaklar"),func():p.route("resources"));button(row,say("Defense","Savunma"),func():p.route("defense"))
  label(v,str(K.assigned(w,0).size())+say(" builders · "," inşaatçı · ")+str(w.get("colony",{}).get("jobs",{}).size())+say(" gathering · "," toplayıcı · ")+str(w.kingdom.buildings.size())+say(" buildings"," bina"))
  button(v,say("Build / locate buildings","Bina kur / yerini bul"),func():p.route("guide"));button(v,say("Hero · boss expeditions & loot","Kahraman · boss seferi ve ganimet"),func():p.route("hunts"),true)
- button(v,say("Current quest","Güncel görev"),func():p.route("quest"))
+ button(v,say("Preview spacious settlement layout","Ferah yerleşim düzenini önizle"),func():p.layout_plan=[];p.route("layout"))
+ button(v,say("Arin · what should I do next?","Arin · şimdi ne yapmalıyım?"),func():p.route("journey"))
 func resources():
  if not C.enabled(game.world):p.playbook().intro();return
  var w=game.world;var v=p.surface(say("Resources & production","Kaynaklar ve üretim"));var start=p.playbook().page(v,"resources",C.RESOURCES.size(),3)
@@ -41,7 +42,7 @@ func resources():
  button(row,say("Defense","Savunma"),func():p.route("defense"))
 func gathering(index):
  if not C.enabled(game.world):p.playbook().intro();return
- var w=game.world;var key=C.RESOURCES[clampi(index,0,C.RESOURCES.size()-1)];var v=p.surface(name(key)+say(" · gathering"," · toplama"));label(v,say("A short trip brings up to 2 materials. Tap the cargo icon to collect. Each worker can carry 6; work pauses in menus and expeditions.","Kısa bir tur en fazla 2 malzeme getirir. Yük ikonuna dokunarak topla. İşçi en fazla 6 taşır; menü ve sefer sırasında iş durur."))
+ var w=game.world;var key=C.RESOURCES[clampi(index,0,C.RESOURCES.size()-1)];var v=p.surface(name(key)+say(" · gathering"," · toplama"));label(v,say("Base trip: 2 materials; suitable tools improve yield. Tap cargo to collect, up to 6 per worker. Menus and expeditions pause work.","Temel tur: 2 malzeme; uygun alet verimi artırır. Yüke dokunarak topla, işçi en fazla 6 taşır. Menü ve seferde iş durur."))
  label(v,say("Forest for wood, mountains for ore, fertile soil for clay, shore for water/fish. Ore deposits are finite; water and fish are renewable.","Odun ormandan, maden dağdan, kil verimli topraktan, su/balık kıyıdan gelir. Madenler sınırlı; su ve balık yenilenebilir."))
  var jobs=[]
  for worker in w.kingdom.workers:
@@ -51,13 +52,13 @@ func gathering(index):
   var id=int(worker.id);var job=w.colony.jobs[str(id)];button(v,worker.name+" · "+C.task_status(w,job,p.ui.language=="tr")+" · "+str(job.buffer/1000.0),func():p.route("worker",id))
  var free=K.assigned(w,0)
  if not free.is_empty():
-  var worker=free[0];button(v,say("Assign ","Ata: ")+worker.name+say(" · leaves construction pool"," · inşaat havuzundan ayrılır"),func():
+  var chosen=free.filter(func(c):return int(c.id)==int(p.gathering_worker));var worker=chosen[0] if not chosen.is_empty() else free[0];button(v,say("Assign ","Ata: ")+worker.name+say(" · leaves construction pool"," · inşaat havuzundan ayrılır"),func():
    if C.start(w,int(worker.id),key):game.realm_ui.changed();p.route("gathering",index,false),true).disabled=C.source(w,key)<0
  else:label(v,say("No free worker. Release another duty explicitly in Workers.","Boştaki işçi yok. İşçiler ekranında mevcut görevi açıkça bırak."))
  button(v,say("All worker duties","Tüm işçi görevleri"),func():p.route("workers"))
 func worker(id):
  var w=game.world;var job=w.colony.jobs[str(id)];var workers=w.kingdom.workers.filter(func(c):return int(c.id)==id);var v=p.surface(workers[0].name+" · "+name(job.resource))
- label(v,C.task_status(w,job,p.ui.language=="tr")+" · "+str(int(job.progress))+" / 10");label(v,say("Cargo: ","Yük: ")+str(job.buffer/1000.0)+" / 6 "+name(job.resource))
+ label(v,C.task_status(w,job,p.ui.language=="tr")+" · "+str(int(job.progress))+" / 10");label(v,say("Cargo: ","Yük: ")+str(job.buffer/1000.0)+" / 6 "+name(job.resource)+say(" · per trip "," · tur başına ")+str(C.trip_yield(w,id,job.resource)/1000.0))
  button(v,say("Collect cargo","Yükü teslim al"),func():
   var amount=C.collect(w,id);game.realm_ui.changed();p.route("worker",id,false);p.ui.toast("+"+str(amount/1000.0)+" "+name(job.resource)),true).disabled=int(job.buffer)<=0
  button(v,say("Leave task · return to builder pool","Görevi bırak · inşaat havuzuna dön"),func():

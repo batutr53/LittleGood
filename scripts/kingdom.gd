@@ -88,6 +88,7 @@ static func spend(w: Dictionary,cost: Dictionary) -> void:
 	for key in cost:w.kingdom.stock[key]=int(w.kingdom.stock[key])-roundi(float(cost[key])*SCALE)
 static func valid_site(w: Dictionary,kind: String,cell: int,ignore: int=0) -> bool:
 	if not writable(w) or not buildings().has(kind) or cell<0 or cell>=w.cells.size():return false
+	if w.has("colony") and w.has("estate") and not load("res://scripts/settlement_layout.gd").clear(w,cell,ignore):return false
 	if w.settlements.any(func(s):return int(s.cell)==cell):return false
 	for p in w.get("wardrobe",{}).get("placements",[]):
 		if int(p.cell)==cell:return false
@@ -123,7 +124,7 @@ static func upgrade(w: Dictionary,id: int) -> bool:
 			spend(w,upgrade_cost(b));b.level=int(b.level)+1;b.progress=0;b.required=int(buildings()[b.kind].ticks)*int(b.level)*SCALE;record(w,"upgrade",b.kind);return true
 	return false
 static func move(w: Dictionary,id: int,cell: int) -> bool:
-	if not writable(w):return false
+	if not writable(w) or TRADE.building_reserved(w,id):return false
 	for b in w.kingdom.buildings:
 		if int(b.id)==id and valid_site(w,b.kind,cell,id):b.cell=cell;return true
 	return false

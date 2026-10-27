@@ -32,6 +32,9 @@ static func release(w,worker_id):
 	if not writable(w) or not reserved(w,worker_id):return false
 	if int(w.colony.jobs[str(worker_id)].buffer)>0:return false
 	w.colony.jobs.erase(str(worker_id));return true
+static func trip_yield(w,id,resource):
+	var role={"wood":"lumber","stone":"quarry","gold":"mine","copper":"mine","silver":"mine","clay":"quarry"}.get(resource,"")
+	return 2000 if role.is_empty() else roundi(2000*load("res://scripts/industry.gd").multiplier(w,id,role)/1000.0)
 static func tick(w):
 	if not writable(w) or int(w.colony.last_tick)>=int(w.tick):return
 	w.colony.last_tick=int(w.tick)
@@ -41,7 +44,7 @@ static func tick(w):
 		if int(job.buffer)>=6000:continue
 		job.progress+=1
 		if job.progress<CYCLE:continue
-		job.progress=0;var c=w.cells[int(job.cell)];var amount=mini(2000,6000-int(job.buffer));var resource=str(job.resource)
+		job.progress=0;var c=w.cells[int(job.cell)];var resource=str(job.resource);var amount=mini(trip_yield(w,int(id),resource),6000-int(job.buffer))
 		if resource in ["wood","stone"]:amount=mini(amount,floori(float(c.resources)*1000));c.resources=maxf(0,float(c.resources)-amount/1000.0)
 		elif resource in ["gold","copper","silver","clay"]:
 			var key=resource+":"+str(int(job.cell));amount=mini(amount,12000-int(w.colony.spent.get(key,0)));w.colony.spent[key]=int(w.colony.spent.get(key,0))+amount

@@ -10,6 +10,7 @@ func run():
 	var w=Persistence.load_world("res://tests/fixtures/planet-v085e2.json");w.kingdom.adventure.run.active=false;var creatures=w.creatures.duplicate(true);var old=w.kingdom.duplicate(true);C.ensure(w);checks.additive=w.kingdom==old and w.creatures==creatures;var colony=w.colony.duplicate(true);C.ensure(w);checks.idempotent=w.colony==colony;checks.initial_valid=Persistence.validate(w)
 	var free=K.assigned(w,0)[0];var id=int(free.id);var target=w.kingdom.buildings.filter(func(b):return K.ready(b) and int(K.buildings()[b.kind].slots)>0 and K.occupied(w,int(b.id))<int(K.buildings()[b.kind].slots))[0]
 	checks.assign=K.assign(w,id,int(target.id));var other=w.kingdom.buildings.filter(func(b):return int(b.id)!=int(target.id) and K.ready(b) and int(K.buildings()[b.kind].slots)>0 and K.occupied(w,int(b.id))<int(K.buildings()[b.kind].slots))[0];checks.cannot_silently_reassign=not K.assign(w,id,int(other.id)) and int(free.building)==int(target.id);checks.busy_not_gather=not C.start(w,id,"wood");checks.explicit_release=K.assign(w,id,0)
+	checks.base_yield_without_tool=load("res://scripts/industry.gd").equip(w,id,0) and C.trip_yield(w,id,"stone")==2000
 	for key in C.RESOURCES:
 		if key in ["wood","stone","gold"]:w.kingdom.stock[key]=0
 		checks[key+"_real_source"]=C.source(w,key)>=0;checks[key+"_start"]=C.start(w,id,key);var job=w.colony.jobs[str(id)];checks[key+"_one_job"]=not C.start(w,id,"fish") and not K.assign(w,id,int(target.id)) and not K.assigned(w,0).has(free)

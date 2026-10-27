@@ -63,10 +63,10 @@ func animate(delta: float) -> void:
 		var worker=w.kingdom.workers[i];var target=int(K.home(w).cell);var working=false
 		var C=load("res://scripts/colony.gd")
 		if C.reserved(w,int(worker.id)):
-			var job=w.colony.jobs[str(int(worker.id))];var home=view.project(w.cells[int(K.home(w).cell)]);var destination=view.project(w.cells[int(job.cell)]);var phase=float(job.progress)
+			var job=w.colony.jobs[str(int(worker.id))];var home=view.project(w.cells[int(K.home(w).cell)]);var destination=view.project(w.cells[int(job.cell)]);var game=view.get_parent();var phase=float(job.progress)+(clampf(game.accumulator/2.0,0,1) if not game.paused and not game.in_menu else 0)
 			var amount=clampf(phase/2.0,0,1) if phase<2 else 1.0 if phase<8 else clampf((10-phase)/2.0,0,1)
 			if int(job.buffer)>=6000:amount=0
-			workers[i].position=home.lerp(destination,amount)+Vector2(sin(clock*3+i)*2,6+cos(clock*3+i));workers[i].rotation=sin(clock*6+i)*(.12 if phase>=2 and phase<8 else .03);workers[i].self_modulate=Color.WHITE;continue
+			var target_point=home.lerp(destination,amount)+Vector2(sin(clock*3+i)*2,6+cos(clock*3+i));workers[i].position=workers[i].position.lerp(target_point,1-exp(-delta*10)) if delta>0 else target_point;workers[i].rotation=sin(clock*6+i)*(.12 if phase>=2 and phase<8 else .03);workers[i].self_modulate=Color.WHITE;continue
 		for b in w.kingdom.buildings:
 			if int(worker.building)==int(b.id) or (int(worker.building)==0 and not K.ready(b)):
 				target=int(b.cell);working=not K.ready(b) or rates.get(int(b.id),0)>0;break
@@ -78,6 +78,19 @@ func animate(delta: float) -> void:
 
 func _draw() -> void:
 	if view==null or not view.world.has("kingdom"):return
+	var C=load("res://scripts/colony.gd");var w=view.world
+	if C.enabled(w):
+		for i in range(mini(workers.size(),w.kingdom.workers.size())):
+			var id=int(w.kingdom.workers[i].id)
+			if not C.reserved(w,id):continue
+			var job=w.colony.jobs[str(id)];var p=workers[i].position+Vector2(12,-14);var active=int(job.progress)>=2 and int(job.progress)<8 and int(job.buffer)<6000;var motion=sin(clock*7+i) if active else 0.0
+			if job.resource in ["water","fish"]:
+				var tip=p+Vector2(17,-21);draw_line(p,tip,Color("986747"),2,true);draw_line(tip,tip+Vector2(10,27),Color("d7cf9e"),.8,true);draw_arc(tip+Vector2(10,29),5+sin(clock*2)*1.5,0,TAU,16,Color(.75,.95,1,.5),1,true)
+			else:
+				var tip=p+Vector2(7+motion*7,-13+motion*5);draw_line(p,tip,Color("926548"),2.5,true);draw_line(tip+Vector2(-7,-2),tip+Vector2(6,3),Color("bac8ca"),4,true)
+				if active:
+					var color=Color("bb8d51") if job.resource in ["wood","clay"] else Color("d6be7f")
+					for n in range(3):draw_circle(p+Vector2(13+sin(clock*4+n*2)*7,-6+fmod(clock*9+n*3,11)),1.3,color)
 	for b in view.world.kingdom.buildings:
 		if int(b.cell)!=int(view.selected):continue
 		var p=view.project(view.world.cells[int(b.cell)])

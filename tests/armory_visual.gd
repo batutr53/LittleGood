@@ -4,12 +4,14 @@ const R=preload("res://scripts/rpg_progression.gd")
 const I=preload("res://scripts/industry.gd")
 var game
 var checks={}
+var capture_dir=OS.get_environment("LITTLEGOD_ARMORY_CAPTURES") if not OS.get_environment("LITTLEGOD_ARMORY_CAPTURES").is_empty() else "res://docs/screenshots/armory"
 func _initialize():call_deferred("run")
 func settle():
 	await process_frame;await process_frame;await RenderingServer.frame_post_draw
 func shot(name):
-	await settle();checks["capture_"+name]=root.get_texture().get_image().save_png("res://docs/screenshots/armory/"+name+".png")==OK
+	await settle();checks["capture_"+name]=root.get_texture().get_image().save_png(capture_dir+"/"+name+".png")==OK
 func run():
+	DirAccess.make_dir_recursive_absolute(capture_dir)
 	DirAccess.make_dir_recursive_absolute("res://docs/screenshots/armory")
 	game=load("res://scenes/main.tscn").instantiate();game.is_test_session=true;game.save_path="user://armory-visual.json";root.add_child(game);current_scene=game
 	var w=Persistence.load_world("res://tests/fixtures/planet-v085e2.json");preload("res://scripts/estate.gd").start(w);R.ensure(w);F.ensure(w)
@@ -36,7 +38,8 @@ func run():
 		game.ui.close();R.switch(w,cls);var hero=w.kingdom.adventure.hero;hero.xp=maxi(int(hero.xp),400);hero.hp=100;hero.cooldowns.skill=0;w.rpg.progression[cls].cooldowns=[0,0,0,0,0,0];w.rpg.progression[cls].mana=100;w.rpg.progression[cls].skills[0]=1;w.rpg.progression[cls].bar[0]=0
 		checks[cls+"_entry"]=game.enter_adventure("wildwood")
 		var scene=game.adventure_scene;await settle();scene.actions.skill=true
-		await physics_frame;await physics_frame;await process_frame
+		var deadline=Time.get_ticks_msec()+750
+		while scene.spell_fx.spells.is_empty() and Time.get_ticks_msec()<deadline:await process_frame
 		checks[cls+"_cast"]=not scene.spell_fx.spells.is_empty();scene.frozen=true;await shot("spell-"+cls);scene.go_home();await settle()
 	checks.state_valid=Persistence.validate(w)
 	DirAccess.make_dir_recursive_absolute("res://builds/armory");var result={"checks":checks,"count":checks.size(),"all_passed":not checks.values().has(false),"source":"Actual Godot screenshots; fixtures and synthetic viewport changes, real adventure skill inputs"};var f=FileAccess.open("res://builds/armory/visual.json",FileAccess.WRITE);f.store_string(JSON.stringify(result,"  "));print("ARMORY_VISUAL "+JSON.stringify(result));quit(0 if result.all_passed else 1)

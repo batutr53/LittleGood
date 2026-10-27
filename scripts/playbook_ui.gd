@@ -61,7 +61,7 @@ func quest():
  button(tabs,say("History","Geçmiş"),func():p.route("quest_history"))
  if H.enabled(w):button(tabs,say("Hunts","Av görevleri"),func():p.route("contracts"))
  if q.is_empty():
-  label(v,say("Current chapters complete. Choose your next journey.","Mevcut bölümler tamamlandı. Yeni yolculuğunu seç."));button(v,say("Continue story","Hikâyeyi sürdür"),game.realm_ui.legacy_open,true);return
+  label(v,say("Current chapters complete. Choose your next journey.","Mevcut bölümler tamamlandı. Yeni yolculuğunu seç."));button(v,say("Continue story","Hikâyeyi sürdür"),func():p.route("chapter"),true);return
  label(v,game.realm_ui.localized(q.title),Color("f4cf7d"))
  var start=page(v,"objectives",q.objectives.size(),2)
  for o in q.objectives.slice(start,start+2):
@@ -133,7 +133,7 @@ func worker(id):
   label(v,say("This worker cannot take another job. Release the current assignment explicitly first; its production will stop.","Bu işçi başka işe atanamaz. Önce mevcut görevi açıkça bırak; bu binadaki üretimi durur."))
   button(v,say("Builder · release current job","İnşaatçı · mevcut görevi bırak"),func():assign(id,0));button(v,say("Back to workers","İşçilere dön"),func():p.route("workers"));return
  label(v,say("AVAILABLE · builder pool. Assign one production or gathering task.","UYGUN · inşaat havuzu. Tek bir üretim veya toplama görevi seç."))
- button(v,say("Gather resources","Kaynak toplama görevleri"),func():p.route("resources"))
+ button(v,say("Gather resources","Kaynak toplama görevleri"),func():p.gathering_worker=id;p.route("resources"))
  var choices=w.kingdom.buildings.filter(func(b):return K.ready(b) and int(K.buildings()[b.kind].slots)>0);var start=page(v,"jobs",choices.size(),3)
  for b in choices.slice(start,start+3):
   var building_id=int(b.id);var d=K.buildings()[b.kind];var occupied=K.occupied(w,building_id)
@@ -262,7 +262,7 @@ func building(id):
  label(v,say("Work resumes when you close this menu.","Menüyü kapatınca çalışma devam eder."))
  var E=load("res://scripts/estate.gd")
  if E.enabled(w) and E.status(w,b)!="":button(v,say("Collect ready output","Hazır ürünü topla"),func():game.view.estate_layer.collect(id);p.route("building",id,false),true)
- var actions=HBoxContainer.new();v.add_child(actions);button(actions,say("Workers","İşçiler"),func():p.route("workers"));button(actions,say("Locate","Yerini göster"),func():game.realm_ui.focus(int(b.cell)))
+ var actions=HBoxContainer.new();v.add_child(actions);button(actions,say("Staff this building","Bu binanın personeli"),func():p.route("staffing",id));button(actions,say("Locate","Yerini göster"),func():game.realm_ui.focus(int(b.cell)))
  if b.kind=="forge":button(v,say("Craft equipment / scrolls","Donanım / parşömen üret"),func():p.route("forge",id))
  if b.kind=="barracks" and M.enabled(w):button(v,say("Army & battlefields","Birlik ve savaş alanları"),func():p.route("army"))
  if b.kind=="marketplace" and T.enabled(w):button(v,say("Trade","Ticaret"),func():p.route("trade"))
@@ -270,3 +270,22 @@ func building(id):
   button(v,say("Upgrade · ","Geliştir · ")+game.realm_ui.cost(K.upgrade_cost(b)),func():
    if K.upgrade(w,id):game.realm_ui.changed();p.route("building",id,false),true).disabled=not K.afford(w,K.upgrade_cost(b)) or T.building_reserved(w,id)
  button(v,say("Relocate building","Binayı taşı"),func():game.realm_ui.begin("build",b.kind,id)).disabled=T.building_reserved(w,id)
+func staffing(id):
+ var w=game.world;var matches=w.get("kingdom",{}).get("buildings",[]).filter(func(b):return int(b.id)==id)
+ if matches.is_empty():p.route("guide");return
+ var b=matches[0];var slots=int(K.buildings()[b.kind].slots);var construction=not K.ready(b);var v=p.surface(game.realm_ui.localized(K.buildings()[b.kind].name)+say(" · staffing"," · personel"));label(v,work_status(w,b),Color("f4cf7d"))
+ if not construction and slots==0:
+  label(v,say("This building works passively. No worker assignment required.","Bu bina pasif çalışır. Personel ataman gerekmez."));button(v,say("Building","Bina"),func():p.route("building",id));return
+ label(v,say("Builders share the first unfinished site. Release a duty to join construction; this stops that duty.","İnşaatçılar ilk bitmemiş yapıda birlikte çalışır. İnşaata katılmak için mevcut işi bırak; o işin üretimi durur.") if construction else say("Only available workers can be assigned. Inspect busy workers to release their current duty first.","Yalnızca uygun işçi atanabilir. Görevdeki işçinin önce mevcut işini bırakması gerekir."))
+ var roster=w.kingdom.workers.duplicate();roster.sort_custom(func(a,b):
+  var rank_a=0 if K.assigned(w,0).has(a) else 1 if int(a.building)==id else 2;var rank_b=0 if K.assigned(w,0).has(b) else 1 if int(b.building)==id else 2
+  return rank_a<rank_b if rank_a!=rank_b else int(a.id)<int(b.id))
+ var start=page(v,"staffing_"+str(id),roster.size(),3)
+ for worker in roster.slice(start,start+3):
+  var worker_id=int(worker.id);var available=K.assigned(w,0).has(worker);var current=int(worker.building)==id and not construction;var text=worker.name+" · "+p.colony_ui().job_name(worker)
+  if available and not construction and K.occupied(w,id)<slots:
+   button(v,say("Assign: ","Ata: ")+text,func():
+    if K.assign(w,worker_id,id):game.realm_ui.changed();p.route("staffing",id,false),true)
+  else:button(v,text,func():p.route("worker",worker_id))
+ label(v,say("Available builders: ","Uygun inşaatçılar: ")+builders(w) if construction else str(K.occupied(w,id))+" / "+str(slots)+say(" production slots"," üretim yuvası"))
+ button(v,say("Back to building","Binaya dön"),func():p.route("building",id))

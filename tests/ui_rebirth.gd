@@ -50,9 +50,9 @@ func run():
  game.navigate_back();await settle();checks.detail_back_to_quest=p.current=="quest"
  var farm=w.kingdom.buildings.filter(func(b):return b.kind=="farm")[0];ui.close();game.view.display_pan=game.view.pan;game.view.display_zoom=game.view.zoom
  game.touch_world(game.view.screen_point(w.cells[int(farm.cell)])-Vector2(0,20)*game.view.display_zoom);await settle();checks.actual_world_building_select=p.current=="building" and p.argument==int(farm.id)
- var worker_button=button(ui.modal,"İşçiler");checks.context_action=worker_button!=null
+ var worker_button=button(ui.modal,"Bu binanın personeli");checks.context_action=worker_button!=null
  if worker_button:worker_button.pressed.emit();await settle()
- checks.context_workers_route=p.current=="workers"
+ checks.context_workers_route=p.current=="staffing" and p.argument==int(farm.id)
  p.route("forge");p.current_recipe="field_sickle";p.route("recipe");await settle();var craft=button(ui.modal,"Dövümü başlat");var queue_before=w.kingdom.industry.queue.size();var iron=w.kingdom.stock.iron;var wood=w.kingdom.stock.wood
  checks.legitimate_craft_available=craft!=null and not craft.disabled
  if craft:

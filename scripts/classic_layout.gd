@@ -18,6 +18,8 @@ func label_at(text: String,rect: Rect2,font_size=13,color=Color("ece6d0")) -> La
 	var l=p.text(text,20,color);l.add_theme_font_size_override("font_size",int(p.px(font_size)));p.put(l,rect);return l
 func build():
 	load("res://scripts/colony.gd").ensure(game.world)
+	load("res://scripts/rpg_progression.gd").ensure(game.world)
+	load("res://scripts/armory.gd").ensure(game.world)
 	if is_instance_valid(ui.root):ui.remove_child(ui.root);ui.root.queue_free()
 	ui.modal=null;ui.veil=null;ui.root=Control.new();ui.root.name="WorldHUD";ui.root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);ui.root.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.add_child(ui.root)
 	var s=p.size();var z=p.scale_ui();var bottom=s.y-p.px(40)

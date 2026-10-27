@@ -245,32 +245,22 @@ func confirm_upgrade(q: Dictionary):
 	confirm.name="ConfirmEnhancement";confirm.custom_minimum_size.y=p.px(48)
 	p.action(v,say("Cancel","Vazgeç"),func():enhance(int(q.id)))
 func bestiary():
-	var v=p.surface(say("Drops & Bestiary","Drop ve Canavar Rehberi"));ui.page="kingdom";p.nested=false
-	v.add_child(p.text(say("LittleGod drop tables · original rewards, not unverified reference odds.","LittleGod drop tabloları · özgün ödüller, doğrulanmamış referans oranları değil."),19,T.MUTED))
-	p.action(v,say("Contracts & rewards","Görevler ve ödüller"),func():p.route("contracts"),true,"quest")
-	var search=LineEdit.new();search.placeholder_text=say("Search monsters…","Canavar ara…");search.custom_minimum_size.y=p.px(40);v.add_child(search);var sections=[]
-	for kind in load("res://scripts/adventure.gd").enemies():
-		var group=VBoxContainer.new();v.add_child(group);var container=group
-		var d=load("res://scripts/adventure.gd").enemies()[kind];var monster_name=d.name.get("tr" if ui.language=="tr" else "en",kind) if d.name is Dictionary else game.realm_ui.localized(d.name);container.add_child(p.heading(monster_name,25));container.add_child(p.text("HP "+str(int(d.health))+" · ATK "+str(int(d.attack))+" · DEF "+str(int(d.defense)),19));sections.append({"node":group,"name":(monster_name+" "+kind).to_lower()})
-		if kind=="thornheart":
-			container.add_child(p.text(say("First victory only: 1 living heart, 5 gold. Extra class weapon: Unique · 100%.","İlk zafer: 1 yaşayan kalp, 5 altın. Ek sınıf silahı: Unique · %100."),19,T.GOLD));continue
-		container.add_child(p.text(say("Guaranteed: ","Kesin: ")+str(int(d.quantity))+" "+resource_name(d.material),18,T.MUTED))
-		var total=0
-		for entry in d.weights:total+=int(entry[1])
-		for entry in d.weights:container.add_child(p.text(resource_name(entry[0])+" · "+str(snappedf(int(entry[1])*100.0/maxi(1,total),.01))+"%",18))
-		container.add_child(p.text(say("Extra class weapon: ","Ek sınıf silahı: ")+("Unique · 100%" if kind in ["thornheart","ruin_sentinel","sunward_warden"] else "High · 25%"),19,T.GOLD))
-	search.text_changed.connect(func(query):
-		for section in sections:section.node.visible=query.strip_edges().is_empty() or section.name.contains(query.to_lower().strip_edges()))
-	p.action(v,say("Back to inventory","Çantaya dön"),func():p.route("inventory"),false,"bag")
+	preload("res://scripts/drop_guide_ui.gd").new(p).open()
 func contracts():
 	F.ensure(game.world);var v=p.surface(say("The Adventurer's Board","Maceracı Panosu"));ui.page="kingdom";p.nested=false
 	v.add_child(p.text(say("One-time objectives. No absence penalty. Rewards are delivered once at home when storage has room.","Tek seferlik hedefler. Yokluk cezası yok. Ödüller evde, depoda yer varsa bir kez verilir."),20,T.MUTED))
-	for key in F.contracts():
+	var keys=F.contracts().keys();var start=p.playbook().page(v,"contracts",keys.size(),1)
+	for key in keys.slice(start,start+1):
 		var id=key;var d=F.contracts()[key];var value=F.progress(game.world,key);var claimed=key in game.world.get("armory",{}).get("claims",[])
 		v.add_child(p.heading(game.realm_ui.localized(d.title),24));v.add_child(p.text(str(mini(value,int(d.target)))+" / "+str(d.target),20,T.GOLD));v.add_child(p.text({"hunt":say("Defeat two forest threats (wolf or thorn).","2 orman tehdidini yen (kurt veya dikenli)."),"guardian":say("Defeat a guardian boss.","Bir muhafız boss yen."),"craft":say("Forge an Iron Sword and collect it.","Demir Kılıç üret ve topla."),"refine":say("Successfully enhance one item.","Bir eşyayı başarıyla yükselt.")}[key],19));v.add_child(p.text(game.realm_ui.cost(d.rewards),19,T.MUTED))
 		var button=p.action(v,say("Claimed","Alındı") if claimed else say("Claim reward","Ödülü al"),func():
 			if F.claim(game.world,id):game.realm_ui.changed();contracts()
 			else:ui.toast(say("Return home and make room in storage.","Eve dön ve depoda yer aç.")),true,"quest");button.disabled=claimed or value<int(d.target) or not R.home(game.world)
+		p.playbook().button(v,say("Go to objective","Hedefe git"),func():
+			if id in ["hunt","guardian"]:p.route("hunts")
+			elif id=="craft":p.current_recipe="iron_sword";p.route("recipe")
+			else:p.route("inventory"))
+	p.playbook().button(v,say("Arin · next steps","Arin · sıradaki adımlar"),func():p.route("journey"))
 func attributes():
 	if not R.available(game.world):p.route("hero");return
 	R.ensure(game.world);draft=R.selected(game.world).attributes.duplicate();var v=p.surface(say("Attributes","Statlar"));p.nested=false;v.add_child(p.text(say("Available points: ","Kullanılabilir puan: ")+str(R.points(game.world)),24,T.GOLD))

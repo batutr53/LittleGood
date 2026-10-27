@@ -25,6 +25,13 @@ var current_title=""
 var rpg
 var playbook_pages={}
 var playbook_region="wildwood"
+var gathering_worker=0
+var drop_query=""
+var drop_region="all"
+var layout_plan=[]
+var forge_query=""
+var material_target="wood"
+func journey_ui():return preload("res://scripts/journey_ui.gd").new(self)
 func colony_ui():return preload("res://scripts/colony_ui.gd").new(self)
 func playbook():return preload("res://scripts/playbook_ui.gd").new(self)
 func _init(u,g):ui=u;game=g
@@ -49,12 +56,16 @@ func route(destination: String,arg: int=0,remember=true):
  if history.size()>16:history.pop_front()
  current=destination;argument=arg;nested=false;routing=true
  if not game.world.is_empty():
-  var needs_industry=destination in ["inventory","item","forge","recipe"]
-  var needs_hero=destination in ["hero","attributes","skills","enhance","bestiary","contracts","sets"]
+  var needs_industry=destination in ["inventory","item","forge","forge_queue","recipe","material"]
+  var needs_hero=destination in ["attributes","skills","enhance","bestiary","contracts","sets"] or destination=="hero" and not H.enabled(game.world)
   if needs_industry and not I.enabled(game.world) or needs_hero and not preload("res://scripts/rpg_progression.gd").available(game.world):
    var locked=surface(say("Feature locked","Özellik henüz açılmadı"));locked.add_child(text(say("Complete the village chapters to unlock equipment and heroes. Your current objective shows the next step.","Donanım ve kahramanları açmak için köy bölümlerini tamamla. Güncel görevin sonraki adımı gösterir."),24));playbook().button(locked,say("Open current quest","Güncel görevi aç"),func():route("quest"),true);routing=false;return
  match destination:
   "quest":quest()
+  "chapter":journey_ui().chapter()
+  "journey":journey_ui().overview()
+  "layout":journey_ui().layout()
+  "staffing":playbook().staffing(arg)
   "quest_history":playbook().history()
   "guide":playbook().guide()
   "destination":playbook().destination(playbook_region)
@@ -64,6 +75,8 @@ func route(destination: String,arg: int=0,remember=true):
   "inventory":inventory()
   "item":item_detail(arg)
   "forge":forge(arg)
+  "forge_queue":preload("res://scripts/workshop_ui.gd").new(self).queue()
+  "material":preload("res://scripts/workshop_ui.gd").new(self).material()
   "recipe":recipe_detail()
   "hero":hero()
   "map":world_map()
@@ -290,7 +303,7 @@ func item_detail(id: int):
 func hero():
  if H.enabled(game.world) and not game.world.kingdom.adventure.hero.is_empty():rpg.inventory();return
  if not H.enabled(game.world):ui.toast(say("A champion joins your kingdom in chapter III.","Şampiyon, III. bölümde krallığına katılır."));route("quest",0,false);return
- if game.world.kingdom.adventure.hero.is_empty():game.hero_ui.legacy_profile();return
+ if game.world.kingdom.adventure.hero.is_empty():journey_ui().recruit();return
  ui.page="kingdom";var w=game.world;var h=w.kingdom.adventure.hero;var v=surface(say("Hall of the Champion","Şampiyonun Salonu"));var row=HBoxContainer.new();v.add_child(row)
  row.add_child(image(load("res://assets/adventure/warrior.png"),Vector2(px(190),px(280))))
  var identity=VBoxContainer.new();identity.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(identity);identity.add_child(text(say("WARRIOR · LEVEL ","SAVAŞÇI · SEVİYE ")+str(H.level(h)),19,T.GOLD));identity.add_child(heading(h.name,44));var stats=H.stats(w)
@@ -338,6 +351,8 @@ func main_menu():
  action(v,ui.t("new"),ui.creation,false,"gift");action(v,"English / Türkçe",func():ui.toggle_language();main_menu())
  action(v,say("Online universe","Çevrimiçi evren"),ui.online_screen,false,"map");action(v,ui.t("local_universe"),ui.local_universe);action(v,ui.t("beta"),ui.beta_tools)
 func forge(forge_id: int=0):
+ preload("res://scripts/workshop_ui.gd").new(self).open(forge_id)
+func previous_forge(forge_id: int=0):
  if not I.enabled(game.world):game.realm_ui.legacy_workshop(forge_id);return
  ui.page="kingdom";var w=game.world;var v=surface(say("The Hearthforge","Ocak Demircisi"));var forges=w.kingdom.buildings.filter(func(b):return b.kind=="forge" and K.ready(b))
  if not forges.any(func(b):return int(b.id)==forge_id):forge_id=0 if forges.is_empty() else int(forges[0].id)
@@ -367,6 +382,8 @@ func forge(forge_id: int=0):
   tile.add_child(text(game.realm_ui.localized(d.name),23));tile.add_child(text(game.realm_ui.cost(d.cost),20,T.MUTED));tile.add_child(text(say("Inspect recipe","Tarifi incele") if K.afford(w,d.cost) else say("Materials missing","Malzeme eksik"),19,T.GOLD))
  action(v,say("Assign a smith","Bir demirci ata"),func():route("workers"),false,"workers");action(v,say("Watch your village work","Köyünün çalışmasını izle"),ui.close,true)
 func recipe_detail():
+ preload("res://scripts/workshop_ui.gd").new(self).recipe()
+func previous_recipe_detail():
  var w=game.world
  if not I.recipes().has(current_recipe):route("forge",forge_selected,false);return
  var d=I.recipes()[current_recipe];var v=surface(game.realm_ui.localized(d.name));v.add_child(image(load("res://scripts/armory.gd").icon(current_recipe),Vector2(0,px(190))));v.add_child(heading(game.realm_ui.localized(d.name),34));v.add_child(text(game.realm_ui.localized(d.description),26,T.MUTED));v.add_child(text(say("MATERIALS · OWNED / REQUIRED","MALZEMELER · MEVCUT / GEREKLİ"),19,T.GOLD))

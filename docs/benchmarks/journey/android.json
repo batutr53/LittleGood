@@ -1,0 +1,90 @@
+{
+  "all_passed": true,
+  "checks": {
+    "actual_worker_assignment": true,
+    "bestiary_no_scroll": true,
+    "can_craft": true,
+    "collect_once": true,
+    "collect_order": true,
+    "completed_order": true,
+    "contracts_no_scroll": true,
+    "exact_cost": true,
+    "fixture": true,
+    "forge_no_scroll": true,
+    "image_journey-android-bestiary": true,
+    "image_journey-android-contracts": true,
+    "image_journey-android-forge": true,
+    "image_journey-android-journey": true,
+    "image_journey-android-material": true,
+    "image_journey-android-recipe": true,
+    "image_journey-android-staffing": true,
+    "journey_no_scroll": true,
+    "material_no_scroll": true,
+    "missing_material_blocks": true,
+    "native_x_closes": true,
+    "real_iron_production": true,
+    "real_order": true,
+    "recipe_no_scroll": true,
+    "restore": true,
+    "save": true,
+    "search_real_sources": true,
+    "staffing_action": true,
+    "staffing_no_scroll": true,
+    "valid": true
+  },
+  "pid": 8667,
+  "profiles": [
+    {
+      "draw_calls": 390.0,
+      "fps": 33.7059738154444,
+      "memory_mb": 53.2305946350098,
+      "p95_ms": 34.126,
+      "process_cpu_p95_ms": 39.371,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 60,
+      "texture_memory_mb": 45.6305446624756,
+      "world_update_cpu_p95_ms": 0.633
+    },
+    {
+      "draw_calls": 306.0,
+      "fps": 30.088012417781,
+      "memory_mb": 53.0919799804688,
+      "p95_ms": 34.818,
+      "process_cpu_p95_ms": 30.626,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 30,
+      "texture_memory_mb": 45.6305446624756,
+      "world_update_cpu_p95_ms": 0.74
+    }
+  ],
+  "run_id": "fcf1a91038c748d4828ff926deaf14ee",
+  "source": "actual emulator render, programmatic staffing/crafting/collection and native ADB close tap; isolated fixture",
+  "stage": "journey_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "player_file_hashes": {
+    "planet.json": {
+      "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "before_bytes": 40618,
+      "after_bytes": 40618
+    },
+    "planet.json.bak": {
+      "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "before_bytes": 41031,
+      "after_bytes": 41031
+    },
+    "settings.cfg": {
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_bytes": 0,
+      "after_bytes": 0
+    }
+  },
+  "script_errors": []
+}

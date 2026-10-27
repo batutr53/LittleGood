@@ -333,6 +333,11 @@ func refresh_placement() -> void:
 		var d=K.buildings()[kind];var sites={"forest":say("Forest","Orman"),"fertile":say("Fertile land","Verimli arazi"),"rock":say("Mountain","Dağ"),"land":say("Land","Kara")}
 		notice.text=localized(d.name)+" · "+(cost(d.cost) if moving==0 else say("Relocate","Taşı"))+" · "+str(sites.get(d.site,d.site))+"\n"+detail
 		if ui.premium!=null:notice.text+=" · "+ui.premium.playbook().builders(game.world)
+		if cell>=0:
+			var c=game.world.cells[cell]
+			if kind=="lumber":notice.text+=say(" · forest cover "," · orman yoğunluğu ")+str(roundi(c.plants*100))+"%"
+			elif kind=="farm":notice.text+=say(" · soil moisture "," · toprak nemi ")+str(roundi(c.moisture*100))+"%"
+			if kind in ["lumber","quarry","mine"]:notice.text+=say(" · deposit "," · rezerv ")+str(snappedf(c.resources,.1))
 	else:notice.text=detail+say(" · confirm to gather"," · toplamak için onayla")
 func valid(index: int) -> bool:
 	if index<0 or index>=game.world.cells.size():return false
