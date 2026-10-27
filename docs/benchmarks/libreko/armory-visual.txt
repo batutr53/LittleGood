@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 616.64 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4070 Laptop GPU
+
+ARMORY_VISUAL {"all_passed":true,"checks":{"bestiary1280":true,"bestiary1600":true,"bestiary960":true,"capture_bestiary-1280":true,"capture_bestiary-1600":true,"capture_bestiary-960":true,"capture_contracts-1280":true,"capture_contracts-1600":true,"capture_contracts-960":true,"capture_enhance-1280":true,"capture_enhance-1600":true,"capture_enhance-960":true,"capture_full-set":true,"capture_inventory-1280":true,"capture_inventory-1600":true,"capture_inventory-960":true,"capture_scroll-crafting":true,"capture_sets-1280":true,"capture_sets-1600":true,"capture_sets-960":true,"capture_spell-mage":true,"capture_spell-priest":true,"capture_spell-rogue":true,"capture_spell-warrior":true,"capture_upgrade-confirmation":true,"confirmation_button":true,"confirmation_visible":true,"contracts1280":true,"contracts1600":true,"contracts960":true,"enhance1280":true,"enhance1600":true,"enhance960":true,"full_set_active":true,"mage_cast":true,"mage_entry":true,"priest_cast":true,"priest_entry":true,"rogue_cast":true,"rogue_entry":true,"sets1280":true,"sets1600":true,"sets960":true,"state_valid":true,"warrior_cast":true,"warrior_entry":true},"count":46,"source":"Actual Godot screenshots; fixtures and synthetic viewport changes, real adventure skill inputs"}
+WARNING: 11 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 5 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

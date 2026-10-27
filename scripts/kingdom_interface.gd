@@ -18,7 +18,10 @@ var confirm_button
 var placement_backdrop
 func _init(owner_game,interface) -> void:game=owner_game;ui=interface
 func say(en: String,tr: String) -> String:return tr if ui.language=="tr" else en
-func localized(pair: Array) -> String:return pair[1 if ui.language=="tr" else 0]
+func localized(pair: Variant) -> String:
+	if pair is Dictionary:return str(pair.get(ui.language,pair.get("en","")))
+	if pair is Array and pair.size()>=2:return str(pair[1 if ui.language=="tr" else 0])
+	return str(pair) if pair is String else ""
 func add(parent,text: String,callback: Callable,primary: bool=false):
 	var b=ui.button(text,callback,primary);b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;parent.add_child(b);return b
 func available() -> bool:return not game.visiting and not game.world.is_empty()

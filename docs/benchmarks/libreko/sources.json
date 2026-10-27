@@ -1,0 +1,76 @@
+{
+  "sources": [
+    {
+      "url": "https://github.com/ZeusAFK/LibreKO",
+      "revision": "e5f0e4200fd42f69934f55557f92f2ee2ccfafde",
+      "path": "D:\\LittleGod\\builds\\research\\LibreKO",
+      "tracked_files": 6143,
+      "bytes": 642052284,
+      "extensions": {
+        ".cfg": 1,
+        ".comp": 1,
+        ".config": 1,
+        ".cs": 3053,
+        ".csproj": 9,
+        ".gdshader": 20,
+        ".gdshaderinc": 7,
+        ".godot": 1,
+        ".ico": 1,
+        ".import": 132,
+        ".jpg": 14,
+        ".json": 165,
+        ".md": 10,
+        ".png": 5,
+        ".po": 2,
+        ".pot": 1,
+        ".props": 1,
+        ".quest": 1131,
+        ".res": 2,
+        ".sln": 2,
+        ".smd": 39,
+        ".svg": 73,
+        ".tscn": 5,
+        ".txt": 4,
+        ".uid": 1411,
+        ".webp": 40,
+        ".yml": 4,
+        "<none>": 8
+      },
+      "license": "AGPL-3.0",
+      "license_sha256": "6f1e622c82a380075843bb084a7ec3b1f1d12a4a02526d75e78b0924a860aa75"
+    },
+    {
+      "url": "https://github.com/ZeusAFK/LibreKO-Assets",
+      "revision": "b44cf9ddf5c3c0b703db0db5d7fe505b582cab66",
+      "path": "D:\\LittleGod\\builds\\research\\LibreKO-Assets",
+      "tracked_files": 120,
+      "bytes": 914050,
+      "extensions": {
+        ".json": 2,
+        ".md": 2,
+        ".py": 113,
+        ".txt": 1,
+        "<none>": 2
+      },
+      "license": "AGPL-3.0",
+      "license_sha256": "6f1e622c82a380075843bb084a7ec3b1f1d12a4a02526d75e78b0924a860aa75"
+    },
+    {
+      "url": "https://github.com/ZeusAFK/LibreKO-vscode",
+      "revision": "4c4597a3a6a150755a7020d82a88a7ff6b78b1d3",
+      "path": "D:\\LittleGod\\builds\\research\\LibreKO-vscode",
+      "tracked_files": 14,
+      "bytes": 86348,
+      "extensions": {
+        ".js": 5,
+        ".json": 5,
+        ".md": 1,
+        "<none>": 3
+      },
+      "license": "AGPL-3.0",
+      "license_sha256": "6f1e622c82a380075843bb084a7ec3b1f1d12a4a02526d75e78b0924a860aa75"
+    }
+  ],
+  "runtime_code_copied": false,
+  "baked_content_included": false
+}

@@ -1,0 +1,72 @@
+{
+  "all_passed": true,
+  "checks": {
+    "adventure": true,
+    "contract": true,
+    "fixture": true,
+    "real_stats": true,
+    "replay_blocked": true,
+    "restore": true,
+    "save": true,
+    "scroll_consumed": true,
+    "set_bonus": true,
+    "spell": true,
+    "upgrade": true,
+    "valid": true
+  },
+  "pid": 2472,
+  "profiles": [
+    {
+      "draw_calls": 0.0,
+      "fps": 4.94797305294292,
+      "memory_mb": 59.2441663742065,
+      "p95_ms": 327.427,
+      "process_cpu_p95_ms": 468.363,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 60,
+      "texture_memory_mb": 63.1904296875,
+      "world_update_cpu_p95_ms": 19.163
+    },
+    {
+      "draw_calls": 0.0,
+      "fps": 12.4829622426058,
+      "memory_mb": 58.9833135604858,
+      "p95_ms": 125.881,
+      "process_cpu_p95_ms": 119.281,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 30,
+      "texture_memory_mb": 63.1904296875,
+      "world_update_cpu_p95_ms": 3.929
+    }
+  ],
+  "run_id": "98d11395871d494ba5bff61070873ca7",
+  "source": "actual_android_emulator_render_with_programmatic_model_actions_no_native_input_claim",
+  "stage": "armory_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "player_file_hashes": {
+    "planet.json": {
+      "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "before_bytes": 40618,
+      "after_bytes": 40618
+    },
+    "planet.json.bak": {
+      "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "before_bytes": 41031,
+      "after_bytes": 41031
+    },
+    "settings.cfg": {
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_bytes": 0,
+      "after_bytes": 0
+    }
+  },
+  "script_errors": []
+}

@@ -136,9 +136,10 @@ static func claim(w: Dictionary,key: String) -> bool:
 	w.armory.claims.append(key);return true
 static func glow(w: Dictionary,id: int) -> Dictionary:
 	var s=state(w,id);var n=int(s.rebirth)
-	var strength=1.0 if n>=21 else .8 if n>=11 else .55 if n>=5 else .3 if n>0 else .16 if int(s.normal)>=7 else 0.0
+	var level=4 if n>=21 else 3 if n>=11 else 2 if n>=5 else 1 if n>0 else clampi(int(s.normal)-6,0,4)
+	var strength=[0.0,.3,.55,.8,1.0][level] if n>0 else [0.0,.16,.36,.65,1.0][level]
 	var colors={"none":Color("f5d088"),"fire":Color("ff9251"),"frost":Color("88ddff"),"lightning":Color("d9a0ff"),"poison":Color("8ae99e")}
-	return {"strength":strength,"color":colors[s.element]}
+	return {"strength":strength,"color":colors[s.element],"level":level,"element":s.element}
 static func validate(w: Dictionary) -> bool:
 	if not w.has("armory"):return true
 	var C=load("res://scripts/planet_showcase.gd");var a=w.armory

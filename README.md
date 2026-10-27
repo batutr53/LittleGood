@@ -26,7 +26,7 @@ Online universe is optional. Run `Launch Online Server.cmd` for the local ASP.NE
 
 This is a closed beta candidate. Long-term content depth and enjoyment still need human testing. Optional diagnostics stay locally, can be previewed/cleared/disabled and never upload. Live payments are disabled. No external analytics, public deployment or store publication is configured. Online visits are read-only snapshots, not real-time multiplayer. OAuth/email recovery and public-hosting security/operational prerequisites remain pending.
 
-All game art, vector assets, shader code, synthesized audio, and game source were created for this project. Godot Forge is an MIT-licensed third-party editor integration. License details: `docs/ASSET_INVENTORY.md`.
+Most game art, vector assets, shader code, synthesized audio, and game source were created for this project. Eight LibreKO interface SVGs are distributed with their AGPL-3.0 license and source notice in `assets/third_party/libreko/`. Godot Forge is an MIT-licensed third-party editor integration. License details: `docs/ASSET_INVENTORY.md`.
 
 Open ☰ → Atelier & collection to browse earned Stardust cosmetics, previews, requirements and favorites. Flowers/stones are available immediately. Browse atelier unlocks with explicit confirmation; Decorate planet lets you preview, place, move, face, store and undo/redo up to 32 pieces. Drag/pinch still navigate. Creature profiles open individual wardrobes. Themes, skies and frames change presentation only. Future premium content is explicitly unavailable.
 

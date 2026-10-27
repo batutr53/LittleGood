@@ -29,6 +29,7 @@ func card(rect: Rect2) -> Panel:
 	var panel=Panel.new();panel.add_theme_stylebox_override("panel",T.box(Color(.045,.075,.105,.94),true));p.put(panel,rect);return panel
 func icon_action(parent: Control,key: String,label: String,cb: Callable) -> Button:
 	var b=ui.button(label,cb);b.icon=T.icon(key);b.expand_icon=true;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.alignment=HORIZONTAL_ALIGNMENT_CENTER;b.vertical_icon_alignment=VERTICAL_ALIGNMENT_TOP;b.add_theme_constant_override("icon_max_width",int(p.px(24)));b.add_theme_constant_override("h_separation",0);b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(48),p.px(43));b.tooltip_text=label;b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;compact_button(b)
+	b.add_theme_color_override("icon_normal_color",T.GOLD);b.add_theme_color_override("icon_pressed_color",T.CREAM);b.add_theme_color_override("icon_hover_color",T.CREAM)
 	for state in ["normal","hover","pressed","disabled","focus"]:
 		var skin=b.get_theme_stylebox(state);skin.content_margin_top=0;skin.content_margin_bottom=0
 	parent.add_child(b);return b
@@ -40,6 +41,7 @@ func highlight_navigation():
 		var skin=T.box(Color("354859") if active else Color("151f29"),active);skin.content_margin_top=0;skin.content_margin_bottom=0
 		if active:skin.set_border_width_all(2)
 		b.add_theme_stylebox_override("normal",skin);b.add_theme_stylebox_override("pressed",skin);b.add_theme_color_override("font_color",T.GOLD if active else T.CREAM)
+		b.add_theme_color_override("icon_normal_color",T.GOLD);b.add_theme_color_override("icon_pressed_color",T.CREAM);b.add_theme_color_override("icon_hover_color",T.CREAM)
 func highlight_item():
 	if not is_instance_valid(ui.modal):return
 	for b in ui.modal.find_children("*","Button",true,false):

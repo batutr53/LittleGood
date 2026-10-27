@@ -9,5 +9,7 @@ static func box(color: Color= SURFACE,primary: bool=false) -> StyleBoxFlat:
  s.content_margin_left=6;s.content_margin_right=6;s.content_margin_top=4;s.content_margin_bottom=4
  return s
 static func icon(key: String) -> Texture2D:
+ var libreko={"hero":"user","bag":"bag","quest":"scroll","hammer":"hammer","workers":"users-three","menu":"sliders","map":"pin","shield":"combat-defence"}
+ if libreko.has(key):return load("res://assets/third_party/libreko/"+libreko[key]+".svg")
  if ResourceLoader.exists("res://assets/ui_classic/"+key+".svg"):return load("res://assets/ui_classic/"+key+".svg")
  return load("res://assets/ui_rebirth/"+key+".svg")

@@ -1,0 +1,8 @@
+--------- beginning of main
+10-27 21:19:47.974  4154  4207 I godot   : Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+10-27 21:19:48.092  4154  4207 E godot   : WARNING: Failed to load cached shader, recompiling.
+10-27 21:19:48.092  4154  4207 E godot   :    at: _load_from_cache (drivers/gles3/shader_gles3.cpp:615)
+10-27 21:19:48.338  4154  4207 I godot   : OpenGL API OpenGL ES 3.1 (4.5.0 NVIDIA 616.64) - Compatibility - Using Device: Google (NVIDIA Corporation) - Android Emulator OpenGL ES Translator (NVIDIA GeForce RTX 4070 Laptop GPU/PCIe/SSE2)
+10-27 21:19:48.355  4154  4207 I godot   : 
+10-27 21:20:01.503  4154  4207 I godot   : LittleGod runtime: tick=386 paused=true menu=false fps=38.0
+10-27 21:20:11.500  4154  4207 I godot   : LittleGod runtime: tick=386 paused=true menu=false fps=35.0

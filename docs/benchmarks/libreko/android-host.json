@@ -1,0 +1,74 @@
+{
+  "all_passed": true,
+  "checks": {
+    "accepted_swing_trail": true,
+    "adventure": true,
+    "contract": true,
+    "fixture": true,
+    "libreko_bag": true,
+    "real_stats": true,
+    "replay_blocked": true,
+    "restore": true,
+    "save": true,
+    "scroll_consumed": true,
+    "set_bonus": true,
+    "spell": true,
+    "upgrade": true,
+    "valid": true
+  },
+  "pid": 3387,
+  "profiles": [
+    {
+      "draw_calls": 373.0,
+      "fps": 11.6389931521293,
+      "memory_mb": 59.3439893722534,
+      "p95_ms": 103.982,
+      "process_cpu_p95_ms": 124.005,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 60,
+      "texture_memory_mb": 63.1904296875,
+      "world_update_cpu_p95_ms": 4.765
+    },
+    {
+      "draw_calls": 292.0,
+      "fps": 18.0461529369816,
+      "memory_mb": 59.0807332992554,
+      "p95_ms": 79.526,
+      "process_cpu_p95_ms": 90.105,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 30,
+      "texture_memory_mb": 63.1904296875,
+      "world_update_cpu_p95_ms": 2.603
+    }
+  ],
+  "run_id": "ccbc7f941590426f811a7b42e3249f9a",
+  "source": "actual_android_emulator_render_with_programmatic_model_actions_no_native_input_claim",
+  "stage": "armory_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "player_file_hashes": {
+    "planet.json": {
+      "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "before_bytes": 40618,
+      "after_bytes": 40618
+    },
+    "planet.json.bak": {
+      "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "before_bytes": 41031,
+      "after_bytes": 41031
+    },
+    "settings.cfg": {
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_bytes": 0,
+      "after_bytes": 0
+    }
+  },
+  "script_errors": []
+}

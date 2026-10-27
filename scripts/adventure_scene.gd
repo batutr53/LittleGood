@@ -267,6 +267,9 @@ func _physics_process(delta: float) -> void:
 		var before_feedback=battle_feedback.snapshot() if is_instance_valid(battle_feedback) else {}
 		var feedback=A.step(game.world,command,move_body);presentation_feedback.append_array(feedback);actions.clear();combat_cpu_us+=Time.get_ticks_usec()-started;physics_steps+=1
 		if is_instance_valid(battle_feedback):battle_feedback.resolve(before_feedback,feedback,command)
+		if feedback.has("swing"):
+			var swing_run=game.world.kingdom.adventure.run
+			spell_fx.weapon_swing(Vector2(swing_run.x,swing_run.y),Vector2(swing_run.facing[0],swing_run.facing[1]),load("res://scripts/armory.gd").glow(game.world,int(game.world.kingdom.adventure.hero.equipment.weapon)))
 		if can_cast and feedback.has("swing"):
 			var cls=game.world.kingdom.adventure.hero.get("class","warrior");var prog=load("res://scripts/rpg_progression.gd").selected(game.world);var index=int(prog.get("bar",[0,1,2])[clampi(int(command.get("skill_slot",0)),0,2)])
 			var run=game.world.kingdom.adventure.run;spell_fx.cast(Vector2(run.x,run.y),cls,index,Vector2(run.facing[0],run.facing[1]))
@@ -286,6 +289,7 @@ func _physics_process(delta: float) -> void:
 		if feedback.has("kill") or feedback.has("boss"):game.checkpoint("combat-victory")
 	var r=game.world.kingdom.adventure.run;bodies[0].position=Vector2(r.x,r.y)
 	spell_fx.aura_position=Vector2(r.x,r.y);spell_fx.aura_direction=Vector2(r.facing[0],r.facing[1]).normalized();spell_fx.aura=load("res://scripts/armory.gd").glow(game.world,int(game.world.kingdom.adventure.hero.equipment.weapon))
+	spell_fx.low_quality=game.view.low_quality
 	if is_instance_valid(warrior_visual):warrior_visual.sample(game.world,presentation_feedback)
 	bodies[0].get_node("Art").rotation=sin(r.clock*.012)*.025*direction.length()
 	bodies[0].get_node("Art").position.y=-46.2-absf(sin(r.clock*.015))*3*direction.length()
@@ -344,7 +348,8 @@ func draw_effects(canvas: Node2D) -> void:
 			var warning=Vector2(e.aimx,e.aimy) if e.kind in ["spider","cave_stalker","ruin_sentinel","sun_shade"] or root else p;var radius=70 if e.kind=="sun_shade" else 65 if e.kind=="ruin_sentinel" else 55 if e.kind=="cave_stalker" else 60 if e.kind=="spider" else 85 if root else 145 if e.kind=="thornheart" else int(data.range)+12
 			canvas.draw_circle(warning,radius,Color(.95,.38,.24,.25));canvas.draw_arc(warning,radius,0,TAU,40,Color("f3bb7b"),3,true)
 	if r.swing>0:
-		var p=Vector2(r.x,r.y);var angle=Vector2(r.facing[0],r.facing[1]).angle();canvas.draw_arc(p,65,angle-.9,angle+.9,20,Color("f8e3a7"),9,true)
+		var p=Vector2(r.x,r.y);var angle=Vector2(r.facing[0],r.facing[1]).angle();var profile=spell_fx.aura
+		canvas.draw_arc(p,65,angle-.9,angle+.9,12 if game.view.low_quality else 20,profile.color if profile.get("element","none")!="none" else Color("f8e3a7"),6+float(profile.strength)*3,true)
 	if r.dash>0:
 		var heading=Vector2(r.facing[0],r.facing[1]).normalized()
 		for i in range(1,4):canvas.draw_circle(Vector2(r.x,r.y)-heading*i*16,15-i*3,Color(.75,.9,.8,.5-i*.1))

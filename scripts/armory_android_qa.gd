@@ -31,7 +31,10 @@ func run():
 		var hero=w.kingdom.adventure.hero;hero.cooldowns.skill=0;w.rpg.progression.warrior.skills[0]=1;w.rpg.progression.warrior.bar[0]=0;w.rpg.progression.warrior.cooldowns=[0,0,0,0,0,0];w.rpg.progression.warrior.mana=100;game.adventure_scene.actions.skill=true
 		var deadline=Time.get_ticks_msec()+1000
 		while game.adventure_scene.spell_fx.spells.is_empty() and Time.get_ticks_msec()<deadline:await get_tree().process_frame
-		host.checks.spell=not game.adventure_scene.spell_fx.spells.is_empty();await shot("armory-android-spell");game.adventure_scene.go_home();await settle()
+		host.checks.spell=not game.adventure_scene.spell_fx.spells.is_empty()
+		host.checks.accepted_swing_trail=not game.adventure_scene.spell_fx.weapon_trails.is_empty()
+		host.checks.libreko_bag=load("res://scripts/premium_theme.gd").icon("bag").resource_path=="res://assets/third_party/libreko/bag.svg"
+		await shot("armory-android-spell");game.adventure_scene.go_home();await settle()
 	host.checks.valid=Persistence.validate(w)
 	var profiles=[await profile(60),await profile(30)];game.view.set_quality(false)
 	host.publish("armory_complete",{"run_id":host.options.get("run_id",""),"pid":OS.get_process_id(),"all_passed":not host.checks.values().has(false),"profiles":profiles,"source":"actual_android_emulator_render_with_programmatic_model_actions_no_native_input_claim"})

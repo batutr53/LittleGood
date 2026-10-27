@@ -1,5 +1,9 @@
 # Asset inventory and provenance
 
+## LibreKO interface additions — 28 October 2026
+
+Eight unchanged interface SVGs from ZeusAFK/LibreKO revision `e5f0e4200fd42f69934f55557f92f2ee2ccfafde` are now used in navigation/theme mappings. Files: `assets/third_party/libreko/{bag,user,scroll,hammer,users-three,sliders,pin,combat-defence}.svg`. Upstream AGPL-3.0 license and provenance accompany them in `LICENSE.txt` and `NOTICE.txt`, including in Android exports. Source SVGs remain editable; asset hashes are in `docs/benchmarks/libreko/asset-hashes.json`. No upstream generated KO client art is included. Detailed source boundaries: [LibreKO integration](research/LIBREKO_INTEGRATION.md).
+
 ## Phase 7 additions
 
 All painted creature/environment atlases, typefaces and existing icon art remain. Six existing species portraits serve as selectable guardian avatars. `assets/phase2/icons/online.svg` is a new original vector planet/orbit emblem. `scripts/showcase_preview.gd` draws a terrain map from the server's actual public tile coordinates/biomes using the established palette. No remote image loading, concept-art substitution, paid service or new raster generation is used. UI retains the game's typography, colors and transitions.
