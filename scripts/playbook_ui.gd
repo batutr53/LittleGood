@@ -260,9 +260,12 @@ func building(id):
  if not K.ready(b):
   var bar=ProgressBar.new();bar.max_value=b.required;bar.value=b.progress;bar.custom_minimum_size.y=p.px(16);v.add_child(bar)
  else:label(v,game.realm_ui.localized(d.description))
- label(v,say("Work resumes when you close this menu.","Menüyü kapatınca çalışma devam eder."))
+ var products=label_collection(w,b);label(v,products)
  var E=load("res://scripts/estate.gd")
- if E.enabled(w) and E.status(w,b)!="":button(v,say("Collect ready output","Hazır ürünü topla"),func():game.view.estate_layer.collect(id);p.route("building",id,false),true)
+ if E.enabled(w) and E.status(w,b)!="":
+  var collect=button(v,say("Collect ready output","Hazır ürünü topla"),func():
+   if not is_same(w,game.world):ui.toast(say("World changed. Select the building again.","Dünya değişti. Binayı yeniden seç."));return
+   game.view.estate_layer.collect(id);p.route("building",id,false),true);collect.name="CollectBuildingOutput"
  var actions=HBoxContainer.new();v.add_child(actions);button(actions,say("Staff this building","Bu binanın personeli"),func():p.route("staffing",id));button(actions,say("Locate","Yerini göster"),func():game.realm_ui.focus(int(b.cell)))
  if b.kind=="forge":button(v,say("Craft equipment / scrolls","Donanım / parşömen üret"),func():p.route("forge",id))
  if b.kind=="barracks" and M.enabled(w):button(v,say("Army & battlefields","Birlik ve savaş alanları"),func():p.route("army"))
@@ -271,6 +274,17 @@ func building(id):
   button(v,say("Upgrade · level ","Geliştir · seviye ")+str(int(b.level)+1),func():p.route("building_upgrade",id),true)
  elif int(b.level)>=3:label(v,say("Maximum building level: 3","Bina son seviyede: 3"))
  button(v,say("Relocate building","Binayı taşı"),func():game.realm_ui.begin("build",b.kind,id)).disabled=T.building_reserved(w,id)
+func label_collection(w,b) -> String:
+ var E=load("res://scripts/estate.gd")
+ if not E.enabled(w):return say("Output is deposited directly into stores.","Ürün doğrudan depoya aktarılır.")
+ var report=E.collection_state(w,int(b.id));var words=[]
+ for key in report.pending:
+  var stored=K.home(w).food if key=="food" else int(w.kingdom.stock.get(key,0))/1000.0;var cap=100 if key=="food" else K.storage(w)
+  words.append(p.rpg.resource_name(key)+" %.3f · %.3f / %.0f"%[int(report.pending[key])/1000.0,stored,cap])
+ if report.items>0:words.append(say("Ready items: ","Hazır eşya: ")+str(report.items))
+ if report.built:words.append(say("Construction ready to acknowledge","İnşaat tamamlandı · teslim al"))
+ if words.is_empty():return say("No products ready · ","Hazır ürün yok · ")+work_status(w,b)
+ return say("Ready / stored: ","Hazır / depoda: ")+" · ".join(words)
 func staffing(id):
  var w=game.world;var matches=w.get("kingdom",{}).get("buildings",[]).filter(func(b):return int(b.id)==id)
  if matches.is_empty():p.route("guide");return

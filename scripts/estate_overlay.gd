@@ -31,8 +31,11 @@ func collect_worker(id,at):
 	rewards.append({"position":at,"age":0.0,"text":"+"+str(amount/1000.0)+" "+C.NAMES[resource][1 if game.ui.language=="tr" else 0]});game.schedule_save();game.ui.refresh();view.invalidate();game.audio.chime(1)
 	if game.haptics and OS.has_feature("mobile"):Input.vibrate_handheld(22,.25)
 func collect(id: int) -> bool:
-	var game=view.get_parent();var result=E.collect(view.world,id)
-	if result.is_empty():game.ui.toast("Depo dolu · önce yer aç" if game.ui.language=="tr" else "Storage full · make room first");return false
+	var game=view.get_parent();var before=E.collection_state(view.world,id);var result=E.collect(view.world,id)
+	if OS.is_debug_build():print("INTERACTION collect button=CollectBuildingOutput building=",id," command=Estate.collect code=",before.code," result=",JSON.stringify(result))
+	if result.is_empty():
+		var code=str(before.code);var tr=game.ui.language=="tr"
+		game.ui.toast(("Depo/çanta dolu · hazır ürünler korunuyor" if tr else "Storage/inventory full · ready output kept") if code=="full" else ("Üretim sürüyor · henüz hazır ürün yok" if tr else "Production running · no products ready") if code=="running" else ("Sefer sırasında toplanamaz" if tr else "Return from expedition to collect") if code=="expedition" else ("Hazır ürün yok · işçi ve girdileri kontrol et" if tr else "No products ready · check workers and inputs") if code=="empty" else ("Bina artık mevcut değil" if tr else "Building is no longer available"));return false
 	var words=[]
 	for key in result:
 		if key=="crafted":words.append(("Üretim toplandı ×" if game.ui.language=="tr" else "Craft collected ×")+str(int(result[key])));continue
@@ -42,6 +45,7 @@ func collect(id: int) -> bool:
 	view.select_cell(int(b.cell))
 	rewards.append({"position":bubble(b),"age":0.0,"text":" · ".join(words)})
 	game.schedule_save();game.ui.refresh();view.invalidate();game.audio.chime(1)
+	game.ui.toast(" · ".join(words)+(" · Kalan ürün içeride korunuyor" if game.ui.language=="tr" else " · Remaining output kept") if not E.collection_state(view.world,id).pending.is_empty() else " · ".join(words))
 	if game.haptics and OS.has_feature("mobile"):Input.vibrate_handheld(22,.25)
 	return true
 func pick(pos: Vector2) -> bool:

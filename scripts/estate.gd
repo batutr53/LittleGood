@@ -74,9 +74,12 @@ static func collect(w: Dictionary,id: int) -> Dictionary:
 	if w.kingdom.has("industry"):
 		for job in w.kingdom.industry.queue.duplicate():
 			if int(job.building)!=id or not w.estate.craft_ready.has(int(job.id)):continue
+			# Queued items reserve capacity, but never append over an occupied/invalid slot.
+			if w.kingdom.industry.items.size()>=load("res://scripts/industry.gd").MAX_ITEMS or w.kingdom.industry.items.any(func(item):return int(item.id)==int(job.id)):continue
 			w.kingdom.industry.items.append({"id":int(job.id),"recipe":job.recipe});w.kingdom.industry.queue.erase(job);w.estate.craft_ready.erase(int(job.id))
 			k.event(w,"craft_"+job.recipe);k.record(w,"craft",job.recipe);result["crafted"]=int(result.get("crafted",0))+1
 	for resource in pending.keys():
+		if resource!="food" and not w.kingdom.stock.has(resource):continue
 		var space=maxf(0,100-k.home(w).food) if resource=="food" else maxf(0,k.storage(w)-int(w.kingdom.stock.get(resource,0))/1000.0)
 		var amount=mini(int(pending[resource]),floori(space*1000))
 		if amount<=0:continue
@@ -89,6 +92,25 @@ static func collect(w: Dictionary,id: int) -> Dictionary:
 	if int(b.progress)>=int(b.required) and int(w.estate.completed.get(key,0))<int(b.level):
 		w.estate.completed[key]=int(b.level);result["built"]=1
 	return result
+static func collection_state(w: Dictionary,id: int) -> Dictionary:
+	var report={"code":"unavailable","pending":{},"space":{},"items":0,"built":false}
+	if not enabled(w) or not w.has("kingdom"):return report
+	if w.kingdom.get("adventure",{}).get("run",{}).get("active",false) or w.kingdom.get("military",{}).get("battle",{}).get("active",false):report.code="expedition";return report
+	var found=w.kingdom.buildings.filter(func(b):return int(b.id)==id)
+	if found.is_empty():return report
+	var b=found[0];var K=load("res://scripts/kingdom.gd");report.pending=w.estate.pending.get(str(id),{}).duplicate();var possible=false
+	for key in report.pending:
+		var room=maxf(0,100-K.home(w).food) if key=="food" else maxf(0,K.storage(w)-int(w.kingdom.stock.get(key,0))/1000.0)
+		report.space[key]=floori(room*1000)
+		if mini(int(report.pending[key]),int(report.space[key]))>0:possible=true
+	if w.kingdom.has("industry"):
+		for job in w.kingdom.industry.queue:
+			if int(job.building)==id and w.estate.craft_ready.has(int(job.id)):report.items+=1
+	if report.items>0 and w.kingdom.industry.items.size()<load("res://scripts/industry.gd").MAX_ITEMS:possible=true
+	report.built=K.ready(b) and int(w.estate.completed.get(str(id),0))<int(b.level)
+	if report.built:possible=true
+	report.code="ready" if possible else "full" if not report.pending.is_empty() or report.items>0 else "running" if not K.ready(b) or K.activity_rate(w,b)>0 else "empty"
+	return report
 static func validate(w: Dictionary) -> bool:
 	if not w.has("estate"):return true
 	var c=load("res://scripts/planet_showcase.gd");var e=w.estate

@@ -7,6 +7,8 @@ var root: Control
 var header: Label
 var stats: Label
 var hint: Label
+var action_notice: PanelContainer
+var action_notice_text: Label
 var power_buttons: Array = []
 var power_icons: Array = []
 var modal: PanelContainer
@@ -849,6 +851,10 @@ func follow_chapter() -> void:
 func toast(text: String) -> void:
 	hint.text = text
 	toast_until = Time.get_ticks_msec() + 8000
+	if not is_instance_valid(action_notice) or action_notice.get_parent()!=root:
+		action_notice=PanelContainer.new();action_notice.name="ActionNotice";action_notice.mouse_filter=Control.MOUSE_FILTER_IGNORE;action_notice.z_index=100;action_notice.add_theme_stylebox_override("panel",preload("res://scripts/premium_theme.gd").box(Color("17232c"),true));root.add_child(action_notice)
+		action_notice_text=Label.new();action_notice_text.mouse_filter=Control.MOUSE_FILTER_IGNORE;action_notice_text.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;action_notice_text.add_theme_font_override("font",ui_font());action_notice_text.add_theme_font_size_override("font_size",16);action_notice.add_child(action_notice_text)
+	var extent=get_viewport().get_visible_rect().size;action_notice.position=Vector2(16,80);action_notice.size=Vector2(minf(470,extent.x-32),0);action_notice_text.text=text;action_notice.show()
 
 func _process(_delta: float) -> void:
 	# Six small SVG controls need a fresh command after bulk story/style updates.
@@ -856,9 +862,10 @@ func _process(_delta: float) -> void:
 	if not game.in_menu and not game.visiting and is_instance_valid(root):
 		for icon in power_icons:
 			if icon.visible: icon.queue_redraw()
-	if toast_until > 0 and Time.get_ticks_msec() > toast_until and not game.in_menu:
+	if toast_until > 0 and Time.get_ticks_msec() > toast_until:
 		toast_until = 0
 		hint.text = t("hint_short")
+		if is_instance_valid(action_notice):action_notice.hide()
 	if is_instance_valid(modal):
 		var keyboard = DisplayServer.virtual_keyboard_get_height() if OS.has_feature("mobile") else 0
 		var scale_factor = get_viewport().get_visible_rect().size.x / maxf(1, DisplayServer.window_get_size().x)
@@ -880,7 +887,7 @@ func blocks_world(pos: Vector2) -> bool:
 func world_controls(value: bool) -> void:
 	if not is_instance_valid(root): return
 	for child in root.get_children():
-		if child is Control and child != modal and child != veil: child.visible = value
+		if child is Control and child != modal and child != veil and child!=action_notice: child.visible = value
 
 func loading_screen() -> void:
 	page = "loading"
