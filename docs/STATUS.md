@@ -1,5 +1,13 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Critical interaction hotfix — 28 October 2026
+
+Fixed misleading product collection feedback, silent worker assignment/rejection and world input blocked by ordinary building panels. Inspectors now allow exposed-world selection/pan and real simulation; another building replaces the active inspector, empty world dismisses it, and controls do not click through. True confirmations/settings/NPC contexts retain deliberate gates. Collection shows actual ready/stored amounts and preserves output on capacity failure; named assignment/removal reports real results and saves immediately. No save schema, balances or identity changes.
+
+Verified existing **822 campaign, 270 UI, 98 HUD, 142 playbook, 224 journey, 97 selection, 61 navigation, 94+100 colony, 44 estate, 46 battle, 72 continuity, 120 systems**; new **26 collection + 24 workers + 65 native-mouse integration**. Android: **33 checks, 14 external ADB actions**, including TR/EN, double collection, exposed building switching and compact portrait Collect/X; **3 new-process restore checks**, unchanged saved bytes and protected player files. No physical phone test. Existing shutdown warnings remain; no stable-FPS or full Reforge completion claim.
+
+Main APK: `D:/LittleGod/builds/android/LittleGod-Critical-Hotfix-debug.apk`; installed/tested QA APK: `D:/LittleGod/builds/android/LittleGod-Critical-Hotfix-QA-debug.apk` (version 108). Source: `D:/LittleGod/builds/android/LittleGod-Critical-Hotfix-source.zip`. Launcher unchanged. Exact scope, evidence, reproduction and limitations: [CRITICAL_INTERACTION_HOTFIX.md](CRITICAL_INTERACTION_HOTFIX.md). Prior APKs and player saves preserved.
+
 ## Project Reforge — R1/R2 intermediate, 28 October 2026
 
 Reproduced Arin freeze in the actual runtime: `in_menu` stopped the economy while SceneTree/user pause were false. Added an explicit NPC-dialogue clock context, functional original Arin world anchor and readable portrait-led bottom dialogue. Real gathering/production/construction now continue during normal conversation; close/settings/user pause/visit/suspend/expedition/caravan policies remain distinct. Chapter reward actions call the original exactly-once command; saves/identities unchanged. Prior systems checkpoint `2d44211` also adapts real combat validation, 24 skill definitions, reviewed upgrades and target-goal/material joins from inspected LibreKO patterns.

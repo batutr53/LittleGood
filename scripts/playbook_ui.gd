@@ -275,6 +275,10 @@ func building(id):
    if not is_same(w,game.world):ui.toast(say("World changed. Select the building again.","Dünya değişti. Binayı yeniden seç."));return
    game.view.estate_layer.collect(id);p.route("building",id,false),true);collect.name="CollectBuildingOutput"
   collect.tooltip_text=say("Collect this building only. Full storage leaves remaining output here.","Yalnızca bu bina toplanır. Depo doluysa kalan ürün burada korunur.")
+  var report=E.collection_state(w,id)
+  if report.code=="full" and report.pending.keys().any(func(key):return key!="food"):
+   button(v,say("Find / build a storehouse","Ambarı bul / kur"),func():go_objective("build_storage"))
+  elif report.code=="full" and report.items>0:button(v,say("Manage inventory","Çantayı yönet"),func():p.route("inventory"))
  var actions=HBoxContainer.new();v.add_child(actions);button(actions,say("Staff this building","Bu binanın personeli"),func():p.route("staffing",id));button(actions,say("Locate","Yerini göster"),func():game.realm_ui.focus(int(b.cell)))
  if b.kind=="forge":button(v,say("Craft equipment / scrolls","Donanım / parşömen üret"),func():p.route("forge",id))
  if b.kind=="barracks" and M.enabled(w):button(v,say("Army & battlefields","Birlik ve savaş alanları"),func():p.route("army"))

@@ -1,0 +1,128 @@
+[
+  {
+    "sequence": 1,
+    "action": "collect",
+    "screen_point": [
+      2040,
+      441
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 2,
+    "action": "double_collect",
+    "screen_point": [
+      2040,
+      441
+    ],
+    "count": 2
+  },
+  {
+    "sequence": 3,
+    "action": "switch_mine",
+    "screen_point": [
+      1388,
+      297
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 4,
+    "action": "open_workers",
+    "screen_point": [
+      1874,
+      525
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 5,
+    "action": "assign",
+    "screen_point": [
+      2040,
+      408
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 6,
+    "action": "remove",
+    "screen_point": [
+      2040,
+      450
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 7,
+    "action": "switch_farm",
+    "screen_point": [
+      994,
+      465
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 8,
+    "action": "switch_forge",
+    "screen_point": [
+      932,
+      112
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 9,
+    "action": "switch_barracks",
+    "screen_point": [
+      1092,
+      566
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 10,
+    "action": "modal_outside",
+    "screen_point": [
+      480,
+      600
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 11,
+    "action": "outside_empty",
+    "screen_point": [
+      480,
+      698
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 12,
+    "action": "english_collect",
+    "screen_point": [
+      2040,
+      441
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 13,
+    "action": "portrait_collect",
+    "screen_point": [
+      540,
+      1450
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 14,
+    "action": "portrait_close",
+    "screen_point": [
+      992,
+      1041
+    ],
+    "count": 1
+  }
+]

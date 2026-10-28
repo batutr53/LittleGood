@@ -227,7 +227,7 @@ func set_screen():
 		var worn=ids.any(func(id):return I.item(w,int(id)).get("recipe","")==recipe);row.add_child(p.text(("✓ " if worn else "◇ ")+game.realm_ui.localized(I.recipes()[recipe].name),20,T.GOLD if worn else T.MUTED))
 	p.action(v,say("Back to inventory","Çantaya dön"),func():p.route("inventory"),false,"bag")
 func resource_name(key: String) -> String:
-	return {"gold":"Altın","iron":"Demir","wood":"Odun","stone":"Taş","herb":"Şifalı bitki","leather":"Deri","thornhide":"Dikenderi","heart":"Yaşayan kalp","ore":"Cevher","desert_crystal":"Çöl kristali","ancient_alloy":"Kadim alaşım"}.get(key,key) if ui.language=="tr" else key.replace("_"," ").capitalize()
+	return {"food":"Yiyecek","gold":"Altın","iron":"Demir","wood":"Odun","stone":"Taş","herb":"Şifalı bitki","leather":"Deri","thornhide":"Dikenderi","heart":"Yaşayan kalp","ore":"Cevher","desert_crystal":"Çöl kristali","ancient_alloy":"Kadim alaşım"}.get(key,key) if ui.language=="tr" else key.replace("_"," ").capitalize()
 func confirm_upgrade(q: Dictionary):
 	if q.is_empty():return
 	var v=p.surface(say("Confirm enhancement","Yükseltmeyi onayla"));v.name="EnhanceConfirmation"

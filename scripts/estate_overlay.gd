@@ -68,7 +68,9 @@ func pick(pos: Vector2) -> bool:
 			if plot_point(p).distance_to(pos)<26:game.ui.premium.estate_selected=p;game.ui.premium.route("estate");return true
 	for b in buildings:
 		var point=view.screen_point(view.world.cells[int(b.cell)]);var z=view.display_zoom
-		if view.kingdom_layer.structures.has(int(b.id)) and load("res://scripts/selection_outline.gd").hit(view.kingdom_layer.structures[int(b.id)].sprite,pos):game.realm_ui.inspect_building(int(b.id));return true
+		if view.kingdom_layer.structures.has(int(b.id)) and load("res://scripts/selection_outline.gd").hit(view.kingdom_layer.structures[int(b.id)].sprite,pos):
+			if OS.is_debug_build():print("INTERACTION selected building=",b.id," kind=",b.kind," position=",pos)
+			game.realm_ui.inspect_building(int(b.id));return true
 	return false
 func _draw():
 	if view==null or not E.enabled(view.world):return

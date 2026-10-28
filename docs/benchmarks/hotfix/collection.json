@@ -1,0 +1,33 @@
+{
+  "all_passed": true,
+  "checks": {
+    "build_storage": true,
+    "conservation": true,
+    "correct_destination": true,
+    "create_room_by_building": true,
+    "double_tap": true,
+    "event_once": true,
+    "expanded_full_keeps_output": true,
+    "full_food_reason": true,
+    "full_warehouse_keeps_output": true,
+    "invalid_id": true,
+    "item_double_tap": true,
+    "item_owner": true,
+    "item_ready": true,
+    "no_ready": true,
+    "no_ready_reason": true,
+    "order": true,
+    "partial_warehouse": true,
+    "production_real": true,
+    "readonly": true,
+    "report_readonly": true,
+    "restore": true,
+    "save": true,
+    "selected_building_only": true,
+    "smith": true,
+    "valid": true,
+    "warehouse_filled_legally": true
+  },
+  "count": 26,
+  "method": "Existing fixture and authoritative gather/queue/tick/collect commands; no demonstration balance/output injection"
+}

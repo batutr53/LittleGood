@@ -281,8 +281,10 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 		b.add_theme_stylebox_override("pressed",theme.box(Color("53697b"),true))
 		b.add_theme_stylebox_override("disabled",theme.box(Color("151d27")))
 		b.add_theme_stylebox_override("focus",theme.box(Color(0,0,0,0),true))
+	var button_ref=weakref(b)
 	b.pressed.connect(func():
-		if not b.is_inside_tree() or b.disabled:return
+		var clicked=button_ref.get_ref()
+		if not is_instance_valid(clicked) or not clicked.is_inside_tree() or clicked.disabled:return
 		game.audio.button_sound();action.call())
 	return b
 

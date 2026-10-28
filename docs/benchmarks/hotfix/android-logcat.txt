@@ -1,0 +1,36 @@
+--------- beginning of main
+10-28 11:32:16.083 13328 13359 I godot   : Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+10-28 11:32:16.268 13328 13359 E godot   : WARNING: Failed to load cached shader, recompiling.
+10-28 11:32:16.271 13328 13359 E godot   :    at: _load_from_cache (drivers/gles3/shader_gles3.cpp:615)
+10-28 11:32:16.896 13328 13359 I godot   : OpenGL API OpenGL ES 3.1 (4.5.0 NVIDIA 616.64) - Compatibility - Using Device: Google (NVIDIA Corporation) - Android Emulator OpenGL ES Translator (NVIDIA GeForce RTX 4070 Laptop GPU/PCIe/SSE2)
+10-28 11:32:16.912 13328 13359 I godot   : 
+10-28 11:32:19.781 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=collect point=(1360.0, 294.0) pan=(-87.12, 152.2863) display_pan=(-86.10169, 150.5063)
+10-28 11:32:20.013 13328 13359 I godot   : INTERACTION collect button=CollectBuildingOutput building=2 command=Estate.collect code=ready result={"food":254}
+10-28 11:32:20.600 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=double_collect point=(1360.0, 294.0) pan=(-87.12, 152.2863) display_pan=(-87.11953, 152.2855)
+10-28 11:32:20.820 13328 13359 I godot   : INTERACTION collect button=CollectBuildingOutput building=2 command=Estate.collect code=full result={}
+10-28 11:32:20.927 13328 13359 I godot   : INTERACTION collect button=CollectBuildingOutput building=2 command=Estate.collect code=full result={}
+10-28 11:32:21.287 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=switch_mine point=(925.0, 198.0) pan=(-87.12, 152.2863) display_pan=(-87.12, 152.2863)
+10-28 11:32:21.739 13328 13359 I godot   : INTERACTION world position=(925.3334, 198.0) inspector=true
+10-28 11:32:22.763 13328 13359 I godot   : INTERACTION selected building=6 kind=mine position=(925.3334, 198.0)
+10-28 11:32:22.998 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=open_workers point=(1249.0, 350.0) pan=(-217.8, 197.4917) display_pan=(-216.2337, 196.9499)
+10-28 11:32:23.529 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=assign point=(1360.0, 272.0) pan=(-217.8, 197.4917) display_pan=(-217.7988, 197.4913)
+10-28 11:32:23.837 13328 13359 I godot   : INTERACTION assign button=AssignWorker building=6 worker=3 command=Kingdom.assign valid=true reason=
+10-28 11:32:27.273 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=remove point=(1360.0, 300.0) pan=(-217.8, 197.4917) display_pan=(-217.8, 197.4917)
+10-28 11:32:27.629 13328 13359 I godot   : INTERACTION assign button=AssignWorker building=0 worker=3 command=Kingdom.assign valid=true reason=
+10-28 11:32:28.269 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=switch_farm point=(663.0, 310.0) pan=(-217.8, 197.4917) display_pan=(-217.8, 197.4917)
+10-28 11:32:28.518 13328 13359 I godot   : INTERACTION world position=(662.6667, 310.0) inspector=true
+10-28 11:32:28.522 13328 13359 I godot   : INTERACTION selected building=2 kind=farm position=(662.6667, 310.0)
+10-28 11:32:28.983 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=switch_forge point=(621.0, 75.0) pan=(-87.12, 152.2863) display_pan=(-87.12, 152.2863)
+10-28 11:32:29.346 13328 13359 I godot   : INTERACTION world position=(621.3334, 74.66667) inspector=true
+10-28 11:32:29.352 13328 13359 I godot   : INTERACTION selected building=8 kind=forge position=(621.3334, 74.66667)
+10-28 11:32:29.732 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=switch_barracks point=(728.0, 377.0) pan=(43.56, 376.9208) display_pan=(43.56, 376.9208)
+10-28 11:32:30.188 13328 13359 I godot   : INTERACTION world position=(728.0, 377.3333) inspector=true
+10-28 11:32:30.199 13328 13359 I godot   : INTERACTION selected building=9 kind=barracks position=(728.0, 377.3333)
+10-28 11:32:31.177 13328 13359 I godot   : LittleGod runtime: tick=395 paused=true menu=true fps=11.0
+10-28 11:32:33.027 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=outside_empty point=(320.0, 465.0) pan=(-87.12, 152.2863) display_pan=(-43.58868, 170.5191)
+10-28 11:32:33.160 13328 13359 I godot   : INTERACTION world position=(320.0, 465.3333) inspector=true
+10-28 11:32:33.458 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=english_collect point=(1360.0, 294.0) pan=(-87.12, 152.2863) display_pan=(-87.01388, 152.3307)
+10-28 11:32:33.596 13328 13359 I godot   : INTERACTION collect button=CollectBuildingOutput building=2 command=Estate.collect code=ready result={"food":254}
+10-28 11:32:35.500 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=portrait_collect point=(180.0, 483.5) pan=(-87.12, 152.2863) display_pan=(-87.12, 152.2863)
+10-28 11:32:35.825 13328 13359 I godot   : INTERACTION collect button=CollectBuildingOutput building=2 command=Estate.collect code=full result={}
+10-28 11:32:36.153 13328 13359 I godot   : HOTFIX_NATIVE_REQUEST action=portrait_close point=(330.5, 347.0) pan=(-87.12, 152.2863) display_pan=(-87.12, 152.2863)

@@ -1,0 +1,19 @@
+{
+  "all_passed": true,
+  "checks": {
+    "economy_present": true,
+    "restore_valid": true,
+    "save_bytes": true
+  },
+  "pid": 13750,
+  "run_id": "849e9d84c47344a8952f7f8b93bf2896",
+  "source": "simulated_android_qa",
+  "stage": "hotfix_restore_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "save_unchanged": true,
+  "new_process": true,
+  "player_files_preserved": true
+}

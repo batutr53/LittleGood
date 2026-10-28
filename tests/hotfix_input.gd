@@ -17,12 +17,21 @@ func point(id):
 		for x in range(int(extent.position.x),int(extent.end.x),7):
 			var at=Vector2(x,y)
 			if game.ui.blocks_world(at) or not S.hit(sprite,at):continue
+			var npc=v.advisor_layer
+			if npc.visible and (npc.get_global_transform_with_canvas()*Vector2(0,-30)).distance_to(at)<=maxf(28,38*v.display_zoom):continue
 			if ordered.any(func(b):return E.status(game.world,b)!="" and v.estate_layer.bubble(b).distance_to(at)<=28):continue
 			if v.kingdom_layer.workers.any(func(worker):return S.hit(worker,at)):continue
 			var top=0
 			for b in ordered:
 				if S.hit(v.kingdom_layer.structures[int(b.id)].sprite,at):top=int(b.id);break
-			if top==id:return at
+			if top!=id:continue
+			var stable=true
+			for shift in [Vector2(-1,-1),Vector2(1,-1),Vector2(-1,1),Vector2(1,1)]:
+				var hit=0
+				for b in ordered:
+					if S.hit(v.kingdom_layer.structures[int(b.id)].sprite,at+shift):hit=int(b.id);break
+				if hit!=id:stable=false;break
+			if stable:return at
 	return Vector2(-1,-1)
 func shot(name):
 	await settle();checks["image_"+name]=root.get_texture().get_image().save_png("res://docs/screenshots/hotfix/"+name+".png")==OK

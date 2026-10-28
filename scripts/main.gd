@@ -511,6 +511,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_SPACE: paused = not paused; ui.refresh()
 
 func touch_world(pos: Vector2) -> void:
+	if OS.is_debug_build():print("INTERACTION world position=",pos," inspector=",world_inspector_open)
 	if realm_ui!=null and realm_ui.active:realm_ui.pick(pos);return
 	if decorator!=null and decorator.active:decorator.pick(pos);return
 	var switching_inspector=world_inspector_open
