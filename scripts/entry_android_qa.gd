@@ -23,7 +23,10 @@ func run():
 	await native("create",game.ui.modal.find_child("CreateRealmHero",true,false),func():return game.ui.modal.find_child("JoinSharedHunt",true,false)!=null);host.checks.only_mage=entry.character.unlocked==["mage"];host.checks.priest_locked=game.ui.modal.find_child("Company_priest",true,false).disabled
 	await native("join",game.ui.modal.find_child("JoinSharedHunt",true,false),func():return is_instance_valid(game.shared_hunt_scene) and game.shared_hunt_scene.received)
 	if not is_instance_valid(game.shared_hunt_scene):host.publish("entry_failed");return
-	var hunt=game.shared_hunt_scene;var until=Time.get_ticks_msec()+12000;var in_range=false
+	var hunt=game.shared_hunt_scene
+	await native("bag",hunt.hud.find_child("SharedNavInventory",true,false),func():return hunt.frozen and is_instance_valid(game.ui.modal));await shot("entry-android-bag")
+	await native("close_bag",game.ui.modal.find_child("SurfaceBack",true,false),func():return not hunt.frozen and not is_instance_valid(game.ui.modal))
+	var until=Time.get_ticks_msec()+12000;var in_range=false
 	while Time.get_ticks_msec()<until:
 		var me=hunt.snapshot.players.filter(func(p):return p.id==entry.character.id)[0];var targets=hunt.snapshot.enemies.filter(func(e):return e.hp>0)
 		if targets.is_empty():await get_tree().process_frame;continue

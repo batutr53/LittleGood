@@ -15,24 +15,26 @@ var messages=[]
 var message_selector: OptionButton
 var oldest=0
 var reason: LineEdit
+var command_row:HBoxContainer
+var moderation_row:HBoxContainer
 func say(en: String,tr: String) -> String:return tr if game.ui.language=="tr" else en
 func _ready():
-	var tr=game.ui.language=="tr";var tabs=HBoxContainer.new();add_child(tabs)
+	var tr=game.ui.language=="tr";var tabs=HBoxContainer.new();tabs.name="ChatTabs";add_child(tabs)
 	for pair in [["system","Sistem" if tr else "System"],["general","Genel" if tr else "General"],["private","Özel" if tr else "Private"]]:
 		var key=pair[0];var b=game.ui.button(pair[1],func():change_channel(key));tabs.add_child(b)
 	recipients=OptionButton.new();recipients.add_item("Arkadaş seç" if tr else "Choose friend");recipients.custom_minimum_size.y=48;recipients.item_selected.connect(func(i):peer=str(recipients.get_item_metadata(i));last_id=0;seen.clear();rows.clear();poll());add_child(recipients);recipients.hide()
-	rows=RichTextLabel.new();rows.bbcode_enabled=false;rows.custom_minimum_size.y=220;rows.fit_content=false;rows.scroll_following=true;rows.selection_enabled=true;rows.add_theme_font_override("normal_font",game.ui.ui_font());rows.add_theme_font_size_override("normal_font_size",20);add_child(rows)
+	rows=RichTextLabel.new();rows.bbcode_enabled=false;rows.custom_minimum_size.y=game.ui.premium.px(160);rows.fit_content=false;rows.scroll_following=true;rows.selection_enabled=true;rows.add_theme_font_override("normal_font",game.ui.ui_font());rows.add_theme_font_size_override("normal_font_size",maxi(11,int(game.ui.premium.px(14))));add_child(rows)
 	entry=LineEdit.new();entry.max_length=300;entry.placeholder_text="Mesaj · en fazla 300 karakter" if tr else "Message · maximum 300 characters";entry.custom_minimum_size.y=48;entry.focus_entered.connect(game.reset_gesture);entry.text_submitted.connect(func(_value):send());add_child(entry)
-	var buttons=HBoxContainer.new();add_child(buttons);buttons.add_child(game.ui.button("Gönder" if tr else "Send",send));state=game.ui.label("",18);add_child(state)
+	var buttons=HBoxContainer.new();command_row=buttons;add_child(buttons);buttons.add_child(game.ui.button("Gönder" if tr else "Send",send));state=game.ui.label("",18);add_child(state)
 	var safety=game.ui.button("Arkadaşlar / engelle" if tr else "Friends / block",game.ui.online_screen);buttons.add_child(safety)
 	buttons.add_child(game.ui.button(say("Older messages","Eski mesajlar"),func():poll(true)))
 	message_selector=OptionButton.new();message_selector.custom_minimum_size.y=48;add_child(message_selector)
 	reason=LineEdit.new();reason.max_length=300;reason.placeholder_text=say("Report reason","Bildirim gerekçesi");reason.custom_minimum_size.y=48;add_child(reason)
-	var moderation=HBoxContainer.new();add_child(moderation);moderation.add_child(game.ui.button(say("Report selected message","Seçili mesajı bildir"),report_selected));moderation.add_child(game.ui.button(say("Block sender","Göndereni engelle"),block_selected))
+	var moderation=HBoxContainer.new();moderation_row=moderation;add_child(moderation);moderation.add_child(game.ui.button(say("Report selected message","Seçili mesajı bildir"),report_selected));moderation.add_child(game.ui.button(say("Block sender","Göndereni engelle"),block_selected))
 	change_channel("system")
 func _exit_tree():epoch+=1
 func change_channel(key):
-	epoch+=1;channel=key;last_id=0;oldest=0;messages.clear();seen.clear();rows.clear();message_selector.clear();recipients.visible=key=="private";entry.editable=key!="system";state.text="";elapsed=0
+	epoch+=1;channel=key;last_id=0;oldest=0;messages.clear();seen.clear();rows.clear();message_selector.clear();recipients.visible=key=="private";entry.visible=key!="system";command_row.visible=key!="system";message_selector.visible=key!="system";reason.visible=key!="system";moderation_row.visible=key!="system";entry.editable=key!="system";state.text="";elapsed=0
 	if key=="system":
 		for e in game.ui.system_events(50):rows.append_text(game.ui.event_text(e)+"\n")
 	elif key=="private":load_friends()

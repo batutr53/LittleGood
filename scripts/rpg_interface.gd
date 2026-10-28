@@ -32,7 +32,7 @@ func icon_action(parent: Control,key: String,label: String,cb: Callable) -> Butt
 	b.add_theme_color_override("icon_normal_color",T.GOLD);b.add_theme_color_override("icon_pressed_color",T.CREAM);b.add_theme_color_override("icon_hover_color",T.CREAM)
 	for state in ["normal","hover","pressed","disabled","focus"]:
 		var skin=b.get_theme_stylebox(state);skin.content_margin_top=0;skin.content_margin_bottom=0
-	parent.add_child(b);return b
+	parent.add_child(b);preload("res://scripts/icon_caption.gd").attach(b,T.icon(key),label,p.scale_ui(),ui.ui_font());return b
 func highlight_navigation():
 	if not is_instance_valid(ui.root):return
 	for b in ui.root.find_children("*","Button",true,false):
@@ -70,11 +70,11 @@ func inventory():
 		for key in R.CLASSES:
 			var cls=key;var b=p.action(selector,R.NAMES[key],func():
 				if R.switch(game.world,cls):selected_item=0;game.realm_ui.changed();inventory(),game.world.rpg.active==key);b.name="SelectClass"+key;b.add_theme_font_size_override("font_size",int(p.px(11)));b.custom_minimum_size.y=p.px(27);b.disabled=not R.home(game.world) or not load("res://scripts/realm_roster.gd").allowed(game.world,key);compact_button(b)
-		var gear=HBoxContainer.new();v.add_child(gear);gear.add_theme_constant_override("separation",int(p.px(6)))
+		var gear=HBoxContainer.new();gear.alignment=BoxContainer.ALIGNMENT_CENTER;v.add_child(gear);gear.add_theme_constant_override("separation",int(p.px(6)))
 		var hero=game.world.kingdom.adventure.hero;var path="res://assets/rpg/"+str(hero.get("class","warrior"))+".png"
 		if not ResourceLoader.exists(path):path="res://assets/rpg/warrior.png"
 		var portrait=p.image(load(path),Vector2(p.px(205),p.px(160)));portrait.set_script(preload("res://scripts/rpg_portrait.gd"));portrait.ui=ui;gear.add_child(portrait)
-		var equipment=GridContainer.new();equipment.size_flags_horizontal=Control.SIZE_EXPAND_FILL;equipment.columns=5;equipment.add_theme_constant_override("h_separation",int(p.px(3)));equipment.add_theme_constant_override("v_separation",int(p.px(3)));gear.add_child(equipment)
+		var equipment=GridContainer.new();equipment.size_flags_horizontal=Control.SIZE_SHRINK_CENTER;equipment.columns=5;equipment.add_theme_constant_override("h_separation",int(p.px(3)));equipment.add_theme_constant_override("v_separation",int(p.px(3)));gear.add_child(equipment)
 		for slot in ["ear_left","head","ear_right","neck","armor","belt","weapon","hands","shield","ring_left","legs","ring_right","feet","artifact"]:equipment_slot(equipment,slot)
 		v.add_child(p.text(hero.name+" · "+R.NAMES[hero.get("class","warrior")]+" · Lv "+str(H.level(hero)),19,T.GOLD))
 		var sets=load("res://scripts/equipment_sets.gd");var set_name=game.realm_ui.localized(sets.definitions()[game.world.rpg.active].name);var set_button=p.action(v,set_name+" · "+str(sets.count(game.world))+" / 5",func():p.route("sets"));set_button.name="EquipmentSet";set_button.custom_minimum_size.y=p.px(27);compact_button(set_button)
@@ -82,7 +82,7 @@ func inventory():
 	var codex=p.action(v,say("Drops & bestiary · Contracts","Drop rehberi · Görev panosu"),func():p.route("bestiary"));codex.name="OpenBestiary";codex.custom_minimum_size.y=p.px(28);compact_button(codex)
 	for tab in [["all",say("All","Tümü")],["weapon",say("Gear","Donanım")],["tool",say("Tools","Alet")],["consumable",say("Items","Eşya")]]:
 		var key=tab[0];var button=p.action(tabs,tab[1],func():p.filter=key;inventory());button.custom_minimum_size.y=p.px(27);button.add_theme_font_size_override("font_size",int(p.px(11)));compact_button(button)
-	var grid=GridContainer.new();grid.name="InventoryGrid";grid.columns=7;grid.add_theme_constant_override("h_separation",int(p.px(3)));grid.add_theme_constant_override("v_separation",int(p.px(3)));v.add_child(grid)
+	var grid=GridContainer.new();grid.name="InventoryGrid";grid.size_flags_horizontal=Control.SIZE_SHRINK_CENTER;grid.columns=7;grid.add_theme_constant_override("h_separation",int(p.px(3)));grid.add_theme_constant_override("v_separation",int(p.px(3)));v.add_child(grid)
 	var visible_items=[]
 	for item in game.world.kingdom.industry.items:
 		var category=I.recipes()[item.recipe].get("category","tool")
@@ -91,7 +91,7 @@ func inventory():
 	for i in range(maxi(28,visible_items.size())):
 		var id=int(visible_items[i].id) if i<visible_items.size() else 0
 		var b=ui.button("",func():
-			if id>0:selected_item=id;show_item(id));b.custom_minimum_size=Vector2(p.px(45),p.px(45));compact_button(b);b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(36)));grid.add_child(b)
+			if id>0:selected_item=id;show_item(id));b.size_flags_horizontal=Control.SIZE_SHRINK_CENTER;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.custom_minimum_size=Vector2(p.px(45),p.px(45));compact_button(b);b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(36)));grid.add_child(b)
 		b.add_theme_stylebox_override("normal",T.box(Color("090c09"),false))
 		if id>0:
 			var item=I.item(game.world,id);b.icon=F.icon(item.recipe);b.tooltip_text=F.label(game.world,item,ui.language=="tr")
@@ -123,7 +123,7 @@ func equipment_slot(parent: Control,slot: String):
 			highlight_item();ui.toast(say("Select equipment from your inventory.","Çantandan donanım seç.")));b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(43),p.px(40));parent.add_child(b)
 	b.set_meta("equipment_slot",slot);b.set_meta("item_id",id);b.set_meta("item_recipe",str(I.item(game.world,id).get("recipe","")))
 	compact_button(b)
-	b.tooltip_text=slot_names.get(slot,slot);b.text="";b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(31)))
+	b.tooltip_text=slot_names.get(slot,slot);b.size_flags_horizontal=Control.SIZE_SHRINK_CENTER;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.text="";b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(31)))
 	var empty="rpg_"+game.world.rpg.active+"_"+slot if slot in ["head","armor","legs","hands","feet"] else "rpg_"+slot.replace("_right","_left")
 	b.icon=load("res://assets/kingdom/"+empty+".svg") if ResourceLoader.exists("res://assets/kingdom/"+empty+".svg") else T.icon("sword" if slot=="weapon" else "shield" if slot=="shield" else "quest")
 	b.add_theme_color_override("icon_normal_color",Color(.5,.55,.45,.45))

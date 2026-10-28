@@ -48,7 +48,7 @@ func text(value: String,n: int=26,color: Color=T.CREAM) -> Label:
  var l=Label.new();l.text=value;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_override("font",ui.ui_font());l.add_theme_font_size_override("font_size",int(maxf(10,px(n*.62*ui.accessibility_scale))));l.add_theme_color_override("font_color",visible_color);l.mouse_filter=Control.MOUSE_FILTER_IGNORE;l.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  return l
 func heading(value: String,n: int=38) -> Label:
- var l=text(value,n);l.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));l.add_theme_color_override("font_color",T.GOLD);return l
+ var l=text(value,n);l.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));l.add_theme_color_override("font_color",T.GOLD);l.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;l.vertical_alignment=VERTICAL_ALIGNMENT_CENTER;return l
 func image(texture: Texture2D,extent: Vector2) -> TextureRect:
  var p=TextureRect.new();p.texture=texture;p.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;p.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;p.custom_minimum_size=extent;p.mouse_filter=Control.MOUSE_FILTER_IGNORE;return p
 func action(parent: Node,title: String,cb: Callable,primary=false,key="") -> Button:
@@ -149,8 +149,9 @@ func surface(title: String,compact=false) -> VBoxContainer:
  var paint=preload("res://scripts/premium_surface.gd").new();paint.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.modal.add_child(paint)
  var stack=VBoxContainer.new();stack.add_theme_constant_override("separation",int(px(5)));ui.modal.add_child(stack)
  var title_row=HBoxContainer.new();title_row.add_theme_constant_override("separation",int(px(4)));stack.add_child(title_row)
- var title_label=heading(title,23);title_label.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title_label)
- var close=ui.button("×",ui.close);close.name="SurfaceBack";close.tooltip_text=say("Close panel","Paneli kapat");close.custom_minimum_size=Vector2.ONE*px(32);close.add_theme_font_size_override("font_size",int(px(17)));rpg.compact_button(close);title_row.add_child(close)
+ var balance=Control.new();balance.custom_minimum_size.x=px(32);title_row.add_child(balance)
+ var title_label=heading(title,23);title_label.name="SurfaceTitle";title_label.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title_label)
+ var close=ui.button("×",ui.close);close.name="SurfaceBack";close.size_flags_horizontal=Control.SIZE_SHRINK_END;close.tooltip_text=say("Close panel","Paneli kapat");close.custom_minimum_size=Vector2.ONE*px(32);close.add_theme_font_size_override("font_size",int(px(17)));rpg.compact_button(close);title_row.add_child(close)
  scroll=ScrollContainer.new();scroll.name="SurfaceScroll";scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;stack.add_child(scroll)
  var v=VBoxContainer.new();v.name="SurfaceContent";v.size_flags_horizontal=Control.SIZE_EXPAND_FILL;v.add_theme_constant_override("separation",int(px(8)));scroll.add_child(v);current_title=title
  ui.modal.modulate.a=1;return v

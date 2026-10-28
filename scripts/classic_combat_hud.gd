@@ -14,8 +14,8 @@ func build():
 	var objective_back=Panel.new();objective_back.mouse_filter=Control.MOUSE_FILTER_IGNORE;objective_back.add_theme_stylebox_override("panel",T.skin());a.place(objective_back,a.objective.get_rect());a.hud.move_child(objective_back,a.objective.get_index())
 	var mini=preload("res://scripts/rpg_minimap.gd").new();mini.game=game;mini.adventure=true;a.place(mini,Rect2(width-112*s,60*s,104*s,84*s))
 	var chat=Panel.new();chat.add_theme_stylebox_override("panel",T.skin());a.place(chat,Rect2(6*s,height-230*s,448*s,181*s))
-	var tabs=game.ui.label(a.say("GENERAL  ·  PRIVATE  ·  SYSTEM","GENEL  ·  ÖZEL  ·  SİSTEM"),int(11*s));a.place(tabs,Rect2(12*s,height-228*s,430*s,20*s))
-	a.message=game.ui.label(a.say("Ready","Hazır"),int(12*s));a.place(a.message,Rect2(12*s,height-205*s,430*s,145*s))
+	var tabs=game.ui.label(a.say("GENERAL  ·  PRIVATE  ·  SYSTEM","GENEL  ·  ÖZEL  ·  SİSTEM"),int(11*s));tabs.autowrap_mode=TextServer.AUTOWRAP_OFF;tabs.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;a.place(tabs,Rect2(18*s,height-220*s,424*s,20*s))
+	a.message=game.ui.label(a.say("Ready","Hazır"),int(12*s));a.place(a.message,Rect2(18*s,height-198*s,424*s,132*s))
 	var bar=Panel.new();bar.add_theme_stylebox_override("panel",T.skin());a.place(bar,Rect2(0,height-40*s,width,40*s))
 	var nav=HBoxContainer.new();nav.add_theme_constant_override("separation",0);a.place(nav,Rect2(width-400*s,height-44*s,392*s,44*s))
 	for item in [["hero","hero",a.say("Char","Karakter")],["inventory","bag",a.say("Bag","Çanta")],["skills","sword",a.say("Skill","Beceri")],["attributes","shield",a.say("Stat","Stat")],["quest","quest",a.say("Quest","Görev")],["map","map",a.say("Town","Işınlan")],["chat","workers",a.say("Chat","Sohbet")],["menu","menu",a.say("Menu","Menü")]]:

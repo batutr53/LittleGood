@@ -104,12 +104,15 @@ result['physical_device'] = False
 result['player_files_preserved'] = player_snapshot() == before
 screens = root / 'docs/screenshots' / args.output
 screens.mkdir(parents=True, exist_ok=True)
-for name in ['login', 'create', 'shared', 'home']:
+screen_names = ['login', 'create', 'shared', 'home']
+if result['checks'].get('native_bag'):
+    screen_names.append('bag')
+for name in screen_names:
     (screens / ('entry-android-' + name + '.png')).write_bytes(read('entry-android-' + name + '.png'))
 logs = run('logcat', '-d', '--pid=' + str(result['pid']), '-s', 'godot:V', 'AndroidRuntime:E')
 (out / 'logcat.txt').write_bytes(logs)
 result['render_errors'] = [line for line in logs.decode('utf8', errors='replace').splitlines() if 'Program linking failed' in line or 'GL_MAX_FRAGMENT_UNIFORM_VECTORS' in line]
-result['captures_rendered'] = all((lambda colors: colors is None or len(colors) > 32)(Image.open(screens / ('entry-android-' + name + '.png')).convert('RGB').getcolors(4096)) for name in ['login', 'create', 'shared', 'home'])
+result['captures_rendered'] = all((lambda colors: colors is None or len(colors) > 32)(Image.open(screens / ('entry-android-' + name + '.png')).convert('RGB').getcolors(4096)) for name in screen_names)
 result['script_errors'] = [line for line in logs.decode('utf8', errors='replace').splitlines() if 'SCRIPT ERROR:' in line or 'FATAL EXCEPTION' in line]
 result['all_passed'] = bool(result['all_passed'] and result['player_files_preserved'] and not result['script_errors'] and not result['render_errors'] and result['captures_rendered'])
 (out / 'result.json').write_text(json.dumps(result, indent=2), encoding='utf8')

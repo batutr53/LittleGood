@@ -27,11 +27,11 @@ var s=1.0
 func _init(interface):ui=interface;game=ui.game;net=game.online
 func say(en,tr):return tr if ui.language=="tr" else en
 func text(parent,value,size=18,color=Color("d3cec1")):
-	var l=ui.label(value,maxi(14,roundi(size*s)),color);l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;parent.add_child(l);return l
+	var l=ui.label(value,maxi(14,roundi(size*s)),color);l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;l.vertical_alignment=VERTICAL_ALIGNMENT_CENTER;parent.add_child(l);return l
 func button(parent,title,callback,primary=false,id=""):
 	var b=ui.button(title,callback,primary);b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;b.custom_minimum_size=Vector2(0,maxf(44,46*s));b.add_theme_font_size_override("font_size",maxi(14,roundi(17*s)));b.name=id if not id.is_empty() else title;parent.add_child(b);return b
 func field(parent,hint,id,secret=false):
-	var f=LineEdit.new();f.placeholder_text=hint;f.name=id;f.secret=secret;f.custom_minimum_size.y=maxf(44,46*s);f.max_length=128 if secret else 64;f.add_theme_font_override("font",ui.ui_font());f.add_theme_font_size_override("font_size",maxi(14,roundi(18*s)));parent.add_child(f);return f
+	var f=LineEdit.new();f.placeholder_text=hint;f.alignment=HORIZONTAL_ALIGNMENT_CENTER;f.name=id;f.secret=secret;f.custom_minimum_size.y=maxf(44,46*s);f.max_length=128 if secret else 64;f.add_theme_font_override("font",ui.ui_font());f.add_theme_font_size_override("font_size",maxi(14,roundi(18*s)));parent.add_child(f);return f
 func base(title):
 	generation+=1;game.in_menu=true;game.reset_gesture();game.show_world(false);ui.world_controls(false);ui.page="entry";ui.premium.current="entry"
 	if is_instance_valid(ui.modal):ui.root.remove_child(ui.modal);ui.modal.queue_free()
@@ -42,8 +42,8 @@ func base(title):
 	canvas=Control.new();canvas.custom_minimum_size=extent;ui.modal.add_child(canvas)
 	var bg=TextureRect.new();bg.texture=ART;bg.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;bg.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED;bg.size=extent;bg.mouse_filter=Control.MOUSE_FILTER_IGNORE;canvas.add_child(bg)
 	var title_box=VBoxContainer.new();title_box.position=Vector2(45*s,35*s);title_box.size=Vector2(extent.x*.5,110*s);canvas.add_child(title_box)
-	var logo=text(title_box,"LITTLE GOD",47,Color("f5dfae"));logo.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));logo.add_theme_color_override("font_shadow_color",Color.BLACK);logo.add_theme_constant_override("shadow_offset_y",3)
-	text(title_box,"A G E   O F   K I N G D O M S",16,Color("dac5a0"))
+	var logo=text(title_box,"LITTLE GOD",47,Color("f5dfae"));logo.horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT;logo.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));logo.add_theme_color_override("font_shadow_color",Color.BLACK);logo.add_theme_constant_override("shadow_offset_y",3)
+	text(title_box,"A G E   O F   K I N G D O M S",16,Color("dac5a0")).horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT
 	var panel=PanelContainer.new();panel.name="EntryForm";panel.position=Vector2(extent.x-415*s,105*s);panel.size=Vector2(370*s,extent.y-205*s);var box=T.skin();box.content_margin_left=18*s;box.content_margin_right=18*s;box.content_margin_top=16*s;box.content_margin_bottom=14*s;panel.add_theme_stylebox_override("panel",box);canvas.add_child(panel)
 	form=VBoxContainer.new();form.add_theme_constant_override("separation",maxi(5,roundi(10*s)));panel.add_child(form)
 	text(form,say("ACCOUNT  ›  REALM  ›  PEOPLE  ›  HERO","HESAP  ›  SUNUCU  ›  HALK  ›  KAHRAMAN"),12,Color("b9a16e"));text(form,title,27,Color("f1dbac"))

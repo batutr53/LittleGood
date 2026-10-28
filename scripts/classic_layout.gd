@@ -44,14 +44,14 @@ func build():
 		var key=entry[0];var b=r.icon_action(nav,entry[1],entry[2],func():p.route(key));b.name="WorldMenu" if key=="menu" else "Nav"+key.capitalize()
 		b.set_meta("nav_key",key)
 	var left=HBoxContainer.new();p.put(left,Rect2(p.px(7),bottom-p.px(4),p.px(150),p.px(44)))
-	r.icon_action(left,"menu",r.say("Colony","Koloni"),func():p.route("colony"));var hunts=r.icon_action(left,"sword",r.say("Boss / Hunt","Boss / Av"),func():p.route("hunts"));hunts.name="OpenHunts";r.icon_action(left,"workers",r.say("Chat","Sohbet"),func():p.route("chat"))
+	r.icon_action(left,"menu",r.say("Colony","Koloni"),func():p.route("colony"));var hunts=r.icon_action(left,"sword",r.say("Hunt","Boss"),func():p.route("hunts"));hunts.tooltip_text=r.say("Boss / Hunt","Boss / Av");hunts.name="OpenHunts";r.icon_action(left,"workers",r.say("Chat","Sohbet"),func():p.route("chat"))
 	xp=bar(Color("70943e"),Rect2(p.px(170),bottom+p.px(15),maxf(p.px(60),s.x-p.px(635)),p.px(9)))
 	r.chat_box=r.card(Rect2(p.px(6),bottom-p.px(190),p.px(448),p.px(185)));r.chat_box.name="ChatPanel"
-	var tabs=p.text(r.say("GENERAL     PRIVATE     SYSTEM","GENEL       ÖZEL       SİSTEM"),17,Color("d8c68f"));r.chat_box.add_child(tabs);tabs.position=Vector2(p.px(6),p.px(2));tabs.size=Vector2(p.px(300),p.px(21))
-	log=p.text("",20,Color("c8c18b"));r.chat_box.add_child(log);log.position=Vector2(p.px(6),p.px(27));log.size=Vector2(p.px(435),p.px(119));log.clip_text=true
-	var open=ui.button(r.say("Enter message…","Mesaj yaz…"),func():p.route("chat"));r.compact_button(open);open.custom_minimum_size=Vector2.ZERO;open.add_theme_font_size_override("font_size",int(p.px(11)));r.chat_box.add_child(open);open.position=Vector2(p.px(5),p.px(152));open.size=Vector2(p.px(400),p.px(27));open.alignment=HORIZONTAL_ALIGNMENT_LEFT
+	var tabs=p.text(r.say("GENERAL     PRIVATE     SYSTEM","GENEL       ÖZEL       SİSTEM"),17,Color("d8c68f"));tabs.autowrap_mode=TextServer.AUTOWRAP_OFF;r.chat_box.add_child(tabs);tabs.name="ChatPreviewTabs";tabs.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;tabs.position=Vector2(p.px(12),p.px(9));tabs.size=Vector2(p.px(424),p.px(21))
+	log=p.text("",20,Color("c8c18b"));r.chat_box.add_child(log);log.position=Vector2(p.px(12),p.px(35));log.size=Vector2(p.px(424),p.px(106));log.clip_text=true
+	var open=ui.button(r.say("Enter message…","Mesaj yaz…"),func():p.route("chat"));r.compact_button(open);open.custom_minimum_size=Vector2.ZERO;open.add_theme_font_size_override("font_size",int(p.px(11)));r.chat_box.add_child(open);open.position=Vector2(p.px(12),p.px(149));open.size=Vector2(p.px(388),p.px(27));open.alignment=HORIZONTAL_ALIGNMENT_LEFT
 	r.chat_reopen=ui.button(r.say("Chat +","Sohbet +"),func():r.chat_collapsed=false;r.refresh_portrait());r.chat_reopen.name="ReopenChat";r.compact_button(r.chat_reopen);r.chat_reopen.custom_minimum_size=Vector2.ZERO;p.put(r.chat_reopen,Rect2(p.px(6),bottom-p.px(37),p.px(95),p.px(30)));r.chat_reopen.hide()
-	var collapse=ui.button("−",func():r.chat_collapsed=true;r.refresh_portrait());collapse.name="CollapseChat";r.compact_button(collapse);collapse.custom_minimum_size=Vector2.ZERO;r.chat_box.add_child(collapse);collapse.position=Vector2(p.px(412),p.px(152));collapse.size=Vector2(p.px(30),p.px(27))
+	var collapse=ui.button("−",func():r.chat_collapsed=true;r.refresh_portrait());collapse.name="CollapseChat";r.compact_button(collapse);collapse.custom_minimum_size=Vector2.ZERO;r.chat_box.add_child(collapse);collapse.position=Vector2(p.px(406),p.px(149));collapse.size=Vector2(p.px(30),p.px(27))
 	var controls=HBoxContainer.new();p.put(controls,Rect2(s.x-p.px(161),bottom-p.px(57),p.px(153),p.px(48)))
 	r.icon_action(controls,"gift",r.say("Gifts","Güçler"),func():p.gifts_open=not p.gifts_open;p.tray.visible=p.gifts_open)
 	ui.speed_button=r.icon_action(controls,"crown","1×",func():game.speed=3 if game.speed==1 else 1;ui.refresh())

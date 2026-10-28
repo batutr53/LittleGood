@@ -1,5 +1,11 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Text, title and icon alignment — 28 October 2026
+
+Centered panel titles with a balanced close-button spacer. Bottom navigation now lays out icons above separate captions, keeping both centered without overlap. Equipment slots/icons and inventory grid are centered, entry fields/headings/stat labels aligned, chat tabs share width, and chat-frame padding/accidental wrapping is fixed. Dynamic speed captions update without painting a second native label. Empty selection plates no longer flash on closing a modal.
+
+Verified **162 geometry/render checks** at 960×540 and 1600×720, **61 native navigation**, **14 RPG interaction**, **19 Android checks / 12 ADB taps / 3 restore checks**, including native inventory open/close. Host GPU emulator rendering inspected; physical device not connected. APK version **113**: `D:/LittleGod/builds/android/LittleGod-Kingdom-UI-debug.apk`. [Public APK](https://31.42.127.79:8443/downloads/LittleGod-Kingdom-UI-debug.apk). Details: [UI_ALIGNMENT.md](UI_ALIGNMENT.md). This supersedes the v112 client build below; server/account data is unchanged.
+
 ## Kingdom UI and character entry — 28 October 2026
 
 Implemented the supplied landscape layout direction with original gold/olive/burgundy surfaces across login, realm selection, people, class/name/ten starting stats, HUD, inventory and tabbed settings. A real UTC visit-gift calendar is server-owned and race/stat data is persisted additively. Shared-hunt HUD includes actual General chat, minimap, XP/HP/MP and functioning modal input freeze/close. Wide inventory fits the starting grid at 960×540 and 1600×720.

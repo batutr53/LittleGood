@@ -265,6 +265,8 @@ func label(text: String, size: int = 22, color: Color = Color("e5efdc")) -> Labe
 func button(text: String, action: Callable, primary: bool = false) -> Button:
 	var b = Button.new()
 	b.text = text
+	b.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.custom_minimum_size = Vector2(0, 66)
 	b.add_theme_font_size_override("font_size", 21)
 	b.add_theme_font_override("font", ui_font())
@@ -426,7 +428,10 @@ func refresh() -> void:
 		var K=preload("res://scripts/kingdom.gd");var quest=K.current(w)
 		chapter.text=("Diyar " if language=="tr" else "Realm ")+str(K.level(w))+" · "+(game.realm_ui.localized(quest.title) if not quest.is_empty() else ("İlk Alev tamamlandı" if language=="tr" else "First Flame complete"))
 		stats.text=(t("day")%(1+int(w.tick)/30))+" · "+("Diyar " if language=="tr" else "Realm ")+str(K.level(w))+" · "+t("population")%[w.creatures.size(),people]
-	if speed_button: speed_button.text = str(game.speed) + "×"
+	if speed_button:
+		var caption=speed_button.find_child("Caption",true,false)
+		if caption:caption.text=str(game.speed)+"×";speed_button.text=""
+		else:speed_button.text=str(game.speed)+"×"
 	if game.visiting:
 		stats.text = t("visiting") + "\n" + t("population") % [w.creatures.size(), people]
 		spirit.text = "◇ " + t("readonly_tag")
@@ -484,6 +489,8 @@ func close() -> void:
 	if premium!=null:premium.current="";premium.history.clear();premium.nested=false
 	world_controls(true)
 	refresh()
+	var selection=root.get_node_or_null("WorldSelection")
+	if selection:selection.refresh()
 	if is_instance_valid(game.shared_hunt_scene):
 		game.shared_hunt_scene.frozen=false;root.hide();game.in_menu=true;layer=1
 
