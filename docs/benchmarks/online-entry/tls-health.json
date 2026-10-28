@@ -1,0 +1,38 @@
+{
+  "endpoint": "https://31.42.127.79:8443",
+  "normal_validation": true,
+  "protocol": "TLSv1.3",
+  "issuer": [
+    [
+      [
+        "countryName",
+        "US"
+      ]
+    ],
+    [
+      [
+        "organizationName",
+        "Let's Encrypt"
+      ]
+    ],
+    [
+      [
+        "commonName",
+        "YR2"
+      ]
+    ]
+  ],
+  "subjectAltName": [
+    [
+      "IP Address",
+      "31.42.127.79"
+    ]
+  ],
+  "notBefore": "Oct 28 16:37:23 2026 GMT",
+  "notAfter": "Nov  4 08:37:22 2026 GMT",
+  "health": {
+    "status": "ok",
+    "version": 1
+  },
+  "http_status": 200
+}

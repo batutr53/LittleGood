@@ -2,7 +2,8 @@ extends Node
 
 # Optional transport. No requests at startup, no stored password/token, no background polling.
 const Showcase = preload("res://scripts/planet_showcase.gd")
-var endpoint = ""
+const DEFAULT_ENDPOINT="https://31.42.127.79:8443"
+var endpoint = DEFAULT_ENDPOINT
 var access = ""
 var renewal = ""
 var profile: Dictionary = {}
@@ -15,7 +16,7 @@ var session_epoch = 0
 
 func _ready() -> void:
 	var cfg = ConfigFile.new()
-	if cfg.load("user://online.cfg") == OK: endpoint = str(cfg.get_value("online","endpoint",""))
+	if cfg.load("user://online.cfg") == OK: endpoint = str(cfg.get_value("online","endpoint",DEFAULT_ENDPOINT))
 
 func configure(value: String) -> bool:
 	value = value.strip_edges().trim_suffix("/")

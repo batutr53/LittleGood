@@ -1,0 +1,19 @@
+{
+  "all_passed": true,
+  "checks": {
+    "account_city_bound": true,
+    "restore_valid": true,
+    "save_bytes": true
+  },
+  "pid": 3680,
+  "run_id": "c913421e5968477b90ea4838d70839c8",
+  "source": "actual_android_emulator_private_save_restore",
+  "stage": "entry_restore_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "save_unchanged": true,
+  "new_process": true,
+  "player_files_preserved": true
+}

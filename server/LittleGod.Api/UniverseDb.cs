@@ -71,6 +71,16 @@ public sealed class UniverseDb(DbContextOptions<UniverseDb> options) : IdentityD
     public DbSet<Activity> Activities => Set<Activity>();
     protected override void OnModelCreating(ModelBuilder b) {
         base.OnModelCreating(b);
+        b.Entity<RealmReward>().HasKey(r=>r.Id);
+        b.Entity<RealmCharacter>().HasKey(c=>c.Id);
+        b.Entity<RealmCharacter>().HasIndex(c=>new{c.Owner,c.Realm}).IsUnique();
+        b.Entity<RealmCharacter>().HasIndex(c=>new{c.Realm,c.NameKey}).IsUnique();
+        b.Entity<RealmCharacter>().Property(c=>c.Name).HasMaxLength(24);
+        b.Entity<RealmCharacter>().Property(c=>c.NameKey).HasMaxLength(48);
+        b.Entity<RealmCharacter>().HasOne(c=>c.Player).WithMany().HasForeignKey(c=>c.Owner).OnDelete(DeleteBehavior.Cascade);
+        b.Entity<RealmTicket>().HasKey(t=>t.Hash);
+        b.Entity<RealmTicket>().HasIndex(t=>t.Expires);
+        b.Entity<RealmTicket>().HasOne(t=>t.Character).WithMany().HasForeignKey(t=>t.CharacterId).OnDelete(DeleteBehavior.Cascade);
         b.Entity<ChatMessage>().HasKey(x=>x.Id);
         b.Entity<ChatMessage>().Property(x=>x.Text).HasMaxLength(300);
         b.Entity<ChatMessage>().HasIndex(x=>new{x.Sender,x.Created});

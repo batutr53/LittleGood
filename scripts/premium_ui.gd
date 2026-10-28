@@ -365,10 +365,9 @@ func menu():
 func chat_screen():
  var v=surface(say("Chat","Sohbet"));var panel=preload("res://scripts/chat_panel.gd").new();panel.game=game;v.add_child(panel)
 func main_menu():
- current="";history.clear();ui.page="main";var v=surface("LittleGod");banner(v,310);v.add_child(heading(say("A little world.\nA story only you can tell.","Küçük bir dünya.\nYalnızca senin anlatacağın bir hikâye."),42));v.add_child(text(ui.t("welcome"),26,T.MUTED))
- if Persistence.has_save(game.save_path):action(v,ui.t("continue"),game.restore,true,"crown")
- action(v,ui.t("new"),ui.creation,false,"gift");action(v,"English / Türkçe",func():ui.toggle_language();main_menu())
- action(v,say("Online universe","Çevrimiçi evren"),ui.online_screen,false,"map");action(v,ui.t("local_universe"),ui.local_universe);action(v,ui.t("beta"),ui.beta_tools)
+ current="";history.clear()
+ if ui.entry_ui==null:ui.entry_ui=load("res://scripts/entry_screen.gd").new(ui)
+ ui.entry_ui.open()
 func forge(forge_id: int=0):
  preload("res://scripts/workshop_ui.gd").new(self).open(forge_id)
 func previous_forge(forge_id: int=0):

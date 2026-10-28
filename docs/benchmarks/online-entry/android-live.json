@@ -1,0 +1,96 @@
+{
+  "all_passed": true,
+  "checks": {
+    "class_bound": true,
+    "native_create": true,
+    "native_join": true,
+    "native_login": true,
+    "native_mage": true,
+    "native_realm": true,
+    "native_return": true,
+    "native_skill": true,
+    "only_mage": true,
+    "priest_locked": true,
+    "private_save": true,
+    "register": true,
+    "server_movement": true,
+    "valid_city": true
+  },
+  "pid": 3342,
+  "run_id": "71d05849005840938a8abe06e0aa914d",
+  "save_sha256": "58dfc93b0e5e30e7d28f4ba2305fd123efcc6db5de63d3af05e86986cbb3ceaf",
+  "source": "actual_android_emulator_real_account_and_websocket_with_external_adb_taps; server movement intent for skill range",
+  "stage": "entry_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "external_adb_actions": [
+    {
+      "sequence": 1,
+      "action": "login",
+      "screen_point": [
+        2055,
+        510
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 2,
+      "action": "realm",
+      "screen_point": [
+        2055,
+        399
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 3,
+      "action": "mage",
+      "screen_point": [
+        1928,
+        501
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 4,
+      "action": "create",
+      "screen_point": [
+        2055,
+        636
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 5,
+      "action": "join",
+      "screen_point": [
+        2055,
+        459
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 6,
+      "action": "skill",
+      "screen_point": [
+        2097,
+        992
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 7,
+      "action": "return",
+      "screen_point": [
+        2268,
+        54
+      ],
+      "count": 1
+    }
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "script_errors": []
+}

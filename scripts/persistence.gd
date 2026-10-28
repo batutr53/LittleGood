@@ -31,6 +31,7 @@ static func save_world(w: Dictionary, path: String = PATH) -> bool:
 
 static func validate(w: Variant) -> bool:
 	if not w is Dictionary: return false
+	if not load("res://scripts/realm_roster.gd").validate(w):return false
 	if not load("res://scripts/parallel_play.gd").validate(w):return false
 	if not load("res://scripts/rpg_progression.gd").validate(w):return false
 	for key in ["version", "seed", "name", "tick", "cells", "creatures", "settlements", "events", "discoveries", "achievements", "energy", "xp", "weather", "rng_state", "saved_at", "theme"]:

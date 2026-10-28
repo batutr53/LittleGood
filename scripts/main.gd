@@ -51,6 +51,7 @@ var military_ui
 var trade_ui
 var army_scene
 var adventure_scene
+var shared_hunt_scene
 # Explicitly opt in to the unapproved V4 character style. Production remains E3.
 var v4_preview = OS.has_feature("v4_preview") or "--v4-preview" in OS.get_cmdline_user_args()
 
@@ -345,6 +346,7 @@ func reset_gesture() -> void:
 	ui_pointer_blocked = true
 
 func navigate_back() -> void:
+	if is_instance_valid(shared_hunt_scene):shared_hunt_scene.leave();return
 	if is_instance_valid(army_scene):army_scene.toggle_pause();return
 	if is_instance_valid(adventure_scene):
 		if adventure_scene.rpg_overlay:ui.premium.back()
@@ -415,6 +417,13 @@ func _process(delta: float) -> void:
 	var simulation_delta = clampf((clock_ms - last_clock_ms) / 1000.0, 0, 1)
 	last_clock_ms = clock_ms
 	diagnostics.advance(simulation_delta if not suspended else 0)
+	if is_instance_valid(shared_hunt_scene):
+		if not suspended and not paused and not world.is_empty() and has_player_world and shared_hunt_scene.received and shared_hunt_scene.socket.get_ready_state()==WebSocketPeer.STATE_OPEN:
+			accumulator+=simulation_delta*speed
+			while accumulator>=2:accumulator-=2;advance_tick()
+			autosave_time+=simulation_delta
+			if autosave_time>=30 and not is_test_session:autosave_time=0;checkpoint("shared-city-autosave")
+		return
 	if is_instance_valid(adventure_scene):
 		if load("res://scripts/parallel_play.gd").enabled(world) and not suspended and not loading and not paused and not adventure_scene.frozen and not adventure_scene.rpg_overlay:
 			accumulator+=simulation_delta*speed

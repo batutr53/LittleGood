@@ -40,6 +40,7 @@ static func selected(w: Dictionary) -> Dictionary:
 	return w.rpg.progression[w.rpg.active] if w.has("rpg") else {}
 static func switch(w: Dictionary,key: String) -> bool:
 	if not home(w) or not key in CLASSES:return false
+	if not load("res://scripts/realm_roster.gd").allowed(w,key):return false
 	ensure(w);w.rpg.roster[w.rpg.active]=w.kingdom.adventure.hero;w.rpg.active=key;w.kingdom.adventure.hero=w.rpg.roster[key]
 	if not w.rpg.has("starter_grants"):w.rpg.starter_grants=["warrior"]
 	if not key in w.rpg.starter_grants and w.kingdom.adventure.hero.equipment.weapon==0:

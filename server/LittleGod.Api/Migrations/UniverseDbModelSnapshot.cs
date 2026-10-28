@@ -22,27 +22,6 @@ namespace LittleGod.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LittleGod.Api.ChatMessage", b => {
-                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-                b.Property<string>("Sender").IsRequired().HasColumnType("text");
-                b.Property<string>("Recipient").HasColumnType("text");
-                b.Property<string>("Text").IsRequired().HasMaxLength(300).HasColumnType("character varying(300)");
-                b.Property<DateTimeOffset>("Created").HasColumnType("timestamp with time zone");
-                b.HasKey("Id");b.HasIndex("Sender","Created");b.HasIndex("Recipient","Id");b.ToTable("ChatMessage");
-            });
-            modelBuilder.Entity("LittleGod.Api.ChatReport", b => {
-                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-                b.Property<long>("MessageId").HasColumnType("bigint");
-                b.Property<string>("Reporter").IsRequired().HasColumnType("text");
-                b.Property<string>("Sender").IsRequired().HasColumnType("text");
-                b.Property<string>("Text").IsRequired().HasMaxLength(300).HasColumnType("character varying(300)");
-                b.Property<string>("Reason").IsRequired().HasMaxLength(300).HasColumnType("character varying(300)");
-                b.Property<DateTimeOffset>("Created").HasColumnType("timestamp with time zone");
-                b.HasKey("Id");b.HasIndex("Reporter","MessageId").IsUnique();b.ToTable("ChatReport");
-            });
-
             modelBuilder.Entity("LittleGod.Api.Activity", b =>
                 {
                     b.Property<long>("Id")
@@ -91,6 +70,78 @@ namespace LittleGod.Api.Migrations
                     b.HasIndex("Target");
 
                     b.ToTable("Blocks");
+                });
+
+            modelBuilder.Entity("LittleGod.Api.ChatMessage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Recipient")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Recipient", "Id");
+
+                    b.HasIndex("Sender", "Created");
+
+                    b.ToTable("ChatMessage");
+                });
+
+            modelBuilder.Entity("LittleGod.Api.ChatReport", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("MessageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("Reporter")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Reporter", "MessageId")
+                        .IsUnique();
+
+                    b.ToTable("ChatReport");
                 });
 
             modelBuilder.Entity("LittleGod.Api.Connection", b =>
@@ -263,6 +314,97 @@ namespace LittleGod.Api.Migrations
                     b.HasIndex("Sender");
 
                     b.ToTable("Reactions");
+                });
+
+            modelBuilder.Entity("LittleGod.Api.RealmCharacter", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Essence")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Experience")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Hunts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)");
+
+                    b.Property<string>("NameKey")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<string>("Owner")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PrimaryClass")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Realm")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Seed")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Unlocked")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Owner", "Realm")
+                        .IsUnique();
+
+                    b.HasIndex("Realm", "NameKey")
+                        .IsUnique();
+
+                    b.ToTable("RealmCharacter");
+                });
+
+            modelBuilder.Entity("LittleGod.Api.RealmReward", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RealmReward");
+                });
+
+            modelBuilder.Entity("LittleGod.Api.RealmTicket", b =>
+                {
+                    b.Property<string>("Hash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CharacterId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Hash");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("Expires");
+
+                    b.ToTable("RealmTicket");
                 });
 
             modelBuilder.Entity("LittleGod.Api.Showcase", b =>
@@ -539,6 +681,28 @@ namespace LittleGod.Api.Migrations
                     b.Navigation("OwnerPlayer");
 
                     b.Navigation("SenderPlayer");
+                });
+
+            modelBuilder.Entity("LittleGod.Api.RealmCharacter", b =>
+                {
+                    b.HasOne("LittleGod.Api.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("Owner")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("LittleGod.Api.RealmTicket", b =>
+                {
+                    b.HasOne("LittleGod.Api.RealmCharacter", "Character")
+                        .WithMany()
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
                 });
 
             modelBuilder.Entity("LittleGod.Api.Showcase", b =>

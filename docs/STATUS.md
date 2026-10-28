@@ -1,5 +1,13 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Live account entry and cooperative beta — 28 October 2026
+
+Deployed public **HTTPS/WSS `https://31.42.127.79:8443`** on the supplied Windows server. New original boot/login artwork and game tips replace the sparse planet-creation entry. Real account login → live realm list → first-class character creation → city/shared hunt works. Online characters start with one class; three server-earned hunts and three essence recruit another. Recruited companions follow/fight/heal in the shared clearing. Existing device saves/classes are preserved separately.
+
+Direct mobile APK: [LittleGod-Online-debug.apk](https://31.42.127.79:8443/downloads/LittleGod-Online-debug.apk), served over validated HTTPS; file size and server hash checked.
+
+Verified **822 campaign, 67 parallel-play, 61 navigation, 63 .NET unit, 26 public two-peer WSS and 40 rendered Godot UI** checks. Android public-IP test: **14 checks, seven external ADB taps and three fresh-process restore checks**; protected player files unchanged, no script errors. Trusted IP TLS, daily renewal and database backup verified. No physical phone or broad MMO/load-test claim. Version-111 main APK: `D:/LittleGod/builds/android/LittleGod-Online-debug.apk`; QA: `LittleGod-Online-QA-debug.apk`. Exact scope, evidence, operations and remaining multiplayer work: [ONLINE_ENTRY_BETA.md](ONLINE_ENTRY_BETA.md).
+
 ## Parallel city and adventure access — 28 October 2026
 
 Live new/continued worlds now expose the hero, bag, skills/stats and all four adventure destinations from city level 1, without completing city chapters. A missing first hero receives a one-time starter weapon; existing hero/items/resources/history are preserved. Assigned city gathering, construction, production and forging continue during hero combat; pause/overlays/suspension remain intentional stops. Actual XP, generated drops and one-time safe return delivery are retained. Destination levels are danger recommendations.

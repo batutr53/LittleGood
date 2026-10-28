@@ -2,6 +2,7 @@ extends CanvasLayer
 
 var game: Node
 var premium
+var entry_ui
 var rebirth_enabled = not "--legacy-ui" in OS.get_cmdline_user_args()
 var root: Control
 var header: Label

@@ -1,0 +1,2 @@
+[{"Name":"LittleGodBetaApi","State":"Running","LastResult":267009},{"Name":"LittleGodBetaBackup","State":"Ready","LastResult":0},{"Name":"LittleGodBetaRenew","State":"Ready","LastResult":0},{"Name":"LittleGodBetaTls","State":"Running","LastResult":2147946720}]
+{"Name":"20261028-104236.dump","Length":42016}

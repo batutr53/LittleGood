@@ -69,7 +69,7 @@ func inventory():
 		var selector=HBoxContainer.new();v.add_child(selector)
 		for key in R.CLASSES:
 			var cls=key;var b=p.action(selector,R.NAMES[key],func():
-				if R.switch(game.world,cls):selected_item=0;game.realm_ui.changed();inventory(),game.world.rpg.active==key);b.name="SelectClass"+key;b.add_theme_font_size_override("font_size",int(p.px(11)));b.custom_minimum_size.y=p.px(27);b.disabled=not R.home(game.world);compact_button(b)
+				if R.switch(game.world,cls):selected_item=0;game.realm_ui.changed();inventory(),game.world.rpg.active==key);b.name="SelectClass"+key;b.add_theme_font_size_override("font_size",int(p.px(11)));b.custom_minimum_size.y=p.px(27);b.disabled=not R.home(game.world) or not load("res://scripts/realm_roster.gd").allowed(game.world,key);compact_button(b)
 		var gear=HBoxContainer.new();v.add_child(gear);gear.add_theme_constant_override("separation",int(p.px(6)))
 		var hero=game.world.kingdom.adventure.hero;var path="res://assets/rpg/"+str(hero.get("class","warrior"))+".png"
 		if not ResourceLoader.exists(path):path="res://assets/rpg/warrior.png"

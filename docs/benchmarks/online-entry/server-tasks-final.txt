@@ -1,0 +1,2 @@
+{"Hash":"99B1DBE4BC3A6709F06875827317101812BBC3285D45E73C093FAF662FA1A08E"}
+[{"Name":"LittleGodBetaApi","State":"Running","LastResult":267009},{"Name":"LittleGodBetaBackup","State":"Ready","LastResult":0},{"Name":"LittleGodBetaRenew","State":"Ready","LastResult":0},{"Name":"LittleGodBetaTls","State":"Running","LastResult":2147946720}]

@@ -1,0 +1,2 @@
+package: name='org.littlegod.livinguniverse' versionCode='111' versionName='0.8.5-rpg-wip' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
+install-location:'auto'
