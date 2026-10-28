@@ -81,7 +81,8 @@ static func specialize(w: Dictionary,key: String) -> bool:
 static func modifiers(w: Dictionary) -> Dictionary:
 	var result={"health":0,"attack":0,"defense":0,"speed":0,"crit":0,"mana":100}
 	if not w.has("rpg") or not available(w):return result
-	var key=w.kingdom.adventure.hero.get("class","warrior");var p=w.rpg.progression[key];var a=p.attributes
+	var key=w.kingdom.adventure.hero.get("class","warrior");var p=w.rpg.progression[key];var a=p.attributes.duplicate()
+	for attr in w.get("realm_entry",{}).get("starting_stats",{}):a[attr]+=int(w.realm_entry.starting_stats[attr])
 	result.health=int(a.vitality)*3;result.defense=int(a.vitality)/3;result.speed=int(a.dexterity);result.crit=int(a.dexterity)*2;result.mana=100+int(a.intelligence)*4
 	result.attack=int(a.strength) if key=="warrior" else int(a.dexterity) if key=="rogue" else int(a.magic)+int(a.intelligence)/2
 	if float(p.get("guard_ms",0))>0:result.defense+=8

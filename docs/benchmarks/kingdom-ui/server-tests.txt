@@ -1,0 +1,6 @@
+  LittleGod.Api -> D:\LittleGod\server\LittleGod.Api\bin\Debug\net10.0\LittleGod.Api.dll
+  LittleGod.Tests -> D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll
+D:\LittleGod\server\LittleGod.Tests\bin\Debug\net10.0\LittleGod.Tests.dll (.NETCoreApp,Version=v10.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:    66, Atlanan:     0, Toplam:    66, Süre: 352 ms - LittleGod.Tests.dll (net10.0)

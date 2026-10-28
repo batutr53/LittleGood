@@ -76,7 +76,14 @@ while time.monotonic() < deadline:
     if result['stage'] == 'entry_tap' and result['sequence'] not in sent:
         sent.add(result['sequence'])
         vx, vy = result['viewport']
-        width, height = map(int, re.findall(r'(\d+)x(\d+)', run('shell', 'wm', 'size').decode())[-1])
+        for attempt in range(5):
+            try:
+                width, height = map(int, re.findall(r'(\d+)x(\d+)', run('shell', 'wm', 'size').decode())[-1])
+                break
+            except (subprocess.CalledProcessError, IndexError):
+                if attempt == 4:
+                    raise
+                time.sleep(1)
         if (width > height) != (vx > vy):
             width, height = height, width
         x, y = result['tap_point']
@@ -94,7 +101,7 @@ else:
 result['external_adb_actions'] = actions
 result['physical_device'] = False
 result['player_files_preserved'] = player_snapshot() == before
-screens = root / 'docs/screenshots/entry'
+screens = root / 'docs/screenshots' / args.output
 screens.mkdir(parents=True, exist_ok=True)
 for name in ['login', 'create', 'shared', 'home']:
     (screens / ('entry-android-' + name + '.png')).write_bytes(read('entry-android-' + name + '.png'))

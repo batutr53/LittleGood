@@ -1,0 +1,26 @@
+suite True
+runtime True
+phase2 True
+phase3 True
+phase4 True
+phase5 True
+phase6 True
+phase7 True
+phase8 True
+phase085 True
+industry True
+hero True
+exploration True
+combat True
+combat_crafting True
+boss True
+adventure_invariants True
+boss_patterns True
+military True checks 44
+military_campaign True checks 0
+trade True checks 56
+trade_campaign True checks 0
+regions True 40
+regional_combat True 10
+{"retained_checks": 689, "new_desert_checks": 56, "game_checks": 745, "all_passed": true, "desert_suite_seconds": 9.27, "legal_1_22_seeds": [7, 42, 2026]}
+{"retained_checks": 745, "sanctuary_checks": 77, "game_checks": 822, "all_passed": true, "suite_seconds": 13.07, "legal_1_23_seeds": [7, 42, 2026]}

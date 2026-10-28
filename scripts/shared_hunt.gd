@@ -28,6 +28,17 @@ var exit_button:Button
 var skill_button:Button
 var attack_button:Button
 var target_button:Button
+var hp_bar:ProgressBar
+var mp_bar:ProgressBar
+var xp_bar:ProgressBar
+var vitals:Label
+var chat_log:Label
+var chat_channel="general"
+var chat_clock=0.0
+var chat_pending=false
+var chat_messages={}
+var chat_last=0
+var mini
 var previous_xp=-1
 var flash_until=0
 var ground=preload("res://assets/adventure/wildwood-ground-premium.svg")
@@ -54,6 +65,9 @@ func _draw():
 func button(parent,title,rect,action,id):
 	var b=game.ui.button(title,action,true);b.name=id;b.position=rect.position;b.size=rect.size;b.add_theme_font_size_override("font_size",16);parent.add_child(b);return b
 func build_hud():
+	load("res://scripts/kingdom_shared_hud.gd").new(self).build()
+	return
+func old_hud():
 	var extent=get_viewport_rect().size;var layer=CanvasLayer.new();layer.layer=20;add_child(layer);hud=Control.new();hud.mouse_filter=Control.MOUSE_FILTER_IGNORE;layer.add_child(hud)
 	var panel=PanelContainer.new();panel.position=Vector2(12,12);panel.size=Vector2(340,86);panel.add_theme_stylebox_override("panel",load("res://scripts/premium_theme.gd").box(Color(.035,.055,.07,.92),true));hud.add_child(panel);status=game.ui.label(say("Connecting to shared realm…","Ortak bölgeye bağlanılıyor…"),16);panel.add_child(status)
 	target_label=game.ui.label("",18,Color("ecd598"));target_label.position=Vector2(370,15);target_label.size=Vector2(340,40);hud.add_child(target_label)
@@ -70,6 +84,7 @@ func cycle_target():
 	if targets.is_empty():return
 	var index=targets.find_custom(func(e):return int(e.id)==selected);selected=int(targets[(index+1)%targets.size()].id)
 func _unhandled_input(event):
+	if frozen:return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode==KEY_SPACE:pending_action="attack"
 		if event.keycode==KEY_Q:pending_action="skill"
@@ -95,9 +110,13 @@ func _process(delta):
 		while socket.get_available_packet_count()>0:
 			var data=JSON.parse_string(socket.get_packet().get_string_from_utf8())
 			if data is Dictionary and data.get("version")==1 and data.get("players") is Array and data.get("enemies") is Array:snapshot=data;received=true;last_packet=Time.get_ticks_msec()
+		chat_clock+=delta
+		if chat_clock>3 and not frozen and not chat_pending and not game.online.busy:
+			chat_clock=0;poll_chat()
 		send_clock+=delta
 		if send_clock>=.05:
 			send_clock=0;var move=direction+Vector2(float(Input.is_physical_key_pressed(KEY_D))-float(Input.is_physical_key_pressed(KEY_A)),float(Input.is_physical_key_pressed(KEY_S))-float(Input.is_physical_key_pressed(KEY_W)));move=move.limit_length(1)
+			if frozen:move=Vector2.ZERO;pending_action="";attack_held=false
 			socket.send_text(JSON.stringify({"sequence":sequence,"x":move.x,"y":move.y,"action":pending_action if not pending_action.is_empty() else "attack" if attack_held else "","target":selected}));sequence+=1;pending_action=""
 	elif state==WebSocketPeer.STATE_CLOSED:status.text=say("Disconnected. Your earned rewards are safe.\nLeave and reconnect.","Bağlantı kesildi. Kazanılan ödüller korundu.\nAyrılıp yeniden bağlan.")
 	var present=[]
@@ -107,6 +126,7 @@ func _process(delta):
 			camera.position=camera.position.lerp(actor.position,delta*6);status.text=str(p.name)+" · "+str(int(p.hp))+" HP · "+str(int(p.mp))+" MP\n"+str(int(p.xp))+" XP · "+str(int(p.essence))+say(" essence · "," öz · ")+str(snapshot.players.size())+say(" players"," oyuncu")
 			if previous_xp>=0 and p.xp>previous_xp:flash_until=Time.get_ticks_msec()+2000;game.audio.chime(6)
 			previous_xp=int(p.xp);skill_button.disabled=p.mp<8 or p.hp<=0
+			var stats=character.get("startingStats",{});hp_bar.max_value=100+int(stats.get("vitality",0))*3;hp_bar.value=p.hp;mp_bar.max_value=100+int(stats.get("intelligence",0))*4;mp_bar.value=p.mp;var level=1+int(sqrt(float(p.xp)/40.0));xp_bar.max_value=40*(level*level-(level-1)*(level-1));xp_bar.value=p.xp-40*(level-1)*(level-1);status.text=str(p.name)+" · "+str(p.job).capitalize()+" · Lv "+str(level);vitals.text=str(int(p.hp))+" HP · "+str(int(p.mp))+" MP · "+str(int(p.xp))+" XP"
 	for e in snapshot.enemies:
 		var id="e_"+str(e.id);present.append(id);var actor=body(id,"wolf",true);actor.position=Vector2(e.x,e.y);actor.visible=e.hp>0;actor.get_node("Name").text=say("Wild wolf","Yaban kurdu")
 		if int(e.id)==selected:target_label.text=say("Wild wolf · ","Yaban kurdu · ")+str(int(e.hp))+" / 100 HP"
@@ -116,8 +136,33 @@ func _process(delta):
 	for id in actors.keys():
 		if not id in present:actors[id].queue_free();actors.erase(id);sprites.erase(id)
 	queue_redraw()
+	if is_instance_valid(mini):mini.queue_redraw()
+	if socket.get_ready_state()!=WebSocketPeer.STATE_OPEN:
+		attack_button.disabled=true;skill_button.disabled=true
+		if authenticated:status.text=say("Disconnected · return and reconnect","Bağlantı kesildi · dönüp yeniden bağlan")
+func poll_chat():
+	if game.suspended or not is_inside_tree():return
+	if chat_channel=="system":
+		var lines=[]
+		for event in game.ui.system_events(4):lines.append(game.ui.event_text(event))
+		chat_log.text="\n".join(lines) if not lines.is_empty() else say("No new system events.","Yeni oyun olayı yok.");return
+	chat_pending=true;var result=await game.online.call_api(HTTPClient.METHOD_GET,"/chat/messages?after="+str(chat_last));chat_pending=false
+	if not is_inside_tree() or chat_channel!="general":return
+	if not result.ok:chat_log.text=say("Chat disconnected · tap Write to retry.","Sohbet bağlantısı yok · yeniden denemek için Mesaj yaz.");return
+	for row in result.data.get("items",[]):
+		chat_messages[int(row.id)]=str(row.get("name",""))+": "+str(row.get("text",""));chat_last=maxi(chat_last,int(row.id))
+	var ids=chat_messages.keys();ids.sort()
+	if ids.size()>4:
+		for id in ids.slice(0,ids.size()-4):chat_messages.erase(id)
+	var lines=[]
+	for id in chat_messages:lines.append(chat_messages[id])
+	chat_log.text="\n".join(lines) if not lines.is_empty() else say("Welcome to Hearth. Start a conversation below.","Hearth’e hoş geldin. Aşağıdan sohbet başlatabilirsin.")
+func choose_chat(channel):
+	chat_channel=channel;chat_clock=3.1
+func open_panel(route):
+	direction=Vector2.ZERO;dragging=false;attack_held=false;pending_action="";frozen=true;game.ui.layer=25;game.ui.root.show();game.ui.world_controls(false);game.ui.premium.route(route)
 func leave():
-	socket.close(1000,"Leave");game.checkpoint("shared-city-progress");game.shared_hunt_scene=null;game.ui.root.show();game.in_menu=true;game.ui.entry_ui.characters();queue_free()
+	socket.close(1000,"Leave");frozen=false;game.ui.layer=1;game.checkpoint("shared-city-progress");game.shared_hunt_scene=null;game.ui.root.show();game.in_menu=true;game.ui.entry_ui.characters();queue_free()
 func _exit_tree():socket.close()
 func _notification(what):
 	if what==NOTIFICATION_APPLICATION_FOCUS_OUT:direction=Vector2.ZERO;dragging=false;attack_held=false;pending_action=""

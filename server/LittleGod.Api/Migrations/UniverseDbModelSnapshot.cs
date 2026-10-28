@@ -330,6 +330,9 @@ namespace LittleGod.Api.Migrations
                     b.Property<int>("Hunts")
                         .HasColumnType("integer");
 
+                    b.Property<DateTimeOffset?>("LastDaily")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(24)
@@ -348,12 +351,23 @@ namespace LittleGod.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Race")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Realm")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("RewardDays")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Seed")
                         .HasColumnType("integer");
+
+                    b.Property<string>("StartingStats")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Unlocked")
                         .IsRequired()

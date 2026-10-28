@@ -48,7 +48,7 @@ public sealed class WorldHub(IServiceScopeFactory scopes,ILogger<WorldHub> log):
         var row=await db.Set<RealmTicket>().Include(t=>t.Character).AsNoTracking().SingleOrDefaultAsync(t=>t.Hash==hash&&!t.Used&&t.Expires>DateTimeOffset.UtcNow);
         if(row is null)return;
         if(await db.Set<RealmTicket>().Where(t=>t.Hash==hash&&!t.Used&&t.Expires>DateTimeOffset.UtcNow).ExecuteUpdateAsync(s=>s.SetProperty(t=>t.Used,true))!=1)return;
-        var session=new Session{Character=row.Character,Socket=socket};
+        var session=new Session{Character=row.Character,Socket=socket,Hp=Realms.MaxHealth(row.Character),Mana=Realms.MaxMana(row.Character)};
         lock(gate){if(players.Count>=Capacity||players.ContainsKey(row.Character.Id))return;session.X+=80*(players.Count%4);session.Y+=35*(players.Count/4);players.Add(row.Character.Id,session);}
         try {
             var window=Environment.TickCount64;var messages=0;
@@ -87,14 +87,14 @@ public sealed class WorldHub(IServiceScopeFactory scopes,ILogger<WorldHub> log):
             lock(gate) {
                 tick++;
                 foreach(var player in players.Values) {
-                    if(player.Hp<=0){if(tick-player.DownAt>50){player.Hp=100;player.Mana=100;player.X=350;player.Y=760;}continue;}
+                    if(player.Hp<=0){if(tick-player.DownAt>50){player.Hp=Realms.MaxHealth(player.Character);player.Mana=Realms.MaxMana(player.Character);player.X=350;player.Y=760;}continue;}
                     var mx=tick-player.LastCommand<=4?player.MoveX:0;var my=tick-player.LastCommand<=4?player.MoveY:0;var length=MathF.Max(1,MathF.Sqrt(mx*mx+my*my));
                     var action=player.Action;player.Action="";player.Ack=player.Sequence;
                     var speed=14f;if(action=="dodge"&&tick-player.LastSkill>=12){speed=70;player.LastSkill=tick;}
                     player.X=Math.Clamp(player.X+mx/length*speed,80,1220);player.Y=Math.Clamp(player.Y+my/length*speed,100,880);
-                    if(tick%10==0)player.Mana=Math.Min(100,player.Mana+2);
+                    if(tick%10==0)player.Mana=Math.Min(Realms.MaxMana(player.Character),player.Mana+2);
                     if(tick%20==0&&tick-player.LastAttack<30)foreach(var ally in Allies(player)) {
-                        if(ally=="priest"&&player.Hp<85){player.Hp=Math.Min(100,player.Hp+5);continue;}
+                        if(ally=="priest"&&player.Hp<Realms.MaxHealth(player.Character)-15){player.Hp=Math.Min(Realms.MaxHealth(player.Character),player.Hp+5);continue;}
                         var nearby=beasts.FirstOrDefault(b=>b.Hp>0&&Distance(player.X,player.Y,b.X,b.Y)<200);if(nearby is not null)Hit(nearby,player,7);
                     }
                     if(action is not ("attack" or "skill"))continue;
@@ -103,7 +103,7 @@ public sealed class WorldHub(IServiceScopeFactory scopes,ILogger<WorldHub> log):
                     var ranged=player.Character.PrimaryClass is "mage" or "priest" or "rogue";
                     if(Distance(player.X,player.Y,beast.X,beast.Y)>(ranged?270:115))continue;
                     if(heavy){player.Mana-=8;player.LastSkill=tick;}else player.LastAttack=tick;
-                    Hit(beast,player,heavy?32:16);
+                    Hit(beast,player,(heavy?32:16)+Realms.BonusAttack(player.Character));
                 }
                 foreach(var beast in beasts) {
                     if(beast.Hp==0){if(tick>=beast.Revive){beast.Hp=100;beast.Contributors.Clear();}continue;}

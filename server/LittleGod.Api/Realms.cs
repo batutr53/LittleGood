@@ -19,6 +19,10 @@ public sealed class RealmCharacter {
     public int Experience { get; set; }
     public int Essence { get; set; }
     public int Hunts { get; set; }
+    public string Race {get;set;}="human";
+    public string StartingStats {get;set;}="{}";
+    public int RewardDays {get;set;}
+    public DateTimeOffset? LastDaily {get;set;}
 }
 public sealed class RealmTicket {
     public string Hash { get; set; } = "";
@@ -27,16 +31,23 @@ public sealed class RealmTicket {
     public DateTimeOffset Expires { get; set; }
     public bool Used { get; set; }
 }
-public record CreateCharacter(string Name, string Class);
+public record CreateCharacter(string Name, string Class,string Race="human",Dictionary<string,int>? Stats=null);
 public record RecruitClass(string Class);
 public sealed class RealmReward {public string Id {get;set;}="";public DateTimeOffset Created {get;set;}=DateTimeOffset.UtcNow;}
 public static partial class Realms {
     public static readonly string[] Classes = ["warrior","priest","mage","rogue"];
+    public static readonly string[] Attributes=["strength","dexterity","intelligence","magic","vitality"];
+    public static bool ValidStats(Dictionary<string,int>? stats)=>stats is null || stats.Count==5&&Attributes.All(k=>stats.TryGetValue(k,out var n)&&n>=0&&n<=10)&&stats.Values.Sum()==10;
+    public static int Stat(RealmCharacter c,string key)=>System.Text.Json.JsonSerializer.Deserialize<Dictionary<string,int>>(string.IsNullOrEmpty(c.StartingStats)?"{}":c.StartingStats)!.GetValueOrDefault(key);
+    public static int MaxHealth(RealmCharacter c)=>100+Stat(c,"vitality")*3;
+    public static int MaxMana(RealmCharacter c)=>100+Stat(c,"intelligence")*4;
+    public static int BonusAttack(RealmCharacter c)=>Stat(c,c.PrimaryClass=="warrior"?"strength":c.PrimaryClass=="rogue"?"dexterity":"magic");
+    public static bool DailyReady(RealmCharacter c,DateTimeOffset now)=>c.LastDaily is null||c.LastDaily.Value.UtcDateTime.Date<now.UtcDateTime.Date;
     [GeneratedRegex("^[\\p{L}][\\p{L}\\p{Nd} _-]{1,22}[\\p{L}\\p{Nd}]$")]
     private static partial Regex NamePattern();
     public static bool ValidName(string? name) => name is not null && name==name.Trim() && NamePattern().IsMatch(name);
     public static string TicketHash(string ticket) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(ticket)));
-    public static object Dto(RealmCharacter c) => new {id=c.Id,realm=c.Realm,name=c.Name,primaryClass=c.PrimaryClass,unlocked=System.Text.Json.JsonSerializer.Deserialize<string[]>(c.Unlocked),seed=c.Seed,experience=c.Experience,essence=c.Essence,hunts=c.Hunts};
+    public static object Dto(RealmCharacter c) => new {id=c.Id,realm=c.Realm,name=c.Name,primaryClass=c.PrimaryClass,unlocked=System.Text.Json.JsonSerializer.Deserialize<string[]>(c.Unlocked),seed=c.Seed,experience=c.Experience,essence=c.Essence,hunts=c.Hunts,race=c.Race=="stoneborn"?"stoneborn":"human",startingStats=System.Text.Json.JsonSerializer.Deserialize<Dictionary<string,int>>(string.IsNullOrEmpty(c.StartingStats)?"{}":c.StartingStats)};
     public static void MapRealms(this WebApplication app) {
         var api=app.MapGroup("/api/v1").RequireAuthorization();
         api.MapGet("/realms",(WorldHub hub)=>Results.Ok(new {items=new[]{new{id="hearth",name="Hearth · İlk Krallık",status="online",players=hub.Count,capacity=WorldHub.Capacity,region="beta",rules="cooperative"}}}));
@@ -46,10 +57,10 @@ public static partial class Realms {
             return Results.Ok(new{items=(await db.Set<RealmCharacter>().Where(c=>c.Owner==owner&&c.Realm==realm).ToListAsync()).Select(Dto)});
         });
         api.MapPost("/realms/{realm}/characters",async(string realm,CreateCharacter body,ClaimsPrincipal user,UniverseDb db)=>{
-            if(realm!="hearth"||!ValidName(body.Name)||!Classes.Contains(body.Class))return Results.BadRequest(new{error="invalid_character"});
+            if(realm!="hearth"||!ValidName(body.Name)||!Classes.Contains(body.Class)||body.Race is not ("human" or "stoneborn")||!ValidStats(body.Stats))return Results.BadRequest(new{error="invalid_character"});
             var owner=user.FindFirstValue(ClaimTypes.NameIdentifier)!;
             if(await db.Set<RealmCharacter>().AnyAsync(c=>c.Owner==owner&&c.Realm==realm))return Results.Conflict(new{error="character_exists"});
-            var c=new RealmCharacter{Owner=owner,Realm=realm,Name=body.Name,NameKey=body.Name.ToUpperInvariant(),PrimaryClass=body.Class,Unlocked=System.Text.Json.JsonSerializer.Serialize(new[]{body.Class}),Seed=RandomNumberGenerator.GetInt32(1,int.MaxValue)};
+            var c=new RealmCharacter{Owner=owner,Realm=realm,Name=body.Name,NameKey=body.Name.ToUpperInvariant(),PrimaryClass=body.Class,Unlocked=System.Text.Json.JsonSerializer.Serialize(new[]{body.Class}),Seed=RandomNumberGenerator.GetInt32(1,int.MaxValue),Race=body.Race,StartingStats=System.Text.Json.JsonSerializer.Serialize(body.Stats??new Dictionary<string,int>())};
             db.Add(c);await db.SaveChangesAsync();return Results.Ok(Dto(c));
         }).RequireRateLimiting("write");
         api.MapPost("/realms/{realm}/characters/{id}/enter",async(string realm,string id,ClaimsPrincipal user,UniverseDb db,WorldHub hub)=>{
@@ -81,6 +92,23 @@ public static partial class Realms {
             var c=await db.Set<RealmCharacter>().SingleOrDefaultAsync(c=>c.Id==id&&c.Owner==owner&&c.Realm==realm);if(c is null)return Results.NotFound();
             if(hub.Contains(id)||!Classes.Contains(body.Class)||!System.Text.Json.JsonSerializer.Deserialize<string[]>(c.Unlocked)!.Contains(body.Class))return Results.Conflict();
             c.PrimaryClass=body.Class;await db.SaveChangesAsync();return Results.Ok(Dto(c));
+        }).RequireRateLimiting("write");
+        api.MapGet("/realms/{realm}/characters/{id}/daily",async(string realm,string id,ClaimsPrincipal user,UniverseDb db)=>{
+            var owner=user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var c=await db.Set<RealmCharacter>().SingleOrDefaultAsync(c=>c.Id==id&&c.Owner==owner&&c.Realm==realm);
+            return c is null?Results.NotFound():Results.Ok(new{claimed=c.RewardDays,day=c.RewardDays%28+1,ready=DailyReady(c,DateTimeOffset.UtcNow),essence=1,serverTime=DateTimeOffset.UtcNow});
+        });
+        api.MapPost("/realms/{realm}/characters/{id}/daily",async(string realm,string id,ClaimsPrincipal user,UniverseDb db,WorldHub hub)=>{
+            if(hub.Contains(id))return Results.Conflict(new{error="leave_hunt_first"});
+            var owner=user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            await using var tx=await db.Database.BeginTransactionAsync();
+            await db.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock(hashtext({owner}))");
+            await db.Database.ExecuteSqlInterpolatedAsync($"SELECT 1 FROM \"RealmCharacter\" WHERE \"Id\"={id} FOR UPDATE");
+            var c=await db.Set<RealmCharacter>().SingleOrDefaultAsync(c=>c.Id==id&&c.Owner==owner&&c.Realm==realm);
+            if(c is null)return Results.NotFound();
+            if(!DailyReady(c,DateTimeOffset.UtcNow))return Results.Ok(new{granted=false,character=Dto(c)});
+            c.RewardDays++;c.LastDaily=DateTimeOffset.UtcNow;c.Essence++;await db.SaveChangesAsync();await tx.CommitAsync();
+            return Results.Ok(new{granted=true,character=Dto(c)});
         }).RequireRateLimiting("write");
     }
 }

@@ -1,0 +1,92 @@
+[
+  {
+    "sequence": 1,
+    "action": "login",
+    "screen_point": [
+      2055,
+      510
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 2,
+    "action": "realm",
+    "screen_point": [
+      1200,
+      399
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 3,
+    "action": "connect",
+    "screen_point": [
+      1200,
+      520
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 4,
+    "action": "race",
+    "screen_point": [
+      854,
+      708
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 5,
+    "action": "mage",
+    "screen_point": [
+      339,
+      540
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 6,
+    "action": "stat",
+    "screen_point": [
+      2311,
+      580
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 7,
+    "action": "create",
+    "screen_point": [
+      2010,
+      714
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 8,
+    "action": "join",
+    "screen_point": [
+      2055,
+      459
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 9,
+    "action": "skill",
+    "screen_point": [
+      2139,
+      874
+    ],
+    "count": 1
+  },
+  {
+    "sequence": 10,
+    "action": "return",
+    "screen_point": [
+      2156,
+      316
+    ],
+    "count": 1
+  }
+]

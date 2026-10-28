@@ -1,5 +1,13 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Kingdom UI and character entry — 28 October 2026
+
+Implemented the supplied landscape layout direction with original gold/olive/burgundy surfaces across login, realm selection, people, class/name/ten starting stats, HUD, inventory and tabbed settings. A real UTC visit-gift calendar is server-owned and race/stat data is persisted additively. Shared-hunt HUD includes actual General chat, minimap, XP/HP/MP and functioning modal input freeze/close. Wide inventory fits the starting grid at 960×540 and 1600×720.
+
+Verified 822 campaign, 67 parallel-play, 61 navigation, 14 RPG interaction, 66 .NET, 59 rendered entry, 45 panel, 15 public identity/daily and 26 public two-peer WSS checks. Android emulator: 17 checks, 10 external taps, 3 restore checks, player files preserved. Physical device not connected; no sustained-FPS certification. Main/QA version-112 APKs are in `D:/LittleGod/builds/android/LittleGod-Kingdom-UI-debug.apk` and `LittleGod-Kingdom-UI-QA-debug.apk`. [Public APK](https://31.42.127.79:8443/downloads/LittleGod-Kingdom-UI-debug.apk). Desktop: `D:/LittleGod/Launch LittleGod.cmd`.
+
+Full implementation, scope limits, actual screenshots, source assets, build hashes and test evidence: [KINGDOM_UI_DELIVERY.md](KINGDOM_UI_DELIVERY.md). The visit gift is implemented; a complete seasonal-event platform and production animation remake remain future work.
+
 ## Live account entry and cooperative beta — 28 October 2026
 
 Deployed public **HTTPS/WSS `https://31.42.127.79:8443`** on the supplied Windows server. New original boot/login artwork and game tips replace the sparse planet-creation entry. Real account login → live realm list → first-class character creation → city/shared hunt works. Online characters start with one class; three server-earned hunts and three essence recruit another. Recruited companions follow/fight/heal in the shared clearing. Existing device saves/classes are preserved separately.

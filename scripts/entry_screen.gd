@@ -9,6 +9,12 @@ var generation=0
 var stage="login"
 var realm="hearth"
 var selected_class="warrior"
+var selected_race="human"
+var pending_name=""
+var starting_stats={"strength":0,"dexterity":0,"intelligence":0,"magic":0,"vitality":0}
+var stat_remaining:Label
+var create_button:Button
+var daily_state={}
 var character={}
 var message=""
 var form:VBoxContainer
@@ -38,14 +44,14 @@ func base(title):
 	var title_box=VBoxContainer.new();title_box.position=Vector2(45*s,35*s);title_box.size=Vector2(extent.x*.5,110*s);canvas.add_child(title_box)
 	var logo=text(title_box,"LITTLE GOD",47,Color("f5dfae"));logo.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));logo.add_theme_color_override("font_shadow_color",Color.BLACK);logo.add_theme_constant_override("shadow_offset_y",3)
 	text(title_box,"A G E   O F   K I N G D O M S",16,Color("dac5a0"))
-	var panel=PanelContainer.new();panel.name="EntryForm";panel.position=Vector2(extent.x-415*s,105*s);panel.size=Vector2(370*s,extent.y-205*s);var box=T.box(Color(.025,.038,.065,.93),true);box.content_margin_left=18*s;box.content_margin_right=18*s;box.content_margin_top=16*s;box.content_margin_bottom=14*s;panel.add_theme_stylebox_override("panel",box);canvas.add_child(panel)
+	var panel=PanelContainer.new();panel.name="EntryForm";panel.position=Vector2(extent.x-415*s,105*s);panel.size=Vector2(370*s,extent.y-205*s);var box=T.skin();box.content_margin_left=18*s;box.content_margin_right=18*s;box.content_margin_top=16*s;box.content_margin_bottom=14*s;panel.add_theme_stylebox_override("panel",box);canvas.add_child(panel)
 	form=VBoxContainer.new();form.add_theme_constant_override("separation",maxi(5,roundi(10*s)));panel.add_child(form)
-	text(form,say("ACCOUNT  ›  REALM  ›  HERO","HESAP  ›  SUNUCU  ›  KAHRAMAN"),12,Color("b9a16e"));text(form,title,27,Color("f1dbac"))
+	text(form,say("ACCOUNT  ›  REALM  ›  PEOPLE  ›  HERO","HESAP  ›  SUNUCU  ›  HALK  ›  KAHRAMAN"),12,Color("b9a16e"));text(form,title,27,Color("f1dbac"))
 	status=text(form,message,15,Color("deb77c"));status.name="EntryStatus";status.visible=not message.is_empty()
-	var tip_panel=PanelContainer.new();tip_panel.position=Vector2(35*s,extent.y-83*s);tip_panel.size=Vector2(extent.x-70*s,58*s);tip_panel.add_theme_stylebox_override("panel",T.box(Color(.025,.035,.055,.88)));canvas.add_child(tip_panel)
+	var tip_panel=PanelContainer.new();tip_panel.name="EntryTips";tip_panel.position=Vector2(35*s,extent.y-83*s);tip_panel.size=Vector2(extent.x-70*s,58*s);tip_panel.add_theme_stylebox_override("panel",T.box(Color(.025,.035,.055,.88)));canvas.add_child(tip_panel)
 	var tips=[say("Your workers keep gathering while you adventure. Collect their cargo when you return.","Sen maceradayken işçilerin çalışır. Döndüğünde yüklerini toplamayı unutma."),say("Watch an enemy's warning, dodge, then strike during its recovery.","Düşmanın uyarısını izle, kaçın ve toparlanırken saldır."),say("In the shared hunting ground, the server calculates damage and earned essence.","Ortak av alanında hasarı ve kazanılan özü sunucu hesaplar.")]
 	var tip=text(tip_panel,say("FIELD NOTES  ·  ","YOLCULUK NOTLARI  ·  ")+tips[int(Time.get_unix_time_from_system()/12)%tips.size()],16);tip.vertical_alignment=VERTICAL_ALIGNMENT_CENTER
-	var language=Button.new();language.text="TR / EN";language.position=Vector2(35*s,extent.y-132*s);language.size=Vector2(100*s,40*s);canvas.add_child(language);language.pressed.connect(func():ui.toggle_language();open())
+	var language=Button.new();language.name="EntryLanguage";language.text="TR / EN";language.position=Vector2(35*s,extent.y-132*s);language.size=Vector2(100*s,40*s);canvas.add_child(language);language.pressed.connect(func():ui.toggle_language();open())
 	if Persistence.has_save(game.save_path) and not game.save_path.begins_with("user://realms/"):
 		var legacy=Button.new();legacy.name="ExistingLocalSave";legacy.text=say("Continue device save","Cihazdaki kayda devam");legacy.position=Vector2(150*s,extent.y-132*s);legacy.size=Vector2(220*s,40*s);canvas.add_child(legacy);legacy.pressed.connect(game.restore)
 func open():
@@ -84,12 +90,15 @@ func connection():
 	button(form,say("Back","Geri"),login_page)
 func servers():
 	stage="servers";message="";base(say("Choose your realm","Sunucunu seç"));var epoch=generation;note(say("Loading realms…","Sunucular alınıyor…"))
+	var extent=ui.get_viewport().get_visible_rect().size;var panel=canvas.get_node("EntryForm");panel.position.x=(extent.x-panel.size.x)*.5
 	var response=await net.call_api(HTTPClient.METHOD_GET,"/realms")
 	if epoch!=generation:return
 	if not response.ok:note(say("Realm list unavailable. Try again.","Sunucu listesi alınamadı. Yeniden dene."));button(form,say("Retry","Yeniden dene"),servers);return
 	note(say("Choose a realm to see your character.","Karakterini görmek için bir sunucu seç."))
+	var connect=button(form,say("CONNECT","BAĞLAN"),characters,true,"ConnectRealm");connect.disabled=true
 	for row in response.data.get("items",[]):
-		var id=str(row.id);var b=button(form,str(row.name)+"\n"+str(int(row.players))+" / "+str(int(row.capacity))+" · "+str(row.status),func():realm=id;await characters(),true,"Realm_"+id);b.disabled=row.status!="online"
+		var id=str(row.id);var b=button(form,str(row.name)+"\n"+str(int(row.players))+" / "+str(int(row.capacity))+" · "+str(row.status),func():realm=id;connect.disabled=false,true,"Realm_"+id);b.disabled=row.status!="online";form.move_child(b,form.get_child_count()-2)
+		var bar=ProgressBar.new();bar.show_percentage=false;bar.max_value=int(row.capacity);bar.value=int(row.players);bar.custom_minimum_size.y=10;form.add_child(bar);form.move_child(bar,form.get_child_count()-2)
 	button(form,say("Sign out","Çıkış yap"),func():net.forget();open())
 func characters():
 	stage="characters";message="";base(say("Your company","Kahraman birliğin"));var epoch=generation;note(say("Loading character…","Karakter alınıyor…"))
@@ -97,24 +106,32 @@ func characters():
 	if epoch!=generation:return
 	if not response.ok:note(say("Character list unavailable.","Karakter listesi alınamadı."));button(form,say("Back","Geri"),servers);return
 	var items=response.data.get("items",[])
-	if items.is_empty():create_page();return
+	if items.is_empty():load("res://scripts/kingdom_entry_design.gd").new(self).race();return
 	character=items[0];selected_class=character.primaryClass;show_character()
 func portrait(key):
 	var p=TextureRect.new();p.texture=load("res://assets/rpg/"+key+".png");p.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;p.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;p.position=Vector2(200*s,190*s);p.size=Vector2(330*s,390*s);p.mouse_filter=Control.MOUSE_FILTER_IGNORE;canvas.add_child(p)
 func realm_back():
 	var b=Button.new();b.text=say("← Realms","← Sunucular");b.position=Vector2(ui.get_viewport().get_visible_rect().size.x-415*s,55*s);b.size=Vector2(150*s,36);canvas.add_child(b);b.pressed.connect(servers)
 func create_page():
-	stage="create";message="";base(say("Create your first hero","İlk kahramanını oluştur"));portrait(selected_class)
-	hero_name=field(form,say("Hero name · 3–24 characters","Kahraman adı · 3–24 karakter"),"HeroName");hero_name.max_length=24
-	var grid=GridContainer.new();grid.columns=2;form.add_child(grid)
-	for key in R.CLASSES:
-		var cls=key;button(grid,R.NAMES[key],func():var name=hero_name.text;selected_class=cls;create_page();hero_name.text=name,selected_class==key,"FirstClass_"+key)
-	text(form,{"warrior":say("Heavy armor · melee and defense","Ağır zırh · yakın saldırı ve savunma"),"priest":say("Sacred magic · healing and protection","Kutsal güç · iyileştirme ve koruma"),"mage":say("Elemental magic · ranged damage","Element büyüsü · menzilli hasar"),"rogue":say("Bow and daggers · speed and precision","Yay ve hançer · hız ve isabet")}[selected_class],16)
-	button(form,say("CREATE HERO","KAHRAMANI OLUŞTUR"),create_character,true,"CreateRealmHero");realm_back()
+	load("res://scripts/kingdom_entry_design.gd").new(self).create()
+func change_stat(key,delta):
+	var total=0
+	for n in starting_stats.values():total+=int(n)
+	if starting_stats[key]+delta<0 or total+delta>10:return
+	starting_stats[key]+=delta;update_stats()
+func update_stats():
+	var total=0
+	for key in starting_stats:
+		total+=int(starting_stats[key]);var label=canvas.find_child("StartValue_"+key,true,false)
+		if label:label.text=str(starting_stats[key])
+	stat_remaining.text=say("Remaining: ","Kalan puan: ")+str(10-total);create_button.disabled=total!=10
 func create_character():
 	if net.busy:return
 	var name=hero_name.text.strip_edges();var epoch=generation;note(say("Creating hero…","Kahraman oluşturuluyor…"))
-	var response=await net.call_api(HTTPClient.METHOD_POST,"/realms/"+realm+"/characters",{"name":name,"class":selected_class})
+	var total=0
+	for n in starting_stats.values():total+=int(n)
+	if total!=10:note(say("Distribute all ten points.","On puanın tamamını dağıt."));return
+	var response=await net.call_api(HTTPClient.METHOD_POST,"/realms/"+realm+"/characters",{"name":name,"class":selected_class,"race":selected_race,"stats":starting_stats})
 	if epoch!=generation:return
 	if response.ok:character=response.data;show_character()
 	else:note(say("Name unavailable or invalid. Use 3–24 letters/numbers.","Ad kullanımda veya geçersiz. 3–24 harf/rakam kullan."))
@@ -123,11 +140,19 @@ func show_character():
 	text(form,R.NAMES[character.primaryClass]+" · "+str(int(character.experience))+" XP",22,Color("f1dbac"));text(form,say("Company essence: ","Birlik özü: ")+str(int(character.essence))+say(" · Hunts: "," · Av: ")+str(int(character.hunts)),16)
 	button(form,say("ENTER SHARED HUNT","ORTAK AVA KATIL"),join_shared,true,"JoinSharedHunt")
 	button(form,say("My city","Şehrime git"),enter_city,false,"EnterRealmCity")
+	button(form,say("Visit gifts & events","Ziyaret hediyeleri ve etkinlikler"),daily,false,"OpenDaily")
 	var company=GridContainer.new();company.columns=2;form.add_child(company)
 	for key in R.CLASSES:
 		if key==character.primaryClass:continue
 		var cls=key;var unlocked=key in character.unlocked;var b=button(company,R.NAMES[key]+(" · "+say("Choose","Seç") if unlocked else " · 3 av / 3 öz"),func():await recruit_or_select(cls,unlocked),false,"Company_"+key);b.disabled=not unlocked and (character.hunts<3 or character.essence<3)
 	realm_back()
+func daily():
+	var response=await net.call_api(HTTPClient.METHOD_GET,"/realms/"+realm+"/characters/"+character.id+"/daily")
+	if not response.ok:note(say("Gift calendar unavailable.","Hediye takvimi alınamadı."));return
+	daily_state=response.data;load("res://scripts/kingdom_entry_design.gd").new(self).daily()
+func claim_daily():
+	var response=await net.call_api(HTTPClient.METHOD_POST,"/realms/"+realm+"/characters/"+character.id+"/daily")
+	if response.ok:character=response.data.character;await daily()
 func recruit_or_select(key,unlocked):
 	var path="select-class" if unlocked else "recruit";var epoch=generation
 	var response=await net.call_api(HTTPClient.METHOD_POST,"/realms/"+realm+"/characters/"+character.id+"/"+path,{"class":key})

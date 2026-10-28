@@ -48,7 +48,7 @@ func text(value: String,n: int=26,color: Color=T.CREAM) -> Label:
  var l=Label.new();l.text=value;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_override("font",ui.ui_font());l.add_theme_font_size_override("font_size",int(maxf(10,px(n*.62*ui.accessibility_scale))));l.add_theme_color_override("font_color",visible_color);l.mouse_filter=Control.MOUSE_FILTER_IGNORE;l.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  return l
 func heading(value: String,n: int=38) -> Label:
- var l=text(value,n);l.add_theme_font_override("font",ui.ui_font());return l
+ var l=text(value,n);l.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));l.add_theme_color_override("font_color",T.GOLD);return l
 func image(texture: Texture2D,extent: Vector2) -> TextureRect:
  var p=TextureRect.new();p.texture=texture;p.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;p.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;p.custom_minimum_size=extent;p.mouse_filter=Control.MOUSE_FILTER_IGNORE;return p
 func action(parent: Node,title: String,cb: Callable,primary=false,key="") -> Button:
@@ -106,7 +106,7 @@ func route(destination: String,arg: int=0,remember=true):
   "bestiary":rpg.bestiary()
   "contracts":rpg.contracts()
   "sets":rpg.set_screen()
-  "settings":ui.legacy_settings()
+  "settings":preload("res://scripts/kingdom_settings.gd").new(self).open()
   "attributes":rpg.attributes()
   "skills":rpg.skills()
   "chat":chat_screen()
@@ -129,13 +129,14 @@ func surface(title: String,compact=false) -> VBoxContainer:
  if not routing and not current.is_empty():nested=true
  if is_instance_valid(ui.modal):ui.root.remove_child(ui.modal);ui.modal.queue_free()
  if is_instance_valid(ui.veil):ui.root.remove_child(ui.veil);ui.veil.queue_free()
- var viewport=size();var margin=px(10);var width=px({"inventory":384,"hero":384,"attributes":380,"skills":470,"quest":440,"map":480,"forge":500,"construction":510,"trade":500,"workers":470,"army":480,"chat":480,"menu":430,"settings":480}.get(current,460))
+ var viewport=size();var margin=px(10);var width=px({"inventory":960,"hero":960,"attributes":380,"skills":470,"quest":440,"map":480,"forge":500,"construction":510,"trade":500,"workers":470,"army":480,"chat":480,"menu":430,"settings":480}.get(current,460))
  var extent=440 if compact else 500 if current in ["quest","workers","construction","guide","worker","quest_history","army","map","destination"] else 560
  var height=minf(viewport.y-px(122),px(extent));var top=px(70)
  if game.world.is_empty():width=minf(viewport.x-px(40),px(680));height=minf(viewport.y-px(60),px(630));top=(viewport.y-height)*.5
  var x=viewport.x-width-margin
+ if current=="settings":width=minf(viewport.x-px(30),px(740));height=minf(viewport.y-px(100),px(520));x=(viewport.x-width)*.5
  if current in ["attributes","quest","menu","workers"]:x=margin
- if current=="map" or game.world.is_empty():x=(viewport.x-width)*.5
+ if current in ["map","inventory","hero"] or game.world.is_empty():x=(viewport.x-width)*.5
  if current=="journey" and not game.world.is_empty():
   width=minf(viewport.x-24,720);height=minf(viewport.y-80,440 if viewport.x>viewport.y else viewport.y*.62);x=(viewport.x-width)*.5;top=viewport.y-height-16
  if game.world_inspector_open and viewport.x<viewport.y:

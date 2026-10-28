@@ -32,7 +32,8 @@ func ui_font() -> Font:
 	if body_font == null:
 		body_font = FontVariation.new()
 		body_font.base_font = load("res://assets/phase2/nunito.ttf")
-		body_font.variation_opentype = {"wght": 550.0}
+		body_font.variation_opentype = {"wght": 650.0}
+		body_font.variation_embolden = 0.35
 	return body_font
 
 func accessibility_toggle(kind: String) -> void:
@@ -277,10 +278,10 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 		b.add_theme_color_override("font_color",Color("fff2ce") if primary else Color("f3ecdc"))
 		b.add_theme_color_override("font_disabled_color",Color("7f8b96"))
 		var theme=preload("res://scripts/premium_theme.gd")
-		b.add_theme_stylebox_override("normal",theme.box(Color("304557") if primary else Color("1c2935"),primary))
-		b.add_theme_stylebox_override("hover",theme.box(Color("415e70") if primary else Color("304858"),true))
-		b.add_theme_stylebox_override("pressed",theme.box(Color("53697b"),true))
-		b.add_theme_stylebox_override("disabled",theme.box(Color("151d27")))
+		b.add_theme_stylebox_override("normal",theme.skin("pressed" if primary else "button"))
+		b.add_theme_stylebox_override("hover",theme.skin("hover"))
+		b.add_theme_stylebox_override("pressed",theme.skin("pressed"))
+		b.add_theme_stylebox_override("disabled",theme.skin("disabled"))
 		b.add_theme_stylebox_override("focus",theme.box(Color(0,0,0,0),true))
 	var button_ref=weakref(b)
 	b.pressed.connect(func():
@@ -401,6 +402,7 @@ func choose_power(i: int) -> void:
 	hint.text = t("hint_short") if game.power == -1 else t("select") % t(POWER_KEYS[i])
 	for n in range(6):
 		var s = power_buttons[n].get_theme_stylebox("normal").duplicate()
+		if not s is StyleBoxFlat:s=preload("res://scripts/premium_theme.gd").box()
 		s.bg_color = Color("4d6550") if n == game.power else Color("1b353b")
 		s.border_color = Color("c9d6a0") if n == game.power else Color(.66, .83, .72, .15)
 		power_buttons[n].add_theme_stylebox_override("normal", s)
@@ -482,6 +484,8 @@ func close() -> void:
 	if premium!=null:premium.current="";premium.history.clear();premium.nested=false
 	world_controls(true)
 	refresh()
+	if is_instance_valid(game.shared_hunt_scene):
+		game.shared_hunt_scene.frozen=false;root.hide();game.in_menu=true;layer=1
 
 func add_close(v: VBoxContainer) -> void:
 	v.add_child(button(t("close"), close, true))

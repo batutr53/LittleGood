@@ -1,0 +1,126 @@
+{
+  "all_passed": true,
+  "checks": {
+    "class_bound": true,
+    "native_connect": true,
+    "native_create": true,
+    "native_join": true,
+    "native_login": true,
+    "native_mage": true,
+    "native_race": true,
+    "native_realm": true,
+    "native_return": true,
+    "native_skill": true,
+    "native_stat": true,
+    "only_mage": true,
+    "priest_locked": true,
+    "private_save": true,
+    "register": true,
+    "server_movement": true,
+    "valid_city": true
+  },
+  "pid": 2733,
+  "run_id": "4b2a2641954743a7aca45fd9c8cde499",
+  "save_sha256": "b7d51ea152dcd486283d66da335a6be0818de5421bb4d32bb99107cc5e560774",
+  "source": "actual_android_emulator_real_account_and_websocket_with_external_adb_taps; server movement intent for skill range",
+  "stage": "entry_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "external_adb_actions": [
+    {
+      "sequence": 1,
+      "action": "login",
+      "screen_point": [
+        2055,
+        510
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 2,
+      "action": "realm",
+      "screen_point": [
+        1200,
+        399
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 3,
+      "action": "connect",
+      "screen_point": [
+        1200,
+        520
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 4,
+      "action": "race",
+      "screen_point": [
+        854,
+        708
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 5,
+      "action": "mage",
+      "screen_point": [
+        339,
+        540
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 6,
+      "action": "stat",
+      "screen_point": [
+        2311,
+        580
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 7,
+      "action": "create",
+      "screen_point": [
+        2010,
+        714
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 8,
+      "action": "join",
+      "screen_point": [
+        2055,
+        459
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 9,
+      "action": "skill",
+      "screen_point": [
+        2139,
+        874
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 10,
+      "action": "return",
+      "screen_point": [
+        2156,
+        316
+      ],
+      "count": 1
+    }
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "script_errors": []
+}

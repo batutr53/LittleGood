@@ -13,8 +13,13 @@ func run():
 	game.online.endpoint=str(host.options.get("endpoint","http://127.0.0.1:5087"));game.ui.main_menu();var entry=game.ui.entry_ui;await shot("entry-android-login")
 	var account="qa_"+Crypto.new().generate_random_bytes(8).hex_encode();var password=Crypto.new().generate_random_bytes(24).hex_encode();var r=await game.online.call_api(HTTPClient.METHOD_POST,"/auth/register",{"account":account,"password":password});host.checks.register=r.ok;entry.account.text=account;entry.password.text=password
 	await native("login",game.ui.modal.find_child("EntryLogin",true,false),func():return game.ui.modal.find_child("Realm_hearth",true,false)!=null)
-	await native("realm",game.ui.modal.find_child("Realm_hearth",true,false),func():return entry.stage=="create")
-	await native("mage",game.ui.modal.find_child("FirstClass_mage",true,false),func():return entry.selected_class=="mage");entry.hero_name.text="QA "+Crypto.new().generate_random_bytes(5).hex_encode();await shot("entry-android-create")
+	await native("realm",game.ui.modal.find_child("Realm_hearth",true,false),func():return not game.ui.modal.find_child("ConnectRealm",true,false).disabled)
+	await native("connect",game.ui.modal.find_child("ConnectRealm",true,false),func():return entry.stage=="race")
+	await native("race",game.ui.modal.find_child("Race_human",true,false),func():return entry.stage=="create")
+	await native("mage",game.ui.modal.find_child("FirstClass_mage",true,false),func():return entry.selected_class=="mage")
+	await native("stat",game.ui.modal.find_child("StartPlus_magic",true,false),func():return entry.starting_stats.magic==1)
+	for n in range(9):entry.change_stat("magic",1)
+	entry.hero_name.text="QA "+Crypto.new().generate_random_bytes(5).hex_encode();await shot("entry-android-create")
 	await native("create",game.ui.modal.find_child("CreateRealmHero",true,false),func():return game.ui.modal.find_child("JoinSharedHunt",true,false)!=null);host.checks.only_mage=entry.character.unlocked==["mage"];host.checks.priest_locked=game.ui.modal.find_child("Company_priest",true,false).disabled
 	await native("join",game.ui.modal.find_child("JoinSharedHunt",true,false),func():return is_instance_valid(game.shared_hunt_scene) and game.shared_hunt_scene.received)
 	if not is_instance_valid(game.shared_hunt_scene):host.publish("entry_failed");return

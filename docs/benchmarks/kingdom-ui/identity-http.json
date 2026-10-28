@@ -1,0 +1,23 @@
+{
+  "checks": {
+    "register_0": true,
+    "login_0": true,
+    "register_1": true,
+    "login_1": true,
+    "bad_race": true,
+    "incomplete_stats": true,
+    "too_many_points": true,
+    "identity_saved": true,
+    "foreign_read_denied": true,
+    "foreign_claim_denied": true,
+    "first_gift_ready": true,
+    "concurrent_one_grant": true,
+    "exactly_one_essence": true,
+    "persistent_calendar": true,
+    "identity_reload": true
+  },
+  "count": 15,
+  "all_passed": true,
+  "origin": "https://31.42.127.79:8443",
+  "source": "real HTTP accounts/PostgreSQL; simultaneous daily claims; normal TLS"
+}

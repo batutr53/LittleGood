@@ -26,7 +26,7 @@ func say(en,tr):return p.say(en,tr)
 func stat_name(key: String) -> String:
 	return {"health":"Can","attack":"Saldırı","defense":"Savunma","speed":"Hız","crit":"Kritik","strength":"Güç","dexterity":"Çeviklik","intelligence":"Zekâ","magic":"Büyü Gücü","vitality":"Dayanıklılık"}.get(key,key.capitalize()) if ui.language=="tr" else key.capitalize()
 func card(rect: Rect2) -> Panel:
-	var panel=Panel.new();panel.add_theme_stylebox_override("panel",T.box(Color(.045,.075,.105,.94),true));p.put(panel,rect);return panel
+	var panel=Panel.new();panel.add_theme_stylebox_override("panel",T.skin());p.put(panel,rect);return panel
 func icon_action(parent: Control,key: String,label: String,cb: Callable) -> Button:
 	var b=ui.button(label,cb);b.icon=T.icon(key);b.expand_icon=true;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.alignment=HORIZONTAL_ALIGNMENT_CENTER;b.vertical_icon_alignment=VERTICAL_ALIGNMENT_TOP;b.add_theme_constant_override("icon_max_width",int(p.px(24)));b.add_theme_constant_override("h_separation",0);b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(48),p.px(43));b.tooltip_text=label;b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;compact_button(b)
 	b.add_theme_color_override("icon_normal_color",T.GOLD);b.add_theme_color_override("icon_pressed_color",T.CREAM);b.add_theme_color_override("icon_hover_color",T.CREAM)
@@ -38,7 +38,7 @@ func highlight_navigation():
 	for b in ui.root.find_children("*","Button",true,false):
 		if not b.has_meta("nav_key"):continue
 		var active=game.in_menu and p.current==str(b.get_meta("nav_key"));b.toggle_mode=true;b.set_pressed_no_signal(active)
-		var skin=T.box(Color("354859") if active else Color("151f29"),active);skin.content_margin_top=0;skin.content_margin_bottom=0
+		var skin=T.box(Color("5a3029") if active else Color("25281e"),active);skin.content_margin_top=0;skin.content_margin_bottom=0
 		if active:skin.set_border_width_all(2)
 		b.add_theme_stylebox_override("normal",skin);b.add_theme_stylebox_override("pressed",skin);b.add_theme_color_override("font_color",T.GOLD if active else T.CREAM)
 		b.add_theme_color_override("icon_normal_color",T.GOLD);b.add_theme_color_override("icon_pressed_color",T.CREAM);b.add_theme_color_override("icon_hover_color",T.CREAM)
@@ -46,7 +46,7 @@ func highlight_item():
 	if not is_instance_valid(ui.modal):return
 	for b in ui.modal.find_children("*","Button",true,false):
 		if not b.has_meta("item_id"):continue
-		var active=(int(b.get_meta("item_id"))==selected_item and selected_item>0) or (selected_item==0 and b.has_meta("equipment_slot") and str(b.get_meta("equipment_slot"))==target_slot);var skin=T.box(Color("314658") if active else Color("0b141d"),active)
+		var active=(int(b.get_meta("item_id"))==selected_item and selected_item>0) or (selected_item==0 and b.has_meta("equipment_slot") and str(b.get_meta("equipment_slot"))==target_slot);var skin=T.box(Color("4e3e27") if active else Color("10170e"),active)
 		var recipe=str(b.get_meta("item_recipe"));skin.border_color=Color("ffe5a9") if active else F.color(recipe) if not recipe.is_empty() else T.MUTED;skin.set_border_width_all(3 if active else 1);b.add_theme_stylebox_override("normal",skin)
 		var marker=b.get_node_or_null("SelectedMark")
 		if active and marker==null:
@@ -64,7 +64,7 @@ func refresh_portrait():
 	hud_portrait.texture=load(path) if ResourceLoader.exists(path) else load("res://assets/adventure/warrior.png")
 func inventory():
 	if not I.enabled(game.world):game.realm_ui.legacy_inventory();return
-	R.ensure(game.world);F.ensure(game.world);var v=p.surface(say("Inventory","Çanta"));p.nested=false;ui.page="kingdom";v.add_theme_constant_override("separation",int(p.px(4)))
+	R.ensure(game.world);F.ensure(game.world);var surface=p.surface(say("Inventory & equipment","Çanta ve donanım"));var layout=HBoxContainer.new();surface.add_child(layout);layout.add_theme_constant_override("separation",int(p.px(12)));var v=VBoxContainer.new();v.size_flags_horizontal=Control.SIZE_EXPAND_FILL;layout.add_child(v);p.nested=false;ui.page="kingdom";v.add_theme_constant_override("separation",int(p.px(4)))
 	if R.available(game.world):
 		var selector=HBoxContainer.new();v.add_child(selector)
 		for key in R.CLASSES:
@@ -73,8 +73,8 @@ func inventory():
 		var gear=HBoxContainer.new();v.add_child(gear);gear.add_theme_constant_override("separation",int(p.px(6)))
 		var hero=game.world.kingdom.adventure.hero;var path="res://assets/rpg/"+str(hero.get("class","warrior"))+".png"
 		if not ResourceLoader.exists(path):path="res://assets/rpg/warrior.png"
-		var portrait=p.image(load(path),Vector2(p.px(158),p.px(213)));portrait.set_script(preload("res://scripts/rpg_portrait.gd"));portrait.ui=ui;gear.add_child(portrait)
-		var equipment=GridContainer.new();equipment.columns=3;equipment.add_theme_constant_override("h_separation",int(p.px(3)));equipment.add_theme_constant_override("v_separation",int(p.px(3)));gear.add_child(equipment)
+		var portrait=p.image(load(path),Vector2(p.px(205),p.px(160)));portrait.set_script(preload("res://scripts/rpg_portrait.gd"));portrait.ui=ui;gear.add_child(portrait)
+		var equipment=GridContainer.new();equipment.size_flags_horizontal=Control.SIZE_EXPAND_FILL;equipment.columns=5;equipment.add_theme_constant_override("h_separation",int(p.px(3)));equipment.add_theme_constant_override("v_separation",int(p.px(3)));gear.add_child(equipment)
 		for slot in ["ear_left","head","ear_right","neck","armor","belt","weapon","hands","shield","ring_left","legs","ring_right","feet","artifact"]:equipment_slot(equipment,slot)
 		v.add_child(p.text(hero.name+" · "+R.NAMES[hero.get("class","warrior")]+" · Lv "+str(H.level(hero)),19,T.GOLD))
 		var sets=load("res://scripts/equipment_sets.gd");var set_name=game.realm_ui.localized(sets.definitions()[game.world.rpg.active].name);var set_button=p.action(v,set_name+" · "+str(sets.count(game.world))+" / 5",func():p.route("sets"));set_button.name="EquipmentSet";set_button.custom_minimum_size.y=p.px(27);compact_button(set_button)
@@ -104,11 +104,11 @@ func inventory():
 			b.mouse_entered.connect(func():
 				if selected_item==0:show_item(id))
 		else:b.disabled=true;b.add_theme_stylebox_override("disabled",T.box(Color("090c09"),false))
-	details_window=PanelContainer.new();details_window.name="ItemComparison";details_window.add_theme_stylebox_override("panel",T.box(Color("10160e"),true));ui.veil.add_child(details_window);details_window.position=Vector2(ui.modal.position.x-p.px(277),ui.modal.position.y+p.px(35));details_window.size=Vector2(p.px(265),p.px(420))
+	details_window=PanelContainer.new();details_window.name="ItemComparison";details_window.add_theme_stylebox_override("panel",T.box(Color("10160e"),true));ui.veil.add_child(details_window);ui.veil.remove_child(details_window);layout.add_child(details_window);details_window.custom_minimum_size=Vector2(p.px(265),p.px(400));details_window.size_flags_vertical=Control.SIZE_EXPAND_FILL
 	var detail_scroll=ScrollContainer.new();detail_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;detail_scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;details_window.add_child(detail_scroll)
 	details=VBoxContainer.new();details.size_flags_horizontal=Control.SIZE_EXPAND_FILL;details.add_theme_constant_override("separation",int(p.px(5)));detail_scroll.add_child(details)
 	if selected_item>0 and not I.item(game.world,selected_item).is_empty():show_item(selected_item)
-	else:details_window.hide()
+	else:show_summary()
 func equipment_slot(parent: Control,slot: String):
 	var id=0
 	if slot in H.SLOTS:id=int(game.world.kingdom.adventure.hero.equipment[slot])
@@ -119,7 +119,7 @@ func equipment_slot(parent: Control,slot: String):
 		if id>0:selected_item=id;show_item(id)
 		else:
 			selected_item=0
-			if is_instance_valid(details_window):details_window.hide()
+			if is_instance_valid(details_window):show_summary()
 			highlight_item();ui.toast(say("Select equipment from your inventory.","Çantandan donanım seç.")));b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(43),p.px(40));parent.add_child(b)
 	b.set_meta("equipment_slot",slot);b.set_meta("item_id",id);b.set_meta("item_recipe",str(I.item(game.world,id).get("recipe","")))
 	compact_button(b)
