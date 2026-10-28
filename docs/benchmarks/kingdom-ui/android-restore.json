@@ -5,8 +5,8 @@
     "restore_valid": true,
     "save_bytes": true
   },
-  "pid": 3917,
-  "run_id": "e1d52c9bd3a14fd9b83ac250f6bc234b",
+  "pid": 3745,
+  "run_id": "3bafb092a78844fdbfdcd6667da0b88d",
   "source": "actual_android_emulator_private_save_restore",
   "stage": "entry_restore_complete",
   "viewport": [

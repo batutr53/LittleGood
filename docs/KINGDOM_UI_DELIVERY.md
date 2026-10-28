@@ -30,7 +30,9 @@
 
 Screenshots are actual Godot gameplay and emulator captures. Inspected login, people, class creation at both desktop sizes, calendar at 960×540, inventory/settings at 960×540 and the shared hunt including an open inventory. The small calendar's overlapping tip strip was removed. Existing player files in both Android packages were hash checked and preserved. No script error/FATAL EXCEPTION in the final Android run. Existing Godot resource/ObjectDB cleanup warnings remain at shutdown.
 
-Final emulator cold activity start: **6347 ms** in the final `am start -W` sample (an earlier sample was 2876 ms); this is Android activity launch latency, not a full-world readiness or FPS benchmark. No new sustained rendering, battery or physical-device performance claim. Phone was not connected. Tests use a separate QA package; production package was exported from the same source, not installed over the owner's phone.
+Final emulator cold activity start: **2578 ms** in the final `am start -W` sample (an earlier host-GPU sample was 2876 ms); this is Android activity launch latency, not a full-world readiness or FPS benchmark. No new sustained rendering, battery or physical-device performance claim. Phone was not connected. Tests use a separate QA package; production package was exported from the same source, not installed over the owner's phone.
+
+The Android harness now rejects near-uniform screenshots and GPU shader-link failures as well as script errors. It uses Pillow (12.3.0 in the bundled workspace Python). The emulator must use the verified host GPU backend (`-gpu host`); its automatic windowless/software SwiftShader selection produced a GLES fragment-uniform limit error and blank frames, despite working UI input. That failed run is not rendering verification. This is a measured emulator-backend issue; physical GPU coverage remains unverified.
 
 Raw reports: [benchmarks/kingdom-ui](benchmarks/kingdom-ui). Reproduce with `tests/entry_flow.gd`, `tests/kingdom_ui.gd`, `devtools/test_identity.py` and `devtools/android_entry_validate.py`.
 

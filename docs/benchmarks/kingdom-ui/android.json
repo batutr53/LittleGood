@@ -19,9 +19,9 @@
     "server_movement": true,
     "valid_city": true
   },
-  "pid": 2733,
-  "run_id": "4b2a2641954743a7aca45fd9c8cde499",
-  "save_sha256": "b7d51ea152dcd486283d66da335a6be0818de5421bb4d32bb99107cc5e560774",
+  "pid": 3346,
+  "run_id": "3552b44c407c4b16abb536bac1a02faa",
+  "save_sha256": "2b3f68937948c9855870d015751efad291e9ed39c5318cf8267be1deb0929363",
   "source": "actual_android_emulator_real_account_and_websocket_with_external_adb_taps; server movement intent for skill range",
   "stage": "entry_complete",
   "viewport": [
@@ -122,5 +122,7 @@
   ],
   "physical_device": false,
   "player_files_preserved": true,
+  "render_errors": [],
+  "captures_rendered": true,
   "script_errors": []
 }

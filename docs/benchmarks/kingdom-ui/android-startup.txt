@@ -6,8 +6,8 @@ LaunchState: COLD
 
 Activity: org.littlegod.livinguniverse.rpgqa/com.godot.game.GodotApp
 
-TotalTime: 6347
+TotalTime: 2578
 
-WaitTime: 6521
+WaitTime: 2590
 
 Complete

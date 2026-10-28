@@ -7,6 +7,7 @@ import re
 import subprocess
 import time
 import uuid
+from PIL import Image
 
 root = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
@@ -107,9 +108,12 @@ for name in ['login', 'create', 'shared', 'home']:
     (screens / ('entry-android-' + name + '.png')).write_bytes(read('entry-android-' + name + '.png'))
 logs = run('logcat', '-d', '--pid=' + str(result['pid']), '-s', 'godot:V', 'AndroidRuntime:E')
 (out / 'logcat.txt').write_bytes(logs)
+result['render_errors'] = [line for line in logs.decode('utf8', errors='replace').splitlines() if 'Program linking failed' in line or 'GL_MAX_FRAGMENT_UNIFORM_VECTORS' in line]
+result['captures_rendered'] = all((lambda colors: colors is None or len(colors) > 32)(Image.open(screens / ('entry-android-' + name + '.png')).convert('RGB').getcolors(4096)) for name in ['login', 'create', 'shared', 'home'])
 result['script_errors'] = [line for line in logs.decode('utf8', errors='replace').splitlines() if 'SCRIPT ERROR:' in line or 'FATAL EXCEPTION' in line]
+result['all_passed'] = bool(result['all_passed'] and result['player_files_preserved'] and not result['script_errors'] and not result['render_errors'] and result['captures_rendered'])
 (out / 'result.json').write_text(json.dumps(result, indent=2), encoding='utf8')
-assert result['all_passed'] and result['player_files_preserved'] and not result['script_errors'], result
+assert result['all_passed'] and result['player_files_preserved'] and not result['script_errors'] and not result['render_errors'] and result['captures_rendered'], result
 saved = read('entry-android-private.json')
 expected = hashlib.sha256(saved).hexdigest()
 assert result['save_sha256'] == expected
