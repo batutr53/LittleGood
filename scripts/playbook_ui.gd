@@ -132,7 +132,8 @@ func worker(id):
   var assigned=w.kingdom.buildings.filter(func(b):return int(b.id)==int(c.building))
   label(v,say("ON DUTY · ","GÖREVDE · ")+(game.realm_ui.localized(K.buildings()[assigned[0].kind].name) if not assigned.is_empty() else str(c.building)),Color("f4cf7d"))
   label(v,say("This worker cannot take another job. Release the current assignment explicitly first; its production will stop.","Bu işçi başka işe atanamaz. Önce mevcut görevi açıkça bırak; bu binadaki üretimi durur."))
-  button(v,say("Builder · release current job","İnşaatçı · mevcut görevi bırak"),func():assign(id,0));button(v,say("Back to workers","İşçilere dön"),func():p.route("workers"));return
+  var return_building=p.staffing_target
+  button(v,say("Builder · release current job","İnşaatçı · mevcut görevi bırak"),func():assign(id,0,return_building));button(v,say("Back to workers","İşçilere dön"),func():p.route("workers"));return
  label(v,say("AVAILABLE · builder pool. Assign one production or gathering task.","UYGUN · inşaat havuzu. Tek bir üretim veya toplama görevi seç."))
  button(v,say("Gather resources","Kaynak toplama görevleri"),func():p.gathering_worker=id;p.route("resources"))
  var choices=w.kingdom.buildings.filter(func(b):return K.ready(b) and int(K.buildings()[b.kind].slots)>0);var start=page(v,"jobs",choices.size(),3)
@@ -140,11 +141,18 @@ func worker(id):
   var building_id=int(b.id);var d=K.buildings()[b.kind];var occupied=K.occupied(w,building_id)
   button(v,game.realm_ui.localized(d.name)+" · "+str(occupied)+" / "+str(int(d.slots)),func():assign(id,building_id)).disabled=occupied>=int(d.slots) or int(c.building)==building_id
  if p.I.enabled(w):button(v,say("Choose or compare tool","Alet seç veya karşılaştır"),func():game.realm_ui.choose_tool(id))
-func assign(worker_id,building_id):
- var current_worker=game.world.kingdom.workers.filter(func(c):return int(c.id)==worker_id)
- if current_worker.is_empty() or building_id!=0 and int(current_worker[0].building)!=0:ui.toast(say("Release the current job first.","Önce mevcut görevi bırak."));return
- if K.assign(game.world,worker_id,building_id):
-  game.realm_ui.changed();p.route("workers",0,false);ui.toast(say("Assigned. Close the menu to resume work.","Atandı. İşin sürmesi için menüyü kapat."))
+func assignment_message(reason):
+ return {"worker":say("Worker no longer exists.","İşçi artık mevcut değil."),"building":say("Building no longer exists.","Bina artık mevcut değil."),"construction":say("Building unfinished. Free builders share its construction queue.","Bina tamamlanmadı. Boştaki inşaatçılar inşaat sırasını paylaşır."),"full":say("This building has reached worker capacity.","Binanın işçi kapasitesi dolu."),"passive":say("This building needs no production workers.","Bu bina üretim işçisi gerektirmez."),"already":say("Worker already has this assignment.","İşçi zaten bu görevde."),"busy":say("Release the current job first.","Önce mevcut görevi bırak."),"military":say("Worker is on military duty.","İşçi askerlik görevinde."),"caravan":say("Worker is reserved for a caravan.","İşçi kervana ayrılmış."),"gathering":say("Worker is gathering. Collect cargo and release that duty first.","İşçi toplama görevinde. Yükünü alıp önce o görevi bırak."),"unavailable":say("Assignment is unavailable in this world.","Bu dünyada atama yapılamaz.")}.get(reason,say("Assignment changed. Select again.","Atama değişti. Yeniden seç."))
+func assign(worker_id,building_id,return_building=0):
+ var w=game.world;var reason=K.assignment_reason(w,worker_id,building_id);var result=false
+ if reason.is_empty():result=K.assign(w,worker_id,building_id)
+ if OS.is_debug_build():print("INTERACTION assign button=AssignWorker building=",building_id," worker=",worker_id," command=Kingdom.assign valid=",result," reason=",reason)
+ if not result:ui.toast(assignment_message(reason));return
+ var citizen=w.kingdom.workers.filter(func(c):return int(c.id)==worker_id)[0];var message=citizen.name+say(" assigned"," atandı") if building_id!=0 else citizen.name+say(" released · previous production stopped"," ayrıldı · önceki üretim katkısı durdu")
+ game.realm_ui.changed();game.checkpoint("worker-assignment")
+ if return_building>0:p.route("staffing",return_building,false)
+ else:p.route("workers",0,false)
+ ui.toast(message)
 func construction():
  if not game.world.has("kingdom"):intro();return
  var w=game.world;var v=p.surface(say("Build · choose then place","İnşaat · seç ve yerleştir"));label(v,say("Builders: ","İnşaatçılar: ")+builders(w))
@@ -292,6 +300,8 @@ func staffing(id):
  if not construction and slots==0:
   label(v,say("This building works passively. No worker assignment required.","Bu bina pasif çalışır. Personel ataman gerekmez."));button(v,say("Building","Bina"),func():p.route("building",id));return
  label(v,say("Builders share the first unfinished site. Release a duty to join construction; this stops that duty.","İnşaatçılar ilk bitmemiş yapıda birlikte çalışır. İnşaata katılmak için mevcut işi bırak; o işin üretimi durur.") if construction else say("Only available workers can be assigned. Inspect busy workers to release their current duty first.","Yalnızca uygun işçi atanabilir. Görevdeki işçinin önce mevcut işini bırakması gerekir."))
+ if not construction and K.occupied(w,id)>=slots:label(v,assignment_message("full"))
+ elif K.assigned(w,0).is_empty():label(v,say("No available workers. Inspect an existing duty to release it.","Uygun işçi yok. Görevini bırakmak için mevcut bir işçiyi incele."))
  var roster=w.kingdom.workers.duplicate();roster.sort_custom(func(a,b):
   var rank_a=0 if K.assigned(w,0).has(a) else 1 if int(a.building)==id else 2;var rank_b=0 if K.assigned(w,0).has(b) else 1 if int(b.building)==id else 2
   return rank_a<rank_b if rank_a!=rank_b else int(a.id)<int(b.id))
@@ -299,8 +309,11 @@ func staffing(id):
  for worker in roster.slice(start,start+3):
   var worker_id=int(worker.id);var available=K.assigned(w,0).has(worker);var current=int(worker.building)==id and not construction;var text=worker.name+" · "+p.colony_ui().job_name(worker)
   if available and not construction and K.occupied(w,id)<slots:
-   button(v,say("Assign: ","Ata: ")+text,func():
-    if K.assign(w,worker_id,id):game.realm_ui.changed();p.route("staffing",id,false),true)
+   var choose=button(v,say("Assign: ","Ata: ")+text,func():
+    if not is_same(w,game.world):ui.toast(say("World changed. Select again.","Dünya değişti. Yeniden seç."));return
+    assign(worker_id,id,id),true);choose.name="AssignWorker"+str(worker_id)
+  elif current:
+   var remove=button(v,say("Remove: ","Ayır: ")+text,func():assign(worker_id,0,id));remove.name="RemoveWorker"+str(worker_id)
   else:button(v,text,func():p.route("worker",worker_id))
  label(v,say("Available builders: ","Uygun inşaatçılar: ")+builders(w) if construction else str(K.occupied(w,id))+" / "+str(slots)+say(" production slots"," üretim yuvası"))
  button(v,say("Back to building","Binaya dön"),func():p.route("building",id))

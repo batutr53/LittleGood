@@ -53,16 +53,22 @@ func gathering(index):
  var free=K.assigned(w,0)
  if not free.is_empty():
   var chosen=free.filter(func(c):return int(c.id)==int(p.gathering_worker));var worker=chosen[0] if not chosen.is_empty() else free[0];button(v,say("Assign ","Ata: ")+worker.name+say(" · leaves construction pool"," · inşaat havuzundan ayrılır"),func():
-   if C.start(w,int(worker.id),key):game.realm_ui.changed();p.route("gathering",index,false),true).disabled=C.source(w,key)<0
+   var ok=is_same(w,game.world) and C.start(w,int(worker.id),key)
+   if OS.is_debug_build():print("INTERACTION gather worker=",worker.id," resource=",key," valid=",ok)
+   if ok:game.realm_ui.changed();game.checkpoint("worker-gathering");p.route("gathering",index,false);p.ui.toast(worker.name+say(" assigned · "," atandı · ")+name(key))
+   else:p.ui.toast(say("Worker or source changed. Release the current duty and check the deposit.","İşçi veya kaynak değişti. Mevcut görevi bırakıp rezervi kontrol et.")),true).disabled=C.source(w,key)<0
  else:label(v,say("No free worker. Release another duty explicitly in Workers.","Boştaki işçi yok. İşçiler ekranında mevcut görevi açıkça bırak."))
  button(v,say("All worker duties","Tüm işçi görevleri"),func():p.route("workers"))
 func worker(id):
  var w=game.world;var job=w.colony.jobs[str(id)];var workers=w.kingdom.workers.filter(func(c):return int(c.id)==id);var v=p.surface(workers[0].name+" · "+name(job.resource))
  label(v,C.task_status(w,job,p.ui.language=="tr")+" · "+str(int(job.progress))+" / 10");label(v,say("Cargo: ","Yük: ")+str(job.buffer/1000.0)+" / 6 "+name(job.resource)+say(" · per trip "," · tur başına ")+str(C.trip_yield(w,id,job.resource)/1000.0))
  button(v,say("Collect cargo","Yükü teslim al"),func():
-  var amount=C.collect(w,id);game.realm_ui.changed();p.route("worker",id,false);p.ui.toast("+"+str(amount/1000.0)+" "+name(job.resource)),true).disabled=int(job.buffer)<=0
+  var amount=C.collect(w,id)
+  if amount>0:game.realm_ui.changed();game.checkpoint("worker-cargo");p.route("worker",id,false);p.ui.toast("+"+str(amount/1000.0)+" "+name(job.resource))
+  else:p.ui.toast(say("Storage full · cargo stays with this worker.","Depo dolu · yük işçide korunuyor.")),true).disabled=int(job.buffer)<=0
  button(v,say("Leave task · return to builder pool","Görevi bırak · inşaat havuzuna dön"),func():
-  if C.release(w,id):game.realm_ui.changed();p.route("workers",0,false)).disabled=int(job.buffer)>0
+  if C.release(w,id):game.realm_ui.changed();game.checkpoint("worker-release");p.route("workers",0,false);p.ui.toast(say("Worker released. Gathering contribution stopped.","İşçi ayrıldı. Toplama katkısı durdu."))
+  else:p.ui.toast(say("Collect cargo before releasing this duty.","Görevi bırakmadan önce yükünü teslim al."))).disabled=int(job.buffer)>0
  label(v,say("Collect cargo before release. No other job can claim this worker. Cancelling abandons only unfinished progress.","Bırakmadan önce yükü al. Bu işçi başka işe atanamaz. İptal yalnızca bitmemiş ilerlemeyi bırakır."))
  button(v,say("Locate worker","İşçinin yerini göster"),func():game.realm_ui.focus(int(job.cell)))
 func defense():

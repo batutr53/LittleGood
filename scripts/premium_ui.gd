@@ -27,6 +27,7 @@ var rpg
 var playbook_pages={}
 var playbook_region="wildwood"
 var gathering_worker=0
+var staffing_target=0
 var drop_query=""
 var drop_region="all"
 var layout_plan=[]
@@ -58,6 +59,8 @@ func route(destination: String,arg: int=0,remember=true):
  if remember and not current.is_empty() and current!=destination:history.append({"key":current,"arg":argument})
  if history.size()>16:history.pop_front()
  current=destination;argument=arg;nested=false;routing=true
+ if destination=="staffing":staffing_target=arg
+ elif destination=="workers":staffing_target=0
  if not game.world.is_empty():
   var needs_industry=destination in ["inventory","item","forge","forge_queue","recipe","material"]
   var needs_hero=destination in ["attributes","skills","enhance","bestiary","contracts","sets"] or destination=="hero" and not H.enabled(game.world)

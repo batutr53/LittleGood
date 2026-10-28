@@ -138,6 +138,23 @@ static func assign(w: Dictionary,worker: int,building: int) -> bool:
 			if w.has("colony") and int(c.building)!=0 and building!=0:return false
 			c.building=building;return true
 	return false
+static func assignment_reason(w: Dictionary,worker: int,building: int) -> String:
+	if not writable(w):return "unavailable"
+	var found=w.kingdom.workers.filter(func(c):return int(c.id)==worker)
+	if found.is_empty():return "worker"
+	if MILITARY.worker_reserved(w,worker):return "military"
+	if TRADE.worker_reserved(w,worker):return "caravan"
+	if load("res://scripts/colony.gd").reserved(w,worker):return "gathering"
+	var citizen=found[0]
+	if int(citizen.building)==building:return "already"
+	if building==0:return ""
+	var targets=w.kingdom.buildings.filter(func(b):return int(b.id)==building)
+	if targets.is_empty():return "building"
+	if not ready(targets[0]):return "construction"
+	if int(buildings()[targets[0].kind].slots)==0:return "passive"
+	if occupied(w,building)>=int(buildings()[targets[0].kind].slots):return "full"
+	if int(citizen.building)!=0:return "busy"
+	return ""
 static func recruit(w: Dictionary) -> bool:
 	if not writable(w) or level(w)<4 or w.kingdom.workers.size()>=MAX_WORKERS or home(w).food<4 or w.kingdom.stability<600 or not afford(w,{"gold":1}):return false
 	var needs_room=w.kingdom.workers.size()>=floori(home(w).population)
