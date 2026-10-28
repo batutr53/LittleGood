@@ -121,6 +121,7 @@ func back():
  else:ui.close()
 func surface(title: String,compact=false) -> VBoxContainer:
  game.npc_dialogue_open=false
+ game.world_inspector_open=current in ["building","staffing","worker","terrain","settlement"] and not game.visiting and not is_instance_valid(game.adventure_scene) and not is_instance_valid(game.army_scene)
  ui.end_live_route();game.reset_gesture();game.in_menu=true
  var selected_context=ui.root.find_child("WorldSelection",true,false) if is_instance_valid(ui.root) else null
  if selected_context:selected_context.hide()
@@ -137,9 +138,13 @@ func surface(title: String,compact=false) -> VBoxContainer:
  if current=="map" or game.world.is_empty():x=(viewport.x-width)*.5
  if current=="journey" and not game.world.is_empty():
   width=minf(viewport.x-24,720);height=minf(viewport.y-80,440 if viewport.x>viewport.y else viewport.y*.62);x=(viewport.x-width)*.5;top=viewport.y-height-16
+ if game.world_inspector_open and viewport.x<viewport.y:
+  width=viewport.x-24;height=minf(viewport.y*.57,560);x=12;top=viewport.y-height-12
  ui.veil=ColorRect.new();ui.veil.color=Color(0,0,0,0);ui.veil.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.veil.position=Vector2.ZERO;ui.veil.size=viewport;ui.root.add_child(ui.veil)
  ui.modal=PanelContainer.new();ui.modal.name="GameSurface";var box=T.box(T.INK,true);box.content_margin_left=px(10);box.content_margin_right=px(10);box.content_margin_top=px(6);box.content_margin_bottom=px(8);ui.modal.add_theme_stylebox_override("panel",box)
  ui.modal.position=Vector2(x,top);ui.modal.size=Vector2(width,height);ui.modal_base_y=top;ui.root.add_child(ui.modal)
+ ui.modal.set_meta("inspector",game.world_inspector_open)
+ if not game.world_inspector_open and current in ["building_upgrade","enhance"]:ui.veil.color=Color(0,0,0,.22)
  var paint=preload("res://scripts/premium_surface.gd").new();paint.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.modal.add_child(paint)
  var stack=VBoxContainer.new();stack.add_theme_constant_override("separation",int(px(5)));ui.modal.add_child(stack)
  var title_row=HBoxContainer.new();title_row.add_theme_constant_override("separation",int(px(4)));stack.add_child(title_row)
@@ -225,6 +230,7 @@ func refresh_hud():
  if not w.has("kingdom"):ui.chapter.text=say("FOUND YOUR COLONY · tap","KOLONİNİ KUR · dokun")
  if ui.toast_until==0:ui.hint.text=""
  if rpg!=null and rpg.classic!=null:rpg.classic.refresh()
+ if game.world_inspector_open and is_instance_valid(ui.modal):playbook().refresh_inspector()
 func quest():
  playbook().quest()
 func previous_quest():

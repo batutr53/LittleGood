@@ -11,8 +11,10 @@ var speed = 1
 var paused = false
 var in_menu = true
 var npc_dialogue_open=false
+var world_inspector_open=false
+func world_input_available() -> bool:return not in_menu or world_inspector_open
 func home_clock_running() -> bool:
-	return not suspended and not loading and not visiting and not paused and not is_instance_valid(adventure_scene) and not is_instance_valid(army_scene) and (not in_menu or npc_dialogue_open)
+	return not suspended and not loading and not visiting and not paused and not is_instance_valid(adventure_scene) and not is_instance_valid(army_scene) and (not in_menu or npc_dialogue_open or world_inspector_open)
 var power = -1
 var dragging = false
 var drag_distance = 0.0
@@ -460,7 +462,7 @@ func _input(event: InputEvent) -> void:
 		elif ui_pointer_blocked or ui.blocks_world(event.position):
 			dragging = false
 			pinch_cancelled = true
-	if in_menu or loading or suspended:
+	if not world_input_available() or loading or suspended:
 		touch_points.clear()
 		return
 	# Pinch uses independent fingers; single-finger input is emulated as mouse.
@@ -485,7 +487,7 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_instance_valid(adventure_scene) or is_instance_valid(army_scene):return
-	if in_menu or loading or suspended: return
+	if not world_input_available() or loading or suspended: return
 	if event is InputEventMouseButton:
 		if (event.button_index == MOUSE_BUTTON_LEFT and ui_pointer_blocked) or ui.blocks_world(event.position): return
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP: view.zoom_at(event.position, 1.1)
@@ -511,6 +513,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func touch_world(pos: Vector2) -> void:
 	if realm_ui!=null and realm_ui.active:realm_ui.pick(pos);return
 	if decorator!=null and decorator.active:decorator.pick(pos);return
+	var switching_inspector=world_inspector_open
+	if switching_inspector:ui.close()
 	var input_started = Time.get_ticks_usec()
 	if visiting: power = -1
 	if power < 0:
@@ -543,6 +547,7 @@ func touch_world(pos: Vector2) -> void:
 	var cell = view.pick(pos)
 	if cell < 0: return
 	view.select_cell(cell)
+	if switching_inspector:return
 	if power >= 0:
 		if Powers.apply(world, power, cell):
 			note("first_power", power, true)

@@ -264,16 +264,17 @@ func building(id):
  var b=found[0];var d=K.buildings()[b.kind];game.view.select_cell(int(b.cell));game.view.pan=-game.view.project(w.cells[int(b.cell)])*game.view.zoom
  var v=p.surface(game.realm_ui.localized(d.name));var row=HBoxContainer.new();v.add_child(row);row.add_child(p.image(game.view.kingdom_layer.texture(b.kind),Vector2.ONE*p.px(65)))
  label(row,say("Level ","Seviye ")+str(int(b.level))+" · "+str(K.occupied(w,id))+" / "+str(int(d.slots))+say(" workers"," işçi"))
- label(v,work_status(w,b),Color("f4cf7d"))
+ var status_label=p.text(work_status(w,b),22,Color("f4cf7d"));status_label.name="InspectorWorkStatus";v.add_child(status_label)
  if not K.ready(b):
   var bar=ProgressBar.new();bar.max_value=b.required;bar.value=b.progress;bar.custom_minimum_size.y=p.px(16);v.add_child(bar)
  else:label(v,game.realm_ui.localized(d.description))
- var products=label_collection(w,b);label(v,products)
+ var products=p.text(label_collection(w,b),22);products.name="InspectorProducts";v.add_child(products)
  var E=load("res://scripts/estate.gd")
- if E.enabled(w) and E.status(w,b)!="":
+ if E.enabled(w):
   var collect=button(v,say("Collect ready output","Hazır ürünü topla"),func():
    if not is_same(w,game.world):ui.toast(say("World changed. Select the building again.","Dünya değişti. Binayı yeniden seç."));return
    game.view.estate_layer.collect(id);p.route("building",id,false),true);collect.name="CollectBuildingOutput"
+  collect.tooltip_text=say("Collect this building only. Full storage leaves remaining output here.","Yalnızca bu bina toplanır. Depo doluysa kalan ürün burada korunur.")
  var actions=HBoxContainer.new();v.add_child(actions);button(actions,say("Staff this building","Bu binanın personeli"),func():p.route("staffing",id));button(actions,say("Locate","Yerini göster"),func():game.realm_ui.focus(int(b.cell)))
  if b.kind=="forge":button(v,say("Craft equipment / scrolls","Donanım / parşömen üret"),func():p.route("forge",id))
  if b.kind=="barracks" and M.enabled(w):button(v,say("Army & battlefields","Birlik ve savaş alanları"),func():p.route("army"))
@@ -293,6 +294,15 @@ func label_collection(w,b) -> String:
  if report.built:words.append(say("Construction ready to acknowledge","İnşaat tamamlandı · teslim al"))
  if words.is_empty():return say("No products ready · ","Hazır ürün yok · ")+work_status(w,b)
  return say("Ready / stored: ","Hazır / depoda: ")+" · ".join(words)
+func refresh_inspector():
+ var w=game.world
+ if not w.has("kingdom"):return
+ if p.current in ["building","staffing"]:
+  var found=w.kingdom.buildings.filter(func(b):return int(b.id)==int(p.argument))
+  if found.is_empty():ui.close();ui.toast(say("Building is no longer available.","Bina artık mevcut değil."));return
+  var b=found[0];var status=ui.modal.find_child("InspectorWorkStatus",true,false);var products=ui.modal.find_child("InspectorProducts",true,false)
+  if status:status.text=work_status(w,b)
+  if products:products.text=label_collection(w,b)
 func staffing(id):
  var w=game.world;var matches=w.get("kingdom",{}).get("buildings",[]).filter(func(b):return int(b.id)==id)
  if matches.is_empty():p.route("guide");return

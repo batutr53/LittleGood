@@ -471,6 +471,7 @@ func end_live_route() -> void:
 
 func close() -> void:
 	game.npc_dialogue_open=false
+	game.world_inspector_open=false
 	end_live_route()
 	if modal: root.remove_child(modal);modal.queue_free(); modal = null
 	if is_instance_valid(veil): root.remove_child(veil);veil.queue_free(); veil = null
@@ -877,7 +878,7 @@ func visible_ui_hit(node: Node,pos: Vector2) -> bool:
 		if visible_ui_hit(child,pos):return true
 	return node is Control and node!=root and node.mouse_filter!=Control.MOUSE_FILTER_IGNORE and node.get_global_rect().has_point(pos)
 func blocks_world(pos: Vector2) -> bool:
-	if game.in_menu or game.loading: return true
+	if (game.in_menu and not game.world_inspector_open) or game.loading: return true
 	if not is_instance_valid(root): return false
 	if premium!=null and rebirth_enabled:return visible_ui_hit(root,pos)
 	for control in root.get_children():
