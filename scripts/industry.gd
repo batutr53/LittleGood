@@ -18,7 +18,7 @@ static func effects(w: Dictionary,owned: Dictionary) -> Dictionary:return load("
 static func enabled(w: Dictionary) -> bool:return w.has("kingdom") and int(w.kingdom.get("version",1)) in [2,3]
 static func writable(w: Dictionary) -> bool:return enabled(w) and not w.get("_read_only",false)
 static func enable(w: Dictionary) -> bool:
-	if w.get("_read_only",false) or not w.has("kingdom") or enabled(w) or w.kingdom.claimed.size()<5:return false
+	if w.get("_read_only",false) or not w.has("kingdom") or enabled(w) or (w.kingdom.claimed.size()<5 and not load("res://scripts/parallel_play.gd").enabled(w)):return false
 	w.kingdom.version=2
 	for key in EXTRA_RESOURCES:w.kingdom.stock[key]=0
 	w.kingdom.industry={"version":1,"next_item":1,"last_tick":int(w.tick),"items":[],"queue":[],"equipped":[]}

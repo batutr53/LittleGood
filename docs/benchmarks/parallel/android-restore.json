@@ -1,0 +1,19 @@
+{
+  "all_passed": true,
+  "checks": {
+    "hero_and_city": true,
+    "restore_valid": true,
+    "save_bytes": true
+  },
+  "pid": 15274,
+  "run_id": "83c58d6500f54596b014cc15e574baad",
+  "source": "simulated_android_qa",
+  "stage": "parallel_restore_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "save_unchanged": true,
+  "new_process": true,
+  "player_files_preserved": true
+}

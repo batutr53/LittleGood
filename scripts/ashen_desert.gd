@@ -8,7 +8,7 @@ static func mine_found(w: Dictionary) -> bool:
 	var a=w.kingdom.adventure;var r=a.run if a.run.get("region","")=="iron_hills" else a.get("regions",{}).get("stored",{}).get("iron_hills",{})
 	return r.get("landmark",false)
 static func enable(w: Dictionary) -> bool:
-	if not load("res://scripts/hero.gd").writable(w) or w.kingdom.claimed.size()<21 or not mine_found(w):return false
+	if not load("res://scripts/hero.gd").writable(w) or ((w.kingdom.claimed.size()<21 or not mine_found(w)) and not load("res://scripts/parallel_play.gd").enabled(w)):return false
 	if enabled(w):return true
 	w.kingdom.adventure.regions.version=2;var q={}
 	for flag in FLAGS:q[flag]=false
@@ -114,7 +114,7 @@ static func validate_run(w: Dictionary,r: Dictionary) -> bool:
 static func validate(w: Dictionary) -> bool:
 	if not enabled(w):return true
 	var C=load("res://scripts/cosmetics.gd");var q=w.kingdom.adventure.regions.quest
-	if not C.shape(q,FLAGS) or not mine_found(w):return false
+	if not C.shape(q,FLAGS) or (not mine_found(w) and not load("res://scripts/parallel_play.gd").enabled(w)):return false
 	for flag in FLAGS:
 		if not q[flag] is bool:return false
 	if q.registered and not q.returned:return false

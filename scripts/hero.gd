@@ -6,7 +6,7 @@ const SLOTS=["weapon","shield","armor","artifact"]
 static func enabled(w: Dictionary) -> bool:return w.has("kingdom") and int(w.kingdom.get("version",1))==3
 static func writable(w: Dictionary) -> bool:return enabled(w) and not w.get("_read_only",false)
 static func enable(w: Dictionary) -> bool:
-	if w.get("_read_only",false) or not I.enabled(w) or enabled(w) or w.kingdom.claimed.size()!=10:return false
+	if w.get("_read_only",false) or not I.enabled(w) or enabled(w) or (w.kingdom.claimed.size()!=10 and not load("res://scripts/parallel_play.gd").enabled(w)):return false
 	w.kingdom.version=3
 	for key in MATERIALS:w.kingdom.stock[key]=0
 	w.kingdom.adventure={"version":1,"hero":{},"events":{},"run":{},"boss_rewarded":false,"next_run":1,"tutorial":false}

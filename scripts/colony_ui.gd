@@ -43,6 +43,8 @@ func resources():
 func gathering(index):
  if not C.enabled(game.world):p.playbook().intro();return
  var w=game.world;var key=C.RESOURCES[clampi(index,0,C.RESOURCES.size()-1)];var v=p.surface(name(key)+say(" · gathering"," · toplama"));label(v,say("Base trip: 2 materials; suitable tools improve yield. Tap cargo to collect, up to 6 per worker. Menus and expeditions pause work.","Temel tur: 2 malzeme; uygun alet verimi artırır. Yüke dokunarak topla, işçi en fazla 6 taşır. Menü ve seferde iş durur."))
+ if load("res://scripts/parallel_play.gd").enabled(w):
+  v.get_child(v.get_child_count()-1).text=say("Base trip: 2 materials; tools improve yield. Collect cargo at home, up to 6 per worker. Gathering continues while you fight; pause and full menus stop it.","Temel tur: 2 malzeme; aletler verimi artırır. İşçi başına en fazla 6 yükü evde topla. Sen savaşırken toplama sürer; duraklatma ve tam menüler işi durdurur.")
  label(v,say("Forest for wood, mountains for ore, fertile soil for clay, shore for water/fish. Ore deposits are finite; water and fish are renewable.","Odun ormandan, maden dağdan, kil verimli topraktan, su/balık kıyıdan gelir. Madenler sınırlı; su ve balık yenilenebilir."))
  var jobs=[]
  for worker in w.kingdom.workers:

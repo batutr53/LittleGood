@@ -185,9 +185,10 @@ func hunts():
  var w=game.world;var v=p.surface(say("Boss hunts & adventures","Boss avı ve maceralar"));label(v,say("CONTROL YOUR HERO · explore, fight, collect and return","KAHRAMANINI YÖNET · keşfet, savaş, topla ve dön"),Color("f4cf7d"))
  if not H.enabled(w):
   label(v,say("Complete chapter 10 to unlock heroes; chapter 11 opens Wildwood.","Kahraman için 10. bölümü tamamla; 11. bölüm Yabanorman yolunu açar."));button(v,say("Current quest","Güncel görev"),func():p.route("quest"),true);return
- var R=preload("res://scripts/regions.gd");var regions=["wildwood","sanctuary"];var start=page(v,"hunt_regions",regions.size(),1);var id=regions[start];var d=R.data(id)
- label(v,game.realm_ui.localized(d.name)+" · "+(say("Thornheart guardian","Dikenyürek muhafızı") if id=="wildwood" else say("Sunward Warden","Güneş Muhafızı")))
- label(v,(say("Guardian gate opens after chapter 14.","Muhafız kapısı 14. bölümden sonra açılır.") if w.kingdom.claimed.size()<14 else say("Follow the northern trail. Read warning circles, dodge and attack in recovery windows.","Kuzey patikasını izle. Uyarı alanlarını oku, kaçın ve dinlenme aralığında saldır.")) if id=="wildwood" else say("Complete chapter 22, enter the sanctuary and open the rune doors.","22. bölümü tamamla, tapınağa gir ve rün kapılarını aç."))
+ var R=preload("res://scripts/regions.gd");var regions=R.IDS if load("res://scripts/parallel_play.gd").enabled(w) else ["wildwood","sanctuary"];var start=page(v,"hunt_regions",regions.size(),1);var id=regions[start];var d=R.data(id)
+ label(v,game.realm_ui.localized(d.name)+" · "+say("Suggested hero level ","Önerilen kahraman seviyesi ")+str(d.level))
+ if load("res://scripts/parallel_play.gd").enabled(w):label(v,say("All adventure destinations are accessible. Choose your risk; return safely with loot while your city keeps producing.","Tüm macera bölgeleri erişilebilir. Riski sen seç; şehrin üretirken ganimetle güvenle dön."))
+ else:label(v,(say("Guardian gate opens after chapter 14.","Muhafız kapısı 14. bölümden sonra açılır.") if load("res://scripts/parallel_play.gd").boss_locked(w) else say("Follow the northern trail. Read warning circles, dodge and attack in recovery windows.","Kuzey patikasını izle. Uyarı alanlarını oku, kaçın ve dinlenme aralığında saldır.")) if id=="wildwood" else say("Complete chapter 22, enter the sanctuary and open the rune doors.","22. bölümü tamamla, tapınağa gir ve rün kapılarını aç."))
  var active=w.kingdom.adventure.run.get("active",false);var live=preload("res://scripts/regions.gd").current(w)
  if active:
   button(v,say("Return to battle","Savaşa dön"),ui.close,true)
@@ -205,8 +206,9 @@ func destination(id):
   if id=="iron_hills":terms=say("Complete chapter 21 and equip a Warrior.","21. bölümü tamamla ve Savaşçı'yı silahlandır.")
   if id=="ashen_desert":terms=say("Complete chapter 21, discover the Forgotten Mine, return home and equip a Warrior.","21. bölümü tamamla, Unutulmuş Maden'i keşfet, eve dön ve Savaşçı'yı silahlandır.")
   if id=="sanctuary":terms=say("Complete chapter 22 and equip a Warrior.","22. bölümü tamamla ve Savaşçı'yı silahlandır.")
+  if load("res://scripts/parallel_play.gd").enabled(game.world):terms=say("Equip a weapon at home before traveling. City level does not restrict entry.","Yola çıkmadan evde silah kuşan. Şehir seviyesi girişini kısıtlamaz.")
   label(v,terms)
- label(v,say("Home delivers loot safely. No travel fee. The village pauses during expeditions.","Eve dönüş ganimeti güvenle teslim eder. Yol ücreti yok. Seferde köy duraklar."))
+ label(v,say("Home delivers loot safely. No travel fee. Assigned city workers continue during expeditions.","Eve dönüş ganimeti güvenle teslim eder. Yol ücreti yok. Atanmış şehir işçileri seferde çalışmaya devam eder.") if load("res://scripts/parallel_play.gd").enabled(game.world) else say("Home delivers loot safely. No travel fee. The village pauses during expeditions.","Eve dönüş ganimeti güvenle teslim eder. Yol ücreti yok. Seferde köy duraklar."))
  if id=="wildwood":
   var run=game.world.kingdom.adventure.run
   if not run.is_empty() and not run.active and run.get("region","wildwood")=="wildwood" and not run.enemies.any(func(e):return e.hp>0) and not run.loot.any(func(l):return not l.taken):button(v,say("Refresh cleared trail","Temizlenen patikayı yenile"),func():

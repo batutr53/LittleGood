@@ -134,7 +134,7 @@ static func attack_context(w: Dictionary,input: Dictionary) -> Dictionary:
 	return result
 static func clear_shot(w: Dictionary,from: Vector2,to: Vector2) -> bool:
 	var map=load("res://scripts/regions.gd").map(load("res://scripts/regions.gd").current(w))
-	for rect in map.solids(w.kingdom.claimed.size()<14):
+	for rect in map.solids(load("res://scripts/parallel_play.gd").boss_locked(w)):
 		var a=rect.position;var b=Vector2(rect.end.x,rect.position.y);var c=rect.end;var d=Vector2(rect.position.x,rect.end.y)
 		for edge in [[a,b],[b,c],[c,d],[d,a]]:
 			if Geometry2D.segment_intersects_segment(from,to,edge[0],edge[1])!=null:return false

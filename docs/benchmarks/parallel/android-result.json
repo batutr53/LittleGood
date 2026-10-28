@@ -1,0 +1,89 @@
+{
+  "all_passed": true,
+  "checks": {
+    "city_one": true,
+    "city_works_in_battle": true,
+    "four_heroes": true,
+    "native_destination": true,
+    "native_enter": true,
+    "native_hunts": true,
+    "native_inventory": true,
+    "native_return": true,
+    "native_skill": true,
+    "no_story_grants": true,
+    "restore_active": true,
+    "save_active": true,
+    "save_home": true,
+    "valid_active": true,
+    "valid_home": true,
+    "worker": true
+  },
+  "pid": 14955,
+  "run_id": "f456ef4e5f6d4e3b96cd61aeb6be0d9e",
+  "save_sha256": "16e263a7c8811bf0320d46553d2d081091feaa0c37b0dd942eb18d8e9b1ec9e1",
+  "source": "actual_android_emulator_first_day_world_with_external_adb_taps",
+  "stage": "parallel_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "external_adb_actions": [
+    {
+      "sequence": 1,
+      "action": "inventory",
+      "screen_point": [
+        1837,
+        1047
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 2,
+      "action": "hunts",
+      "screen_point": [
+        124,
+        1047
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 3,
+      "action": "destination",
+      "screen_point": [
+        2040,
+        450
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 4,
+      "action": "enter",
+      "screen_point": [
+        2040,
+        332
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 5,
+      "action": "skill",
+      "screen_point": [
+        2135,
+        883
+      ],
+      "count": 1
+    },
+    {
+      "sequence": 6,
+      "action": "return",
+      "screen_point": [
+        2138,
+        124
+      ],
+      "count": 1
+    }
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "script_errors": []
+}

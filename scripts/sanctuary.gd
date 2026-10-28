@@ -6,8 +6,10 @@ const KINDS=["ancient_sentinel","sun_shade","sunward_warden"]
 static func enabled(w: Dictionary) -> bool:return int(w.get("kingdom",{}).get("adventure",{}).get("regions",{}).get("version",0))==3
 static func writable(w: Dictionary) -> bool:return load("res://scripts/hero.gd").writable(w) and enabled(w)
 static func enable(w: Dictionary) -> bool:
-	if not load("res://scripts/hero.gd").writable(w) or not w.kingdom.claimed.has("main_22"):return false
+	if not load("res://scripts/hero.gd").writable(w) or (not w.kingdom.claimed.has("main_22") and not load("res://scripts/parallel_play.gd").enabled(w)):return false
 	if enabled(w):return true
+	if load("res://scripts/parallel_play.gd").enabled(w) and not load("res://scripts/ashen_desert.gd").enabled(w):
+		if not load("res://scripts/ashen_desert.gd").enable(w):return false
 	w.kingdom.adventure.regions.version=3
 	w.kingdom.adventure.regions.ancients={"version":1,"relic_item":0,"returned":false,"researched":false}
 	for key in MATERIALS:w.kingdom.stock[key]=0
@@ -164,7 +166,7 @@ static func validate_run(w: Dictionary,r: Dictionary) -> bool:
 static func validate(w: Dictionary) -> bool:
 	if not enabled(w):return true
 	var C=load("res://scripts/cosmetics.gd");var s=w.kingdom.adventure.regions.ancients;var r=run_of(w)
-	if not w.kingdom.claimed.has("main_22") or not C.shape(s,["version","relic_item","returned","researched"]) or not C.number(s.version,1,1,true) or not C.number(s.relic_item,0,100000,true) or not s.returned is bool or not s.researched is bool:return false
+	if (not w.kingdom.claimed.has("main_22") and not load("res://scripts/parallel_play.gd").enabled(w)) or not C.shape(s,["version","relic_item","returned","researched"]) or not C.number(s.version,1,1,true) or not C.number(s.relic_item,0,100000,true) or not s.returned is bool or not s.researched is bool:return false
 	if s.researched and not s.returned:return false
 	if s.returned and s.relic_item==0:return false
 	var relics=w.kingdom.industry.items.filter(func(item):return item.recipe=="sun_relic")

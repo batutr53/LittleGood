@@ -75,7 +75,7 @@ func _ready() -> void:
 		if region!="wildwood":tree.texture=load("res://assets/adventure/desert-palm.svg" if region=="ashen_desert" else "res://assets/adventure/mountain-pine.svg");tree.scale=Vector2.ONE*.7;tree.position.y-=55
 		elif not game.view.low_quality:tree.material=GameArt.foliage()
 		actors.add_child(tree)
-	for rect in region_map.solids(game.world.kingdom.claimed.size()<14):
+	for rect in region_map.solids(load("res://scripts/parallel_play.gd").boss_locked(game.world)):
 		var wall=StaticBody2D.new();wall.position=rect.get_center();var shape=CollisionShape2D.new();var box=RectangleShape2D.new();box.size=rect.size;shape.shape=box;wall.add_child(shape);add_child(wall)
 		if region!="wildwood" and rect.size.x>60 and rect.size.y>60:
 			# Art follows the physical obstacle footprint, rather than blocking invisible ground.
@@ -117,7 +117,7 @@ func make_body(id: int,p: Vector2,texture: Texture2D,size: float) -> void:
 	var sprite=Sprite2D.new();sprite.name="Art";sprite.texture=texture;sprite.scale=Vector2.ONE*size/texture.get_width();sprite.position.y=-size*.42;body.add_child(sprite);bodies[id]=body
 	body.set_meta("art_rest",sprite.position)
 func move_body(id: int,p: Vector2,delta: Vector2) -> Vector2:
-	if not bodies.has(id):return region_map.move(p,delta,game.world.kingdom.claimed.size()<14)
+	if not bodies.has(id):return region_map.move(p,delta,load("res://scripts/parallel_play.gd").boss_locked(game.world))
 	var body=bodies[id];body.position=p;body.move_and_collide(delta);return body.position.round()
 func place(node: Control,rect: Rect2) -> void:
 	hud.add_child(node);node.position=rect.position;node.size=rect.size
@@ -387,7 +387,7 @@ func draw_props(canvas: Node2D) -> void:
 		canvas.draw_arc(region_map.LANDMARK,70,0,TAU,32,Color("b4dbc6") if r.landmark else Color("f0c987"),3,true)
 		canvas.draw_string(game.ui.ui_font(),region_map.LANDMARK+Vector2(-120,85),say("The Forgotten Mine","Unutulmuş Maden"),HORIZONTAL_ALIGNMENT_LEFT,-1,21,Color("f0d6a3"))
 		return
-	if game.world.kingdom.claimed.size()<14:
+	if load("res://scripts/parallel_play.gd").boss_locked(game.world):
 		canvas.draw_line(Vector2(560,362),Vector2(942,362),Color("aec18a"),14,true);canvas.draw_string(game.ui.ui_font(),Vector2(580,345),say("Roots sealed · quest 14","Kökler mühürlü · görev 14"),HORIZONTAL_ALIGNMENT_LEFT,-1,20,Color("f2dfab"))
 	for p in [MAP.CHEST,MAP.HERBS]:
 		var image=effect_textures["chest" if p==MAP.CHEST else "herb"];canvas.draw_texture_rect(image,Rect2(p-Vector2(38,55),Vector2(76,76)),false,Color(1,1,1,.4 if (r.chest if p==MAP.CHEST else r.harvest) else 1))

@@ -189,6 +189,7 @@ func new_planet(seed_value: int, planet_name: String, persist: bool = true) -> v
 	var start = Time.get_ticks_usec()
 	world = WorldGen.generate(seed_value, planet_name)
 	preload("res://scripts/estate.gd").start(world)
+	if persist:load("res://scripts/parallel_play.gd").ensure(world)
 	preload("res://scripts/cosmetics.gd").ensure(world)
 	pipeline.world_generation_ms = (Time.get_ticks_usec() - start) / 1000.0
 	has_player_world = persist
@@ -234,6 +235,7 @@ func restore() -> void:
 	var recovery = Persistence.last_recovery
 	var report = await replay_offline(restored, Time.get_unix_time_from_system())
 	preload("res://scripts/estate.gd").start(restored)
+	load("res://scripts/parallel_play.gd").ensure(restored)
 	world = restored
 	has_player_world = true
 	onboarding_live = false
@@ -413,7 +415,16 @@ func _process(delta: float) -> void:
 	var simulation_delta = clampf((clock_ms - last_clock_ms) / 1000.0, 0, 1)
 	last_clock_ms = clock_ms
 	diagnostics.advance(simulation_delta if not suspended else 0)
-	if is_instance_valid(adventure_scene) or is_instance_valid(army_scene):return
+	if is_instance_valid(adventure_scene):
+		if load("res://scripts/parallel_play.gd").enabled(world) and not suspended and not loading and not paused and not adventure_scene.frozen and not adventure_scene.rpg_overlay:
+			accumulator+=simulation_delta*speed
+			while accumulator>=2:accumulator-=2;advance_tick()
+			# Combat and city share one save; keep both durable during longer hunts.
+			autosave_time+=simulation_delta
+			if autosave_time>=30 and not is_test_session:
+				autosave_time=0;checkpoint("parallel-autosave")
+		return
+	if is_instance_valid(army_scene):return
 	diagnostic_time += delta
 	if OS.is_debug_build() and diagnostic_time >= 10:
 		diagnostic_time = 0

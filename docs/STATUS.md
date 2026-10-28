@@ -1,5 +1,11 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Parallel city and adventure access — 28 October 2026
+
+Live new/continued worlds now expose the hero, bag, skills/stats and all four adventure destinations from city level 1, without completing city chapters. A missing first hero receives a one-time starter weapon; existing hero/items/resources/history are preserved. Assigned city gathering, construction, production and forging continue during hero combat; pause/overlays/suspension remain intentional stops. Actual XP, generated drops and one-time safe return delivery are retained. Destination levels are danger recommendations.
+
+Verified **822 campaign + 61 navigation + 26 collection + 24 workers + 65 input** existing checks, **67 new model + 27 rendered UI** checks. Android emulator: **16 checks, six external ADB taps, three new-process restore checks**, private save and both packages' player files preserved; no script errors. No physical device verification. Main/QA version-109 APKs: `D:/LittleGod/builds/android/LittleGod-Parallel-debug.apk` and `D:/LittleGod/builds/android/LittleGod-Parallel-QA-debug.apk`. Launcher: `D:/LittleGod/Launch LittleGod.cmd`. Details, screenshots, exact limits and reproduction: [PARALLEL_ADVENTURES.md](PARALLEL_ADVENTURES.md).
+
 ## Critical interaction hotfix — 28 October 2026
 
 Fixed misleading product collection feedback, silent worker assignment/rejection and world input blocked by ordinary building panels. Inspectors now allow exposed-world selection/pan and real simulation; another building replaces the active inspector, empty world dismisses it, and controls do not click through. True confirmations/settings/NPC contexts retain deliberate gates. Collection shows actual ready/stored amounts and preserves output on capacity failure; named assignment/removal reports real results and saves immediately. No save schema, balances or identity changes.

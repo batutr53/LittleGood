@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 616.64 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4070 Laptop GPU
+
+INTERACTION world position=(503.0, 310.0) inspector=true
+INTERACTION selected building=2 kind=farm position=(503.0, 310.0)
+INTERACTION world position=(461.0, 75.0) inspector=true
+INTERACTION selected building=8 kind=forge position=(461.0, 75.0)
+INTERACTION world position=(568.0, 377.0) inspector=true
+INTERACTION selected building=9 kind=barracks position=(568.0, 377.0)
+INTERACTION world position=(765.0, 310.0) inspector=true
+INTERACTION selected building=12 kind=marketplace position=(765.0, 310.0)
+INTERACTION world position=(803.0, 307.0) inspector=true
+INTERACTION selected building=6 kind=mine position=(803.0, 307.0)
+INTERACTION world position=(503.0, 310.0) inspector=true
+INTERACTION selected building=2 kind=farm position=(503.0, 310.0)
+INTERACTION collect button=CollectBuildingOutput building=2 command=Estate.collect code=ready result={"food":254}
+INTERACTION collect button=CollectBuildingOutput building=2 command=Estate.collect code=full result={}
+INTERACTION assign button=AssignWorker building=6 worker=3 command=Kingdom.assign valid=true reason=
+INTERACTION assign button=AssignWorker building=0 worker=3 command=Kingdom.assign valid=true reason=
+INTERACTION world position=(320.0, 465.0) inspector=true
+HOTFIX_INPUT {"all_passed":true,"checks":{"assign_feedback":true,"bounds_en1280":true,"bounds_en320":true,"bounds_en360":true,"bounds_en393":true,"bounds_tr1280":true,"bounds_tr320":true,"bounds_tr360":true,"bounds_tr393":true,"buttons_en1280":true,"buttons_en320":true,"buttons_en360":true,"buttons_en393":true,"buttons_tr1280":true,"buttons_tr320":true,"buttons_tr360":true,"buttons_tr393":true,"empty_dismisses":true,"exposed_12":true,"exposed_2":true,"exposed_6":true,"exposed_8":true,"exposed_9":true,"feedback_visible":true,"image_b-native-assigned":true,"image_c-inspector-en1280":true,"image_c-inspector-en320":true,"image_c-inspector-en360":true,"image_c-inspector-en393":true,"image_c-inspector-tr1280":true,"image_c-inspector-tr320":true,"image_c-inspector-tr360":true,"image_c-inspector-tr393":true,"image_c-mouse-farm":true,"inside_no_clickthrough":true,"inspect_clock_advances":true,"legal_fixture_move":true,"live_status":true,"modal_blocks":true,"modal_retains":true,"native_assign":true,"native_collection":true,"native_double_collect":true,"native_remove":true,"nonmodal_clock":true,"one_panel_12":true,"one_panel_2":true,"one_panel_6":true,"one_panel_8":true,"one_panel_9":true,"outside_en1280":true,"outside_en320":true,"outside_en360":true,"outside_en393":true,"outside_tr1280":true,"outside_tr320":true,"outside_tr360":true,"outside_tr393":true,"restore":true,"save":true,"switch_12":true,"switch_2":true,"switch_6":true,"switch_8":true,"switch_9":true},"count":65,"method":"Real Godot viewport mouse events, existing fixture and authoritative ticks; no arbitrary output/balance injection"}
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

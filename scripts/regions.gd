@@ -17,6 +17,7 @@ static func map(id: String):return SANCTUARY if id=="sanctuary" else DESERT if i
 static func unlocked(w: Dictionary,id: String) -> bool:
 	if not id in IDS or not data(id).playable:return false
 	var H=load("res://scripts/hero.gd")
+	if load("res://scripts/parallel_play.gd").enabled(w):return H.writable(w) and not w.kingdom.adventure.hero.is_empty() and H.progress(w,"hero_armed")>0
 	if id=="sanctuary":return H.writable(w) and w.kingdom.claimed.has("main_22") and H.progress(w,"hero_armed")>0
 	return H.writable(w) and not w.kingdom.adventure.hero.is_empty() and H.progress(w,"hero_armed")>0 and w.kingdom.claimed.size()>=(21 if id!="wildwood" else 11) and (id!="ashen_desert" or load("res://scripts/ashen_desert.gd").mine_found(w))
 static func seen(w: Dictionary,id: String) -> bool:
@@ -27,6 +28,7 @@ static func prepare(w: Dictionary,id: String) -> bool:
 	if not unlocked(w,id):return false
 	var a=w.kingdom.adventure
 	if not a.run.is_empty() and a.run.active:return false
+	if load("res://scripts/parallel_play.gd").enabled(w) and not a.has("regions") and id!="wildwood":a.regions={"version":1,"stored":{}}
 	if id=="sanctuary" and not load("res://scripts/sanctuary.gd").enable(w):return false
 	if id=="ashen_desert" and not load("res://scripts/ashen_desert.gd").enable(w):return false
 	if current(w)==id:return true
@@ -72,7 +74,7 @@ static func validate(w: Dictionary) -> bool:
 	var fields=["version","stored"]
 	if int(r.get("version",0))>=2:fields.append("quest")
 	if int(r.get("version",0))==3:fields.append("ancients")
-	if w.kingdom.claimed.size()<21 or not C.shape(r,fields) or not C.number(r.version,1,3,true) or not r.stored is Dictionary or r.stored.size()>(3 if int(r.version)==3 else 2):return false
+	if (w.kingdom.claimed.size()<21 and not load("res://scripts/parallel_play.gd").enabled(w)) or not C.shape(r,fields) or not C.number(r.version,1,3,true) or not r.stored is Dictionary or r.stored.size()>(3 if int(r.version)==3 else 2):return false
 	var ids=[]
 	if not a.run.is_empty():ids.append(int(a.run.id))
 	for id in r.stored:

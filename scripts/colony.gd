@@ -44,7 +44,7 @@ static func trip_yield(w,id,resource):
 static func tick(w):
 	if not writable(w) or int(w.colony.last_tick)>=int(w.tick):return
 	w.colony.last_tick=int(w.tick)
-	if w.kingdom.get("adventure",{}).get("run",{}).get("active",false) or w.kingdom.get("military",{}).get("battle",{}).get("active",false):return
+	if (w.kingdom.get("adventure",{}).get("run",{}).get("active",false) and not load("res://scripts/parallel_play.gd").enabled(w)) or w.kingdom.get("military",{}).get("battle",{}).get("active",false):return
 	for id in w.colony.jobs:
 		var job=w.colony.jobs[id]
 		if int(job.buffer)>=6000:continue

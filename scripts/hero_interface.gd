@@ -60,6 +60,8 @@ func destination(id: String) -> void:
 	if ui.premium!=null and ui.rebirth_enabled:ui.premium.playbook_region=id;ui.premium.route("destination");return
 	var R=preload("res://scripts/regions.gd");var d=R.data(id);ui.page="kingdom";var v=ui.popup(game.realm_ui.localized(d.name));var list=ui.card_list(v,440)
 	list.add_child(ui.label(say("ADVENTURE DESTINATION · Hero level ","MACERA BÖLGESİ · Kahraman seviyesi ")+str(d.level)+"\n"+game.realm_ui.localized(d.risk)+"\n\n"+game.realm_ui.localized(d.resources)+"\n"+game.realm_ui.localized(d.enemies)+"\n"+game.realm_ui.localized(d.landmark),21))
+	if load("res://scripts/parallel_play.gd").enabled(game.world):
+		list.add_child(ui.label(say("No city level or chapter requirement. The listed hero level is a danger recommendation. Your city's workers continue while you fight.","Şehir seviyesi veya bölüm şartı yok. Yazılı kahraman seviyesi tehlike önerisidir. Sen savaşırken şehirdeki işçiler çalışır."),20))
 	if id=="iron_hills":list.add_child(ui.label(say("Two finite mineral deposits. They do not refresh when you leave or reload. Ore feeds your existing furnace; stone can build your kingdom. No travel fee.","İki sınırlı maden damarı. Ayrılınca veya kayıt yükleyince yenilenmez. Cevher mevcut fırınında eritilir; taş krallığında kullanılır. Yol ücreti yok."),19))
 	if R.unlocked(game.world,id):add(v,say("Enter ","Gir: ")+game.realm_ui.localized(d.name),func():game.enter_adventure(id),true)
 	elif id=="sanctuary":list.add_child(ui.label(say("Complete quest22 and prepare an armed Warrior. This entrance leads beneath the Ashen Desert.","22. görevi tamamla ve silahlı Savaşçı hazırla. Bu giriş Kül Çölü'nün altına iner."),20))

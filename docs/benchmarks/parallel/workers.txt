@@ -1,0 +1,3 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+HOTFIX_WORKERS {"all_passed":true,"checks":{"assign":true,"busy_explained":true,"capacity":true,"eligible":true,"gathering_reserved":true,"gathering_started":true,"invalid_building":true,"invalid_worker":true,"military_1":true,"military_2":true,"military_3":true,"no_incompatible_assign":true,"passive":true,"population_conserved":true,"real_output":true,"release":true,"release_gathering":true,"removal_stops_output":true,"restore":true,"same_assignment_explained":true,"save":true,"transfer_after_release":true,"unfinished":true,"valid":true},"count":24}

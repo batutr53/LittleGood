@@ -15,7 +15,7 @@ static func new_enemies() -> Array:
 	return result
 static func enter(w: Dictionary,home_paused: bool=false,region: String="") -> bool:
 	if w.get("kingdom",{}).get("military",{}).get("battle",{}).get("active",false):return false
-	if not H.writable(w) or w.kingdom.claimed.size()<11 or H.progress(w,"hero_armed")==0:return false
+	if not H.writable(w) or (w.kingdom.claimed.size()<11 and not load("res://scripts/parallel_play.gd").enabled(w)) or H.progress(w,"hero_armed")==0:return false
 	var a=w.kingdom.adventure
 	var R=load("res://scripts/regions.gd")
 	if region.is_empty():region=R.current(w)
@@ -37,7 +37,7 @@ static func enter(w: Dictionary,home_paused: bool=false,region: String="") -> bo
 	if a.run.is_empty():
 		a.run={"id":int(a.next_run),"active":true,"home_paused":home_paused,"clock":0,"x":240,"y":1260,"facing":[0,-1000],"invulnerable":0,"dash":0,"swing":0,"enemies":new_enemies(),"loot":[],"cargo":{},"picked":0,"chest":false,"harvest":false,"landmark":false,"rng":str(int(w.seed)+int(a.next_run)*7919)};a.next_run+=1
 	else:a.run.active=true;a.run.home_paused=home_paused
-	if w.kingdom.claimed.size()>=14 and not a.run.enemies.any(func(e):return e.kind=="thornheart"):
+	if not load("res://scripts/parallel_play.gd").boss_locked(w) and not a.run.enemies.any(func(e):return e.kind=="thornheart"):
 		a.run.enemies.append({"id":4,"kind":"thornheart","x":720,"y":230,"hp":220,"state":"idle","timer":0,"aimx":0,"aimy":0,"pattern":0})
 	return true
 static func can_travel(w: Dictionary) -> bool:
@@ -66,7 +66,7 @@ static func revisit(w: Dictionary) -> bool:
 	w.kingdom.adventure.run={};return true
 static func move_actor(w: Dictionary,id: int,p: Vector2,delta: Vector2,mover: Callable) -> Vector2:
 	if not mover.is_valid() and w.kingdom.adventure.run.get("region","")=="sanctuary":return load("res://scripts/sanctuary_map.gd").move(p,delta,w.kingdom.adventure.run)
-	return mover.call(id,p,delta) if mover.is_valid() else load("res://scripts/regions.gd").map(load("res://scripts/regions.gd").current(w)).move(p,delta,w.kingdom.claimed.size()<14)
+	return mover.call(id,p,delta) if mover.is_valid() else load("res://scripts/regions.gd").map(load("res://scripts/regions.gd").current(w)).move(p,delta,load("res://scripts/parallel_play.gd").boss_locked(w))
 static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> Array:
 	if not H.writable(w) or w.kingdom.adventure.run.is_empty() or not w.kingdom.adventure.run.active:return []
 	var a=w.kingdom.adventure;var r=a.run;var h=a.hero;r.clock+=STEP
@@ -282,7 +282,7 @@ static func validate_run(w: Dictionary,r: Dictionary) -> bool:
 	var desert=r.get("region","")=="ashen_desert"
 	var sanctuary=r.get("region","")=="sanctuary"
 	if r.has("region"):
-		if not (hills or desert or sanctuary) or not w.kingdom.adventure.has("regions") or w.kingdom.claimed.size()<21:return false
+		if not (hills or desert or sanctuary) or not w.kingdom.adventure.has("regions") or (w.kingdom.claimed.size()<21 and not load("res://scripts/parallel_play.gd").enabled(w)):return false
 		keys.append_array(["region","nodes"])
 		if hills and (not C.shape(r.get("nodes"),["ore","stone"]) or not r.nodes.ore is bool or not r.nodes.stone is bool or r.harvest or r.chest):return false
 		if desert:keys.append_array(["poison_until","poison_next","recovered","road"])

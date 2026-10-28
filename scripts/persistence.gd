@@ -31,6 +31,7 @@ static func save_world(w: Dictionary, path: String = PATH) -> bool:
 
 static func validate(w: Variant) -> bool:
 	if not w is Dictionary: return false
+	if not load("res://scripts/parallel_play.gd").validate(w):return false
 	if not load("res://scripts/rpg_progression.gd").validate(w):return false
 	for key in ["version", "seed", "name", "tick", "cells", "creatures", "settlements", "events", "discoveries", "achievements", "energy", "xp", "weather", "rng_state", "saved_at", "theme"]:
 		if not w.has(key): return false
@@ -211,7 +212,7 @@ static func offline_begin(w: Dictionary, now: float) -> Dictionary:
 	var people_before = 0.0
 	for s in w.settlements: people_before += s.population
 	var actual_elapsed = 0.0 if w.get("user_paused", false) else maxf(0, now - float(w.saved_at))
-	if w.get("kingdom",{}).get("adventure",{}).get("run",{}).get("active",false):actual_elapsed=0.0
+	if w.get("kingdom",{}).get("adventure",{}).get("run",{}).get("active",false) and not load("res://scripts/parallel_play.gd").enabled(w):actual_elapsed=0.0
 	if w.get("kingdom",{}).get("military",{}).get("battle",{}).get("active",false):actual_elapsed=0.0
 	var elapsed = minf(actual_elapsed, MAX_OFFLINE_SECONDS)
 	var count = mini(480, int(elapsed / 60))

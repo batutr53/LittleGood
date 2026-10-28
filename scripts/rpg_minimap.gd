@@ -18,7 +18,7 @@ func _draw():
 		var scene=game.adventure_scene
 		if not is_instance_valid(scene):return
 		var r=game.world.kingdom.adventure.run;var extent=scene.region_map.SIZE
-		for rect in scene.region_map.solids(game.world.kingdom.claimed.size()<14):draw_rect(Rect2(rect.position/extent*size,rect.size/extent*size),Color("5a6256"))
+		for rect in scene.region_map.solids(load("res://scripts/parallel_play.gd").boss_locked(game.world)):draw_rect(Rect2(rect.position/extent*size,rect.size/extent*size),Color("5a6256"))
 		draw_circle(Vector2(r.x,r.y)/extent*size,4,Color("f7dc8d"))
 		for e in r.enemies:
 			if e.hp>0:draw_circle(Vector2(e.x,e.y)/extent*size,2,Color("c46a55"))

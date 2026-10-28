@@ -281,8 +281,8 @@ static func validate(w: Dictionary) -> bool:
 		if not C.number(k[key],1,1000000,true):return false
 	if not C.number(k.legacy_capacity,5,80,true) or not C.number(k.last_tick,0,w.tick,true) or not C.number(k.gather_at,-4,w.tick,true):return false
 	if not k.workers is Array or k.workers.size()>MAX_WORKERS or not k.buildings is Array or k.buildings.size()>MAX_BUILDINGS or not k.claimed is Array or k.claimed.size()>quests().size():return false
-	if int(k.version)>=2 and k.claimed.size()<5:return false
-	if int(k.version)==3 and k.claimed.size()<10:return false
+	if int(k.version)>=2 and k.claimed.size()<5 and not load("res://scripts/parallel_play.gd").enabled(w):return false
+	if int(k.version)==3 and k.claimed.size()<10 and not load("res://scripts/parallel_play.gd").enabled(w):return false
 	if w.settlements.is_empty() or k.workers.size()>floori(home(w).population):return false
 	var ids: Dictionary={};var cells: Dictionary={}
 	for b in k.buildings:
