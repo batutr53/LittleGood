@@ -16,6 +16,7 @@ var tray
 var toast_label
 var craft_filter="all"
 var current_recipe=""
+var tracked_recipe=""
 var forge_selected=0
 var estate_selected=Vector2i(-2,0)
 var filter="all"

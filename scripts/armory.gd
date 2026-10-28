@@ -84,6 +84,12 @@ static func quote(w: Dictionary,id: int,mode: String,element: String="none") -> 
 	q.scroll_recipe=scroll_recipe(mode);q.scroll_id=scroll_item(w,mode)
 	return q
 static func scroll_recipe(mode: String) -> String:return {"normal":"armory_refine_scroll","reverse":"armory_reverse_scroll","rebirth":"armory_rebirth_scroll","element":"armory_element_scroll"}.get(mode,"")
+static func attempt_quote(w: Dictionary,reviewed: Dictionary) -> Dictionary:
+	# Bind confirmation to the exact item state, selected scroll and quoted costs.
+	if not reviewed.has_all(["id","mode","serial","element"]):return {}
+	var current=quote(w,int(reviewed.id),str(reviewed.mode),str(reviewed.element))
+	if current.is_empty() or current!=reviewed:return {}
+	return attempt(w,int(reviewed.id),str(reviewed.mode),int(reviewed.serial),str(reviewed.element))
 static func scroll_item(w: Dictionary,mode: String) -> int:
 	var recipe=scroll_recipe(mode);var locked=w.get("rpg",{}).get("locked",[])
 	for item in w.get("kingdom",{}).get("industry",{}).get("items",[]):

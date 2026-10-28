@@ -89,39 +89,42 @@ static func step(w: Dictionary,input: Dictionary,mover: Callable=Callable()) -> 
 	if h.defeated:return feedback
 	if input.get("heal",false) and heal(w):feedback.append("heal")
 	if (input.get("attack",false) and h.cooldowns.attack==0) or (input.get("skill",false) and h.cooldowns.skill==0):
-		var heavy=input.get("skill",false) and h.cooldowns.skill==0
-		var cast_input=input.duplicate();cast_input.skill=heavy
-		var attack_context=load("res://scripts/rpg_progression.gd").attack_context(w,cast_input)
-		h.cooldowns.attack=500
-		if heavy:h.cooldowns.skill=4000
-		r.swing=200
-		var aim=Vector2(input.get("aim",Vector2.ZERO));var nearest=INF
-		var locked=r.enemies.filter(func(e):return int(e.id)==int(input.get("target_id",0)) and e.hp>0)
-		if not locked.is_empty():aim=Vector2(locked[0].x,locked[0].y)-p
-		if aim.length()<.1:
-			for e in r.enemies:
-				var distance=p.distance_to(Vector2(e.x,e.y))
-				if e.hp>0 and distance<nearest:nearest=distance;aim=Vector2(e.x,e.y)-p
-		if aim.length()>.1:r.facing=[roundi(aim.normalized().x*1000),roundi(aim.normalized().y*1000)]
-		feedback.append("swing")
-		var attack_targets=r.enemies
-		if not locked.is_empty() and int(attack_context.range)>105 and not heavy and not attack_context.area:attack_targets=locked
-		for e in attack_targets:
-			var offset=Vector2(e.x,e.y)-p
-			if e.hp<=0 or offset.length()>(maxi(105,int(attack_context.range)) if heavy else int(attack_context.range)):continue
-			if int(attack_context.range)>105 and not load("res://scripts/rpg_progression.gd").clear_shot(w,p,Vector2(e.x,e.y)):continue
-			if r.get("region","")=="sanctuary" and not load("res://scripts/sanctuary.gd").line_clear(p,Vector2(e.x,e.y),r):continue
-			if not heavy and not attack_context.area and offset.length()>1 and offset.normalized().dot(Vector2(r.facing[0],r.facing[1]).normalized())<.15:continue
-			var rng=RandomNumberGenerator.new();rng.state=int(r.rng);var critical=rng.randi_range(0,999)<int(H.stats(w).crit);r.rng=str(rng.state)
-			var armor=0 if e.kind=="dune_scorpion" and e.state=="recover" else int(enemies()[e.kind].defense)
-			if attack_context.get("pierce",false):armor=0
-			if e.kind in load("res://scripts/sanctuary.gd").KINDS:armor=load("res://scripts/sanctuary.gd").armor(e,armor);load("res://scripts/sanctuary.gd").struck(w,e)
-			var hit=maxi(1,roundi(int(H.stats(w).attack)*(float(attack_context.multiplier) if attack_context.cast else 1.6 if heavy else 1.0)*(1.5 if critical else 1.0))-armor)
-			if attack_context.multiplier==0:continue
-			e.hp=maxi(0,int(e.hp)-hit);feedback.append({"damage":hit,"critical":critical,"enemy_id":int(e.id),"x":e.x,"y":e.y})
-			if int(attack_context.range)>105:feedback[-1].fromx=r.x;feedback[-1].fromy=r.y;feedback[-1].ranged=true
-			if e.hp==0:defeat_enemy(w,e);feedback.append("boss" if e.kind=="thornheart" else "kill")
-			if int(attack_context.range)>105 and not heavy and not attack_context.area:break
+		var rejection=load("res://scripts/combat_rules.gd").check(w,input)
+		if not rejection.is_empty():feedback.append("reject_"+rejection)
+		else:
+			var heavy=input.get("skill",false) and h.cooldowns.skill==0
+			var cast_input=input.duplicate();cast_input.skill=heavy
+			var attack_context=load("res://scripts/rpg_progression.gd").attack_context(w,cast_input)
+			h.cooldowns.attack=500
+			if heavy:h.cooldowns.skill=4000
+			r.swing=200
+			var aim=Vector2(input.get("aim",Vector2.ZERO));var nearest=INF
+			var locked=r.enemies.filter(func(e):return int(e.id)==int(input.get("target_id",0)) and e.hp>0)
+			if not locked.is_empty():aim=Vector2(locked[0].x,locked[0].y)-p
+			if aim.length()<.1:
+				for e in r.enemies:
+					var distance=p.distance_to(Vector2(e.x,e.y))
+					if e.hp>0 and distance<nearest:nearest=distance;aim=Vector2(e.x,e.y)-p
+			if aim.length()>.1:r.facing=[roundi(aim.normalized().x*1000),roundi(aim.normalized().y*1000)]
+			feedback.append("swing")
+			var attack_targets=r.enemies
+			if not locked.is_empty() and int(attack_context.range)>105 and not heavy and not attack_context.area:attack_targets=locked
+			for e in attack_targets:
+				var offset=Vector2(e.x,e.y)-p
+				if e.hp<=0 or offset.length()>(maxi(105,int(attack_context.range)) if heavy else int(attack_context.range)):continue
+				if int(attack_context.range)>105 and not load("res://scripts/rpg_progression.gd").clear_shot(w,p,Vector2(e.x,e.y)):continue
+				if r.get("region","")=="sanctuary" and not load("res://scripts/sanctuary.gd").line_clear(p,Vector2(e.x,e.y),r):continue
+				if not heavy and not attack_context.area and offset.length()>1 and offset.normalized().dot(Vector2(r.facing[0],r.facing[1]).normalized())<.15:continue
+				var rng=RandomNumberGenerator.new();rng.state=int(r.rng);var critical=rng.randi_range(0,999)<int(H.stats(w).crit);r.rng=str(rng.state)
+				var armor=0 if e.kind=="dune_scorpion" and e.state=="recover" else int(enemies()[e.kind].defense)
+				if attack_context.get("pierce",false):armor=0
+				if e.kind in load("res://scripts/sanctuary.gd").KINDS:armor=load("res://scripts/sanctuary.gd").armor(e,armor);load("res://scripts/sanctuary.gd").struck(w,e)
+				var hit=maxi(1,roundi(int(H.stats(w).attack)*(float(attack_context.multiplier) if attack_context.cast else 1.6 if heavy else 1.0)*(1.5 if critical else 1.0))-armor)
+				if attack_context.multiplier==0:continue
+				e.hp=maxi(0,int(e.hp)-hit);feedback.append({"damage":hit,"critical":critical,"enemy_id":int(e.id),"x":e.x,"y":e.y})
+				if int(attack_context.range)>105:feedback[-1].fromx=r.x;feedback[-1].fromy=r.y;feedback[-1].ranged=true
+				if e.hp==0:defeat_enemy(w,e);feedback.append("boss" if e.kind=="thornheart" else "kill")
+				if int(attack_context.range)>105 and not heavy and not attack_context.area:break
 	for e in r.enemies:
 		if e.hp<=0:continue
 		if e.kind in load("res://scripts/sanctuary.gd").KINDS:feedback.append_array(load("res://scripts/sanctuary.gd").enemy_step(w,e,mover));continue

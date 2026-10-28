@@ -42,6 +42,7 @@ static func equip(w: Dictionary,slot: String,id: int) -> bool:
 	if id!=0:
 		var owned=I.item(w,id)
 		if owned.is_empty() or I.recipes()[owned.recipe].get("category","tool")!=slot:return false
+		if load("res://scripts/military.gd").item_reserved(w,id):return false
 		var allowed=I.recipes()[owned.recipe].get("classes",["warrior"] if slot!="artifact" else ["warrior","priest","mage","rogue"])
 		if not a.hero.get("class","warrior") in allowed:return false
 		if w.has("rpg"):

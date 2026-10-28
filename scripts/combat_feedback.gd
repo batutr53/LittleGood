@@ -20,7 +20,7 @@ func _ready():
 func run_data():return a.game.world.kingdom.adventure.run
 func snapshot() -> Dictionary:
 	var w=a.game.world;var hero=w.kingdom.adventure.hero;var run=run_data()
-	return {"hp":int(hero.hp),"mana":float(R.selected(w).mana) if w.has("rpg") else 0.0,"xp":int(hero.xp),"level":H.level(hero),"loot":run.loot.map(func(l):return int(l.id)),"taken":run.loot.filter(func(l):return l.taken).map(func(l):return int(l.id)),"living":run.enemies.filter(func(e):return e.hp>0).map(func(e):return int(e.id))}
+	return {"ready":load("res://scripts/quest_targets.gd").ready(w),"hp":int(hero.hp),"mana":float(R.selected(w).mana) if w.has("rpg") else 0.0,"xp":int(hero.xp),"level":H.level(hero),"loot":run.loot.map(func(l):return int(l.id)),"taken":run.loot.filter(func(l):return l.taken).map(func(l):return int(l.id)),"living":run.enemies.filter(func(e):return e.hp>0).map(func(e):return int(e.id))}
 func event(kind: String,amount: float=0):
 	events.append({"kind":kind,"amount":amount})
 	if events.size()>40:events.pop_front()
@@ -32,6 +32,8 @@ func announce(text: String,priority=0):
 	banner=text if text.length()<=44 else text.left(41)+"...";banner_time=1.5;banner_priority=priority
 func resolve(before: Dictionary,cues: Array=[],command: Dictionary={}):
 	var w=a.game.world;var hero=w.kingdom.adventure.hero;var run=run_data();var point=Vector2(run.x,run.y)
+	for reason in ["target","range","obstacle"]:
+		if cues.has("reject_"+reason):announce({"target":a.say("Target is no longer available","Hedef artık mevcut değil"),"range":a.say("Approach the selected target","Seçili hedefe yaklaş"),"obstacle":a.say("Terrain blocks the attack","Arazi saldırıyı engelliyor")}[reason]);event("rejected_"+reason)
 	for cue in cues:
 		if not cue is Dictionary or not cue.has("damage"):continue
 		var hit=Vector2(cue.x,cue.y);var critical=cue.get("critical",false);popup(hit+Vector2(60,-112),("CRIT " if critical else "")+str(int(cue.damage)),Color("fff19f") if critical else Color("fff2d0"),29 if critical else 24);impacts.append({"point":hit-Vector2(0,35),"age":0.0,"critical":critical});event("critical" if critical else "hit",cue.damage)
@@ -46,6 +48,8 @@ func resolve(before: Dictionary,cues: Array=[],command: Dictionary={}):
 	var xp=int(hero.xp)-int(before.xp)
 	if xp>0:popup(point+Vector2(-100,-24),"+"+str(xp)+" EXP",Color("e2b4ff"),25);event("experience",xp)
 	if H.level(hero)>int(before.level):announce(a.say("LEVEL UP · ","SEVİYE ATLADIN · ")+str(H.level(hero)),2);event("level_up",H.level(hero));a.game.audio.chime(6)
+	for key in load("res://scripts/quest_targets.gd").ready(w):
+		if not key in before.get("ready",[]):announce(a.say("Quest ready · claim at home","Görev hazır · ödülü evde al"),1);event("quest_ready")
 	for loot in run.loot:
 		if not before.loot.has(int(loot.id)):event("drop",loot.amount);drop_ages[int(loot.id)]=0.0;impacts.append({"point":Vector2(loot.x,loot.y),"age":0.0,"critical":false})
 		if loot.taken and not before.taken.has(int(loot.id)):

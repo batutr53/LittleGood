@@ -12,12 +12,14 @@ var hp: ProgressBar
 var warning: Label
 var resume_button: Button
 var inspect_button: Button
+var goal_label: Label
 var timer=0.0
 func _ready():
 	a=get_parent();var s=a.game.ui.premium.scale_ui();var extent=get_viewport_rect().size
 	card=Panel.new();card.name="SelectedEnemy";card.add_theme_stylebox_override("panel",T.box(Color("171e27"),true));a.place(card,Rect2(extent.x*.5-155*s,8*s,310*s,67*s));card.hide()
 	title=Label.new();title.name="TargetName";title.add_theme_font_override("font",a.game.ui.ui_font());title.add_theme_font_size_override("font_size",int(15*s));title.add_theme_color_override("font_color",Color("fff0cf"));title.mouse_filter=Control.MOUSE_FILTER_IGNORE;card.add_child(title);title.position=Vector2(10,4)*s;title.size=Vector2(245,23)*s;title.clip_text=true
 	detail=Label.new();detail.add_theme_font_override("font",a.game.ui.ui_font());detail.add_theme_font_size_override("font_size",int(12*s));detail.add_theme_color_override("font_color",Color("ddd7c4"));detail.mouse_filter=Control.MOUSE_FILTER_IGNORE;card.add_child(detail);detail.position=Vector2(10,39)*s
+	goal_label=Label.new();goal_label.name="TargetGoals";goal_label.add_theme_font_override("font",a.game.ui.ui_font());goal_label.add_theme_font_size_override("font_size",int(11*s));goal_label.add_theme_color_override("font_color",T.GOLD);goal_label.mouse_filter=Control.MOUSE_FILTER_IGNORE;card.add_child(goal_label);goal_label.position=Vector2(10,60)*s;goal_label.size=Vector2(288,38)*s;goal_label.clip_text=true
 	hp=ProgressBar.new();hp.name="TargetHealth";hp.show_percentage=false;hp.mouse_filter=Control.MOUSE_FILTER_IGNORE;hp.add_theme_stylebox_override("background",T.box(Color("090d14")));var fill=StyleBoxFlat.new();fill.bg_color=Color("c54b49");hp.add_theme_stylebox_override("fill",fill);card.add_child(hp);hp.position=Vector2(10,29)*s;hp.size=Vector2(242,8)*s
 	var close=a.game.ui.button("×",clear);close.name="ClearTarget";a.game.ui.premium.rpg.compact_button(close);card.add_child(close);close.position=Vector2(260,9)*s;close.custom_minimum_size=Vector2.ONE*48*s;close.size=Vector2.ONE*48*s
 	inspect_button=a.game.ui.button(a.say("Inspect","İncele"),func():
@@ -77,11 +79,14 @@ func refresh():
 	warning.visible=not a.rpg_overlay
 	var e=target();card.visible=not e.is_empty() and not a.rpg_overlay
 	inspect_button.visible=card.visible
-	if e.is_empty():selected_id=0;return
+	if e.is_empty():selected_id=0;warning.position.y=82*a.game.ui.premium.scale_ui();return
 	var d=A.enemies()[e.kind];title.text="◆ "+a.game.realm_ui.localized(d.name);hp.max_value=d.health;hp.value=e.hp
 	var state=a.say("IN RANGE","MENZİLDE") if in_range() else a.say("APPROACH · range / obstacle","YAKLAŞ · menzil / engel")
 	if e.state=="windup":state=a.say("ATTACK · DODGE","SALDIRI · KAÇIN")
 	detail.text=str(int(e.hp))+" / "+str(int(d.health))+"  ·  "+state
+	var goals=load("res://scripts/quest_targets.gd").for_enemy(a.game.world,str(e.kind),a.game.ui.premium.tracked_recipe);var lines=[]
+	for row in goals.slice(0,2):lines.append((a.game.realm_ui.localized(row.title) if row.resource.is_empty() else a.game.ui.premium.rpg.resource_name(row.resource))+"  "+str(row.have)+" / "+str(row.need))
+	goal_label.text="\n".join(lines);var s=a.game.ui.premium.scale_ui();card.size.y=(67 if lines.is_empty() else 104)*s;warning.position.y=(82 if lines.is_empty() else 114)*s
 func _process(delta):
 	timer+=delta
 	if timer<.1:return

@@ -239,7 +239,7 @@ func confirm_upgrade(q: Dictionary):
 	v.add_child(p.text(F.label(game.world,{"id":0,"recipe":q.scroll_recipe},ui.language=="tr")+" ×1",21,T.GOLD))
 	v.add_child(p.text(say("On failure: item and level stay; materials spent.","Başarısızlık: eşya ve seviye korunur, malzeme harcanır."),22,T.MUTED))
 	var confirm=p.action(v,say("Confirm enhancement","Yükseltmeyi onayla"),func():
-		var result=F.attempt(game.world,int(q.id),q.mode,int(q.serial),q.element)
+		var result=F.attempt_quote(game.world,q)
 		if result.is_empty():ui.toast(say("State changed. Check resources and item protection.","Durum değişti. Kaynakları ve eşya korumasını kontrol et."))
 		else:
 			game.realm_ui.changed();game.audio.chime(6 if result.success else 2);ui.toast(say("Enhancement succeeded!","Yükseltme başarılı!") if result.success else say("Unchanged · materials spent","Seviye korundu · malzeme harcandı"))

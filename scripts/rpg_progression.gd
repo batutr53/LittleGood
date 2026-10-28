@@ -103,47 +103,34 @@ static func combat_tick(w: Dictionary):
 static func skill_ready(w: Dictionary,input: Dictionary) -> bool:
 	if not w.has("rpg"):return true
 	var p=selected(w);var index=int(p.bar[clampi(int(input.get("skill_slot",0)),0,2)])
-	if int(p.skills[index])==0:return index==0 and int(w.kingdom.adventure.hero.cooldowns.skill)==0 and float(p.mana)>=8
-	return int(p.get("cooldowns",[0,0,0,0,0,0])[index])==0 and (int(p.skills[index])==0 or float(p.mana)>=12+index*3)
+	if int(p.skills[index])==0:return index==0 and int(p.get("cooldowns",[0,0,0,0,0,0])[0])==0 and float(p.mana)>=8
+	return int(p.get("cooldowns",[0,0,0,0,0,0])[index])==0 and (int(p.skills[index])==0 or float(p.mana)>=int(skill_definition(w.kingdom.adventure.hero.get("class","warrior"),index).mana))
 static func basic_range(w: Dictionary) -> int:
 	var key=w.kingdom.adventure.hero.get("class","warrior")
 	if key=="rogue" and w.has("rpg") and selected(w).specialization=="assassin":return 78
 	return 300 if key=="mage" else 190 if key=="priest" else 340 if key=="rogue" else 78
+static var skill_behaviors={}
+static func skill_definition(key: String,index: int) -> Dictionary:
+	if skill_behaviors.is_empty():skill_behaviors=JSON.parse_string(FileAccess.get_file_as_string("res://assets/rpg/skill-behaviors.json"))
+	return skill_behaviors[key][index]
 static func attack_context(w: Dictionary,input: Dictionary) -> Dictionary:
 	var key=w.kingdom.adventure.hero.get("class","warrior")
 	var result={"range":basic_range(w),"multiplier":1.0,"area":false,"cast":false}
-	if not w.has("rpg"):return result
-	var p=selected(w)
-	if key=="rogue" and p.specialization=="assassin":result.range=78
-	var skill_slot=int(input.get("skill_slot",0));var index=int(p.bar[clampi(skill_slot,0,2)]);var rank=int(p.skills[index])
-	if not input.get("skill",false):return result
+	if not w.has("rpg") or not input.get("skill",false):return result
+	if not skill_ready(w,input):return {"range":0,"multiplier":0.0,"area":false,"cast":false}
+	var p=selected(w);var index=int(p.bar[clampi(int(input.get("skill_slot",0)),0,2)]);var rank=int(p.skills[index])
 	if rank<=0:
-		if index!=0 or float(p.mana)<8:return {"range":0,"multiplier":0.0,"area":false,"cast":false}
 		p.mana-=8;result.cast=true;result.multiplier=1.6;p.cooldowns[0]=4000;return result
-	var cost=12+index*3
-	if float(p.mana)<cost:return {"range":0,"multiplier":0.0,"area":false,"cast":false}
-	p.mana-=cost;result.cast=true;result.multiplier=1.4+rank*.2+index*.1
-	p.cooldowns[index]=4000+index*500
+	var d=skill_definition(key,index)
+	p.mana-=int(d.mana);p.cooldowns[index]=int(d.cooldown_ms)
+	result.cast=true;result.multiplier=1.4+rank*.2+index*.1+float(d.damage_bonus);result.area=d.area
+	if int(d.range)>0:result.range=int(d.range)
+	if d.pierce:result.pierce=true
+	if d.guard:p.guard_ms=3000+rank*500
 	var hero=w.kingdom.adventure.hero;var run=w.kingdom.adventure.run
-	match key:
-		"warrior":
-			if index in [0,4]:result.area=true;result.range=145 if index==0 else 180
-			if index in [1,5]:p.guard_ms=3000+rank*500
-			if index==2:run.dash=250;run.invulnerable=300
-			if index in [3,5]:hero.hp=mini(load("res://scripts/hero.gd").stats(w).health,int(hero.hp)+10+rank*5)
-		"priest":
-			if index in [1,2,5]:hero.hp=mini(load("res://scripts/hero.gd").stats(w).health,int(hero.hp)+15+rank*5)
-			if index==2:p.guard_ms=3000+rank*500
-			if index in [3,5]:result.area=true
-			if index==4 and run.get("region","")=="ashen_desert":run.poison_until=0;run.poison_next=0
-		"mage":
-			if index in [1,2,3,5]:result.area=true
-			if index==1:result.range=150
-			if index==4:p.guard_ms=3000+rank*500
-		"rogue":
-			if index in [1,3]:run.dash=250;run.invulnerable=300
-			if index in [2,5]:result.multiplier+=.4
-			if index==4:result.pierce=true
+	if d.dash:run.dash=250;run.invulnerable=300
+	if int(d.heal_base)>0:hero.hp=mini(load("res://scripts/hero.gd").stats(w).health,int(hero.hp)+int(d.heal_base)+rank*int(d.heal_per_rank))
+	if d.cleanse and run.get("region","")=="ashen_desert":run.poison_until=0;run.poison_next=0
 	return result
 static func clear_shot(w: Dictionary,from: Vector2,to: Vector2) -> bool:
 	var map=load("res://scripts/regions.gd").map(load("res://scripts/regions.gd").current(w))

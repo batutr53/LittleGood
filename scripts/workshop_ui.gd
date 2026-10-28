@@ -65,6 +65,7 @@ func recipe():
 		if I.queue(w,p.current_recipe,p.forge_selected):game.realm_ui.changed();game.checkpoint("craft");p.route("forge_queue",0,false)
 		else:p.ui.toast(say("Requirements changed. Review the recipe.","Koşullar değişti. Tarifi gözden geçir.")),true).disabled=not can_queue
 	var row=HBoxContainer.new();v.add_child(row);button(row,say("Assign smith","Demirci ata"),func():p.route("staffing",p.forge_selected) if p.forge_selected>0 else p.playbook().go_objective("build_forge"));button(row,say("Recipes","Tarifler"),func():p.route("forge",p.forge_selected))
+	var track=button(row,say("Untrack","Takibi bırak") if p.tracked_recipe==p.current_recipe else say("Track materials","Malzeme izle"),func():p.tracked_recipe="" if p.tracked_recipe==p.current_recipe else p.current_recipe;p.route("recipe"));track.name="TrackRecipeMaterials";track.tooltip_text=say("Shows needed materials on enemies that actually drop them during this session.","Bu oturumda gereken malzemeleri gerçekten düşüren hedeflerde gösterir.")
 func material():
 	var w=game.world;var key=p.material_target;var v=p.surface(p.rpg.resource_name(key)+say(" · sources"," · kaynaklar"));var C=load("res://scripts/colony.gd")
 	label(v,say("Owned: ","Mevcut: ")+str(w.kingdom.stock.get(key,w.get("colony",{}).get("stock",{}).get(key,0))/1000.0))
