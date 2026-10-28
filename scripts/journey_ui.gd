@@ -20,14 +20,8 @@ func chapter():
 		else:p.ui.toast(say("Requirements changed. Reopen your current objective.","Koşullar değişti. Güncel hedefini yeniden aç.")),true)
 	button(v,say("Colony overview","Koloni özeti"),func():p.route("journey"))
 func overview():
-	var w=game.world
-	if not w.has("kingdom"):p.playbook().intro();return
-	var v=p.surface(say("Arin · next steps","Arin · sıradaki adımlar"));var advice=J.report(w);label(v,game.realm_ui.localized(advice.message));button(v,say("Go to next action","Sonraki adıma git"),func():p.route(advice.route,int(advice.argument)),true)
-	label(v,say("COLONY → EQUIPMENT → EXPEDITION → LOOT → GROWTH","KOLONİ → DONANIM → SEFER → GANİMET → GELİŞİM"))
-	var row=HBoxContainer.new();v.add_child(row);button(row,say("Workers / resources","İşçi / kaynak"),func():p.route("workers"));button(row,say("Equipment / forge","Donanım / demirci"),func():p.route("inventory") if p.I.enabled(w) else p.route("quest"))
-	var trips=HBoxContainer.new();v.add_child(trips);button(trips,say("Boss expeditions","Boss seferleri"),func():p.route("hunts"));button(trips,say("Defense","Savunma"),func():p.route("defense"))
-	label(v,say("World paused. Resume explicitly to let workers work.","Dünya duraklatılmış. İşçilerin çalışması için sürdür.") if game.paused else say("Close this panel to let work continue. Expeditions pause the colony.","İşlerin sürmesi için paneli kapat. Sefer sırasında koloni durur."))
-	button(v,say("Resume world & watch workers","Dünyayı sürdür ve işçileri izle"),func():game.paused=false;game.schedule_save();p.ui.close())
+	if not game.world.has("kingdom"):p.playbook().intro();return
+	load("res://scripts/advisor_dialogue.gd").new(p).open()
 func recruit():
 	var w=game.world;var v=p.surface(say("Arin · call your champion","Arin · şampiyonunu çağır"));label(v,say("The Hearthkin protect the home. Your champion explores the Wildwood and brings back equipment and rare materials.","Ocaklılar yuvayı korur. Şampiyonun Yabanorman'ı keşfeder; donanım ve nadir malzemelerle döner."))
 	var field=LineEdit.new();field.name="HeroName";field.text="Lale";field.max_length=24;field.custom_minimum_size.y=p.px(48);v.add_child(field)

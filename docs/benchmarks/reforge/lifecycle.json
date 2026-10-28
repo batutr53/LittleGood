@@ -1,0 +1,19 @@
+{
+  "all_passed": true,
+  "checks": {
+    "jobs_restored": true,
+    "restore_valid": true,
+    "same_saved_bytes": true
+  },
+  "pid": 9457,
+  "run_id": "7e56157f2b6444e8ad98351d920e8c46",
+  "source": "simulated_android_qa",
+  "stage": "reforge_restore_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "saved_bytes_unchanged": true,
+  "new_process": true,
+  "physical_device": false
+}

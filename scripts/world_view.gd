@@ -31,6 +31,7 @@ var cosmetic_layer
 var estate_layer
 var estate_paths
 var kingdom_layer
+var advisor_layer
 var layout_size = Vector2.ZERO
 
 func _ready() -> void:
@@ -48,6 +49,7 @@ func _ready() -> void:
 	cosmetic_layer.view=self
 	world_root.add_child(cosmetic_layer)
 	kingdom_layer=preload("res://scripts/kingdom_renderer.gd").new();kingdom_layer.view=self;world_root.add_child(kingdom_layer)
+	advisor_layer=preload("res://scenes/village_advisor.tscn").instantiate();advisor_layer.view=self;world_root.add_child(advisor_layer)
 
 	estate_layer=preload("res://scripts/estate_overlay.gd").new();estate_layer.view=self;add_child(estate_layer)
 

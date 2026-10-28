@@ -1,0 +1,74 @@
+{
+  "all_passed": true,
+  "checks": {
+    "collect_exact": true,
+    "fixture": true,
+    "job_started": true,
+    "lifecycle_checkpoint": true,
+    "live_clock": true,
+    "native_close": true,
+    "no_double_collect": true,
+    "real_production": true,
+    "restore": true,
+    "save": true,
+    "settings_pauses": true,
+    "valid": true,
+    "worker_visual": true
+  },
+  "pid": 8735,
+  "profiles": [
+    {
+      "draw_calls": 378.0,
+      "fps": 29.4237107792373,
+      "memory_mb": 49.759015083313,
+      "p95_ms": 40.461,
+      "process_cpu_p95_ms": 42.019,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 60,
+      "texture_memory_mb": 49.4138526916504,
+      "world_update_cpu_p95_ms": 1.198
+    },
+    {
+      "draw_calls": 297.0,
+      "fps": 30.1126852578264,
+      "memory_mb": 49.556450843811,
+      "p95_ms": 35.361,
+      "process_cpu_p95_ms": 30.572,
+      "scene": "paused_home_with_ambient_animation",
+      "target": 30,
+      "texture_memory_mb": 49.4138526916504,
+      "world_update_cpu_p95_ms": 1.147
+    }
+  ],
+  "run_id": "fb479cb5e702441da1bc3c1d5833a4a7",
+  "save_sha256": "3a408f4e9970ed02fef8544a1ac8bcfcfc1b86e743467ead577e3259a18de3b2",
+  "source": "Real Android wall-clock production and native ADB X tap; private fixture; not a full onboarding or portrait HUD test",
+  "stage": "reforge_complete",
+  "viewport": [
+    1600.0,
+    720.0
+  ],
+  "physical_device": false,
+  "player_files_preserved": true,
+  "player_file_hashes": {
+    "planet.json": {
+      "before": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "after": "fe6810a8674f97a948fb8f1334589d49edd2620a48973c9572ae5f6c91c32f9b",
+      "before_bytes": 40618,
+      "after_bytes": 40618
+    },
+    "planet.json.bak": {
+      "before": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "after": "6130e3be0202f5fa6db86e8ae382f53cd0b0b0221e68aefb2e87f0b52c6b9877",
+      "before_bytes": 41031,
+      "after_bytes": 41031
+    },
+    "settings.cfg": {
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_bytes": 0,
+      "after_bytes": 0
+    }
+  },
+  "script_errors": []
+}

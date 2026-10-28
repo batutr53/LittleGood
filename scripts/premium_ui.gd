@@ -117,6 +117,7 @@ func back():
  elif current=="main" and not game.world.is_empty():ui.menu()
  else:ui.close()
 func surface(title: String,compact=false) -> VBoxContainer:
+ game.npc_dialogue_open=false
  ui.end_live_route();game.reset_gesture();game.in_menu=true
  var selected_context=ui.root.find_child("WorldSelection",true,false) if is_instance_valid(ui.root) else null
  if selected_context:selected_context.hide()
@@ -131,6 +132,8 @@ func surface(title: String,compact=false) -> VBoxContainer:
  var x=viewport.x-width-margin
  if current in ["attributes","quest","menu","workers"]:x=margin
  if current=="map" or game.world.is_empty():x=(viewport.x-width)*.5
+ if current=="journey" and not game.world.is_empty():
+  width=minf(viewport.x-24,720);height=minf(viewport.y-80,440 if viewport.x>viewport.y else viewport.y*.62);x=(viewport.x-width)*.5;top=viewport.y-height-16
  ui.veil=ColorRect.new();ui.veil.color=Color(0,0,0,0);ui.veil.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.veil.position=Vector2.ZERO;ui.veil.size=viewport;ui.root.add_child(ui.veil)
  ui.modal=PanelContainer.new();ui.modal.name="GameSurface";var box=T.box(T.INK,true);box.content_margin_left=px(10);box.content_margin_right=px(10);box.content_margin_top=px(6);box.content_margin_bottom=px(8);ui.modal.add_theme_stylebox_override("panel",box)
  ui.modal.position=Vector2(x,top);ui.modal.size=Vector2(width,height);ui.modal_base_y=top;ui.root.add_child(ui.modal)

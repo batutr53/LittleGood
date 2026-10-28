@@ -10,6 +10,9 @@ var autosave_time = 0.0
 var speed = 1
 var paused = false
 var in_menu = true
+var npc_dialogue_open=false
+func home_clock_running() -> bool:
+	return not suspended and not loading and not visiting and not paused and not is_instance_valid(adventure_scene) and not is_instance_valid(army_scene) and (not in_menu or npc_dialogue_open)
 var power = -1
 var dragging = false
 var drag_distance = 0.0
@@ -424,7 +427,7 @@ func _process(delta: float) -> void:
 	if save_pending >= 0:
 		save_pending -= simulation_delta
 		if save_pending <= 0: checkpoint("interaction")
-	if visiting or ((paused or in_menu) and not (trade_ui!=null and trade_ui.watching)): return
+	if visiting or (not home_clock_running() and not (trade_ui!=null and trade_ui.watching)): return
 	accumulator += simulation_delta * speed
 	autosave_time += simulation_delta
 	while accumulator >= 2:
@@ -511,6 +514,7 @@ func touch_world(pos: Vector2) -> void:
 	var input_started = Time.get_ticks_usec()
 	if visiting: power = -1
 	if power < 0:
+		if not visiting and is_instance_valid(view.advisor_layer) and view.advisor_layer.pick(pos):return
 		if not visiting and view.estate_layer.pick(pos):return
 		for home in world.settlements:
 			var point=view.screen_point(world.cells[int(home.cell)])

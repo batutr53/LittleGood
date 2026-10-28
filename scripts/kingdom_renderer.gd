@@ -68,7 +68,7 @@ func animate(delta: float) -> void:
 		var worker=w.kingdom.workers[i];var target=int(K.home(w).cell);var working=false
 		var C=load("res://scripts/colony.gd")
 		if C.reserved(w,int(worker.id)):
-			var job=w.colony.jobs[str(int(worker.id))];var home=view.project(w.cells[int(K.home(w).cell)]);var destination=view.project(w.cells[int(job.cell)]);var game=view.get_parent();var phase=float(job.progress)+(clampf(game.accumulator/2.0,0,1) if not game.paused and not game.in_menu else 0)
+			var job=w.colony.jobs[str(int(worker.id))];var home=view.project(w.cells[int(K.home(w).cell)]);var destination=view.project(w.cells[int(job.cell)]);var game=view.get_parent();var phase=float(job.progress)+(clampf(game.accumulator/2.0,0,1) if game.home_clock_running() else 0)
 			var amount=clampf(phase/2.0,0,1) if phase<2 else 1.0 if phase<8 else clampf((10-phase)/2.0,0,1)
 			if int(job.buffer)>=6000:amount=0
 			var target_point=home.lerp(destination,amount)+Vector2(sin(clock*3+i)*2,6+cos(clock*3+i));workers[i].position=workers[i].position.lerp(target_point,1-exp(-delta*10)) if delta>0 else target_point;workers[i].rotation=sin(clock*6+i)*(.12 if phase>=2 and phase<8 else .03);workers[i].self_modulate=Color.WHITE;continue

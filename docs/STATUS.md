@@ -1,5 +1,13 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Project Reforge — R1/R2 intermediate, 28 October 2026
+
+Reproduced Arin freeze in the actual runtime: `in_menu` stopped the economy while SceneTree/user pause were false. Added an explicit NPC-dialogue clock context, functional original Arin world anchor and readable portrait-led bottom dialogue. Real gathering/production/construction now continue during normal conversation; close/settings/user pause/visit/suspend/expedition/caravan policies remain distinct. Chapter reward actions call the original exactly-once command; saves/identities unchanged. Prior systems checkpoint `2d44211` also adapts real combat validation, 24 skill definitions, reviewed upgrades and target-goal/material joins from inspected LibreKO patterns.
+
+Verified **822 campaign, 270 UI, 224 journey, 98 HUD**, **72 new continuity/layout**, **13 Android** and **3 force-stop/relaunch** checks. Native MCP Arin click and native ADB X tested. Live desktop dialogue advanced tick 386→402 and produced 2 gold; real Android clock completed a gathering cycle and collected it once. Private saved bytes survived a new Android process. Final emulator paused-home: **29.42 FPS / p95 40.46 ms** at 60 cap, **30.11 FPS / p95 35.36 ms** at battery 30; 378/297 draw calls, ~49.41 MiB textures. No stable-60 or controlled optimization claim. Physical phone removed by owner; no new physical-device validation. Existing shutdown warnings remain.
+
+APK: `D:/LittleGod/builds/android/LittleGod-Reforge-R2-debug.apk` (QA package, version 107). Backup: `D:/LittleGod/builds/backups/LittleGod-pre-reforge-2d44211.zip`. Launcher unchanged. **Reforge is incomplete:** full hero/NPC/quest journey, portrait main HUD, chat, animation and audio overhaul remain. Only dialogue is portrait-responsive; main HUD remains landscape. No final release tag created. Exact workstream ledger: [REFORGE_RELEASE_REPORT.md](REFORGE_RELEASE_REPORT.md); evidence: `docs/benchmarks/reforge/`, `docs/screenshots/reforge/`.
+
 ## LibreKO sources and first runtime integration — 28 October 2026
 
 Also fixed an existing boss-target crash caused by mixed array/dictionary localized names. All 12 enemy names are covered in both languages; the actual Thornheart target card was inspected in Godot MCP. Existing **97 object-selection checks** pass.

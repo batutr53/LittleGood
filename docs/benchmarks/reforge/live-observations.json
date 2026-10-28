@@ -1,0 +1,25 @@
+{
+  "method": "Actual Godot MCP observations of private regression fixture, not first-time player journey",
+  "baseline": {
+    "scene_tree_paused": false,
+    "user_paused": false,
+    "in_menu": true,
+    "tick_before": 386,
+    "tick_after": 386,
+    "view_time_before": 21.7741293333339,
+    "view_time_after": 93.437924333337
+  },
+  "after": {
+    "scene_tree_paused": false,
+    "user_paused": false,
+    "in_menu": true,
+    "home_clock_running": true,
+    "tick_before": 386,
+    "tick_after": 402,
+    "gold_buffer": 2000,
+    "native_world_click": [
+      907,
+      238
+    ]
+  }
+}

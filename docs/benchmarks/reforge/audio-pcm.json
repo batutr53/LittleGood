@@ -1,0 +1,40 @@
+{
+  "method": "PCM measurements only; no listening or mix-comfort certification",
+  "files": [
+    {
+      "path": "assets\\button.wav",
+      "seconds": 0.6,
+      "peak_dbfs": -14.504703294314771,
+      "rms_dbfs": -28.211387011745366,
+      "full_scale_samples": 0
+    },
+    {
+      "path": "assets\\water.wav",
+      "seconds": 0.6,
+      "peak_dbfs": -14.475185718791998,
+      "rms_dbfs": -28.211089100796233,
+      "full_scale_samples": 0
+    },
+    {
+      "path": "assets\\discovery.wav",
+      "seconds": 0.6,
+      "peak_dbfs": -14.45556291636301,
+      "rms_dbfs": -28.211350275771125,
+      "full_scale_samples": 0
+    },
+    {
+      "path": "assets\\adventure\\audio\\swing.wav",
+      "seconds": 0.12,
+      "peak_dbfs": -17.60334593923012,
+      "rms_dbfs": -25.984585429845446,
+      "full_scale_samples": 0
+    },
+    {
+      "path": "assets\\adventure\\audio\\impact.wav",
+      "seconds": 0.1,
+      "peak_dbfs": -17.45575207035365,
+      "rms_dbfs": -26.344704583601096,
+      "full_scale_samples": 0
+    }
+  ]
+}

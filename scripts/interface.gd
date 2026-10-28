@@ -468,6 +468,7 @@ func end_live_route() -> void:
 		game.show_world(true)
 
 func close() -> void:
+	game.npc_dialogue_open=false
 	end_live_route()
 	if modal: root.remove_child(modal);modal.queue_free(); modal = null
 	if is_instance_valid(veil): root.remove_child(veil);veil.queue_free(); veil = null
