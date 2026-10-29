@@ -12,7 +12,7 @@ var details: VBoxContainer
 var draft={}
 var chat_box: Panel
 var chat_reopen: Button
-var chat_collapsed=false
+var chat_collapsed=true
 var hud_portrait: TextureRect
 var hud_class=""
 var target_slot=""
@@ -31,23 +31,23 @@ func icon_action(parent: Control,key: String,label: String,cb: Callable) -> Butt
 	var b=ui.button(label,cb);b.icon=T.icon(key);b.expand_icon=true;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.alignment=HORIZONTAL_ALIGNMENT_CENTER;b.vertical_icon_alignment=VERTICAL_ALIGNMENT_TOP;b.add_theme_constant_override("icon_max_width",int(p.px(24)));b.add_theme_constant_override("h_separation",0);b.add_theme_font_size_override("font_size",int(p.px(9)));b.custom_minimum_size=Vector2(p.px(48),p.px(43));b.tooltip_text=label;b.size_flags_horizontal=Control.SIZE_EXPAND_FILL;compact_button(b)
 	b.add_theme_color_override("icon_normal_color",T.GOLD);b.add_theme_color_override("icon_pressed_color",T.CREAM);b.add_theme_color_override("icon_hover_color",T.CREAM)
 	for state in ["normal","hover","pressed","disabled","focus"]:
-		var skin=b.get_theme_stylebox(state);skin.content_margin_top=0;skin.content_margin_bottom=0
+		var skin=T.nav(state=="pressed");skin.bg_color=Color(.4,.85,.72,.10) if state=="hover" else skin.bg_color;b.add_theme_stylebox_override(state,skin)
 	parent.add_child(b);preload("res://scripts/icon_caption.gd").attach(b,T.icon(key),label,p.scale_ui(),ui.ui_font());return b
 func highlight_navigation():
 	if not is_instance_valid(ui.root):return
 	for b in ui.root.find_children("*","Button",true,false):
 		if not b.has_meta("nav_key"):continue
 		var active=game.in_menu and p.current==str(b.get_meta("nav_key"));b.toggle_mode=true;b.set_pressed_no_signal(active)
-		var skin=T.box(Color("5a3029") if active else Color("25281e"),active);skin.content_margin_top=0;skin.content_margin_bottom=0
-		if active:skin.set_border_width_all(2)
+		var skin=T.nav(active);skin.content_margin_top=0;skin.content_margin_bottom=0
+		if active:skin.border_width_bottom=2
 		b.add_theme_stylebox_override("normal",skin);b.add_theme_stylebox_override("pressed",skin);b.add_theme_color_override("font_color",T.GOLD if active else T.CREAM)
 		b.add_theme_color_override("icon_normal_color",T.GOLD);b.add_theme_color_override("icon_pressed_color",T.CREAM);b.add_theme_color_override("icon_hover_color",T.CREAM)
 func highlight_item():
 	if not is_instance_valid(ui.modal):return
 	for b in ui.modal.find_children("*","Button",true,false):
 		if not b.has_meta("item_id"):continue
-		var active=(int(b.get_meta("item_id"))==selected_item and selected_item>0) or (selected_item==0 and b.has_meta("equipment_slot") and str(b.get_meta("equipment_slot"))==target_slot);var skin=T.box(Color("4e3e27") if active else Color("10170e"),active)
-		var recipe=str(b.get_meta("item_recipe"));skin.border_color=Color("ffe5a9") if active else F.color(recipe) if not recipe.is_empty() else T.MUTED;skin.set_border_width_all(3 if active else 1);b.add_theme_stylebox_override("normal",skin)
+		var active=(int(b.get_meta("item_id"))==selected_item and selected_item>0) or (selected_item==0 and b.has_meta("equipment_slot") and str(b.get_meta("equipment_slot"))==target_slot);var skin=T.box(Color("284b48") if active else T.INK,active)
+		var recipe=str(b.get_meta("item_recipe"));skin.border_color=T.GOLD if active else F.color(recipe) if not recipe.is_empty() else T.MUTED;skin.set_border_width_all(3 if active else 1);b.add_theme_stylebox_override("normal",skin)
 		var marker=b.get_node_or_null("SelectedMark")
 		if active and marker==null:
 			marker=p.text("✓",18,Color("fff4bd"));marker.name="SelectedMark";b.add_child(marker);marker.position=Vector2(2,0)*p.scale_ui()
@@ -92,19 +92,19 @@ func inventory():
 		var id=int(visible_items[i].id) if i<visible_items.size() else 0
 		var b=ui.button("",func():
 			if id>0:selected_item=id;show_item(id));b.size_flags_horizontal=Control.SIZE_SHRINK_CENTER;b.icon_alignment=HORIZONTAL_ALIGNMENT_CENTER;b.custom_minimum_size=Vector2(p.px(45),p.px(45));compact_button(b);b.expand_icon=true;b.add_theme_constant_override("icon_max_width",int(p.px(36)));grid.add_child(b)
-		b.add_theme_stylebox_override("normal",T.box(Color("090c09"),false))
+		b.add_theme_stylebox_override("normal",T.box(Color("15232d"),false))
 		if id>0:
 			var item=I.item(game.world,id);b.icon=F.icon(item.recipe);b.tooltip_text=F.label(game.world,item,ui.language=="tr")
 			b.set_meta("item_id",id);b.set_meta("item_recipe",str(item.recipe))
-			var box=T.box(Color("090c09"),false);box.border_color=F.color(item.recipe);box.set_border_width_all(1);b.add_theme_stylebox_override("normal",box)
+			var box=T.box(Color("15232d"),false);box.border_color=F.color(item.recipe);box.set_border_width_all(1);b.add_theme_stylebox_override("normal",box)
 			var s=F.state(game.world,id)
 			add_glow(b,id)
 			if int(s.normal)>0 or int(s.rebirth)>0:
 				var tag=p.text(("R+"+str(int(s.rebirth))) if int(s.rebirth)>0 else "+"+str(int(s.normal)),16,F.color(item.recipe));tag.position=Vector2(p.px(2),p.px(26));b.add_child(tag)
 			b.mouse_entered.connect(func():
 				if selected_item==0:show_item(id))
-		else:b.disabled=true;b.add_theme_stylebox_override("disabled",T.box(Color("090c09"),false))
-	details_window=PanelContainer.new();details_window.name="ItemComparison";details_window.add_theme_stylebox_override("panel",T.box(Color("10160e"),true));ui.veil.add_child(details_window);ui.veil.remove_child(details_window);layout.add_child(details_window);details_window.custom_minimum_size=Vector2(p.px(265),p.px(400));details_window.size_flags_vertical=Control.SIZE_EXPAND_FILL
+		else:b.disabled=true;b.add_theme_stylebox_override("disabled",T.box(Color("15232d"),false))
+	details_window=PanelContainer.new();details_window.name="ItemComparison";details_window.add_theme_stylebox_override("panel",T.skin());ui.veil.add_child(details_window);ui.veil.remove_child(details_window);layout.add_child(details_window);details_window.custom_minimum_size=Vector2(p.px(265),p.px(400));details_window.size_flags_vertical=Control.SIZE_EXPAND_FILL
 	var detail_scroll=ScrollContainer.new();detail_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;detail_scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;details_window.add_child(detail_scroll)
 	details=VBoxContainer.new();details.size_flags_horizontal=Control.SIZE_EXPAND_FILL;details.add_theme_constant_override("separation",int(p.px(5)));detail_scroll.add_child(details)
 	if selected_item>0 and not I.item(game.world,selected_item).is_empty():show_item(selected_item)

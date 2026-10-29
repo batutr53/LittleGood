@@ -48,7 +48,7 @@ func text(value: String,n: int=26,color: Color=T.CREAM) -> Label:
  var l=Label.new();l.text=value;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_override("font",ui.ui_font());l.add_theme_font_size_override("font_size",int(maxf(10,px(n*.62*ui.accessibility_scale))));l.add_theme_color_override("font_color",visible_color);l.mouse_filter=Control.MOUSE_FILTER_IGNORE;l.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  return l
 func heading(value: String,n: int=38) -> Label:
- var l=text(value,n);l.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));l.add_theme_color_override("font_color",T.GOLD);l.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;l.vertical_alignment=VERTICAL_ALIGNMENT_CENTER;return l
+ var l=text(value,n);l.add_theme_font_override("font",ui.ui_font());l.add_theme_color_override("font_color",T.CREAM);l.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;l.vertical_alignment=VERTICAL_ALIGNMENT_CENTER;return l
 func image(texture: Texture2D,extent: Vector2) -> TextureRect:
  var p=TextureRect.new();p.texture=texture;p.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;p.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;p.custom_minimum_size=extent;p.mouse_filter=Control.MOUSE_FILTER_IGNORE;return p
 func action(parent: Node,title: String,cb: Callable,primary=false,key="") -> Button:
@@ -134,7 +134,7 @@ func surface(title: String,compact=false) -> VBoxContainer:
  var height=minf(viewport.y-px(122),px(extent));var top=px(70)
  if game.world.is_empty():width=minf(viewport.x-px(40),px(680));height=minf(viewport.y-px(60),px(630));top=(viewport.y-height)*.5
  var x=viewport.x-width-margin
- if current=="settings":width=minf(viewport.x-px(30),px(740));height=minf(viewport.y-px(100),px(520));x=(viewport.x-width)*.5
+ if current=="settings":width=minf(viewport.x-px(30),px(740));height=minf(viewport.y-px(100),px(400));x=(viewport.x-width)*.5
  if current in ["attributes","quest","menu","workers"]:x=margin
  if current in ["map","inventory","hero"] or game.world.is_empty():x=(viewport.x-width)*.5
  if current=="journey" and not game.world.is_empty():
@@ -142,7 +142,7 @@ func surface(title: String,compact=false) -> VBoxContainer:
  if game.world_inspector_open and viewport.x<viewport.y:
   width=viewport.x-24;height=minf(viewport.y*.57,560);x=12;top=viewport.y-height-12
  ui.veil=ColorRect.new();ui.veil.color=Color(0,0,0,0);ui.veil.mouse_filter=Control.MOUSE_FILTER_IGNORE;ui.veil.position=Vector2.ZERO;ui.veil.size=viewport;ui.root.add_child(ui.veil)
- ui.modal=PanelContainer.new();ui.modal.name="GameSurface";var box=T.box(T.INK,true);box.content_margin_left=px(10);box.content_margin_right=px(10);box.content_margin_top=px(6);box.content_margin_bottom=px(8);ui.modal.add_theme_stylebox_override("panel",box)
+ ui.modal=PanelContainer.new();ui.modal.name="GameSurface";var box=T.skin();box.content_margin_left=px(10);box.content_margin_right=px(10);box.content_margin_top=px(6);box.content_margin_bottom=px(8);ui.modal.add_theme_stylebox_override("panel",box)
  ui.modal.position=Vector2(x,top);ui.modal.size=Vector2(width,height);ui.modal_base_y=top;ui.root.add_child(ui.modal)
  ui.modal.set_meta("inspector",game.world_inspector_open)
  if not game.world_inspector_open and current in ["building_upgrade","enhance"]:ui.veil.color=Color(0,0,0,.22)
@@ -365,7 +365,7 @@ func menu():
  var access=HBoxContainer.new();access.name="AccessibilityQuickAccess";v.add_child(access)
  quick_access(access,"A","text",say("Text size","Metin boyutu"));quick_access(access,"C","contrast",say("High contrast","Yüksek kontrast"));quick_access(access,"S","sound",say("Sound","Ses"));quick_access(access,"V","haptics",say("Haptics","Titreşim"));quick_access(access,"30","quality",say("Battery saver","Pil tasarrufu"));quick_access(access,"TR" if ui.language=="en" else "EN","language",say("Language","Dil"))
 func chat_screen():
- var v=surface(say("Chat","Sohbet"));var panel=preload("res://scripts/chat_panel.gd").new();panel.game=game;v.add_child(panel)
+ var v=surface(say("Chat","Sohbet"));var panel=preload("res://scripts/chat_panel.gd").new();panel.name="LiveChatPanel";panel.game=game;v.add_child(panel)
 func main_menu():
  current="";history.clear()
  if ui.entry_ui==null:ui.entry_ui=load("res://scripts/entry_screen.gd").new(ui)

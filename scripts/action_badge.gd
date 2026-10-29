@@ -11,4 +11,4 @@ func _draw():
 	if locked:
 		draw_line(center+Vector2(-9,-9),center+Vector2(9,9),Color("a9afb5"),3,true);draw_line(center+Vector2(-9,9),center+Vector2(9,-9),Color("a9afb5"),3,true)
 	elif remaining>0:
-		draw_arc(center,radius,-PI*.5,-PI*.5+TAU*clampf(remaining/duration,0,1),48,Color("ffe0a2"),3,true)
+		draw_arc(center,radius,-PI*.5,-PI*.5+TAU*clampf(remaining/duration,0,1),48,preload("res://scripts/premium_theme.gd").GOLD,3,true)

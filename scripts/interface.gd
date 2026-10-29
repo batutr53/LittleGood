@@ -277,8 +277,8 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 	if premium!=null and rebirth_enabled:
 		b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 		b.custom_minimum_size.y=premium.px(32);b.add_theme_font_size_override("font_size",int(premium.px(14)))
-		b.add_theme_color_override("font_color",Color("fff2ce") if primary else Color("f3ecdc"))
-		b.add_theme_color_override("font_disabled_color",Color("7f8b96"))
+		b.add_theme_color_override("font_color",Color("edf4f5"))
+		b.add_theme_color_override("font_disabled_color",Color("6b8795"))
 		var theme=preload("res://scripts/premium_theme.gd")
 		b.add_theme_stylebox_override("normal",theme.skin("pressed" if primary else "button"))
 		b.add_theme_stylebox_override("hover",theme.skin("hover"))

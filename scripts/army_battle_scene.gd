@@ -20,24 +20,12 @@ func _ready() -> void:
 	var started=Time.get_ticks_usec();game.show_world(false);game.ui.root.hide()
 	for key in ["militia","spearman","archer","raider","bow","captain","watchtower","wall","barracks"]:textures[key]=load("res://assets/kingdom/"+key+".svg")
 	arena=Node2D.new();arena.draw.connect(draw_arena);arena.scale=Vector2.ONE*.75;arena.position=Vector2(0,get_viewport_rect().size.y*.48-337.5);add_child(arena)
-	var layer=CanvasLayer.new();layer.layer=12;add_child(layer);hud=Control.new();hud.mouse_filter=Control.MOUSE_FILTER_IGNORE;layer.add_child(hud)
-	var h=get_viewport_rect().size.y
-	var bg=ColorRect.new();bg.color=Color("142e3b");bg.mouse_filter=Control.MOUSE_FILTER_IGNORE;place(bg,Rect2(0,0,720,205))
-	title=game.ui.label("",29,Color("f1d7a2"));place(title,Rect2(26,30,665,48))
-	status=game.ui.label("",20);place(status,Rect2(26,88,660,110))
-	var bottom=ColorRect.new();bottom.color=Color("142e3b");bottom.mouse_filter=Control.MOUSE_FILTER_IGNORE;place(bottom,Rect2(0,h-272,720,272))
-	for i in range(3):
-		var key=["advance","hold","retreat"][i];var value=key
-		button(key,[say("Advance","İlerle"),say("Hold","Tut"),say("Retreat","Çekil")][i],Rect2(20+i*235,h-250,218,68),func():M.order(game.world,value);game.checkpoint("army-order"))
-	for i in range(3):
-		var key=["balanced","defensive","assault"][i];var value=key
-		button(key,[say("Balanced","Dengeli"),say("Defense","Savunma"),say("Assault","Hücum")][i],Rect2(20+i*235,h-170,218,68),func():M.formation(game.world,value);game.checkpoint("army-formation"))
-	button("pause",say("Pause","Dur"),Rect2(20,h-89,335,68),toggle_pause)
-	button("home",say("Return home","Eve dön"),Rect2(370,h-89,330,68),go_home)
+	load("res://scripts/simple_army_hud.gd").new(self).build()
+	var extent=get_viewport_rect().size;var fit=minf((extent.x-32)/960,(extent.y-150)/900);arena.scale=Vector2.ONE*fit;arena.position=Vector2((extent.x-960*fit)*.5,(extent.y-900*fit)*.5)
 	startup_ms=(Time.get_ticks_usec()-started)/1000.0;refresh()
 func place(n: Control,r: Rect2) -> void:hud.add_child(n);n.position=r.position;n.size=r.size
 func button(key: String,t: String,r: Rect2,cb: Callable) -> void:
-	var b=game.ui.button(t,cb,true);b.add_theme_font_size_override("font_size",19);place(b,r);buttons[key]=b
+	var b=game.ui.button(t,cb,false);b.add_theme_font_size_override("font_size",19);place(b,r);buttons[key]=b
 func refresh() -> void:
 	var b=game.world.kingdom.military.battle;var m=game.world.kingdom.military
 	title.text=say("HOLD THE HEARTH","OCAĞI SAVUN") if b.mission=="raid" else say("THE BORDER CAPTAIN","SINIR KOMUTANI")
@@ -46,7 +34,8 @@ func refresh() -> void:
 	status.text=game.world.kingdom.adventure.hero.name+" · "+order_text[b.order]+"\n"+(result.get(b.result,say("Watch the attack windups. Change formation to protect your company.","Saldırı hazırlığını izle. Birliğini korumak için düzen değiştir.")))
 	buttons.home.disabled=b.result.is_empty()
 	for key in ["advance","hold","retreat"]:buttons[key].disabled=not b.result.is_empty()
-	for key in M.FORMATIONS:buttons[key].modulate=Color("f2d994") if m.formation==key else Color.WHITE
+	for key in M.FORMATIONS:buttons[key].set_pressed_no_signal(m.formation==key)
+	for key in ["advance","hold","retreat"]:buttons[key].set_pressed_no_signal(b.order==key)
 func toggle_pause() -> void:
 	frozen=not frozen;buttons.pause.text=say("Resume","Sürdür") if frozen else say("Pause","Dur")
 func _unhandled_input(event: InputEvent) -> void:
@@ -67,7 +56,7 @@ func _process(delta: float) -> void:
 	refresh();arena.queue_redraw()
 func draw_arena() -> void:
 	var b=game.world.kingdom.military.battle;var camp=b.mission=="camp"
-	arena.draw_rect(Rect2(-100,-1600,1200,4000),Color("688b73") if camp else Color("789c7c"))
+	arena.draw_rect(Rect2(-4000,-4000,9000,9000),Color("688b73") if camp else Color("789c7c"))
 	arena.draw_colored_polygon(PackedVector2Array([Vector2(0,0),Vector2(960,0),Vector2(960,250),Vector2(600,170),Vector2(300,225),Vector2(0,180)]),Color("507768"))
 	arena.draw_polyline(PackedVector2Array([Vector2(30,590),Vector2(280,510),Vector2(570,520),Vector2(960,650)]),Color("b7b18a"),100,true)
 	arena.draw_polyline(PackedVector2Array([Vector2(30,590),Vector2(280,510),Vector2(570,520),Vector2(960,650)]),Color("c4bd96"),72,true)

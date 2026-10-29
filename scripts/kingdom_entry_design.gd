@@ -30,14 +30,14 @@ func race():
 		e.button(v,e.say("Choose","Seç"),func():e.selected_race=key;e.create_page(),true,"Race_"+key)
 func create():
 	e.stage="create";var extent=begin(e.say("Forge your legend","Efsaneni oluştur"));var width=extent.x-70;var left=35.0;var top=155.0;var height=extent.y-top-105;var side=width*.25;var middle=width*.44
-	var classes=panel(Rect2(left,top,side,height),e.say("CLASS","SINIF"));e.text(classes,e.say("Dawnkin","Şafak Halkı") if e.selected_race=="human" else e.say("Stoneborn","Taşsoy"),18,T.MUTED)
+	var classes=panel(Rect2(left,top,side,height),e.say("Class","Sınıf"));e.text(classes,e.say("Dawnkin","Şafak Halkı") if e.selected_race=="human" else e.say("Stoneborn","Taşsoy"),18,T.MUTED)
 	for key in e.R.CLASSES:
 		var cls=key;var b=e.button(classes,e.R.NAMES[key],func():e.pending_name=e.hero_name.text;e.selected_class=cls;e.create_page(),e.selected_class==key,"FirstClass_"+key);b.tooltip_text={"warrior":e.say("Heavy armor · melee and defense","Ağır zırh · yakın saldırı ve savunma"),"priest":e.say("Sacred attacks · healing and protection","Kutsal saldırı · iyileştirme ve koruma"),"mage":e.say("Elemental magic · ranged area damage","Element büyüsü · uzaktan alan hasarı"),"rogue":e.say("Bow or daggers · speed and precision","Yay veya hançer · hız ve isabet")}[key];b.custom_minimum_size.y=42*scale
 	e.button(classes,e.say("← People","← Halk seçimi"),func():e.pending_name=e.hero_name.text;race())
 	var hero=panel(Rect2(left+side+12,top,middle,height),"")
 	var preview=TextureRect.new();preview.texture=load("res://assets/rpg/"+e.selected_class+".png");preview.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;preview.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;preview.custom_minimum_size.y=maxf(125,(height-105)*scale);hero.add_child(preview)
 	e.hero_name=e.field(hero,e.say("Hero name · 3–24 characters","Kahraman adı · 3–24 karakter"),"HeroName");e.hero_name.max_length=24;e.hero_name.text=e.pending_name
-	var stats=panel(Rect2(left+side+middle+24,top,width-side-middle-24,height),e.say("BONUS POINTS","BAŞLANGIÇ PUANI"))
+	var stats=panel(Rect2(left+side+middle+24,top,width-side-middle-24,height),e.say("Stat points","Stat puanları"))
 	e.stat_remaining=e.text(stats,"",18,T.GOLD);e.stat_remaining.name="StartingPoints"
 	for attr in e.R.ATTRIBUTES:
 		var key=attr;var row=HBoxContainer.new();row.add_theme_constant_override("separation",3);stats.add_child(row)
@@ -45,7 +45,7 @@ func create():
 		var minus=e.button(row,"−",func():e.change_stat(key,-1),false,"StartMinus_"+key);minus.custom_minimum_size=Vector2(32,36)*scale;minus.size_flags_horizontal=Control.SIZE_SHRINK_END
 		var value=e.text(row,str(e.starting_stats[key]),17,T.CREAM);value.name="StartValue_"+key;value.custom_minimum_size.x=24*scale;value.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;value.size_flags_horizontal=Control.SIZE_SHRINK_END
 		var plus=e.button(row,"+",func():e.change_stat(key,1),false,"StartPlus_"+key);plus.custom_minimum_size=Vector2(32,36)*scale;plus.size_flags_horizontal=Control.SIZE_SHRINK_END
-	e.create_button=e.button(stats,e.say("CREATE HERO","KAHRAMANI OLUŞTUR"),e.create_character,true,"CreateRealmHero");e.update_stats()
+	e.create_button=e.button(stats,e.say("Create hero","Kahramanı oluştur"),e.create_character,true,"CreateRealmHero");e.update_stats()
 	e.status=e.text(stats,"",14,Color("df9f77"));e.status.name="EntryStatus";e.status.hide()
 func daily():
 	e.stage="daily";var extent=begin(e.say("Traveler's calendar","Yolcu takvimi"));var width=minf(1060,extent.x-60);var v=panel(Rect2((extent.x-width)*.5,145,width,extent.y-240),e.say("28 VISITS · NO MISSED-DAY PENALTY","28 ZİYARET · KAÇIRILAN GÜN CEZASI YOK"))

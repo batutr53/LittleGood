@@ -6,7 +6,9 @@ var other
 var other_id=""
 var credentials=[]
 var capture_dir="res://docs/screenshots/kingdom-ui-delivery"
-func _initialize():call_deferred("run")
+func _initialize():
+	if not OS.get_environment("LITTLEGOD_ENTRY_CAPTURES").is_empty():capture_dir=OS.get_environment("LITTLEGOD_ENTRY_CAPTURES")
+	call_deferred("run")
 func settle():await process_frame;await process_frame
 func wait_for(predicate,seconds=15.0):
 	var until=Time.get_ticks_msec()+int(seconds*1000)

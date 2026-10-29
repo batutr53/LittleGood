@@ -9,9 +9,9 @@ var timer=0.0
 var selection={}
 func _ready():
 	mouse_filter=Control.MOUSE_FILTER_IGNORE;var p=game.ui.premium
-	var plate=Panel.new();plate.name="SelectionPlate";plate.mouse_filter=Control.MOUSE_FILTER_IGNORE;plate.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);plate.add_theme_stylebox_override("panel",T.box(Color("151f29"),true));add_child(plate)
-	title=p.text("",23,Color("ffe0a2"));title.name="SelectionTitle";title.clip_text=true;title.autowrap_mode=TextServer.AUTOWRAP_OFF;add_child(title);title.position=Vector2(10,5)*p.scale_ui();title.size=Vector2(235,24)*p.scale_ui()
-	detail=p.text("",19,Color("e2e5db"));detail.clip_text=true;detail.autowrap_mode=TextServer.AUTOWRAP_OFF;add_child(detail);detail.position=Vector2(10,33)*p.scale_ui();detail.size=Vector2(235,22)*p.scale_ui()
+	var plate=Panel.new();plate.name="SelectionPlate";plate.mouse_filter=Control.MOUSE_FILTER_IGNORE;plate.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);plate.add_theme_stylebox_override("panel",T.skin());add_child(plate)
+	title=p.text("",23,T.CREAM);title.name="SelectionTitle";title.clip_text=true;title.autowrap_mode=TextServer.AUTOWRAP_OFF;add_child(title);title.position=Vector2(10,5)*p.scale_ui();title.size=Vector2(235,24)*p.scale_ui()
+	detail=p.text("",19,T.MUTED);detail.clip_text=true;detail.autowrap_mode=TextServer.AUTOWRAP_OFF;add_child(detail);detail.position=Vector2(10,33)*p.scale_ui();detail.size=Vector2(235,22)*p.scale_ui()
 	command=game.ui.button("",activate);command.name="SelectionAction";p.rpg.compact_button(command);add_child(command);command.position=Vector2(250,8)*p.scale_ui();command.size=Vector2(66,48)*p.scale_ui()
 	var close=game.ui.button("×",clear);close.name="ClearWorldSelection";p.rpg.compact_button(close);add_child(close);close.position=Vector2(320,8)*p.scale_ui();close.size=Vector2(32,48)*p.scale_ui();close.custom_minimum_size.x=0
 	refresh()

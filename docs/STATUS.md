@@ -1,5 +1,11 @@
 # LittleGod — RPG interface checkpoint / E3 gameplay baseline
 
+## Sade arayüz — 29 Ekim 2026
+
+Koyu mavi yüzeyler, yeşil seçim vurgusu ve özgün çizgi ikonlarıyla giriş, şehir, envanter, ayarlar, ortak av ve birlik savaşı arayüzleri yenilendi. Şehirde sohbet başlangıçta küçültülür; alt navigasyon tek yüzen çubuktadır. 960×540 ve 1600×720 gerçek Godot görüntüleri incelendi. 822 oyun, 172 arayüz, 28 birlik ekranı, 61 navigasyon, 14 RPG etkileşim ve 59 giriş/ortak av kontrolü geçti. Kapanışta mevcut Godot kaynak temizliği uyarıları devam ediyor.
+
+Yeni v114 ana APK: `D:/LittleGod/builds/android/LittleGod-Simple-UI-debug.apk`; QA APK: `D:/LittleGod/builds/android/LittleGod-Kingdom-UI-QA-debug.apk`. Android cihaz/emülatör bu teslimde bağlı değildi; kurulum veya fiziksel cihaz doğrulaması yapılmadı. Mevcut çevrimiçi indirme adresindeki v113 değiştirilmedi. Görüntüler: `docs/screenshots/simple-ui-final`, `docs/screenshots/simple-ui-entry` ve `docs/screenshots/simple-ui`.
+
 ## Text, title and icon alignment — 28 October 2026
 
 Centered panel titles with a balanced close-button spacer. Bottom navigation now lays out icons above separate captions, keeping both centered without overlap. Equipment slots/icons and inventory grid are centered, entry fields/headings/stat labels aligned, chat tabs share width, and chat-frame padding/accidental wrapping is fixed. Dynamic speed captions update without painting a second native label. Empty selection plates no longer flash on closing a modal.

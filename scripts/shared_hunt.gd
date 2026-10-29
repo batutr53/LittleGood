@@ -63,7 +63,7 @@ func _draw():
 		if clock-int(player.get("cast",-100))<3:draw_arc(point,62,0,TAU,40,Color("91bbfa"),5)
 		elif clock-int(player.get("attack",-100))<2:draw_arc(point,55,-PI*.8,PI*.3,24,Color("ffe1a1"),4)
 func button(parent,title,rect,action,id):
-	var b=game.ui.button(title,action,true);b.name=id;b.position=rect.position;b.size=rect.size;b.add_theme_font_size_override("font_size",16);parent.add_child(b);return b
+	var b=game.ui.button(title,action,false);b.name=id;b.position=rect.position;b.size=rect.size;b.add_theme_font_size_override("font_size",16);parent.add_child(b);return b
 func build_hud():
 	load("res://scripts/kingdom_shared_hud.gd").new(self).build()
 	return
@@ -159,6 +159,12 @@ func poll_chat():
 	chat_log.text="\n".join(lines) if not lines.is_empty() else say("Welcome to Hearth. Start a conversation below.","Hearth’e hoş geldin. Aşağıdan sohbet başlatabilirsin.")
 func choose_chat(channel):
 	chat_channel=channel;chat_clock=3.1
+	for key in ["general","private","system"]:
+		var b=hud.find_child("Feed"+key.capitalize(),true,false)
+		if b:b.add_theme_stylebox_override("normal",preload("res://scripts/premium_theme.gd").nav(key==channel))
+func open_chat(channel="general"):
+	open_panel("chat");var panel=game.ui.modal.find_child("LiveChatPanel",true,false)
+	if panel:panel.change_channel(channel)
 func open_panel(route):
 	direction=Vector2.ZERO;dragging=false;attack_held=false;pending_action="";frozen=true;game.ui.layer=25;game.ui.root.show();game.ui.world_controls(false);game.ui.premium.route(route)
 func leave():

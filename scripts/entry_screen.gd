@@ -39,18 +39,19 @@ func base(title):
 	var extent=ui.get_viewport().get_visible_rect().size;s=minf(extent.x/1280.0,extent.y/720.0)
 	ui.modal=PanelContainer.new();ui.modal.name="RealmEntry";ui.modal.position=Vector2.ZERO;ui.modal.size=extent;ui.modal.add_theme_stylebox_override("panel",StyleBoxEmpty.new());ui.root.add_child(ui.modal)
 	ui.modal_base_y=0
+	ui.root.theme=T.controls(ui.ui_font(),s)
 	canvas=Control.new();canvas.custom_minimum_size=extent;ui.modal.add_child(canvas)
 	var bg=TextureRect.new();bg.texture=ART;bg.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;bg.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED;bg.size=extent;bg.mouse_filter=Control.MOUSE_FILTER_IGNORE;canvas.add_child(bg)
 	var title_box=VBoxContainer.new();title_box.position=Vector2(45*s,35*s);title_box.size=Vector2(extent.x*.5,110*s);canvas.add_child(title_box)
-	var logo=text(title_box,"LITTLE GOD",47,Color("f5dfae"));logo.horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT;logo.add_theme_font_override("font",load("res://assets/phase2/lora.ttf"));logo.add_theme_color_override("font_shadow_color",Color.BLACK);logo.add_theme_constant_override("shadow_offset_y",3)
-	text(title_box,"A G E   O F   K I N G D O M S",16,Color("dac5a0")).horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT
+	var logo=text(title_box,"LittleGod",44,T.CREAM);logo.horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT;logo.add_theme_font_override("font",ui.ui_font());logo.add_theme_color_override("font_shadow_color",Color.BLACK);logo.add_theme_constant_override("shadow_offset_y",3)
+	text(title_box,"A G E   O F   K I N G D O M S",14,T.MUTED).horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT
 	var panel=PanelContainer.new();panel.name="EntryForm";panel.position=Vector2(extent.x-415*s,105*s);panel.size=Vector2(370*s,extent.y-205*s);var box=T.skin();box.content_margin_left=18*s;box.content_margin_right=18*s;box.content_margin_top=16*s;box.content_margin_bottom=14*s;panel.add_theme_stylebox_override("panel",box);canvas.add_child(panel)
 	form=VBoxContainer.new();form.add_theme_constant_override("separation",maxi(5,roundi(10*s)));panel.add_child(form)
-	text(form,say("ACCOUNT  ›  REALM  ›  PEOPLE  ›  HERO","HESAP  ›  SUNUCU  ›  HALK  ›  KAHRAMAN"),12,Color("b9a16e"));text(form,title,27,Color("f1dbac"))
+	text(form,say("Account · Realm · Hero","Hesap · Sunucu · Kahraman"),12,T.MUTED);text(form,title,27,T.CREAM)
 	status=text(form,message,15,Color("deb77c"));status.name="EntryStatus";status.visible=not message.is_empty()
 	var tip_panel=PanelContainer.new();tip_panel.name="EntryTips";tip_panel.position=Vector2(35*s,extent.y-83*s);tip_panel.size=Vector2(extent.x-70*s,58*s);tip_panel.add_theme_stylebox_override("panel",T.box(Color(.025,.035,.055,.88)));canvas.add_child(tip_panel)
 	var tips=[say("Your workers keep gathering while you adventure. Collect their cargo when you return.","Sen maceradayken işçilerin çalışır. Döndüğünde yüklerini toplamayı unutma."),say("Watch an enemy's warning, dodge, then strike during its recovery.","Düşmanın uyarısını izle, kaçın ve toparlanırken saldır."),say("In the shared hunting ground, the server calculates damage and earned essence.","Ortak av alanında hasarı ve kazanılan özü sunucu hesaplar.")]
-	var tip=text(tip_panel,say("FIELD NOTES  ·  ","YOLCULUK NOTLARI  ·  ")+tips[int(Time.get_unix_time_from_system()/12)%tips.size()],16);tip.vertical_alignment=VERTICAL_ALIGNMENT_CENTER
+	var tip=text(tip_panel,say("TIP · ","İPUCU · ")+tips[int(Time.get_unix_time_from_system()/12)%tips.size()],16);tip.vertical_alignment=VERTICAL_ALIGNMENT_CENTER
 	var language=Button.new();language.name="EntryLanguage";language.text="TR / EN";language.position=Vector2(35*s,extent.y-132*s);language.size=Vector2(100*s,40*s);canvas.add_child(language);language.pressed.connect(func():ui.toggle_language();open())
 	if Persistence.has_save(game.save_path) and not game.save_path.begins_with("user://realms/"):
 		var legacy=Button.new();legacy.name="ExistingLocalSave";legacy.text=say("Continue device save","Cihazdaki kayda devam");legacy.position=Vector2(150*s,extent.y-132*s);legacy.size=Vector2(220*s,40*s);canvas.add_child(legacy);legacy.pressed.connect(game.restore)
@@ -62,7 +63,7 @@ func note(value):
 func login_page():
 	stage="login";base(say("Welcome back","Krallığına hoş geldin"))
 	account=field(form,say("Account name","Hesap adı"),"AccountName");password=field(form,say("Password","Parola"),"AccountPassword",true)
-	button(form,say("SIGN IN","GİRİŞ YAP"),authenticate,true,"EntryLogin")
+	button(form,say("Sign in","Giriş yap"),authenticate,true,"EntryLogin")
 	button(form,say("Create account","Hesap oluştur"),register_account,false,"EntryRegister")
 	button(form,say("Connection","Sunucu bağlantısı"),connection,false,"EntryConnection")
 	text(form,say("Your password is never saved on this device.","Parolan bu cihazda saklanmaz."),14)
@@ -137,7 +138,7 @@ func create_character():
 	else:note(say("Name unavailable or invalid. Use 3–24 letters/numbers.","Ad kullanımda veya geçersiz. 3–24 harf/rakam kullan."))
 func show_character():
 	stage="characters";message="";base(str(character.name));portrait(character.primaryClass)
-	text(form,R.NAMES[character.primaryClass]+" · "+str(int(character.experience))+" XP",22,Color("f1dbac"));text(form,say("Company essence: ","Birlik özü: ")+str(int(character.essence))+say(" · Hunts: "," · Av: ")+str(int(character.hunts)),16)
+	text(form,R.NAMES[character.primaryClass]+" · "+str(int(character.experience))+" XP",22,T.CREAM);text(form,say("Company essence: ","Birlik özü: ")+str(int(character.essence))+say(" · Hunts: "," · Av: ")+str(int(character.hunts)),16)
 	button(form,say("ENTER SHARED HUNT","ORTAK AVA KATIL"),join_shared,true,"JoinSharedHunt")
 	button(form,say("My city","Şehrime git"),enter_city,false,"EnterRealmCity")
 	button(form,say("Visit gifts & events","Ziyaret hediyeleri ve etkinlikler"),daily,false,"OpenDaily")
